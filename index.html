@@ -563,6 +563,53 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 }
 .rfloat:hover { color:var(--gold); border-color:var(--gold-d); opacity:1 }
 .rfloat:disabled { opacity:0.25; pointer-events:none }
+
+/* ── PARALLEL PASSAGES ── */
+#parallel-strip{
+  display:none;align-items:center;gap:8px;
+  padding:6px 12px;background:var(--bg3);
+  border-bottom:1px solid var(--border);
+  overflow-x:auto;white-space:nowrap;
+  -webkit-overflow-scrolling:touch;
+}
+#parallel-strip.on{display:flex}
+.par-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);flex-shrink:0}
+.par-chip{
+  background:var(--surface);border:1px solid var(--gold-d);
+  color:var(--gold);border-radius:20px;padding:4px 11px;
+  font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .15s;flex-shrink:0;white-space:nowrap;
+}
+.par-chip:active{background:var(--gold);color:var(--bg)}
+
+/* Parallel panel slide-up */
+#par-panel{
+  position:fixed;inset:0;background:rgba(0,0,0,.65);
+  z-index:310;display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+#par-panel.on{display:flex}
+#par-panel-inner{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:18px 18px 0 0;
+  width:100%;max-width:700px;
+  max-height:72vh;display:flex;flex-direction:column;
+  animation:su .22s ease;
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+#par-panel-hdr{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px 10px;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+#par-panel-title{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold);flex:1}
+#par-panel-open{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;transition:all .15s}
+#par-panel-open:hover{background:var(--bg3);color:var(--gold)}
+#par-close{background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;line-height:1;flex-shrink:0}
+#par-panel-body{overflow-y:auto;padding:12px 16px 16px;flex:1}
+.par-verse{display:flex;gap:8px;padding:4px 2px;border-radius:4px}
+.par-vnum{font-family:'Crimson Pro',serif;font-size:11px;font-weight:600;color:var(--gold-d);min-width:22px;text-align:right;flex-shrink:0;padding-top:3px}
+.par-vtxt{font-family:'Crimson Pro',serif;font-size:var(--font-v);line-height:1.75;color:var(--text)}
 </style>
 </head>
 <body>
@@ -619,6 +666,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div class="screen" id="screen-reader">
     <div id="reader-topbar">
       <div id="reader-loc" onclick="goToChapters()"></div>
+    </div>
+    <div id="parallel-strip">
+      <span class="par-lbl">⇄ Parallels</span>
+      <div id="par-chips"></div>
     </div>
     <!-- Floating prev/next -->
     <div id="reader-float-nav">
@@ -705,6 +756,18 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 </div>
 
 <div id="day-toast"></div>
+
+<!-- PARALLEL PANEL -->
+<div id="par-panel" onclick="closeParPanel(event)">
+  <div id="par-panel-inner">
+    <div id="par-panel-hdr">
+      <div id="par-panel-title"></div>
+      <button id="par-panel-open" onclick="openParFull()">Open in Reader</button>
+      <button id="par-close" onclick="closeParPanel()">✕</button>
+    </div>
+    <div id="par-panel-body"></div>
+  </div>
+</div>
 
 <!-- MILESTONE TOAST -->
 <div id="milestone-toast">
@@ -1432,7 +1495,7 @@ function showScreen(name, pushHistory=true){
   S.screen=name; updateHeaderState();
   if(name==='saved')  renderSaved();
   if(name==='plans')  renderPlansScreen();
-  if(name==='reader') setTimeout(applyRL, 80);
+  if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();}, 80);
   if(name!=='reader') exitSelectMode();
   if(pushHistory) history.pushState({screen:name}, '', '');
 }
@@ -2600,6 +2663,139 @@ function applyRL(){
   document.querySelectorAll('.vblock').forEach(el => {
     el.classList.toggle('rl-verse', isRL);
   });
+}
+
+
+/* ════════════════════════════════
+   PARALLEL PASSAGES
+════════════════════════════════ */
+// Key: 'Book:Chapter' (1-indexed). Value: array of {book, ch (1-indexed), label}
+const PARALLELS = {
+  // ── Matthew ──
+  'Matthew:3':  [{book:'Mark',ch:1,l:'Mark 1'},{book:'Luke',ch:3,l:'Luke 3'}],
+  'Matthew:4':  [{book:'Mark',ch:1,l:'Mark 1'},{book:'Luke',ch:4,l:'Luke 4'}],
+  'Matthew:5':  [{book:'Luke',ch:6,l:'Luke 6'}],
+  'Matthew:6':  [{book:'Luke',ch:11,l:'Luke 11'}],
+  'Matthew:8':  [{book:'Mark',ch:1,l:'Mark 1'},{book:'Luke',ch:4,l:'Luke 4'},{book:'Luke',ch:5,l:'Luke 5'}],
+  'Matthew:9':  [{book:'Mark',ch:2,l:'Mark 2'},{book:'Luke',ch:5,l:'Luke 5'}],
+  'Matthew:10': [{book:'Mark',ch:6,l:'Mark 6'},{book:'Luke',ch:9,l:'Luke 9'}],
+  'Matthew:11': [{book:'Luke',ch:7,l:'Luke 7'}],
+  'Matthew:12': [{book:'Mark',ch:3,l:'Mark 3'},{book:'Luke',ch:6,l:'Luke 6'}],
+  'Matthew:13': [{book:'Mark',ch:4,l:'Mark 4'},{book:'Luke',ch:8,l:'Luke 8'}],
+  'Matthew:14': [{book:'Mark',ch:6,l:'Mark 6'},{book:'Luke',ch:9,l:'Luke 9'},{book:'John',ch:6,l:'John 6'}],
+  'Matthew:15': [{book:'Mark',ch:7,l:'Mark 7'}],
+  'Matthew:16': [{book:'Mark',ch:8,l:'Mark 8'},{book:'Luke',ch:9,l:'Luke 9'}],
+  'Matthew:17': [{book:'Mark',ch:9,l:'Mark 9'},{book:'Luke',ch:9,l:'Luke 9'}],
+  'Matthew:18': [{book:'Mark',ch:9,l:'Mark 9'},{book:'Luke',ch:9,l:'Luke 9'}],
+  'Matthew:19': [{book:'Mark',ch:10,l:'Mark 10'},{book:'Luke',ch:18,l:'Luke 18'}],
+  'Matthew:20': [{book:'Mark',ch:10,l:'Mark 10'},{book:'Luke',ch:18,l:'Luke 18'}],
+  'Matthew:21': [{book:'Mark',ch:11,l:'Mark 11'},{book:'Luke',ch:19,l:'Luke 19'},{book:'John',ch:12,l:'John 12'}],
+  'Matthew:22': [{book:'Mark',ch:12,l:'Mark 12'},{book:'Luke',ch:20,l:'Luke 20'}],
+  'Matthew:24': [{book:'Mark',ch:13,l:'Mark 13'},{book:'Luke',ch:21,l:'Luke 21'}],
+  'Matthew:26': [{book:'Mark',ch:14,l:'Mark 14'},{book:'Luke',ch:22,l:'Luke 22'},{book:'John',ch:13,l:'John 13'}],
+  'Matthew:27': [{book:'Mark',ch:15,l:'Mark 15'},{book:'Luke',ch:23,l:'Luke 23'},{book:'John',ch:19,l:'John 19'}],
+  'Matthew:28': [{book:'Mark',ch:16,l:'Mark 16'},{book:'Luke',ch:24,l:'Luke 24'},{book:'John',ch:20,l:'John 20'}],
+  // ── Mark ──
+  'Mark:1':  [{book:'Matthew',ch:3,l:'Matt 3'},{book:'Matthew',ch:4,l:'Matt 4'},{book:'Luke',ch:3,l:'Luke 3'},{book:'Luke',ch:4,l:'Luke 4'}],
+  'Mark:2':  [{book:'Matthew',ch:9,l:'Matt 9'},{book:'Luke',ch:5,l:'Luke 5'}],
+  'Mark:3':  [{book:'Matthew',ch:12,l:'Matt 12'},{book:'Luke',ch:6,l:'Luke 6'}],
+  'Mark:4':  [{book:'Matthew',ch:13,l:'Matt 13'},{book:'Luke',ch:8,l:'Luke 8'}],
+  'Mark:5':  [{book:'Matthew',ch:8,l:'Matt 8'},{book:'Luke',ch:8,l:'Luke 8'}],
+  'Mark:6':  [{book:'Matthew',ch:14,l:'Matt 14'},{book:'Luke',ch:9,l:'Luke 9'},{book:'John',ch:6,l:'John 6'}],
+  'Mark:7':  [{book:'Matthew',ch:15,l:'Matt 15'}],
+  'Mark:8':  [{book:'Matthew',ch:16,l:'Matt 16'},{book:'Luke',ch:9,l:'Luke 9'}],
+  'Mark:9':  [{book:'Matthew',ch:17,l:'Matt 17'},{book:'Luke',ch:9,l:'Luke 9'}],
+  'Mark:10': [{book:'Matthew',ch:19,l:'Matt 19'},{book:'Matthew',ch:20,l:'Matt 20'},{book:'Luke',ch:18,l:'Luke 18'}],
+  'Mark:11': [{book:'Matthew',ch:21,l:'Matt 21'},{book:'Luke',ch:19,l:'Luke 19'},{book:'John',ch:12,l:'John 12'}],
+  'Mark:12': [{book:'Matthew',ch:22,l:'Matt 22'},{book:'Luke',ch:20,l:'Luke 20'}],
+  'Mark:13': [{book:'Matthew',ch:24,l:'Matt 24'},{book:'Luke',ch:21,l:'Luke 21'}],
+  'Mark:14': [{book:'Matthew',ch:26,l:'Matt 26'},{book:'Luke',ch:22,l:'Luke 22'},{book:'John',ch:13,l:'John 13'}],
+  'Mark:15': [{book:'Matthew',ch:27,l:'Matt 27'},{book:'Luke',ch:23,l:'Luke 23'},{book:'John',ch:19,l:'John 19'}],
+  'Mark:16': [{book:'Matthew',ch:28,l:'Matt 28'},{book:'Luke',ch:24,l:'Luke 24'},{book:'John',ch:20,l:'John 20'}],
+  // ── Luke ──
+  'Luke:3':  [{book:'Matthew',ch:3,l:'Matt 3'},{book:'Mark',ch:1,l:'Mark 1'}],
+  'Luke:4':  [{book:'Matthew',ch:4,l:'Matt 4'},{book:'Mark',ch:1,l:'Mark 1'}],
+  'Luke:5':  [{book:'Matthew',ch:9,l:'Matt 9'},{book:'Mark',ch:2,l:'Mark 2'}],
+  'Luke:6':  [{book:'Matthew',ch:5,l:'Matt 5'},{book:'Matthew',ch:12,l:'Matt 12'},{book:'Mark',ch:3,l:'Mark 3'}],
+  'Luke:7':  [{book:'Matthew',ch:11,l:'Matt 11'}],
+  'Luke:8':  [{book:'Matthew',ch:13,l:'Matt 13'},{book:'Mark',ch:4,l:'Mark 4'},{book:'Mark',ch:5,l:'Mark 5'}],
+  'Luke:9':  [{book:'Matthew',ch:14,l:'Matt 14'},{book:'Matthew',ch:16,l:'Matt 16'},{book:'Matthew',ch:17,l:'Matt 17'},{book:'Mark',ch:6,l:'Mark 6'},{book:'Mark',ch:8,l:'Mark 8'},{book:'Mark',ch:9,l:'Mark 9'},{book:'John',ch:6,l:'John 6'}],
+  'Luke:11': [{book:'Matthew',ch:6,l:'Matt 6'}],
+  'Luke:18': [{book:'Matthew',ch:19,l:'Matt 19'},{book:'Mark',ch:10,l:'Mark 10'}],
+  'Luke:19': [{book:'Matthew',ch:21,l:'Matt 21'},{book:'Mark',ch:11,l:'Mark 11'},{book:'John',ch:12,l:'John 12'}],
+  'Luke:20': [{book:'Matthew',ch:22,l:'Matt 22'},{book:'Mark',ch:12,l:'Mark 12'}],
+  'Luke:21': [{book:'Matthew',ch:24,l:'Matt 24'},{book:'Mark',ch:13,l:'Mark 13'}],
+  'Luke:22': [{book:'Matthew',ch:26,l:'Matt 26'},{book:'Mark',ch:14,l:'Mark 14'},{book:'John',ch:13,l:'John 13'}],
+  'Luke:23': [{book:'Matthew',ch:27,l:'Matt 27'},{book:'Mark',ch:15,l:'Mark 15'},{book:'John',ch:19,l:'John 19'}],
+  'Luke:24': [{book:'Matthew',ch:28,l:'Matt 28'},{book:'Mark',ch:16,l:'Mark 16'},{book:'John',ch:20,l:'John 20'}],
+  // ── John ──
+  'John:6':  [{book:'Matthew',ch:14,l:'Matt 14'},{book:'Mark',ch:6,l:'Mark 6'},{book:'Luke',ch:9,l:'Luke 9'}],
+  'John:12': [{book:'Matthew',ch:21,l:'Matt 21'},{book:'Mark',ch:11,l:'Mark 11'},{book:'Luke',ch:19,l:'Luke 19'}],
+  'John:13': [{book:'Matthew',ch:26,l:'Matt 26'},{book:'Mark',ch:14,l:'Mark 14'},{book:'Luke',ch:22,l:'Luke 22'}],
+  'John:18': [{book:'Matthew',ch:26,l:'Matt 26'},{book:'Mark',ch:14,l:'Mark 14'},{book:'Luke',ch:22,l:'Luke 22'}],
+  'John:19': [{book:'Matthew',ch:27,l:'Matt 27'},{book:'Mark',ch:15,l:'Mark 15'},{book:'Luke',ch:23,l:'Luke 23'}],
+  'John:20': [{book:'Matthew',ch:28,l:'Matt 28'},{book:'Mark',ch:16,l:'Mark 16'},{book:'Luke',ch:24,l:'Luke 24'}],
+  // ── OT Parallels ──
+  '2 Samuel:22':    [{book:'Psalms',ch:18,l:'Psalm 18'}],
+  'Psalms:18':      [{book:'2 Samuel',ch:22,l:'2 Sam 22'}],
+  '2 Samuel:7':     [{book:'1 Chronicles',ch:17,l:'1 Chr 17'}],
+  '1 Chronicles:17':[{book:'2 Samuel',ch:7,l:'2 Sam 7'}],
+  '2 Kings:18':     [{book:'Isaiah',ch:36,l:'Isaiah 36'}],
+  '2 Kings:19':     [{book:'Isaiah',ch:37,l:'Isaiah 37'}],
+  '2 Kings:20':     [{book:'Isaiah',ch:38,l:'Isaiah 38'}],
+  'Isaiah:36':      [{book:'2 Kings',ch:18,l:'2 Kings 18'}],
+  'Isaiah:37':      [{book:'2 Kings',ch:19,l:'2 Kings 19'}],
+  'Isaiah:38':      [{book:'2 Kings',ch:20,l:'2 Kings 20'}],
+  'Isaiah:2':       [{book:'Micah',ch:4,l:'Micah 4'}],
+  'Micah:4':        [{book:'Isaiah',ch:2,l:'Isaiah 2'}],
+};
+
+let _parOpenBook = null, _parOpenCh = null;
+
+function showParallelBar(){
+  const key = `${S.book}:${S.ch+1}`;
+  const pars = PARALLELS[key];
+  const strip = document.getElementById('parallel-strip');
+  const chips = document.getElementById('par-chips');
+  if(!pars || !pars.length){ strip.classList.remove('on'); return; }
+  chips.innerHTML = pars.map(p =>
+    `<div class="par-chip" onclick="openParallel('${p.book.replace(/'/g,"\\'")}',${p.ch},'${p.l}')">${p.l}</div>`
+  ).join('');
+  strip.classList.add('on');
+}
+
+async function openParallel(book, ch, label){
+  _parOpenBook = book; _parOpenCh = ch - 1;
+  const panel = document.getElementById('par-panel');
+  const body  = document.getElementById('par-panel-body');
+  document.getElementById('par-panel-title').textContent = label;
+  body.innerHTML = '<div style="color:var(--text-m);font-size:13px;padding:20px 0;text-align:center">Loading…</div>';
+  panel.classList.add('on');
+
+  const data = await fetchBook(book);
+  if(!data){ body.innerHTML = '<div style="color:var(--text-m);text-align:center;padding:20px">Could not load.</div>'; return; }
+  const verses = data.chapters[ch-1]?.verses || [];
+  body.innerHTML = verses.map(v =>
+    `<div class="par-verse">
+      <span class="par-vnum">${v.verse}</span>
+      <span class="par-vtxt">${v.text}</span>
+    </div>`
+  ).join('');
+}
+
+function openParFull(){
+  if(_parOpenBook === null) return;
+  closeParPanel();
+  fetchBook(_parOpenBook).then(data => {
+    if(!data) return;
+    S.book=_parOpenBook; S.ch=_parOpenCh; S.bookData=data;
+    renderReader(); showScreen('reader');
+  });
+}
+
+function closeParPanel(e){
+  if(!e || e.target===document.getElementById('par-panel'))
+    document.getElementById('par-panel').classList.remove('on');
 }
 
 /* ════ SETTINGS ════ */
