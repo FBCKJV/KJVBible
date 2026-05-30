@@ -537,6 +537,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
   </button>
   <div id="logo">✝ Holy Bible</div>
+  <button class="hbtn" id="btn-rl" onclick="toggleRL()" style="display:none">RL</button>
   <button class="hbtn" id="btn-select" onclick="toggleSelectMode()" style="display:none" title="Select verses">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     Select
@@ -643,6 +644,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     </div>
   </div>
 
+
+  <!-- READING PLANS -->
+  <div class="screen" id="screen-plans">
+    <div id="plans-inner" style="padding:12px"></div>
+  </div>
   <!-- SAVED -->
   <div class="screen" id="screen-saved">
     <div style="padding:12px">
@@ -657,6 +663,8 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     </div>
   </div>
 </div>
+
+<div id="day-toast"></div>
 
 <!-- MILESTONE TOAST -->
 <div id="milestone-toast">
@@ -686,6 +694,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <button class="bn" id="bn-search" onclick="showScreen('search')">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
     Search
+  </button>
+  <button class="bn" id="bn-plans" onclick="showScreen('plans')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+    Plans
   </button>
   <button class="bn" id="bn-saved" onclick="showScreen('saved')">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
@@ -975,7 +987,7 @@ async function selectBook(name){
   showScreen('chapters');
 }
 
-function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();}
+function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();planTrackChapter(S.book,i);}
 
 /* ════ RENDER READER ════ */
 function renderReader(){
@@ -1378,9 +1390,10 @@ function showScreen(name, pushHistory=true){
   document.getElementById('screen-'+name)?.classList.add('on');
   document.getElementById('bn-'+name)?.classList.add('on');
   S.screen=name; updateHeaderState();
-  if(name==='saved') renderSaved();
+  if(name==='saved')  renderSaved();
+  if(name==='plans')  renderPlansScreen();
+  if(name==='reader') setTimeout(applyRL, 80);
   if(name!=='reader') exitSelectMode();
-  // Push a history entry so Android back button fires popstate instead of closing
   if(pushHistory) history.pushState({screen:name}, '', '');
 }
 
@@ -1413,15 +1426,18 @@ window.addEventListener('popstate', e => {
   }
 });
 function updateHeaderState(){
-  const back = document.getElementById('btn-back');
-  const sel  = document.getElementById('btn-select');
+  const back   = document.getElementById('btn-back');
+  const sel    = document.getElementById('btn-select');
   const selAll = document.getElementById('btn-select-all');
-  const show = S.screen === 'reader' || S.screen === 'chapters';
-  back.style.display   = show ? 'flex' : 'none';
-  sel.style.display    = S.screen === 'reader' ? 'flex' : 'none';
-  selAll.style.display = S.screen === 'reader' ? 'flex' : 'none';
+  const rl     = document.getElementById('btn-rl');
+  const show   = S.screen==='reader'||S.screen==='chapters';
+  back.style.display   = show?'flex':'none';
+  sel.style.display    = S.screen==='reader'?'flex':'none';
+  selAll.style.display = S.screen==='reader'?'flex':'none';
+  rl.style.display     = S.screen==='reader'?'flex':'none';
+  if(rl) rl.classList.toggle('on', S.rlOn);
   document.getElementById('logo').textContent =
-    S.screen === 'reader' ? S.book : S.screen === 'chapters' ? S.book : '✝ Holy Bible';
+    S.screen==='reader'?S.book:S.screen==='chapters'?S.book:'✝ Holy Bible';
 }
 
 /* ════ FETCH ════ */
@@ -2287,6 +2303,266 @@ function closeStreakPanel(e){
     document.getElementById('streak-panel').classList.remove('on');
 }
 
+
+/* ════════════════════════════════
+   READING PLANS
+════════════════════════════════ */
+
+// NT in 30 Days — [bookIdx, startCh0, endCh0] segments
+const NT30_RAW = [
+  [[39,0,8]],[[39,9,18]],[[39,19,27],[40,0,0]],[[40,1,9]],
+  [[40,10,15],[41,0,2]],[[41,3,11]],[[41,12,19]],[[41,20,23],[42,0,3]],
+  [[42,4,11]],[[42,12,20]],[[43,0,8]],[[43,9,17]],[[43,18,27]],
+  [[44,0,7]],[[44,8,15]],[[45,0,7]],[[45,8,15]],[[46,0,8]],
+  [[46,9,12],[47,0,5]],[[48,0,5],[49,0,3]],[[50,0,3],[51,0,4]],
+  [[52,0,2],[53,0,5]],[[54,0,3],[55,0,2],[56,0,0]],[[57,0,8]],
+  [[57,9,12],[58,0,4]],[[59,0,4],[60,0,2]],
+  [[61,0,4],[62,0,0],[63,0,0],[64,0,0]],
+  [[65,0,7]],[[65,8,15]],[[65,16,21]]
+];
+
+// Expand NT30 segments to flat arrays of [bookIdx, chIdx]
+const NT30_DAYS = NT30_RAW.map(segs =>
+  segs.flatMap(([bi,s,e]) => { const r=[]; for(let c=s;c<=e;c++) r.push([bi,c]); return r; })
+);
+
+// Bible in a Year — distribute all 1189 chapters across 365 days
+function buildBIY(){
+  const all = [];
+  BOOKS.forEach((b,bi) => { for(let c=0;c<CH_COUNTS[bi];c++) all.push([bi,c]); });
+  const days = [];
+  let i = 0;
+  for(let d=0;d<365;d++){
+    const n = Math.ceil((all.length - i) / (365 - d));
+    days.push(all.slice(i, i+n));
+    i += n;
+  }
+  return days;
+}
+let _biyDays = null;
+function getBIYDays(){ if(!_biyDays) _biyDays = buildBIY(); return _biyDays; }
+
+// Proverbs — day i = Proverbs chapter i (0-indexed)
+// Proverbs is BOOKS index 19
+
+const PLAN_DEFS = {
+  prov:{ id:'prov', name:'Proverbs in a Month', desc:'31 days · 1 chapter per day', icon:'📖', days:31 },
+  nt30:{ id:'nt30', name:'New Testament in 30 Days', desc:'30 days · 8–9 chapters per day', icon:'✝', days:30 },
+  biy: { id:'biy',  name:'Bible in a Year', desc:'365 days · 3–4 chapters per day', icon:'📅', days:365 },
+};
+
+// Returns [{bi, ci}] array for a given plan day (0-indexed)
+function getPlanDayReadings(planId, dayIdx){
+  if(planId === 'prov') return [[19, dayIdx]];
+  if(planId === 'nt30') return NT30_DAYS[dayIdx] || [];
+  if(planId === 'biy')  return getBIYDays()[dayIdx] || [];
+  return [];
+}
+
+// Human-readable label for a day's reading
+function planDayLabel(planId, dayIdx){
+  const readings = getPlanDayReadings(planId, dayIdx);
+  const groups = {};
+  readings.forEach(([bi,ci]) => {
+    if(!groups[bi]) groups[bi] = [];
+    groups[bi].push(ci+1);
+  });
+  return Object.entries(groups).map(([bi,chs]) => {
+    const b = BOOKS[parseInt(bi)];
+    return chs.length === 1 ? `${b} ${chs[0]}` : `${b} ${chs[0]}–${chs[chs.length-1]}`;
+  }).join(', ');
+}
+
+// Plan state helpers
+function loadPlan(){ return LS.get('kjv_active_plan', null); }
+// plan = {id, startDate, done:[], chDone:[]}
+
+function activePlan(){ return loadPlan(); }
+
+function startPlan(id){
+  const plan = {id, startDate: todayStr(), done:[], chDone:[]};
+  LS.set('kjv_active_plan', plan);
+  showScreen('plans');
+  renderPlansScreen();
+}
+
+function getCurrentDay(plan){
+  // First uncompleted day
+  const def = PLAN_DEFS[plan.id];
+  for(let d=0; d<def.days; d++){
+    if(!plan.done.includes(d)) return d;
+  }
+  return def.days; // all done
+}
+
+function markDayComplete(dayIdx){
+  const plan = activePlan();
+  if(!plan || plan.done.includes(dayIdx)) return;
+  plan.done.push(dayIdx);
+  LS.set('kjv_active_plan', plan);
+  // Show toast
+  const toast = document.getElementById('day-toast');
+  const def = PLAN_DEFS[plan.id];
+  toast.textContent = `✓ Day ${dayIdx+1} complete! ${plan.done.length}/${def.days} days`;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 3000);
+  recordActivity();
+  renderPlansScreen();
+}
+
+function planTrackChapter(bookName, chIdx){
+  const plan = activePlan();
+  if(!plan) return;
+  const bi = BOOKS.indexOf(bookName);
+  const key = `${bi}:${chIdx}`;
+  if(!plan.chDone.includes(key)) plan.chDone.push(key);
+
+  // Check if current day is now fully read
+  const curDay = getCurrentDay(plan);
+  const def = PLAN_DEFS[plan.id];
+  if(curDay < def.days){
+    const dayReadings = getPlanDayReadings(plan.id, curDay);
+    const allDone = dayReadings.every(([b,c]) => plan.chDone.includes(`${b}:${c}`));
+    if(allDone) markDayComplete(curDay);
+    else LS.set('kjv_active_plan', plan);
+  }
+}
+
+// ── RENDER PLANS SCREEN ──
+function renderPlansScreen(){
+  const el = document.getElementById('plans-inner');
+  const plan = activePlan();
+
+  if(!plan){
+    // Plan selection
+    el.innerHTML = `
+      <div style="font-family:'IM Fell English',serif;font-size:20px;color:var(--gold);margin-bottom:14px">Reading Plans</div>
+      ${Object.values(PLAN_DEFS).map(p => `
+        <div class="plan-card">
+          <div class="plan-card-top">
+            <span class="plan-ico">${p.icon}</span>
+            <span class="plan-name">${p.name}</span>
+          </div>
+          <div class="plan-desc">${p.desc}</div>
+          <button class="plan-start-btn" onclick="startPlan('${p.id}')">Start Plan</button>
+        </div>`).join('')}`;
+    return;
+  }
+
+  const def = PLAN_DEFS[plan.id];
+  const curDay = getCurrentDay(plan);
+  const pct = Math.round((plan.done.length / def.days) * 100);
+  const allDone = curDay >= def.days;
+
+  // Today's chapter pills
+  const todayReadings = allDone ? [] : getPlanDayReadings(plan.id, curDay);
+  const todayPills = todayReadings.map(([bi,ci]) => {
+    const ref = `${BOOKS[bi]} ${ci+1}`;
+    const done = plan.chDone.includes(`${bi}:${ci}`);
+    return `<div class="ch-pill ${done?'done':''}" onclick="openPlanChapter(${bi},${ci})">${done?'✓ ':''}${ref}</div>`;
+  }).join('');
+
+  const todayDone = plan.done.includes(curDay);
+
+  el.innerHTML = `
+    <div id="active-plan-header">
+      <div class="ap-title">${def.icon} ${def.name}</div>
+      <div class="ap-prog-bar"><div class="ap-prog-fill" style="width:${pct}%"></div></div>
+      <div class="ap-prog-lbl">${plan.done.length} of ${def.days} days complete (${pct}%)</div>
+      <button class="ap-change" onclick="abandonPlan()">✕ Change Plan</button>
+    </div>
+
+    ${allDone ? `
+      <div style="text-align:center;padding:30px;font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">
+        🏆 Plan Complete!<br>
+        <span style="font-size:14px;color:var(--text-m);font-family:'Crimson Pro',serif">Well done — thou good and faithful servant</span>
+      </div>` : `
+    <div id="today-card">
+      <div class="today-lbl">✦ Today's Reading</div>
+      <div class="today-day">Day ${curDay+1} of ${def.days} — ${planDayLabel(plan.id, curDay)}</div>
+      <div class="today-chs">${todayPills}</div>
+      <button class="today-complete-btn ${todayDone?'done':''}" onclick="${todayDone?'':' markDayComplete('+curDay+')'}">
+        ${todayDone ? '✓ Day Complete' : '✓ Mark Day Complete'}
+      </button>
+    </div>`}
+
+    <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);padding:6px 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px">All Days</div>
+    ${Array.from({length:def.days},(_,i)=>{
+      const done = plan.done.includes(i);
+      const isToday = i === curDay;
+      const label = planDayLabel(plan.id, i);
+      return `<div class="day-row ${done?'completed':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
+        <span class="day-num">Day ${i+1}</span>
+        <span class="day-label">${label}</span>
+        <span class="day-check">${done?'✅':isToday?'📖':''}</span>
+      </div>`;
+    }).join('')}`;
+}
+
+function openPlanChapter(bi, ci){
+  const plan = activePlan(); if(!plan) return;
+  const bookName = BOOKS[bi];
+  fetchBook(bookName).then(data => {
+    if(!data) return;
+    S.book=bookName; S.ch=ci; S.bookData=data;
+    renderReader(); showScreen('reader');
+    planTrackChapter(bookName, ci);
+    recordActivity();
+  });
+}
+
+function openPlanDay(dayIdx){
+  // Open first chapter of that day
+  const plan = activePlan(); if(!plan) return;
+  const readings = getPlanDayReadings(plan.id, dayIdx);
+  if(readings.length) openPlanChapter(readings[0][0], readings[0][1]);
+}
+
+function abandonPlan(){
+  if(confirm('Abandon current plan and choose a new one?')){
+    LS.set('kjv_active_plan', null);
+    renderPlansScreen();
+  }
+}
+
+/* ════════════════════════════════
+   RED LETTER
+════════════════════════════════ */
+// Chapters that are predominantly Jesus speaking (book:ch, 1-indexed)
+const RL_SET = new Set([
+  // Matthew — Sermon on Mount + major discourses
+  'Matthew:5','Matthew:6','Matthew:7','Matthew:10','Matthew:11',
+  'Matthew:13','Matthew:18','Matthew:23','Matthew:24','Matthew:25',
+  // Mark
+  'Mark:4','Mark:9','Mark:13',
+  // Luke
+  'Luke:6','Luke:10','Luke:11','Luke:12','Luke:15','Luke:16','Luke:17','Luke:18','Luke:21',
+  // John — Upper Room + I AM discourses
+  'John:3','John:5','John:6','John:7','John:8','John:10',
+  'John:12','John:13','John:14','John:15','John:16','John:17',
+  // Revelation — letters to churches
+  'Revelation:1','Revelation:2','Revelation:3','Revelation:22',
+]);
+
+S.rlOn = LS.get('kjv_rl', false);
+
+function toggleRL(){
+  S.rlOn = !S.rlOn;
+  LS.set('kjv_rl', S.rlOn);
+  document.getElementById('btn-rl').classList.toggle('on', S.rlOn);
+  // Re-apply to current chapter
+  applyRL();
+}
+
+function applyRL(){
+  const chKey = `${S.book}:${S.ch+1}`;
+  const isRL = S.rlOn && RL_SET.has(chKey);
+  document.querySelectorAll('.vblock').forEach(el => {
+    el.classList.toggle('rl-verse', isRL);
+  });
+}
+
+/* ════ SETTINGS ════ */
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
 document.addEventListener('click',e=>{if(!e.target.closest('[id^="fp-"]')&&!e.target.closest('.hbtn'))document.querySelectorAll('[id^="fp-"]').forEach(p=>p.classList.remove('on'));});
