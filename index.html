@@ -610,6 +610,34 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .par-verse{display:flex;gap:8px;padding:4px 2px;border-radius:4px}
 .par-vnum{font-family:'Crimson Pro',serif;font-size:11px;font-weight:600;color:var(--gold-d);min-width:22px;text-align:right;flex-shrink:0;padding-top:3px}
 .par-vtxt{font-family:'Crimson Pro',serif;font-size:var(--font-v);line-height:1.75;color:var(--text)}
+
+/* ── VERSE CROSS-REFERENCES ── */
+.xref-mark{
+  display:inline-block;color:var(--gold);font-size:10px;
+  cursor:pointer;margin-left:3px;vertical-align:super;
+  line-height:0;opacity:.75;transition:opacity .15s;user-select:none;
+}
+.xref-mark:hover{opacity:1}
+
+#xref-pop{
+  position:fixed;bottom:70px;left:12px;right:12px;
+  background:var(--bg2);border:1px solid var(--gold-d);
+  border-radius:12px;padding:14px 16px;z-index:260;
+  display:none;box-shadow:0 8px 32px rgba(0,0,0,.5);
+  max-width:700px;margin:0 auto;animation:su .2s ease;
+}
+#xref-pop.on{display:block}
+#xref-pop-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+#xref-ref-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);flex:1}
+#xref-open{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;transition:all .15s}
+#xref-open:hover{background:var(--bg3);color:var(--gold)}
+#xref-close{background:none;border:none;color:var(--text-m);font-size:18px;cursor:pointer;line-height:1}
+#xref-txt{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.7}
+
+/* Multi-ref tabs */
+#xref-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.xref-tab{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:16px;padding:3px 10px;font-size:11px;cursor:pointer;transition:all .15s}
+.xref-tab.on{background:var(--gold-d);color:var(--text);border-color:var(--gold-d)}
 </style>
 </head>
 <body>
@@ -767,6 +795,17 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     </div>
     <div id="par-panel-body"></div>
   </div>
+</div>
+
+<!-- VERSE CROSS-REF POPUP -->
+<div id="xref-pop">
+  <div id="xref-pop-hdr">
+    <div id="xref-ref-lbl"></div>
+    <button id="xref-open" onclick="openXRefFull()">Open ↗</button>
+    <button id="xref-close" onclick="closeXRef()">✕</button>
+  </div>
+  <div id="xref-tabs"></div>
+  <div id="xref-txt"></div>
 </div>
 
 <!-- MILESTONE TOAST -->
@@ -1495,7 +1534,7 @@ function showScreen(name, pushHistory=true){
   S.screen=name; updateHeaderState();
   if(name==='saved')  renderSaved();
   if(name==='plans')  renderPlansScreen();
-  if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();}, 80);
+  if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();addXRefMarkers();}, 80);
   if(name!=='reader') exitSelectMode();
   if(pushHistory) history.pushState({screen:name}, '', '');
 }
@@ -2797,6 +2836,216 @@ function closeParPanel(e){
   if(!e || e.target===document.getElementById('par-panel'))
     document.getElementById('par-panel').classList.remove('on');
 }
+
+
+/* ════════════════════════════════
+   VERSE CROSS-REFERENCES (OT→NT)
+════════════════════════════════ */
+// Key: 'Book:ch:v' (1-indexed). Value: array of refs.
+// Each ref: {ref:'Display label', book:'BookName', ch:1, v:1}
+const VERSE_XREF = {
+  // ── Matthew ──
+  'Matthew:1:23': [{ref:'Isaiah 7:14',      book:'Isaiah',       ch:7,  v:14}],
+  'Matthew:2:6':  [{ref:'Micah 5:2',        book:'Micah',        ch:5,  v:2}],
+  'Matthew:2:15': [{ref:'Hosea 11:1',       book:'Hosea',        ch:11, v:1}],
+  'Matthew:2:18': [{ref:'Jeremiah 31:15',   book:'Jeremiah',     ch:31, v:15}],
+  'Matthew:3:3':  [{ref:'Isaiah 40:3',      book:'Isaiah',       ch:40, v:3}],
+  'Matthew:4:4':  [{ref:'Deuteronomy 8:3',  book:'Deuteronomy',  ch:8,  v:3}],
+  'Matthew:4:10': [{ref:'Deuteronomy 6:13', book:'Deuteronomy',  ch:6,  v:13}],
+  'Matthew:8:17': [{ref:'Isaiah 53:4',      book:'Isaiah',       ch:53, v:4}],
+  'Matthew:11:10':[{ref:'Malachi 3:1',      book:'Malachi',      ch:3,  v:1}],
+  'Matthew:12:18':[{ref:'Isaiah 42:1',      book:'Isaiah',       ch:42, v:1}],
+  'Matthew:13:14':[{ref:'Isaiah 6:9',       book:'Isaiah',       ch:6,  v:9}],
+  'Matthew:13:35':[{ref:'Psalm 78:2',       book:'Psalms',       ch:78, v:2}],
+  'Matthew:21:5': [{ref:'Zechariah 9:9',    book:'Zechariah',    ch:9,  v:9}],
+  'Matthew:21:9': [{ref:'Psalm 118:26',     book:'Psalms',       ch:118,v:26}],
+  'Matthew:21:13':[{ref:'Isaiah 56:7',      book:'Isaiah',       ch:56, v:7},
+                   {ref:'Jeremiah 7:11',    book:'Jeremiah',     ch:7,  v:11}],
+  'Matthew:21:42':[{ref:'Psalm 118:22',     book:'Psalms',       ch:118,v:22}],
+  'Matthew:22:37':[{ref:'Deuteronomy 6:5',  book:'Deuteronomy',  ch:6,  v:5}],
+  'Matthew:22:39':[{ref:'Leviticus 19:18',  book:'Leviticus',    ch:19, v:18}],
+  'Matthew:22:44':[{ref:'Psalm 110:1',      book:'Psalms',       ch:110,v:1}],
+  'Matthew:26:31':[{ref:'Zechariah 13:7',   book:'Zechariah',    ch:13, v:7}],
+  'Matthew:27:9': [{ref:'Zechariah 11:12',  book:'Zechariah',    ch:11, v:12}],
+  'Matthew:27:46':[{ref:'Psalm 22:1',       book:'Psalms',       ch:22, v:1}],
+  // ── Mark ──
+  'Mark:1:2':  [{ref:'Malachi 3:1',     book:'Malachi',     ch:3,  v:1}],
+  'Mark:1:3':  [{ref:'Isaiah 40:3',     book:'Isaiah',      ch:40, v:3}],
+  'Mark:7:6':  [{ref:'Isaiah 29:13',    book:'Isaiah',      ch:29, v:13}],
+  'Mark:11:17':[{ref:'Isaiah 56:7',     book:'Isaiah',      ch:56, v:7},
+                {ref:'Jeremiah 7:11',   book:'Jeremiah',    ch:7,  v:11}],
+  'Mark:12:10':[{ref:'Psalm 118:22',    book:'Psalms',      ch:118,v:22}],
+  'Mark:12:29':[{ref:'Deuteronomy 6:4', book:'Deuteronomy', ch:6,  v:4}],
+  'Mark:12:31':[{ref:'Leviticus 19:18', book:'Leviticus',   ch:19, v:18}],
+  'Mark:12:36':[{ref:'Psalm 110:1',     book:'Psalms',      ch:110,v:1}],
+  'Mark:14:27':[{ref:'Zechariah 13:7',  book:'Zechariah',   ch:13, v:7}],
+  'Mark:15:34':[{ref:'Psalm 22:1',      book:'Psalms',      ch:22, v:1}],
+  // ── Luke ──
+  'Luke:1:17': [{ref:'Malachi 4:5',      book:'Malachi',     ch:4,  v:5}],
+  'Luke:3:4':  [{ref:'Isaiah 40:3',      book:'Isaiah',      ch:40, v:3}],
+  'Luke:4:4':  [{ref:'Deuteronomy 8:3',  book:'Deuteronomy', ch:8,  v:3}],
+  'Luke:4:8':  [{ref:'Deuteronomy 6:13', book:'Deuteronomy', ch:6,  v:13}],
+  'Luke:4:18': [{ref:'Isaiah 61:1',      book:'Isaiah',      ch:61, v:1}],
+  'Luke:7:27': [{ref:'Malachi 3:1',      book:'Malachi',     ch:3,  v:1}],
+  'Luke:10:27':[{ref:'Deuteronomy 6:5',  book:'Deuteronomy', ch:6,  v:5},
+                {ref:'Leviticus 19:18',  book:'Leviticus',   ch:19, v:18}],
+  'Luke:19:46':[{ref:'Isaiah 56:7',      book:'Isaiah',      ch:56, v:7},
+                {ref:'Jeremiah 7:11',    book:'Jeremiah',    ch:7,  v:11}],
+  'Luke:20:17':[{ref:'Psalm 118:22',     book:'Psalms',      ch:118,v:22}],
+  'Luke:20:42':[{ref:'Psalm 110:1',      book:'Psalms',      ch:110,v:1}],
+  'Luke:22:37':[{ref:'Isaiah 53:12',     book:'Isaiah',      ch:53, v:12}],
+  // ── John ──
+  'John:1:23': [{ref:'Isaiah 40:3',    book:'Isaiah',    ch:40, v:3}],
+  'John:2:17': [{ref:'Psalm 69:9',     book:'Psalms',    ch:69, v:9}],
+  'John:6:31': [{ref:'Psalm 78:24',    book:'Psalms',    ch:78, v:24}],
+  'John:6:45': [{ref:'Isaiah 54:13',   book:'Isaiah',    ch:54, v:13}],
+  'John:10:34':[{ref:'Psalm 82:6',     book:'Psalms',    ch:82, v:6}],
+  'John:12:13':[{ref:'Psalm 118:26',   book:'Psalms',    ch:118,v:26}],
+  'John:12:15':[{ref:'Zechariah 9:9',  book:'Zechariah', ch:9,  v:9}],
+  'John:12:38':[{ref:'Isaiah 53:1',    book:'Isaiah',    ch:53, v:1}],
+  'John:12:40':[{ref:'Isaiah 6:10',    book:'Isaiah',    ch:6,  v:10}],
+  'John:13:18':[{ref:'Psalm 41:9',     book:'Psalms',    ch:41, v:9}],
+  'John:15:25':[{ref:'Psalm 35:19',    book:'Psalms',    ch:35, v:19}],
+  'John:19:24':[{ref:'Psalm 22:18',    book:'Psalms',    ch:22, v:18}],
+  'John:19:36':[{ref:'Psalm 34:20',    book:'Psalms',    ch:34, v:20}],
+  'John:19:37':[{ref:'Zechariah 12:10',book:'Zechariah', ch:12, v:10}],
+  // ── Acts ──
+  'Acts:2:17': [{ref:'Joel 2:28',       book:'Joel',        ch:2,  v:28}],
+  'Acts:2:25': [{ref:'Psalm 16:8',      book:'Psalms',      ch:16, v:8}],
+  'Acts:2:34': [{ref:'Psalm 110:1',     book:'Psalms',      ch:110,v:1}],
+  'Acts:3:22': [{ref:'Deuteronomy 18:15',book:'Deuteronomy',ch:18, v:15}],
+  'Acts:4:11': [{ref:'Psalm 118:22',    book:'Psalms',      ch:118,v:22}],
+  'Acts:8:32': [{ref:'Isaiah 53:7',     book:'Isaiah',      ch:53, v:7}],
+  'Acts:13:33':[{ref:'Psalm 2:7',       book:'Psalms',      ch:2,  v:7}],
+  'Acts:13:47':[{ref:'Isaiah 49:6',     book:'Isaiah',      ch:49, v:6}],
+  'Acts:15:16':[{ref:'Amos 9:11',       book:'Amos',        ch:9,  v:11}],
+  // ── Romans ──
+  'Romans:1:17': [{ref:'Habakkuk 2:4',     book:'Habakkuk',    ch:2,  v:4}],
+  'Romans:3:4':  [{ref:'Psalm 51:4',       book:'Psalms',      ch:51, v:4}],
+  'Romans:3:10': [{ref:'Psalm 14:1',       book:'Psalms',      ch:14, v:1}],
+  'Romans:3:13': [{ref:'Psalm 5:9',        book:'Psalms',      ch:5,  v:9}],
+  'Romans:4:3':  [{ref:'Genesis 15:6',     book:'Genesis',     ch:15, v:6}],
+  'Romans:4:7':  [{ref:'Psalm 32:1',       book:'Psalms',      ch:32, v:1}],
+  'Romans:9:13': [{ref:'Malachi 1:2',      book:'Malachi',     ch:1,  v:2}],
+  'Romans:9:15': [{ref:'Exodus 33:19',     book:'Exodus',      ch:33, v:19}],
+  'Romans:9:25': [{ref:'Hosea 2:23',       book:'Hosea',       ch:2,  v:23}],
+  'Romans:10:5': [{ref:'Leviticus 18:5',   book:'Leviticus',   ch:18, v:5}],
+  'Romans:10:13':[{ref:'Joel 2:32',        book:'Joel',        ch:2,  v:32}],
+  'Romans:10:15':[{ref:'Isaiah 52:7',      book:'Isaiah',      ch:52, v:7}],
+  'Romans:10:16':[{ref:'Isaiah 53:1',      book:'Isaiah',      ch:53, v:1}],
+  'Romans:11:8': [{ref:'Isaiah 29:10',     book:'Isaiah',      ch:29, v:10}],
+  'Romans:12:19':[{ref:'Deuteronomy 32:35',book:'Deuteronomy', ch:32, v:35}],
+  'Romans:14:11':[{ref:'Isaiah 45:23',     book:'Isaiah',      ch:45, v:23}],
+  'Romans:15:12':[{ref:'Isaiah 11:10',     book:'Isaiah',      ch:11, v:10}],
+  // ── Galatians ──
+  'Galatians:3:6':  [{ref:'Genesis 15:6',     book:'Genesis',     ch:15, v:6}],
+  'Galatians:3:11': [{ref:'Habakkuk 2:4',     book:'Habakkuk',    ch:2,  v:4}],
+  'Galatians:3:13': [{ref:'Deuteronomy 21:23',book:'Deuteronomy', ch:21, v:23}],
+  // ── Hebrews ──
+  'Hebrews:1:5':  [{ref:'Psalm 2:7',      book:'Psalms',   ch:2,  v:7}],
+  'Hebrews:1:8':  [{ref:'Psalm 45:6',     book:'Psalms',   ch:45, v:6}],
+  'Hebrews:1:13': [{ref:'Psalm 110:1',    book:'Psalms',   ch:110,v:1}],
+  'Hebrews:2:6':  [{ref:'Psalm 8:4',      book:'Psalms',   ch:8,  v:4}],
+  'Hebrews:2:12': [{ref:'Psalm 22:22',    book:'Psalms',   ch:22, v:22}],
+  'Hebrews:3:7':  [{ref:'Psalm 95:7',     book:'Psalms',   ch:95, v:7}],
+  'Hebrews:5:5':  [{ref:'Psalm 2:7',      book:'Psalms',   ch:2,  v:7}],
+  'Hebrews:5:6':  [{ref:'Psalm 110:4',    book:'Psalms',   ch:110,v:4}],
+  'Hebrews:8:8':  [{ref:'Jeremiah 31:31', book:'Jeremiah', ch:31, v:31}],
+  'Hebrews:10:5': [{ref:'Psalm 40:6',     book:'Psalms',   ch:40, v:6}],
+  'Hebrews:10:16':[{ref:'Jeremiah 31:33', book:'Jeremiah', ch:31, v:33}],
+  'Hebrews:10:37':[{ref:'Habakkuk 2:3',   book:'Habakkuk', ch:2,  v:3}],
+  'Hebrews:12:5': [{ref:'Proverbs 3:11',  book:'Proverbs', ch:3,  v:11}],
+  'Hebrews:13:5': [{ref:'Deuteronomy 31:6',book:'Deuteronomy',ch:31,v:6}],
+  'Hebrews:13:6': [{ref:'Psalm 118:6',    book:'Psalms',   ch:118,v:6}],
+  // ── 1 Peter ──
+  '1 Peter:1:16': [{ref:'Leviticus 19:2', book:'Leviticus', ch:19, v:2}],
+  '1 Peter:1:24': [{ref:'Isaiah 40:6',    book:'Isaiah',    ch:40, v:6}],
+  '1 Peter:2:6':  [{ref:'Isaiah 28:16',   book:'Isaiah',    ch:28, v:16}],
+  '1 Peter:2:7':  [{ref:'Psalm 118:22',   book:'Psalms',    ch:118,v:22}],
+  '1 Peter:2:22': [{ref:'Isaiah 53:9',    book:'Isaiah',    ch:53, v:9}],
+  '1 Peter:2:24': [{ref:'Isaiah 53:5',    book:'Isaiah',    ch:53, v:5}],
+  '1 Peter:3:10': [{ref:'Psalm 34:12',    book:'Psalms',    ch:34, v:12}],
+  '1 Peter:5:5':  [{ref:'Proverbs 3:34',  book:'Proverbs',  ch:3,  v:34}],
+  // ── Revelation ──
+  'Revelation:1:7': [{ref:'Zechariah 12:10',book:'Zechariah',ch:12,v:10}],
+};
+
+let _xrefs = null, _xrefIdx = 0, _xrefBook = null, _xrefCh = null, _xrefV = null;
+
+// ── Called from renderReader to add markers ──
+function addXRefMarkers(){
+  if(!S.book || S.ch === null) return;
+  const chN = S.ch + 1;
+  document.querySelectorAll('.vblock').forEach(el => {
+    const vnum = parseInt(el.dataset.vnum);
+    const key  = `${S.book}:${chN}:${vnum}`;
+    const refs = VERSE_XREF[key];
+    if(!refs) return;
+    const span = document.createElement('span');
+    span.className = 'xref-mark';
+    span.textContent = '✦';
+    span.title = refs.map(r=>r.ref).join(' · ');
+    span.onclick = e => { e.stopPropagation(); showXRef(refs); };
+    // Insert after .vnum span
+    const vnumEl = el.querySelector('.vnum');
+    if(vnumEl) vnumEl.after(span);
+  });
+}
+
+function showXRef(refs){
+  _xrefs = refs; _xrefIdx = 0;
+  renderXRefTab(0);
+  document.getElementById('xref-pop').classList.add('on');
+}
+
+function renderXRefTab(idx){
+  _xrefIdx = idx;
+  const r = _xrefs[idx];
+  _xrefBook = r.book; _xrefCh = r.ch - 1; _xrefV = r.v;
+
+  // Tabs (if multiple refs)
+  const tabsEl = document.getElementById('xref-tabs');
+  if(_xrefs.length > 1){
+    tabsEl.innerHTML = _xrefs.map((x,i) =>
+      `<div class="xref-tab ${i===idx?'on':''}" onclick="renderXRefTab(${i})">${x.ref}</div>`
+    ).join('');
+    tabsEl.style.display = 'flex';
+  } else {
+    tabsEl.style.display = 'none';
+  }
+
+  document.getElementById('xref-ref-lbl').textContent = r.ref;
+  document.getElementById('xref-open').textContent = `Open ${r.book} ${r.ch} ↗`;
+  document.getElementById('xref-txt').textContent = 'Loading…';
+
+  fetchBook(r.book).then(data => {
+    if(!data){ document.getElementById('xref-txt').textContent = 'Could not load.'; return; }
+    const ch = data.chapters[r.ch - 1];
+    const v  = ch?.verses.find(x => parseInt(x.verse) === r.v);
+    document.getElementById('xref-txt').textContent = v ? `"${v.text}"` : 'Verse not found.';
+  });
+}
+
+function openXRefFull(){
+  if(!_xrefBook) return;
+  closeXRef();
+  fetchBook(_xrefBook).then(data => {
+    if(!data) return;
+    S.book=_xrefBook; S.ch=_xrefCh; S.bookData=data;
+    renderReader(); showScreen('reader');
+  });
+}
+
+function closeXRef(){
+  document.getElementById('xref-pop').classList.remove('on');
+}
+
+// Close on outside tap
+document.addEventListener('click', e => {
+  const pop = document.getElementById('xref-pop');
+  if(pop.classList.contains('on') && !pop.contains(e.target) && !e.target.classList.contains('xref-mark'))
+    closeXRef();
+});
 
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
