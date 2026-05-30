@@ -660,7 +660,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <button class="hbtn" id="btn-back" onclick="goBack()" style="display:none">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
   </button>
-  <div id="logo">✝ Holy Bible</div>
+  <div id="logo">✝ Faith Baptist Church</div>
   <button class="hbtn" id="btn-rl" onclick="toggleRL()" style="display:none">RL</button>
   <button class="hbtn" id="btn-select" onclick="toggleSelectMode()" style="display:none" title="Select verses">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -672,6 +672,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   </button>
   <button id="share-btn" onclick="showSharePop()" title="Share this app">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Share Site
   </button>
   <button class="hbtn" onclick="toggleFP('fp-font')">Aa</button>
   <div id="streak-badge" onclick="showStreakInfo()" title="Reading streak">🔥<span id="streak-num">0</span></div>
@@ -1639,7 +1640,7 @@ function updateHeaderState(){
   rl.style.display     = S.screen==='reader'?'flex':'none';
   if(rl) rl.classList.toggle('on', S.rlOn);
   document.getElementById('logo').textContent =
-    S.screen==='reader'?S.book:S.screen==='chapters'?S.book:'✝ Holy Bible';
+    S.screen==='reader'?S.book:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
 }
 
 /* ════ FETCH ════ */
