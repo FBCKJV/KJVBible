@@ -1400,10 +1400,13 @@ function getMultiText(){
 
 function multiCopy(){
   const sorted = getSelectedSorted();
-  // Build clean format: "Job 1\n\n1  In the land of Uz...\n2  And he had seven sons..."
-  const header = sorted[0].ref.replace(/:.*$/, ''); // e.g. "Job 1"
-  const verseLines = sorted.map(v => `${v.vnum}  ${v.txt}`).join('\n\n');
-  const txt = `${header}\n\n${verseLines}\n\n(KJV)`;
+  const first  = sorted[0];
+  const last   = sorted[sorted.length-1];
+  const ref    = sorted.length === 1
+    ? first.ref
+    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
+  const text = sorted.map(v => v.txt).join(' ');
+  const txt  = `${ref}\n${text}`;
   navigator.clipboard?.writeText(txt);
   const btn = document.getElementById('mb-copy');
   if(btn){ btn.innerHTML = '✓ Copied!'; setTimeout(()=>btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy All`, 1500); }
@@ -1411,10 +1414,14 @@ function multiCopy(){
 
 function multiShare(){
   const sorted = getSelectedSorted();
-  const header = sorted[0].ref.replace(/:.*$/, '');
-  const verseLines = sorted.map(v => `${v.vnum}  ${v.txt}`).join('\n\n');
-  const txt = `${header}\n\n${verseLines}\n\n— ${getMultiRef()} (KJV)`;
-  if(navigator.share) navigator.share({title: getMultiRef(), text: txt});
+  const first  = sorted[0];
+  const last   = sorted[sorted.length-1];
+  const ref    = sorted.length === 1
+    ? first.ref
+    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
+  const text = sorted.map(v => v.txt).join(' ');
+  const txt  = `${ref}\n${text}`;
+  if(navigator.share) navigator.share({title:ref, text:txt});
   else navigator.clipboard?.writeText(txt);
 }
 
