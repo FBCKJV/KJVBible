@@ -717,11 +717,32 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
 /* Help button in header */
 #btn-help{font-size:14px;font-weight:600;line-height:1}
-/* ── MEM OVERLAY (missing rule restored) ── */
+/* ── MEM OVERLAY ── */
 #mem-overlay{position:fixed;inset:0;background:var(--bg);z-index:520;display:none;flex-direction:column}
 #mem-overlay.on{display:flex}
 #mem-game{flex:1;display:none;flex-direction:column;overflow:hidden;position:relative}
 #mem-congrats{display:none;flex-direction:column;align-items:center;gap:10px;padding:24px 16px;text-align:center;flex-shrink:0}
+
+/* Inline input */
+.mem-inline-input{
+  display:inline-block;background:rgba(201,148,58,.12);
+  border:none;border-bottom:2px solid var(--gold);
+  color:var(--text);font-family:'Crimson Pro',serif;
+  font-size:inherit;font-style:italic;line-height:inherit;
+  outline:none;padding:0 3px;vertical-align:baseline;
+  min-width:28px;max-width:200px;
+  transition:background .2s,border-color .2s;
+}
+.mem-inline-input::placeholder{color:var(--gold-d);font-style:normal}
+.mem-inline-input.correct{background:rgba(76,175,80,.25);border-color:#4CAF50;animation:mem-flash-ok .35s ease}
+.mem-inline-input.wrong{background:rgba(220,60,60,.25);border-color:#dc3c3c;animation:mem-flash-bad .35s ease}
+
+/* Peek (reveal) mode */
+.mem-peek{color:var(--text-m);font-style:italic;border-bottom:1px dotted var(--text-m);cursor:pointer}
+
+/* Reveal button */
+#mem-reveal-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;transition:all .15s}
+#mem-reveal-btn.on{background:rgba(201,148,58,.2);color:var(--gold);border-color:var(--gold-d)}
 </style>
 </head>
 <body>
@@ -1010,13 +1031,16 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <!-- Game view -->
   <div id="mem-game">
     <div id="mem-game-top">
-      <div id="mem-game-ref"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div id="mem-game-ref" style="flex:1"></div>
+        <button id="mem-reveal-btn" onclick="toggleMemReveal()">👁 Show</button>
+      </div>
       <div class="mem-mode-row">
-        <button class="mem-mode-btn on" id="mmb-guided" onclick="setMemMode('guided')">🔤 Guided — first letter shown</button>
-        <button class="mem-mode-btn" id="mmb-challenge" onclick="setMemMode('challenge')">⬜ Challenge — all blanks</button>
+        <button class="mem-mode-btn on" id="mmb-guided" onclick="setMemMode('guided')">🔤 Guided</button>
+        <button class="mem-mode-btn" id="mmb-challenge" onclick="setMemMode('challenge')">⬜ Challenge</button>
       </div>
       <div id="mem-prog-wrap"><div id="mem-prog-fill" style="width:0%"></div></div>
-      <div id="mem-prog-lbl">0 of 0 words</div>
+      <div id="mem-prog-lbl">Tap any blank to begin</div>
     </div>
     <div id="mem-verse-scroll">
       <div id="mem-verse-text"></div>
@@ -1030,15 +1054,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
         </div>
       </div>
     </div>
-    <div id="mem-input-bar">
-      <div id="mem-input-hint"></div>
-      <div id="mem-input-row">
-        <input id="mem-input" type="text" placeholder="Type the word…"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-          onkeydown="if(event.key==='Enter')submitMemWord()">
-        <button id="mem-submit" onclick="submitMemWord()">✓</button>
-      </div>
-    </div>
+
   </div>
 </div>
 
@@ -3837,205 +3853,182 @@ const MEM_VERSES = [
   { cat:'Christian Life', icon:'📖', verses:[
     'Philippians 4:13','Proverbs 3:5','Proverbs 3:6',
     'Isaiah 40:31','Romans 8:28','Matthew 11:28',
-    'Philippians 4:6','Philippians 4:7',
-    '1 Peter 5:7','2 Timothy 1:7'
+    'Philippians 4:6','Philippians 4:7','1 Peter 5:7','2 Timothy 1:7'
   ]},
   { cat:'Scripture & Prayer', icon:'🙏', verses:[
     'Psalm 119:105','Psalm 119:11','2 Timothy 3:16',
     '1 Thessalonians 5:17','Matthew 7:7','Matthew 6:33'
   ]},
   { cat:'The Great Commission', icon:'🌍', verses:[
-    'Matthew 28:19','Matthew 28:20',
-    'Mark 16:15','Acts 1:8','Proverbs 11:30'
+    'Matthew 28:19','Matthew 28:20','Mark 16:15','Acts 1:8','Proverbs 11:30'
   ]},
 ];
 
-// Game state
-const M = {
-  ref:null, tokens:[], revealed:new Set(),
-  mode:'guided', active:null
-};
+const M = { ref:null,tokens:[],revealed:new Set(),mode:'guided',active:null,peeking:false };
 
-// ── Open / close ──
-function openMemorize(){
-  document.getElementById('mem-overlay').classList.add('on');
-  renderMemSelect();
-}
-function closeMemorize(){
-  document.getElementById('mem-overlay').classList.remove('on');
-  M.active=null;
-  document.getElementById('mem-input-bar').style.display='none';
-}
+function openMemorize(){ document.getElementById('mem-overlay').classList.add('on'); renderMemSelect(); }
+function closeMemorize(){ document.getElementById('mem-overlay').classList.remove('on'); M.active=null; M.peeking=false; }
 function memBack(){
   document.getElementById('mem-game').style.display='none';
   document.getElementById('mem-select').style.display='block';
   document.getElementById('mem-hdr-title').textContent='✏️ Verse Memory';
   document.getElementById('mem-back').style.display='none';
-  M.active=null;
-  document.getElementById('mem-input-bar').style.display='none';
+  M.active=null; M.peeking=false;
 }
 
-// ── Verse selection ──
 function renderMemSelect(){
   document.getElementById('mem-select').style.display='block';
   document.getElementById('mem-game').style.display='none';
   document.getElementById('mem-back').style.display='none';
-  const el = document.getElementById('mem-select');
-  el.innerHTML = `
-    <div style="padding:14px">
-      <div style="font-size:13px;color:var(--text-m);margin-bottom:14px;font-style:italic;font-family:'Crimson Pro',serif">
-        Choose a verse to memorise. Tap each blank and type the missing word.
-      </div>
-      ${MEM_VERSES.map(cat=>`
-        <div class="mem-cat">
-          <div class="mem-cat-hdr">${cat.icon} ${cat.cat}</div>
-          ${cat.verses.map(ref=>`
-            <button class="mem-verse-btn" onclick="startMem('${ref.replace(/'/g,"\\'")}')">
-              <span class="mem-verse-ref">${ref}</span>
-              <span class="mem-verse-preview">tap to begin →</span>
-            </button>`).join('')}
-        </div>`).join('')}
+  const el=document.getElementById('mem-select');
+  el.innerHTML=`<div style="padding:14px">
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:14px;font-style:italic;font-family:'Crimson Pro',serif">
+      Choose a verse. Tap any blank and type — press Enter to check.
+    </div>
+    ${MEM_VERSES.map(cat=>`
+      <div class="mem-cat">
+        <div class="mem-cat-hdr">${cat.icon} ${cat.cat}</div>
+        ${cat.verses.map(ref=>`
+          <button class="mem-verse-btn" onclick="startMem('${ref.replace(/'/g,"\\'") }')">
+            <span class="mem-verse-ref">${ref}</span>
+            <span class="mem-verse-preview">tap to begin →</span>
+          </button>`).join('')}
+      </div>`).join('')}
     </div>`;
 }
 
-// ── Tokenise verse text ──
 function tokeniseVerse(text){
   return text.trim().split(/\s+/).map(w=>{
-    const m = w.match(/^([^a-zA-Z]*)([a-zA-Z][a-zA-Z'-]*)([^a-zA-Z]*)$/);
-    if(m) return {pre:m[1], word:m[2], post:m[3]};
-    return {pre:'', word:w, post:''};
+    const m=w.match(/^([^a-zA-Z]*)([a-zA-Z][a-zA-Z'-]*)([^a-zA-Z]*)$/);
+    return m?{pre:m[1],word:m[2],post:m[3]}:{pre:'',word:w,post:''};
   });
 }
 
-// ── Start game ──
 async function startMem(refStr){
-  document.getElementById('mem-hdr-title').textContent = refStr;
-  document.getElementById('mem-back').style.display = 'block';
-  document.getElementById('mem-select').style.display = 'none';
-  document.getElementById('mem-game').style.display = 'flex';
-  document.getElementById('mem-input-bar').style.display = 'none';
-  document.getElementById('mem-congrats').style.display = 'none';
-  document.getElementById('mem-verse-text').style.display = 'block';
-
-  const parsed = parseReference(refStr);
-  if(!parsed){ alert('Could not load verse'); return; }
-  const data = await fetchBook(parsed.book);
-  if(!data){ alert('Could not load '+parsed.book); return; }
-  const ch = data.chapters[parsed.chIdx];
-  const v  = ch?.verses[(parsed.verse||1)-1];
-  if(!v){ alert('Verse not found'); return; }
-
-  M.ref     = refStr;
-  M.tokens  = tokeniseVerse(v.text);
-  M.revealed= new Set();
-  M.active  = null;
-  M.mode    = document.getElementById('mmb-guided').classList.contains('on') ? 'guided' : 'challenge';
-
-  document.getElementById('mem-game-ref').textContent = refStr;
-  updateMemDisplay();
-  updateMemProgress();
+  document.getElementById('mem-hdr-title').textContent=refStr;
+  document.getElementById('mem-back').style.display='block';
+  document.getElementById('mem-select').style.display='none';
+  document.getElementById('mem-game').style.display='flex';
+  document.getElementById('mem-congrats').style.display='none';
+  document.getElementById('mem-verse-text').style.display='block';
+  const parsed=parseReference(refStr);
+  if(!parsed)return;
+  const data=await fetchBook(parsed.book);
+  if(!data)return;
+  const v=data.chapters[parsed.chIdx]?.verses[(parsed.verse||1)-1];
+  if(!v)return;
+  M.ref=refStr; M.tokens=tokeniseVerse(v.text);
+  M.revealed=new Set(); M.active=null; M.peeking=false;
+  M.mode=document.getElementById('mmb-guided').classList.contains('on')?'guided':'challenge';
+  const rb=document.getElementById('mem-reveal-btn');
+  if(rb){rb.classList.remove('on');rb.textContent='👁 Show';}
+  document.getElementById('mem-game-ref').textContent=refStr;
+  updateMemDisplay(); updateMemProgress();
 }
 
-// ── Render verse with blanks ──
-function blankText(word, mode){
-  if(mode==='guided') return word[0] + '─'.repeat(Math.max(1,word.length-1));
-  return '─'.repeat(word.length);
+function createBlankSpan(idx){
+  const t=M.tokens[idx],s=document.createElement('span');
+  s.className='mem-blank-span'; s.dataset.idx=idx;
+  s.textContent=M.mode==='guided'?t.word[0]+'─'.repeat(Math.max(1,t.word.length-1)):'─'.repeat(t.word.length);
+  s.onclick=()=>activateMem(idx); return s;
 }
 
 function updateMemDisplay(){
-  const el = document.getElementById('mem-verse-text');
-  el.innerHTML = M.tokens.map((t,i)=>{
-    if(M.revealed.has(i)){
-      return `<span class="mem-known">${t.pre}${t.word}${t.post} </span>`;
-    }
-    const blank = blankText(t.word, M.mode);
-    const active = M.active===i ? ' active' : '';
-    return `<span class="mem-token">${t.pre}<span class="mem-blank-span${active}" data-idx="${i}" onclick="activateMem(${i})">${blank}</span>${t.post} </span>`;
+  const el=document.getElementById('mem-verse-text');
+  if(!el)return;
+  el.innerHTML=M.tokens.map((t,i)=>{
+    if(M.revealed.has(i)) return `<span class="mem-known">${t.pre}${t.word}${t.post} </span>`;
+    if(M.peeking) return `<span class="mem-token">${t.pre}<span class="mem-peek" data-idx="${i}" onclick="activateMem(${i})">${t.word}</span>${t.post} </span>`;
+    const h=M.mode==='guided'?t.word[0]+'─'.repeat(Math.max(1,t.word.length-1)):'─'.repeat(t.word.length);
+    return `<span class="mem-token">${t.pre}<span class="mem-blank-span" data-idx="${i}" onclick="activateMem(${i})">${h}</span>${t.post} </span>`;
   }).join('');
+  if(M.active!==null&&!M.revealed.has(M.active)) setTimeout(()=>activateMem(M.active),30);
 }
 
-function updateMemProgress(){
-  const total = M.tokens.length;
-  const done  = M.revealed.size;
-  const pct   = total ? Math.round(done/total*100) : 0;
-  document.getElementById('mem-prog-fill').style.width = pct+'%';
-  document.getElementById('mem-prog-lbl').textContent  = `${done} of ${total} words`;
-  if(done===total && total>0) showMemCongrats();
-}
-
-// ── Activate a blank ──
 function activateMem(idx){
-  if(M.revealed.has(idx)) return;
-  M.active = idx;
-  updateMemDisplay();
-  const t   = M.tokens[idx];
-  const bar = document.getElementById('mem-input-bar');
-  const hint= document.getElementById('mem-input-hint');
-  hint.textContent = M.mode==='guided' ? `First letter: "${t.word[0]}"` : `${t.word.length} letters`;
-  bar.style.display = 'flex';
-  const inp = document.getElementById('mem-input');
-  inp.value = '';
-  setTimeout(()=>inp.focus(), 50);
-  // Scroll blank into view above keyboard
-  const blankEl = document.querySelector(`[data-idx="${idx}"]`);
-  if(blankEl) blankEl.scrollIntoView({behavior:'smooth', block:'center'});
+  if(M.revealed.has(idx))return;
+  // Cancel existing input
+  const ex=document.querySelector('.mem-inline-input');
+  if(ex){ const pi=parseInt(ex.dataset.idx); ex.replaceWith(createBlankSpan(pi)); }
+  M.active=idx;
+  const t=M.tokens[idx];
+  const target=document.querySelector(`[data-idx="${idx}"]`);
+  if(!target)return;
+  const inp=document.createElement('input');
+  inp.type='text'; inp.className='mem-inline-input'; inp.dataset.idx=idx;
+  inp.autocomplete='off'; inp.setAttribute('autocorrect','off');
+  inp.setAttribute('autocapitalize','off'); inp.spellcheck=false;
+  if(M.mode==='guided') inp.placeholder=t.word[0]+'…';
+  inp.style.width=Math.max(32,Math.min(t.word.length*11,180))+'px';
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();checkInlineWord(idx,inp.value.trim(),inp);}
+  });
+  inp.addEventListener('blur',()=>{
+    setTimeout(()=>{
+      const still=document.querySelector(`.mem-inline-input[data-idx="${idx}"]`);
+      if(still&&M.active===idx){still.replaceWith(createBlankSpan(idx));M.active=null;}
+    },250);
+  });
+  target.replaceWith(inp);
+  setTimeout(()=>{inp.focus();inp.scrollIntoView({behavior:'smooth',block:'center'});},30);
 }
 
-// ── Submit answer ──
-function submitMemWord(){
-  if(M.active===null) return;
-  const inp     = document.getElementById('mem-input');
-  const typed   = inp.value.trim();
-  if(!typed) return;
-  const expected= M.tokens[M.active].word;
-  const norm    = s => s.toLowerCase().replace(/[^a-z]/g,'');
-
-  if(norm(typed)===norm(expected)){
-    // ✓ Correct
-    M.revealed.add(M.active);
-    const blankEl = document.querySelector(`[data-idx="${M.active}"]`);
-    if(blankEl){ blankEl.classList.add('correct'); }
-    M.active=null;
-    document.getElementById('mem-input-bar').style.display='none';
-    inp.value='';
-    setTimeout(()=>{ updateMemDisplay(); updateMemProgress(); }, 380);
+function checkInlineWord(idx,typed,inputEl){
+  if(!typed){inputEl.focus();return;}
+  const norm=s=>s.toLowerCase().replace(/[^a-z]/g,'');
+  if(norm(typed)===norm(M.tokens[idx].word)){
+    M.revealed.add(idx); M.active=null;
+    inputEl.classList.add('correct');
+    setTimeout(()=>{
+      updateMemDisplay(); updateMemProgress();
+      // Auto-advance: next unrevealed after idx, then wrap
+      for(let i=idx+1;i<M.tokens.length;i++){if(!M.revealed.has(i)){activateMem(i);return;}}
+      for(let i=0;i<idx;i++){if(!M.revealed.has(i)){activateMem(i);return;}}
+    },350);
   } else {
-    // ✗ Wrong — shake and clear
-    const blankEl = document.querySelector(`[data-idx="${M.active}"]`);
-    if(blankEl){
-      blankEl.classList.add('wrong');
-      setTimeout(()=>blankEl.classList.remove('wrong'), 380);
-    }
-    inp.value='';
-    inp.focus();
+    inputEl.classList.add('wrong'); inputEl.value='';
+    setTimeout(()=>{inputEl.classList.remove('wrong');inputEl.focus();},380);
   }
 }
 
-// ── Mode toggle ──
-function setMemMode(mode){
-  M.mode = mode;
-  document.getElementById('mmb-guided').classList.toggle('on', mode==='guided');
-  document.getElementById('mmb-challenge').classList.toggle('on', mode==='challenge');
+function updateMemProgress(){
+  const total=M.tokens.length,done=M.revealed.size;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('mem-prog-fill').style.width=pct+'%';
+  document.getElementById('mem-prog-lbl').textContent=done===total&&total>0?'✓ Complete!':`${done} of ${total} words`;
+  if(done===total&&total>0)showMemCongrats();
+}
+
+function toggleMemReveal(){
+  M.peeking=!M.peeking; M.active=null;
+  const btn=document.getElementById('mem-reveal-btn');
+  if(btn){btn.classList.toggle('on',M.peeking);btn.textContent=M.peeking?'👁 Hide':'👁 Show';}
   updateMemDisplay();
 }
 
-// ── Reset ──
+function setMemMode(mode){
+  M.mode=mode;
+  document.getElementById('mmb-guided').classList.toggle('on',mode==='guided');
+  document.getElementById('mmb-challenge').classList.toggle('on',mode==='challenge');
+  M.active=null; updateMemDisplay();
+}
+
 function resetMem(){
-  M.revealed.clear();
-  M.active=null;
-  document.getElementById('mem-input-bar').style.display='none';
+  M.revealed.clear();M.active=null;M.peeking=false;
+  const rb=document.getElementById('mem-reveal-btn');
+  if(rb){rb.classList.remove('on');rb.textContent='👁 Show';}
   document.getElementById('mem-congrats').style.display='none';
   document.getElementById('mem-verse-text').style.display='block';
-  updateMemDisplay();
-  updateMemProgress();
+  updateMemDisplay();updateMemProgress();
 }
 
-// ── Completion ──
 function showMemCongrats(){
   document.getElementById('mem-verse-text').style.display='none';
-  document.getElementById('mem-input-bar').style.display='none';
   document.getElementById('mem-congrats').style.display='flex';
 }
+
+function submitMemWord(){}  /* no-op — input bar removed */
+
 /* ── Float nav scroll-hide ── */
 (function(){
   let _scrollTimer = null;
