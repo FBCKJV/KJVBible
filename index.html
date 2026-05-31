@@ -1500,61 +1500,67 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
   // 9:16 portrait — TikTok / Instagram Stories / Reels
   const W = 540, H = 960, PAD = 52;
   canvas.width = W * dpr; canvas.height = H * dpr;
-  // Display: show full height, capped to screen
   const dispW = 200;
   canvas.style.width  = dispW + 'px';
   canvas.style.height = (dispW * H / W) + 'px';
   ctx.resetTransform(); ctx.scale(dpr, dpr);
 
+  // Font size based on text length
   const charCount = bodyText.length;
-  const BFONT = charCount > 400 ? 20 : charCount > 200 ? 24 : 28;
-  const lineH = BFONT * 1.8;
+  const BFONT = charCount > 400 ? 19 : charCount > 200 ? 23 : 27;
+  const lineH  = BFONT * 1.85;
   ctx.font = `italic ${BFONT}px Georgia, serif`;
   const bodyLines = wrapText(ctx, bodyText, W - PAD * 2);
   const bodyH = bodyLines.length * lineH;
 
-  // ── BG
+  // ── BG + border
   drawCardBase(ctx, W, H, PAD, t, 24);
 
-  // ── Large decorative cross (top third)
+  // ── Very subtle full-card cross watermark (background)
   ctx.textAlign = 'center';
-  ctx.font = '80px serif'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.15;
-  ctx.fillText('✝', W / 2, 160);
+  ctx.font = '260px serif'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.04;
+  ctx.fillText('✝', W / 2, H / 2 + 100);
   ctx.globalAlpha = 1;
 
-  // ── Church name (small top label)
-  ctx.font = `500 14px Georgia, serif`;
-  ctx.fillStyle = t.ref; ctx.globalAlpha = 0.55; ctx.textAlign = 'center';
-  ctx.fillText('Faith Baptist Church', W / 2, 58);
+  // ── TOP SECTION ──
+  const TOP_PAD = 42;
+
+  // Church name
+  ctx.font = `400 13px Georgia, serif`;
+  ctx.fillStyle = t.ref; ctx.globalAlpha = 0.5; ctx.textAlign = 'center';
+  ctx.fillText('Faith Baptist Church', W / 2, TOP_PAD + 16);
   ctx.globalAlpha = 1;
 
-  // ── Decorative top rule
-  drawRule(ctx, PAD, W - PAD, 72, t);
+  // Rule under church name
+  const RULE1_Y = TOP_PAD + 30;
+  drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
 
-  // ── Reference — large and bold, centered in upper area
-  ctx.textAlign = 'center';
-  ctx.fillStyle = t.ref;
-  ctx.font = `700 28px Georgia, serif`;
-  ctx.fillText(S.scrRef, W / 2, 120);
+  // Reference — bold, large, prominent
+  ctx.textAlign = 'center'; ctx.fillStyle = t.ref;
+  ctx.font = `700 32px Georgia, serif`;
+  const REF_Y = RULE1_Y + 52;
+  ctx.fillText(S.scrRef, W / 2, REF_Y);
 
-  // ── Middle rule
-  const MID_RULE = H / 2 - bodyH / 2 - 30;
-  drawRule(ctx, PAD, W - PAD, MID_RULE, t);
+  // Rule under reference
+  const RULE2_Y = REF_Y + 24;
+  drawRule(ctx, PAD, W - PAD, RULE2_Y, t);
 
-  // ── Body text — vertically centred
-  const TEXT_Y = H / 2 - bodyH / 2 + BFONT * 0.4;
+  // ── BOTTOM SECTION ──
+  const RULE3_Y = H - 68;
+  drawRule(ctx, PAD, W - PAD, RULE3_Y, t);
+
+  ctx.textAlign = 'center'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
+  ctx.font = `400 13px Georgia, serif`;
+  ctx.fillText('King James Version', W / 2, H - 40);
+  ctx.globalAlpha = 1;
+
+  // ── BODY — vertically centred in the space between the two rule pairs
+  const textAreaTop    = RULE2_Y + 24;
+  const textAreaBottom = RULE3_Y - 16;
+  const textAreaH      = textAreaBottom - textAreaTop;
+  const TEXT_Y         = textAreaTop + (textAreaH - bodyH) / 2 + BFONT * 0.8;
+
   drawBody(ctx, bodyLines, PAD, TEXT_Y, lineH, BFONT, t);
-
-  // ── Bottom rule
-  const BOT_RULE = H / 2 + bodyH / 2 + 24;
-  drawRule(ctx, PAD, W - PAD, BOT_RULE, t);
-
-  // ── KJV footer
-  ctx.textAlign = 'center';
-  ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
-  ctx.font = `400 14px Georgia, serif`;
-  ctx.fillText('King James Version', W / 2, H - 38);
-  ctx.globalAlpha = 1;
 
   // ── Corner ornaments
   drawCorners(ctx, PAD, W, H, t);
