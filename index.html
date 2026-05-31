@@ -715,6 +715,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
 /* Help button in header */
 #btn-help{font-size:14px;font-weight:600;line-height:1}
+/* ── MEM OVERLAY (missing rule restored) ── */
+#mem-overlay{position:fixed;inset:0;background:var(--bg);z-index:520;display:none;flex-direction:column}
+#mem-overlay.on{display:flex}
+#mem-game{flex:1;display:none;flex-direction:column;overflow:hidden;position:relative}
+#mem-congrats{display:none;flex-direction:column;align-items:center;gap:10px;padding:24px 16px;text-align:center;flex-shrink:0}
 </style>
 </head>
 <body>
@@ -800,6 +805,17 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       <div id="ch-sub"></div>
       <div id="verses"></div>
     </div>
+  
+<div id="mem-home-card" onclick="openMemorize()">
+  <div class="mhc-ico">✏️</div>
+  <div class="mhc-text">
+    <div class="mhc-label">✦ Scripture Memory</div>
+    <div class="mhc-title">Memorize a Verse</div>
+    <div class="mhc-sub">30 key verses · fill-in-the-blank</div>
+  </div>
+  <div class="mhc-arrow">›</div>
+</div>
+
   </div>
 
   <!-- SEARCH -->
@@ -972,7 +988,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
             <button id="offline-clear-btn" onclick="clearOfflineCache()" style="display:none;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:9px;font-size:13px;cursor:pointer">✕ Clear</button>
           </div>
           <div style="margin-top:8px;font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);line-height:1.5">
-            Downloads all Bible text (~3MB) so chapters open instantly without internet. Takes 1–2 minutes on Wi-Fi.
+            Bible chapters require an internet connection to load — the text is fetched on demand. Download all 66 books (~3MB) below so chapters open instantly without internet.
             <br><strong style="color:var(--gold)">Tip:</strong> Download on Wi-Fi before travelling or areas with poor signal.
           </div>
         </div>
@@ -982,9 +998,54 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       <div class="tips-section">
         <div class="tips-section-lbl">⚠️ Important</div>
         <div class="tip-row"><span class="tip-ico">⚠️</span><span class="tip-txt"><strong>Do not clear your browser cache</strong> for this site — doing so permanently deletes your bookmarks, highlights, notes, reading streak, and plan progress. Your data is stored on your device only</span></div>
-        <div class="tip-row"><span class="tip-ico">📶</span><span class="tip-txt"><strong>Requires internet</strong> to load Bible chapters — the text is fetched on demand and cached during your session, but is not stored permanently offline</span></div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- VERSE MEMORY OVERLAY -->
+<div id="mem-overlay">
+  <div id="mem-hdr">
+    <button id="mem-back" onclick="memBack()">← Back</button>
+    <div id="mem-hdr-title">✏️ Verse Memory</div>
+    <button id="mem-close-btn" onclick="closeMemorize()">✕</button>
+  </div>
+
+  <!-- Verse selection -->
+  <div id="mem-select"></div>
+
+  <!-- Game view -->
+  <div id="mem-game">
+    <div id="mem-game-top">
+      <div id="mem-game-ref"></div>
+      <div class="mem-mode-row">
+        <button class="mem-mode-btn on" id="mmb-guided" onclick="setMemMode('guided')">🔤 Guided — first letter shown</button>
+        <button class="mem-mode-btn" id="mmb-challenge" onclick="setMemMode('challenge')">⬜ Challenge — all blanks</button>
+      </div>
+      <div id="mem-prog-wrap"><div id="mem-prog-fill" style="width:0%"></div></div>
+      <div id="mem-prog-lbl">0 of 0 words</div>
+    </div>
+    <div id="mem-verse-scroll">
+      <div id="mem-verse-text"></div>
+      <div id="mem-congrats">
+        <div class="mc-ico">🎉</div>
+        <div class="mc-title">Verse Complete!</div>
+        <div class="mc-sub">Well done — hide it in thine heart</div>
+        <div class="mc-btns">
+          <button class="mc-btn" onclick="resetMem()">↩ Try Again</button>
+          <button class="mc-btn primary" onclick="memBack()">Choose Another</button>
+        </div>
+      </div>
+    </div>
+    <div id="mem-input-bar">
+      <div id="mem-input-hint"></div>
+      <div id="mem-input-row">
+        <input id="mem-input" type="text" placeholder="Type the word…"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter')submitMemWord()">
+        <button id="mem-submit" onclick="submitMemWord()">✓</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1851,6 +1912,13 @@ function goBack(){
 // ── Android / browser back button handler ──
 window.addEventListener('popstate', e => {
   const state = e.state;
+
+  // Close Tips sheet if open — don't navigate away
+  if(document.getElementById('tips-sheet').classList.contains('on')){
+    document.getElementById('tips-sheet').classList.remove('on');
+    return;
+  }
+
   if(!state){ 
     if(S.screen !== 'books') showScreen('books', false);
     history.pushState({screen:'books'}, '', '');
@@ -1858,10 +1926,8 @@ window.addEventListener('popstate', e => {
   }
 
   if(state.screen === 'search'){
-    // Restore search screen without pushing more history
     showScreen('search', false);
     if(state.sub === 'verses'){
-      // Was inside a doctrine verse list — go back to doctrine list
       switchSearchMode('doctrine', false);
       renderDoctrines();
     } else if(state.searchMode){
@@ -3620,6 +3686,7 @@ function showTips(){
   document.getElementById('tips-sheet').classList.add('on');
   renderInstallGuide();
   setTimeout(checkOfflineStatus, 100);
+  history.pushState({screen: S.screen, modal:'tips'}, '', '');
 }
 function closeTips(e){
   if(!e||e.target===document.getElementById('tips-sheet'))
@@ -3753,6 +3820,221 @@ async function clearOfflineCache(){
   } catch(e){}
 }
 
+
+/* ════════════════════════════════
+   VERSE MEMORY GAME
+════════════════════════════════ */
+const MEM_VERSES = [
+  { cat:"Roman's Road", icon:'✝', verses:[
+    'Romans 3:23','Romans 6:23','Romans 5:8',
+    'Romans 10:9','Romans 10:13','Romans 8:1'
+  ]},
+  { cat:'Salvation', icon:'🕊', verses:[
+    'John 3:16','Acts 16:31','Ephesians 2:8',
+    'Ephesians 2:9','John 14:6','Titus 3:5'
+  ]},
+  { cat:'Christian Life', icon:'📖', verses:[
+    'Philippians 4:13','Proverbs 3:5','Proverbs 3:6',
+    'Isaiah 40:31','Romans 8:28','Matthew 11:28',
+    'Philippians 4:6','Philippians 4:7',
+    '1 Peter 5:7','2 Timothy 1:7'
+  ]},
+  { cat:'Scripture & Prayer', icon:'🙏', verses:[
+    'Psalm 119:105','Psalm 119:11','2 Timothy 3:16',
+    '1 Thessalonians 5:17','Matthew 7:7','Matthew 6:33'
+  ]},
+  { cat:'The Great Commission', icon:'🌍', verses:[
+    'Matthew 28:19','Matthew 28:20',
+    'Mark 16:15','Acts 1:8','Proverbs 11:30'
+  ]},
+];
+
+// Game state
+const M = {
+  ref:null, tokens:[], revealed:new Set(),
+  mode:'guided', active:null
+};
+
+// ── Open / close ──
+function openMemorize(){
+  document.getElementById('mem-overlay').classList.add('on');
+  renderMemSelect();
+}
+function closeMemorize(){
+  document.getElementById('mem-overlay').classList.remove('on');
+  M.active=null;
+  document.getElementById('mem-input-bar').style.display='none';
+}
+function memBack(){
+  document.getElementById('mem-game').style.display='none';
+  document.getElementById('mem-select').style.display='block';
+  document.getElementById('mem-hdr-title').textContent='✏️ Verse Memory';
+  document.getElementById('mem-back').style.display='none';
+  M.active=null;
+  document.getElementById('mem-input-bar').style.display='none';
+}
+
+// ── Verse selection ──
+function renderMemSelect(){
+  document.getElementById('mem-select').style.display='block';
+  document.getElementById('mem-game').style.display='none';
+  document.getElementById('mem-back').style.display='none';
+  const el = document.getElementById('mem-select');
+  el.innerHTML = `
+    <div style="padding:14px">
+      <div style="font-size:13px;color:var(--text-m);margin-bottom:14px;font-style:italic;font-family:'Crimson Pro',serif">
+        Choose a verse to memorise. Tap each blank and type the missing word.
+      </div>
+      ${MEM_VERSES.map(cat=>`
+        <div class="mem-cat">
+          <div class="mem-cat-hdr">${cat.icon} ${cat.cat}</div>
+          ${cat.verses.map(ref=>`
+            <button class="mem-verse-btn" onclick="startMem('${ref.replace(/'/g,"\\'")}')">
+              <span class="mem-verse-ref">${ref}</span>
+              <span class="mem-verse-preview">tap to begin →</span>
+            </button>`).join('')}
+        </div>`).join('')}
+    </div>`;
+}
+
+// ── Tokenise verse text ──
+function tokeniseVerse(text){
+  return text.trim().split(/\s+/).map(w=>{
+    const m = w.match(/^([^a-zA-Z]*)([a-zA-Z][a-zA-Z'-]*)([^a-zA-Z]*)$/);
+    if(m) return {pre:m[1], word:m[2], post:m[3]};
+    return {pre:'', word:w, post:''};
+  });
+}
+
+// ── Start game ──
+async function startMem(refStr){
+  document.getElementById('mem-hdr-title').textContent = refStr;
+  document.getElementById('mem-back').style.display = 'block';
+  document.getElementById('mem-select').style.display = 'none';
+  document.getElementById('mem-game').style.display = 'flex';
+  document.getElementById('mem-input-bar').style.display = 'none';
+  document.getElementById('mem-congrats').style.display = 'none';
+  document.getElementById('mem-verse-text').style.display = 'block';
+
+  const parsed = parseReference(refStr);
+  if(!parsed){ alert('Could not load verse'); return; }
+  const data = await fetchBook(parsed.book);
+  if(!data){ alert('Could not load '+parsed.book); return; }
+  const ch = data.chapters[parsed.chIdx];
+  const v  = ch?.verses[(parsed.verse||1)-1];
+  if(!v){ alert('Verse not found'); return; }
+
+  M.ref     = refStr;
+  M.tokens  = tokeniseVerse(v.text);
+  M.revealed= new Set();
+  M.active  = null;
+  M.mode    = document.getElementById('mmb-guided').classList.contains('on') ? 'guided' : 'challenge';
+
+  document.getElementById('mem-game-ref').textContent = refStr;
+  updateMemDisplay();
+  updateMemProgress();
+}
+
+// ── Render verse with blanks ──
+function blankText(word, mode){
+  if(mode==='guided') return word[0] + '─'.repeat(Math.max(1,word.length-1));
+  return '─'.repeat(word.length);
+}
+
+function updateMemDisplay(){
+  const el = document.getElementById('mem-verse-text');
+  el.innerHTML = M.tokens.map((t,i)=>{
+    if(M.revealed.has(i)){
+      return `<span class="mem-known">${t.pre}${t.word}${t.post} </span>`;
+    }
+    const blank = blankText(t.word, M.mode);
+    const active = M.active===i ? ' active' : '';
+    return `<span class="mem-token">${t.pre}<span class="mem-blank-span${active}" data-idx="${i}" onclick="activateMem(${i})">${blank}</span>${t.post} </span>`;
+  }).join('');
+}
+
+function updateMemProgress(){
+  const total = M.tokens.length;
+  const done  = M.revealed.size;
+  const pct   = total ? Math.round(done/total*100) : 0;
+  document.getElementById('mem-prog-fill').style.width = pct+'%';
+  document.getElementById('mem-prog-lbl').textContent  = `${done} of ${total} words`;
+  if(done===total && total>0) showMemCongrats();
+}
+
+// ── Activate a blank ──
+function activateMem(idx){
+  if(M.revealed.has(idx)) return;
+  M.active = idx;
+  updateMemDisplay();
+  const t   = M.tokens[idx];
+  const bar = document.getElementById('mem-input-bar');
+  const hint= document.getElementById('mem-input-hint');
+  hint.textContent = M.mode==='guided' ? `First letter: "${t.word[0]}"` : `${t.word.length} letters`;
+  bar.style.display = 'flex';
+  const inp = document.getElementById('mem-input');
+  inp.value = '';
+  setTimeout(()=>inp.focus(), 50);
+  // Scroll blank into view above keyboard
+  const blankEl = document.querySelector(`[data-idx="${idx}"]`);
+  if(blankEl) blankEl.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+// ── Submit answer ──
+function submitMemWord(){
+  if(M.active===null) return;
+  const inp     = document.getElementById('mem-input');
+  const typed   = inp.value.trim();
+  if(!typed) return;
+  const expected= M.tokens[M.active].word;
+  const norm    = s => s.toLowerCase().replace(/[^a-z]/g,'');
+
+  if(norm(typed)===norm(expected)){
+    // ✓ Correct
+    M.revealed.add(M.active);
+    const blankEl = document.querySelector(`[data-idx="${M.active}"]`);
+    if(blankEl){ blankEl.classList.add('correct'); }
+    M.active=null;
+    document.getElementById('mem-input-bar').style.display='none';
+    inp.value='';
+    setTimeout(()=>{ updateMemDisplay(); updateMemProgress(); }, 380);
+  } else {
+    // ✗ Wrong — shake and clear
+    const blankEl = document.querySelector(`[data-idx="${M.active}"]`);
+    if(blankEl){
+      blankEl.classList.add('wrong');
+      setTimeout(()=>blankEl.classList.remove('wrong'), 380);
+    }
+    inp.value='';
+    inp.focus();
+  }
+}
+
+// ── Mode toggle ──
+function setMemMode(mode){
+  M.mode = mode;
+  document.getElementById('mmb-guided').classList.toggle('on', mode==='guided');
+  document.getElementById('mmb-challenge').classList.toggle('on', mode==='challenge');
+  updateMemDisplay();
+}
+
+// ── Reset ──
+function resetMem(){
+  M.revealed.clear();
+  M.active=null;
+  document.getElementById('mem-input-bar').style.display='none';
+  document.getElementById('mem-congrats').style.display='none';
+  document.getElementById('mem-verse-text').style.display='block';
+  updateMemDisplay();
+  updateMemProgress();
+}
+
+// ── Completion ──
+function showMemCongrats(){
+  document.getElementById('mem-verse-text').style.display='none';
+  document.getElementById('mem-input-bar').style.display='none';
+  document.getElementById('mem-congrats').style.display='flex';
+}
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
 document.addEventListener('click',e=>{if(!e.target.closest('[id^="fp-"]')&&!e.target.closest('.hbtn'))document.querySelectorAll('[id^="fp-"]').forEach(p=>p.classList.remove('on'));});
