@@ -3621,6 +3621,7 @@ function showTips(){
   renderInstallGuide();
   setTimeout(checkOfflineStatus, 100);
 }
+function closeTips(e){
   if(!e||e.target===document.getElementById('tips-sheet'))
     document.getElementById('tips-sheet').classList.remove('on');
 }
