@@ -2772,7 +2772,9 @@ function renderPlansScreen(){
           </div>
           <div class="plan-desc">${p.desc}</div>
           <button class="plan-start-btn" onclick="startPlan('${p.id}')">Start Plan</button>
-        </div>`).join('')}`;
+        </div>`).join('')}
+      <div id="book-checklist"></div>`;
+    renderBookChecklist();
     return;
   }
 
@@ -2823,7 +2825,9 @@ function renderPlansScreen(){
         <span class="day-label">${label}</span>
         <span class="day-check">${done?'✅':isToday?'📖':''}</span>
       </div>`;
-    }).join('')}`;
+    }).join('')}
+    <div id="book-checklist"></div>`;
+  renderBookChecklist();
 }
 
 function openPlanChapter(bi, ci){
