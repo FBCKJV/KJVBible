@@ -3619,8 +3619,8 @@ _logoImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3G
 function showTips(){
   document.getElementById('tips-sheet').classList.add('on');
   renderInstallGuide();
+  setTimeout(checkOfflineStatus, 100);
 }
-function closeTips(e){
   if(!e||e.target===document.getElementById('tips-sheet'))
     document.getElementById('tips-sheet').classList.remove('on');
 }
@@ -3752,12 +3752,6 @@ async function clearOfflineCache(){
   } catch(e){}
 }
 
-// Patch showTips to also check offline status
-const _origShowTips = showTips;
-function showTips(){
-  _origShowTips();
-  setTimeout(checkOfflineStatus, 100);
-}
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
 document.addEventListener('click',e=>{if(!e.target.closest('[id^="fp-"]')&&!e.target.closest('.hbtn'))document.querySelectorAll('[id^="fp-"]').forEach(p=>p.classList.remove('on'));});
