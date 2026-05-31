@@ -554,15 +554,17 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   left:0;right:0;display:none;
   justify-content:space-between;
   padding:0 14px;pointer-events:none;z-index:90;
+  opacity:1;transition:opacity .3s ease;
 }
 #screen-reader.on #reader-float-nav { display:flex }
+#reader-float-nav.scrolling { opacity:0; pointer-events:none !important }
 .rfloat {
   background:var(--bg2);border:1px solid var(--border);
   color:var(--text-d);border-radius:20px;
   padding:8px 14px;font-size:13px;font-weight:500;
   cursor:pointer;pointer-events:all;
   display:flex;align-items:center;gap:5px;
-  backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   opacity:0.92;transition:all .15s;
   box-shadow:0 2px 12px rgba(0,0,0,.3);
 }
@@ -4034,6 +4036,26 @@ function showMemCongrats(){
   document.getElementById('mem-input-bar').style.display='none';
   document.getElementById('mem-congrats').style.display='flex';
 }
+/* ── Float nav scroll-hide ── */
+(function(){
+  let _scrollTimer = null;
+  const _hideNav = () => {
+    const nav = document.getElementById('reader-float-nav');
+    if(nav) nav.classList.add('scrolling');
+    clearTimeout(_scrollTimer);
+    _scrollTimer = setTimeout(()=>{
+      if(nav) nav.classList.remove('scrolling');
+    }, 900);
+  };
+  // Listen on both screen-reader and reader-body since scroll target varies by device
+  ['screen-reader','reader-body'].forEach(id=>{
+    document.addEventListener('DOMContentLoaded',()=>{
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('scroll', _hideNav, {passive:true});
+    });
+  });
+})();
+
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
 document.addEventListener('click',e=>{if(!e.target.closest('[id^="fp-"]')&&!e.target.closest('.hbtn'))document.querySelectorAll('[id^="fp-"]').forEach(p=>p.classList.remove('on'));});
