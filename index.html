@@ -1917,8 +1917,16 @@ function showScreen(name, pushHistory=true){
   if(name==='saved')  renderSaved();
   if(name==='plans')  renderPlansScreen();
   if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();addXRefMarkers();}, 80);
+  if(name==='books')  updateContinueBanner();
   if(name!=='reader') exitSelectMode();
   if(pushHistory) history.pushState({screen:name}, '', '');
+}
+
+function updateContinueBanner(){
+  const el = document.getElementById('cont-banner');
+  if(!el || !S.lastPos) return;
+  const ref = el.querySelector('.cont-ref');
+  if(ref) ref.textContent = `${S.lastPos.book} — Chapter ${S.lastPos.ch+1}`;
 }
 
 function goBack(){
@@ -2717,8 +2725,9 @@ document.addEventListener('click', e=>{
   if(!vtxt) return;
   const word = getWordAtPoint(e.clientX, e.clientY);
   if(!word) return;
-  const def = KJV_DICT[word] || KJV_DICT[word.replace(/s$/, '')] || KJV_DICT[word.replace(/ed$/, '')] || KJV_DICT[word.replace(/eth$/, '')];
+  const def = KJV_DICT[word] || KJV_DICT[word.replace(/s$/,'')] || KJV_DICT[word.replace(/ed$/,'')] || KJV_DICT[word.replace(/eth$/,'')] || KJV_DICT[word.replace(/est$/,'')];
   if(def){
+    e.stopPropagation(); // prevent verse popup from opening
     document.getElementById('wp-word').textContent = word.charAt(0).toUpperCase()+word.slice(1);
     document.getElementById('wp-def').textContent = def;
     document.getElementById('word-pop').classList.add('on');
@@ -2727,16 +2736,27 @@ document.addEventListener('click', e=>{
 
 function getWordAtPoint(x, y){
   try{
-    let range;
-    if(document.caretRangeFromPoint) range = document.caretRangeFromPoint(x, y);
-    else if(document.caretPositionFromPoint){
-      const pos = document.caretPositionFromPoint(x, y);
-      range = document.createRange();
-      range.setStart(pos.offsetNode, pos.offset);
-    }
-    if(!range) return null;
-    range.expand('word');
-    return range.toString().trim().toLowerCase().replace(/[^a-z]/g,'');
+    let node, offset;
+    if(document.caretRangeFromPoint){
+      const r = document.caretRangeFromPoint(x, y);
+      if(!r) return null;
+      node = r.startContainer; offset = r.startOffset;
+    } else if(document.caretPositionFromPoint){
+      const p = document.caretPositionFromPoint(x, y);
+      if(!p) return null;
+      node = p.offsetNode; offset = p.offset;
+    } else return null;
+
+    if(!node || node.nodeType !== Node.TEXT_NODE) return null;
+    const txt = node.textContent;
+
+    // Expand left and right from offset to find word boundaries
+    let s = offset, e2 = offset;
+    while(s > 0 && /[a-zA-Z']/.test(txt[s-1])) s--;
+    while(e2 < txt.length && /[a-zA-Z']/.test(txt[e2])) e2++;
+    if(s === e2) return null;
+
+    return txt.slice(s, e2).toLowerCase().replace(/[^a-z]/g, '');
   }catch(e){ return null; }
 }
 
