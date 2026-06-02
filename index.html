@@ -1148,6 +1148,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <div id="vpop-ref"></div>
     <div id="vpop-txt"></div>
     <div id="vpop-dict-row"><div class="vd-label">📖 Words in this verse</div><div id="vpop-dict-words"></div></div>
+    <div id="vpop-dict-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
+      <button onclick="event.stopPropagation();showVpopDictList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">← All words</button>
+      <div id="vpop-def-word" style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
+      <div id="vpop-def-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
+    </div>
     <div class="hl-row">
       <span class="hl-label">Highlight</span>
       <div class="hl-dot" data-c="y" onclick="setHL('y')"></div>
@@ -1707,21 +1712,33 @@ function openVPop(ref,txt){
   const dWrap = document.getElementById('vpop-dict-words');
   const dWords = getVerseDictWords(txt);
   if(dWords.length && dRow && dWrap){
-    dWrap.innerHTML = dWords.map(w=>
-      `<span class="vd-word" onclick="event.stopPropagation();showSingleDictWord('${w.word.replace(/'/g,"\'")}','${w.def.replace(/'/g,"\'")}')">${w.word.charAt(0).toUpperCase()+w.word.slice(1)}</span>`
+    dWrap.innerHTML = dWords.map((w,i)=>
+      `<span class="vd-word" data-idx="${i}">${w.word.charAt(0).toUpperCase()+w.word.slice(1)}</span>`
     ).join('');
-    dRow.style.display='block';
+    dWrap._words = dWords;
+    dWrap.onclick = e => {
+      const sp = e.target.closest('.vd-word');
+      if(!sp) return;
+      e.stopPropagation();
+      const w = dWrap._words[parseInt(sp.dataset.idx)];
+      document.getElementById('vpop-def-word').textContent = w.word.charAt(0).toUpperCase()+w.word.slice(1);
+      document.getElementById('vpop-def-text').textContent = w.def;
+      dRow.style.display = 'none';
+      document.getElementById('vpop-dict-def').style.display = 'block';
+    };
+    dRow.style.display = 'block';
   } else if(dRow){
-    dRow.style.display='none';
+    dRow.style.display = 'none';
   }
+  document.getElementById('vpop-dict-def').style.display = 'none';
   document.getElementById('vpop').classList.add('on');
 }
 
-function showSingleDictWord(word, def){
-  document.getElementById('wp-word').textContent = word.charAt(0).toUpperCase()+word.slice(1);
-  document.getElementById('wp-def').textContent  = def;
-  document.getElementById('word-pop').classList.add('on');
+function showVpopDictList(){
+  document.getElementById('vpop-dict-row').style.display = 'block';
+  document.getElementById('vpop-dict-def').style.display = 'none';
 }
+
 function closePop(e){if(!e||e.target===document.getElementById('vpop'))document.getElementById('vpop').classList.remove('on');}
 function setHL(c){if(c)S.highlights[S.popRef]=c;else delete S.highlights[S.popRef];LS.set('kjv_hl',S.highlights);updateHLPicker();refreshVBlock(S.popRef);}
 function updateHLPicker(){const cur=S.highlights[S.popRef];document.querySelectorAll('.hl-dot').forEach(d=>d.classList.toggle('active',d.dataset.c===cur));}
