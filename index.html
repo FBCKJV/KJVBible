@@ -745,19 +745,18 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #mem-reveal-btn.on{background:rgba(201,148,58,.2);color:var(--gold);border-color:var(--gold-d)}
 
 /* ── DICT TRIGGER on verse ── */
-.dict-trigger{
-  display:inline;font-size:10px;font-weight:700;letter-spacing:.04em;
-  color:var(--gold);border:1px solid var(--gold-d);border-radius:4px;
-  padding:1px 5px;margin-left:8px;vertical-align:middle;
-  cursor:pointer;opacity:.85;user-select:none;white-space:nowrap;
-  transition:opacity .15s;
-}
-.dict-trigger:active{opacity:1;background:rgba(201,148,58,.2)}
+
 /* word-pop multi-word support */
 #wp-def{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.7;max-height:220px;overflow-y:auto}
 .wp-word-entry{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
 .wp-word-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
 .wp-word-title{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);margin-bottom:2px}
+
+/* ── Dict words in verse popup ── */
+#vpop-dict-row{display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px;font-size:12px;color:var(--text-m)}
+#vpop-dict-row .vd-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:5px}
+.vd-word{display:inline-block;color:var(--gold);font-family:'Crimson Pro',serif;font-size:14px;font-weight:600;cursor:pointer;margin-right:8px;padding:1px 0;border-bottom:1px dotted var(--gold-d)}
+.vd-word:active{opacity:.7}
 </style>
 </head>
 <body>
@@ -1148,6 +1147,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div id="vpop-inner">
     <div id="vpop-ref"></div>
     <div id="vpop-txt"></div>
+    <div id="vpop-dict-row"><div class="vd-label">📖 Words in this verse</div><div id="vpop-dict-words"></div></div>
     <div class="hl-row">
       <span class="hl-label">Highlight</span>
       <div class="hl-dot" data-c="y" onclick="setHL('y')"></div>
@@ -1443,16 +1443,6 @@ function renderReader(){
 
     d.innerHTML=inner;
 
-    // Add dict trigger at end of verse text for archaic words
-    const dictWords = getVerseDictWords(v.text);
-    if(dictWords.length){
-      const dt = document.createElement('span');
-      dt.className = 'dict-trigger';
-      dt.textContent = 'Abc';
-      dt.onclick = e => { e.stopPropagation(); showVerseDictWords(dictWords); };
-      const vtxtEl = d.querySelector('.vtxt');
-      if(vtxtEl) vtxtEl.appendChild(dt);
-    }
 
     /* touch/click handling */
     let pressTimer=null;
@@ -1712,7 +1702,25 @@ function openVPop(ref,txt){
   document.getElementById('vpop-txt').textContent=txt;
   updateHLPicker();updateBMBtn();
   document.getElementById('note-area-wrap').classList.remove('on');
+  // Dictionary words
+  const dRow  = document.getElementById('vpop-dict-row');
+  const dWrap = document.getElementById('vpop-dict-words');
+  const dWords = getVerseDictWords(txt);
+  if(dWords.length && dRow && dWrap){
+    dWrap.innerHTML = dWords.map(w=>
+      `<span class="vd-word" onclick="event.stopPropagation();showSingleDictWord('${w.word.replace(/'/g,"\'")}','${w.def.replace(/'/g,"\'")}')">${w.word.charAt(0).toUpperCase()+w.word.slice(1)}</span>`
+    ).join('');
+    dRow.style.display='block';
+  } else if(dRow){
+    dRow.style.display='none';
+  }
   document.getElementById('vpop').classList.add('on');
+}
+
+function showSingleDictWord(word, def){
+  document.getElementById('wp-word').textContent = word.charAt(0).toUpperCase()+word.slice(1);
+  document.getElementById('wp-def').textContent  = def;
+  document.getElementById('word-pop').classList.add('on');
 }
 function closePop(e){if(!e||e.target===document.getElementById('vpop'))document.getElementById('vpop').classList.remove('on');}
 function setHL(c){if(c)S.highlights[S.popRef]=c;else delete S.highlights[S.popRef];LS.set('kjv_hl',S.highlights);updateHLPicker();refreshVBlock(S.popRef);}
