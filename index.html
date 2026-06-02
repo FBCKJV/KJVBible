@@ -745,15 +745,14 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #mem-reveal-btn.on{background:rgba(201,148,58,.2);color:var(--gold);border-color:var(--gold-d)}
 
 /* ── DICT TRIGGER on verse ── */
-.vblock{position:relative}
 .dict-trigger{
-  position:absolute;top:5px;right:5px;
-  background:rgba(201,148,58,.18);color:var(--gold);
-  border-radius:8px;padding:2px 6px;font-size:9px;font-weight:700;
-  letter-spacing:.06em;cursor:pointer;line-height:1.4;
-  transition:background .15s;user-select:none;
+  display:inline-block;color:var(--gold);
+  font-size:9px;font-weight:700;letter-spacing:.05em;
+  cursor:pointer;margin-left:3px;vertical-align:super;
+  line-height:0;opacity:.7;transition:opacity .15s;user-select:none;
+  border:1px solid var(--gold-d);border-radius:4px;padding:1px 3px;
 }
-.dict-trigger:active{background:rgba(201,148,58,.35)}
+.dict-trigger:active{opacity:1;background:rgba(201,148,58,.2)}
 /* word-pop multi-word support */
 #wp-def{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.7;max-height:220px;overflow-y:auto}
 .wp-word-entry{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
@@ -1442,11 +1441,19 @@ function renderReader(){
     if(note) inner+=`<div class="vnote-chip" onclick="openNoteChip(event,'${ref}')">📝 ${note.substring(0,50)}${note.length>50?'…':''}</div>`;
     inner+='</div>';
 
-    // Add dict trigger if verse contains known dictionary words
-    const dictWords = getVerseDictWords(v.text);
-    if(dictWords.length) inner += `<span class="dict-trigger" title="Dictionary" onclick="event.stopPropagation();showVerseDictWords(${JSON.stringify(dictWords).replace(/"/g,'&quot;')})">Abc</span>`;
-
     d.innerHTML=inner;
+
+    // Add dict trigger inline after verse number (like ✦) for truly archaic words
+    const dictWords = getVerseDictWords(v.text);
+    if(dictWords.length){
+      const dt = document.createElement('span');
+      dt.className = 'dict-trigger';
+      dt.textContent = 'Abc';
+      dt.title = 'Dictionary words in this verse';
+      dt.onclick = e => { e.stopPropagation(); showVerseDictWords(dictWords); };
+      const vnumEl = d.querySelector('.vnum');
+      if(vnumEl) vnumEl.after(dt);
+    }
 
     /* touch/click handling */
     let pressTimer=null;
@@ -2818,13 +2825,30 @@ function dictCard(word, def){
 }
 
 /* ── Dictionary verse trigger ── */
+// Only these truly archaic/obscure words show the Abc badge
+const DICT_HARD = new Set([
+  'hart','hind','roe','roebuck','pygarg','chamois','coney','kine','whelp','ossifrage',
+  'spikenard','hyssop','calamus','cassia','camphire','tares','fitches','rie',
+  'froward','bewray','bolled','chapiter','concupiscence','daysman','dissimulation',
+  'emerods','eschew','holpen','husbandman','knop','leasing','lucre','mortify',
+  'ouches','peradventure','pilled','privily','purloining','ringstraked','scrip',
+  'sodden','sottish','stanch','straitly','succour','tabret','timbrel','twain',
+  'winefat','withal','wont','propitiation','impute','reprobate','peculiar',
+  'carriage','camphire','comely','flagons','subtil','subtilty','broided',
+  'latchet','damsel','palsy','maimed','penury','requite','bewail','fain',
+  'botch','besom','betimes','feign','holden','jangling','raiment','rend',
+  'ruddy','vex','wen','froward','wroth','mote','nigh','usury','tabernacle',
+  'shekel','talent','mite','farthing','cubit','ephah','homer','hin',
+  'sackcloth','phylactery','corban','mammon','raca','centurion',
+]);
+
 function getVerseDictWords(text){
   const seen=new Set(),results=[];
   (text.toLowerCase().match(/[a-z']+/g)||[]).forEach(raw=>{
     const variants=[raw,raw.replace(/s$/,''),raw.replace(/ed$/,''),raw.replace(/eth$/,''),raw.replace(/est$/,'')];
     for(const w of variants){
       if(seen.has(w))break;
-      if(KJV_DICT[w]){seen.add(w);results.push({word:w,def:KJV_DICT[w]});break;}
+      if(DICT_HARD.has(w)&&KJV_DICT[w]){seen.add(w);results.push({word:w,def:KJV_DICT[w]});break;}
     }
   });
   return results;
