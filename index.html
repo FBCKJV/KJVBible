@@ -746,10 +746,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
 /* ── DICT TRIGGER on verse ── */
 .dict-trigger{
-  display:inline-block;font-size:7px;font-weight:700;letter-spacing:.04em;
-  color:var(--gold);border:1px solid var(--gold-d);border-radius:3px;
-  padding:0 2px;margin-left:3px;vertical-align:super;line-height:1.4;
-  cursor:pointer;opacity:.8;transition:opacity .15s;user-select:none;
+  display:inline;font-size:10px;font-weight:700;letter-spacing:.04em;
+  color:var(--gold);border:1px solid var(--gold-d);border-radius:4px;
+  padding:1px 5px;margin-left:8px;vertical-align:middle;
+  cursor:pointer;opacity:.85;user-select:none;white-space:nowrap;
+  transition:opacity .15s;
 }
 .dict-trigger:active{opacity:1;background:rgba(201,148,58,.2)}
 /* word-pop multi-word support */
@@ -1442,15 +1443,15 @@ function renderReader(){
 
     d.innerHTML=inner;
 
-    // Add dict trigger inside verse number (like a superscript) for archaic words
+    // Add dict trigger at end of verse text for archaic words
     const dictWords = getVerseDictWords(v.text);
     if(dictWords.length){
       const dt = document.createElement('span');
       dt.className = 'dict-trigger';
       dt.textContent = 'Abc';
       dt.onclick = e => { e.stopPropagation(); showVerseDictWords(dictWords); };
-      const vnumEl = d.querySelector('.vnum');
-      if(vnumEl) vnumEl.appendChild(dt);
+      const vtxtEl = d.querySelector('.vtxt');
+      if(vtxtEl) vtxtEl.appendChild(dt);
     }
 
     /* touch/click handling */
