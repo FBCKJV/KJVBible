@@ -743,6 +743,22 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 /* Reveal button */
 #mem-reveal-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;transition:all .15s}
 #mem-reveal-btn.on{background:rgba(201,148,58,.2);color:var(--gold);border-color:var(--gold-d)}
+
+/* ── DICT TRIGGER on verse ── */
+.vblock{position:relative}
+.dict-trigger{
+  position:absolute;top:5px;right:5px;
+  background:rgba(201,148,58,.18);color:var(--gold);
+  border-radius:8px;padding:2px 6px;font-size:9px;font-weight:700;
+  letter-spacing:.06em;cursor:pointer;line-height:1.4;
+  transition:background .15s;user-select:none;
+}
+.dict-trigger:active{background:rgba(201,148,58,.35)}
+/* word-pop multi-word support */
+#wp-def{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.7;max-height:220px;overflow-y:auto}
+.wp-word-entry{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.wp-word-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.wp-word-title{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);margin-bottom:2px}
 </style>
 </head>
 <body>
@@ -1425,6 +1441,11 @@ function renderReader(){
     let inner=`<span class="vnum">${v.verse}</span><div><span class="vtxt">${v.text}</span>`;
     if(note) inner+=`<div class="vnote-chip" onclick="openNoteChip(event,'${ref}')">📝 ${note.substring(0,50)}${note.length>50?'…':''}</div>`;
     inner+='</div>';
+
+    // Add dict trigger if verse contains known dictionary words
+    const dictWords = getVerseDictWords(v.text);
+    if(dictWords.length) inner += `<span class="dict-trigger" title="Dictionary" onclick="event.stopPropagation();showVerseDictWords(${JSON.stringify(dictWords).replace(/"/g,'&quot;')})">Abc</span>`;
+
     d.innerHTML=inner;
 
     /* touch/click handling */
@@ -2796,46 +2817,54 @@ function dictCard(word, def){
   return '<div class="dict-entry"><div class="dict-word">'+word.charAt(0).toUpperCase()+word.slice(1)+'</div><div class="dict-def">'+def+'</div></div>';
 }
 
-/* Word-tap lookup in the reader — capture phase fires before vblock onclick */
-document.addEventListener('click', e=>{
-  const vtxt = e.target.closest('.vtxt');
-  if(!vtxt) return;
-  const word = getWordAtPoint(e.clientX, e.clientY);
-  if(!word) return;
-  const def = KJV_DICT[word] || KJV_DICT[word.replace(/s$/,'')] || KJV_DICT[word.replace(/ed$/,'')] || KJV_DICT[word.replace(/eth$/,'')] || KJV_DICT[word.replace(/est$/,'')];
-  if(def){
-    e.stopPropagation();
-    e.preventDefault();
-    document.getElementById('wp-word').textContent = word.charAt(0).toUpperCase()+word.slice(1);
-    document.getElementById('wp-def').textContent = def;
-    document.getElementById('word-pop').classList.add('on');
+/* ── Dictionary verse trigger ── */
+function getVerseDictWords(text){
+  const seen=new Set(),results=[];
+  (text.toLowerCase().match(/[a-z']+/g)||[]).forEach(raw=>{
+    const variants=[raw,raw.replace(/s$/,''),raw.replace(/ed$/,''),raw.replace(/eth$/,''),raw.replace(/est$/,'')];
+    for(const w of variants){
+      if(seen.has(w))break;
+      if(KJV_DICT[w]){seen.add(w);results.push({word:w,def:KJV_DICT[w]});break;}
+    }
+  });
+  return results;
+}
+
+function showVerseDictWords(words){
+  if(typeof words==='string') words=JSON.parse(words);
+  const pop=document.getElementById('word-pop');
+  document.getElementById('wp-word').textContent=
+    words.length===1?words[0].word.charAt(0).toUpperCase()+words[0].word.slice(1)
+                    :words.length+' words in this verse';
+  const defEl=document.getElementById('wp-def');
+  if(words.length===1){
+    defEl.textContent=words[0].def;
+  } else {
+    defEl.innerHTML=words.map(w=>
+      '<div class="wp-word-entry"><div class="wp-word-title">'+
+      w.word.charAt(0).toUpperCase()+w.word.slice(1)+
+      '</div><div>'+w.def+'</div></div>'
+    ).join('');
   }
-}, true);
+  pop.classList.add('on');
+}
 
-function getWordAtPoint(x, y){
+/* word-tap removed — dict trigger on verse block used instead */
+
+function getWordAtPoint(x,y){
   try{
-    let node, offset;
-    if(document.caretRangeFromPoint){
-      const r = document.caretRangeFromPoint(x, y);
-      if(!r) return null;
-      node = r.startContainer; offset = r.startOffset;
-    } else if(document.caretPositionFromPoint){
-      const p = document.caretPositionFromPoint(x, y);
-      if(!p) return null;
-      node = p.offsetNode; offset = p.offset;
-    } else return null;
-
-    if(!node || node.nodeType !== Node.TEXT_NODE) return null;
-    const txt = node.textContent;
-
-    // Expand left and right from offset to find word boundaries
-    let s = offset, e2 = offset;
-    while(s > 0 && /[a-zA-Z']/.test(txt[s-1])) s--;
-    while(e2 < txt.length && /[a-zA-Z']/.test(txt[e2])) e2++;
-    if(s === e2) return null;
-
-    return txt.slice(s, e2).toLowerCase().replace(/[^a-z]/g, '');
-  }catch(e){ return null; }
+    let node,offset;
+    if(document.caretRangeFromPoint){const r=document.caretRangeFromPoint(x,y);if(!r)return null;node=r.startContainer;offset=r.startOffset;}
+    else if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(x,y);if(!p)return null;node=p.offsetNode;offset=p.offset;}
+    else return null;
+    if(!node||node.nodeType!==Node.TEXT_NODE)return null;
+    const txt=node.textContent;
+    let s=offset,e2=offset;
+    while(s>0&&/[a-zA-Z']/.test(txt[s-1]))s--;
+    while(e2<txt.length&&/[a-zA-Z']/.test(txt[e2]))e2++;
+    if(s===e2)return null;
+    return txt.slice(s,e2).toLowerCase().replace(/[^a-z]/g,'');
+  }catch(e){return null;}
 }
 
 function closeWordPop(){ document.getElementById('word-pop').classList.remove('on'); }
