@@ -1587,26 +1587,75 @@ function multiCopy(){
   const sorted = getSelectedSorted();
   const first  = sorted[0];
   const last   = sorted[sorted.length-1];
-  const ref    = sorted.length === 1
+
+  // Detect if this is a full chapter selection
+  const totalVerses = S.bookData?.chapters[S.ch]?.verses?.length || 0;
+  const isFullChapter = sorted.length === totalVerses && totalVerses > 0;
+
+  if(isFullChapter){
+    showCopyFormatPicker(sorted, first, last);
+  } else {
+    // Partial — always use block text
+    doCopy(buildBlockText(sorted, first, last));
+  }
+}
+
+function buildBlockText(sorted, first, last){
+  const ref = sorted.length === 1
     ? first.ref
     : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
-  const text = sorted.map(v => v.txt).join(' ');
-  const txt  = `${ref}\n${text}`;
+  return `${ref}\n${sorted.map(v=>v.txt).join(' ')}`;
+}
+
+function buildNumberedText(sorted, first){
+  const header = first.ref.replace(/:.*$/,''); // e.g. "Song of Solomon 1"
+  const lines  = sorted.map(v=>`${v.vnum}  ${v.txt}`).join('\n\n');
+  return `${header}\n\n${lines}`;
+}
+
+function showCopyFormatPicker(sorted, first, last){
+  const existing = document.getElementById('copy-fmt-sheet');
+  if(existing) existing.remove();
+
+  const sheet = document.createElement('div');
+  sheet.id = 'copy-fmt-sheet';
+  sheet.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:600;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)';
+  sheet.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:700px;padding:20px 18px 32px;animation:su .22s ease">
+      <div style="font-family:'IM Fell English',serif;font-size:17px;color:var(--gold);margin-bottom:14px;text-align:center">Copy Format</div>
+      <button onclick="document.getElementById('copy-fmt-sheet').remove();doCopy(buildNumberedText(window._cfSorted,window._cfFirst))"
+        style="display:block;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 16px;font-size:14px;cursor:pointer;text-align:left;margin-bottom:8px">
+        <div style="font-weight:600;color:var(--gold);margin-bottom:3px">📋 Traditional (numbered verses)</div>
+        <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif">Song of Solomon 1<br>1  The song of songs...<br>2  Let him kiss me...</div>
+      </button>
+      <button onclick="document.getElementById('copy-fmt-sheet').remove();doCopy(buildBlockText(window._cfSorted,window._cfFirst,window._cfLast))"
+        style="display:block;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 16px;font-size:14px;cursor:pointer;text-align:left;margin-bottom:12px">
+        <div style="font-weight:600;color:var(--gold);margin-bottom:3px">📄 Block text (flowing paragraph)</div>
+        <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif">Song of Solomon 1:1–22<br>The song of songs, which is...</div>
+      </button>
+      <button onclick="document.getElementById('copy-fmt-sheet').remove()"
+        style="display:block;width:100%;background:none;border:1px solid var(--border);color:var(--text-m);border-radius:10px;padding:10px;font-size:13px;cursor:pointer">
+        Cancel
+      </button>
+    </div>`;
+  // Store data on window for the onclick handlers
+  window._cfSorted = sorted; window._cfFirst = first; window._cfLast = last;
+  document.body.appendChild(sheet);
+  sheet.addEventListener('click', e=>{ if(e.target===sheet) sheet.remove(); });
+}
+
+function doCopy(txt){
   navigator.clipboard?.writeText(txt);
   const btn = document.getElementById('mb-copy');
-  if(btn){ btn.innerHTML = '✓ Copied!'; setTimeout(()=>btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy All`, 1500); }
+  if(btn){ btn.innerHTML='✓ Copied!'; setTimeout(()=>btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy All`,1500); }
 }
 
 function multiShare(){
   const sorted = getSelectedSorted();
   const first  = sorted[0];
   const last   = sorted[sorted.length-1];
-  const ref    = sorted.length === 1
-    ? first.ref
-    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
-  const text = sorted.map(v => v.txt).join(' ');
-  const txt  = `${ref}\n${text}`;
-  if(navigator.share) navigator.share({title:ref, text:txt});
+  const txt    = buildBlockText(sorted, first, last);
+  if(navigator.share) navigator.share({title:first.ref, text:txt});
   else navigator.clipboard?.writeText(txt);
 }
 
@@ -2135,6 +2184,34 @@ const KJV_DICT = {
   "sottish": "Foolish; stupid (Jer. 4:22).",
   "span": "Half a cubit — the distance from thumb to little finger on an outstretched hand.",
   "spikenard": "A costly aromatic ointment made from a plant from the Himalayas; used to anoint Christ (Mark 14:3).",
+  "camphire": "The henna plant; a fragrant flowering shrub. A cluster of camphire = a spray of henna blossoms (S.S. 1:14).",
+  "comely": "Beautiful; pleasing in appearance — I am black but comely means dark-skinned but beautiful (S.S. 1:5).",
+  "savour": "Scent; smell; fragrance. Also taste — savour of thy good ointments = the fragrance of your perfumes (S.S. 1:3).",
+  "ointment": "A fragrant oil or perfumed salve; used for anointing and as perfume (S.S. 1:3).",
+  "flagons": "Large vessels for wine; also raisin cakes — comfort me with flagons (S.S. 2:5).",
+  "subtil": "Crafty; cunning; shrewd — the serpent was more subtil than any beast (Gen. 3:1).",
+  "broided": "Braided; intricately woven — broided hair means elaborately braided hair (1 Tim. 2:9).",
+  "divers": "Various; several different kinds — divers diseases means various illnesses (Matt. 4:24).",
+  "sundry": "Various; several — at sundry times means at various times (Heb. 1:1).",
+  "sore": "As adjective: painful, grievous. As adverb: greatly, intensely — sore afraid means extremely frightened (Luke 2:9).",
+  "replenish": "To fill; to stock fully — replenish the earth means fill the earth (Gen. 1:28).",
+  "requite": "To repay; to return in kind; to recompense (2 Sam. 16:12).",
+  "manifest": "To make clear; to reveal openly (John 1:31).",
+  "bewail": "To mourn loudly; to lament; to weep over (Luke 23:27).",
+  "alway": "Always; at all times — a shortened KJV form of always (Phil. 4:4).",
+  "straightway": "Immediately; without delay; at once (Mark 1:12).",
+  "tarry": "To wait; to stay; to delay — tarry ye in Jerusalem (Luke 24:49).",
+  "asunder": "Apart; into pieces — cut asunder means cut in two (Matt. 24:51).",
+  "penury": "Extreme poverty; destitution (Luke 21:4).",
+  "maimed": "Crippled; having lost a limb or its use (Matt. 15:30).",
+  "palsy": "Paralysis — sick of the palsy means paralysed (Matt. 4:24).",
+  "damsel": "A young woman or girl (Mark 5:41).",
+  "afar": "At a great distance — afar off means from a distance (Luke 15:20).",
+  "hitherto": "Until now; up to this point (John 16:24).",
+  "thither": "To that place; there — go thither means go there (John 11:8).",
+  "whither": "To which place; where — whither goest thou means where are you going? (John 13:36).",
+  "henceforth": "From this time forward; from now on (John 15:15).",
+  "latchet": "The thong or strap of a sandal (Mark 1:7).",
   "stanch": "To stop the flow of blood (Luke 8:44).",
   "strait": "Narrow; difficult; confined — \'strait gate\' means narrow gate (Matt. 7:13).",
   "straitly": "Strictly; sternly; with urgency (Gen. 43:7).",
@@ -2719,7 +2796,7 @@ function dictCard(word, def){
   return '<div class="dict-entry"><div class="dict-word">'+word.charAt(0).toUpperCase()+word.slice(1)+'</div><div class="dict-def">'+def+'</div></div>';
 }
 
-/* Word-tap lookup in the reader */
+/* Word-tap lookup in the reader — capture phase fires before vblock onclick */
 document.addEventListener('click', e=>{
   const vtxt = e.target.closest('.vtxt');
   if(!vtxt) return;
@@ -2727,12 +2804,13 @@ document.addEventListener('click', e=>{
   if(!word) return;
   const def = KJV_DICT[word] || KJV_DICT[word.replace(/s$/,'')] || KJV_DICT[word.replace(/ed$/,'')] || KJV_DICT[word.replace(/eth$/,'')] || KJV_DICT[word.replace(/est$/,'')];
   if(def){
-    e.stopPropagation(); // prevent verse popup from opening
+    e.stopPropagation();
+    e.preventDefault();
     document.getElementById('wp-word').textContent = word.charAt(0).toUpperCase()+word.slice(1);
     document.getElementById('wp-def').textContent = def;
     document.getElementById('word-pop').classList.add('on');
   }
-});
+}, true);
 
 function getWordAtPoint(x, y){
   try{
