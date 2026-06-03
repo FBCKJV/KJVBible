@@ -758,6 +758,15 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .vd-word{display:inline-block;color:var(--gold);font-family:'Crimson Pro',serif;font-size:14px;font-weight:600;cursor:pointer;margin-right:8px;padding:1px 0;border-bottom:1px dotted var(--gold-d)}
 .vd-word:active{opacity:.7}
 </style>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "2899d3fb-9085-48be-8d7f-a315e564ecda",
+      });
+    });
+  </script>
 </head>
 <body>
 
