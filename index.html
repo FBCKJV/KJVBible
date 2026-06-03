@@ -1260,7 +1260,81 @@ const S={
   scrVerses:null,       // [{ref,vnum,txt}] for current screenshot
 };
 
-const VOD=[{b:'John',c:3,v:16},{b:'Psalms',c:23,v:1},{b:'Romans',c:8,v:28},{b:'Philippians',c:4,v:13},{b:'Proverbs',c:3,v:5},{b:'Isaiah',c:40,v:31},{b:'Matthew',c:5,v:4},{b:'Jeremiah',c:29,v:11},{b:'Romans',c:12,v:2},{b:'Ephesians',c:2,v:8},{b:'Hebrews',c:11,v:1},{b:'Psalms',c:46,v:1},{b:'John',c:14,v:6},{b:'Matthew',c:6,v:33},{b:'Psalms',c:119,v:105}];
+const VOD=[
+  {b:'John',c:3,v:16},{b:'Romans',c:3,v:23},{b:'Romans',c:5,v:8},{b:'Romans',c:6,v:23},{b:'Acts',c:4,v:12},
+  {b:'Acts',c:16,v:31},{b:'Ephesians',c:2,v:8},{b:'Titus',c:3,v:5},{b:'1 Timothy',c:1,v:15},{b:'1 Corinthians',c:15,v:3},
+  {b:'John',c:14,v:6},{b:'Romans',c:10,v:9},{b:'Proverbs',c:3,v:5},{b:'Psalms',c:37,v:3},{b:'Isaiah',c:26,v:3},
+  {b:'Hebrews',c:11,v:1},{b:'Hebrews',c:11,v:6},{b:'Psalms',c:46,v:1},{b:'Psalms',c:56,v:3},{b:'Matthew',c:6,v:33},
+  {b:'Philippians',c:4,v:6},{b:'Romans',c:8,v:28},{b:'Joshua',c:1,v:8},{b:'Deuteronomy',c:31,v:6},{b:'Jeremiah',c:33,v:3},
+  {b:'Matthew',c:7,v:7},{b:'Luke',c:11,v:9},{b:'1 Thessalonians',c:5,v:17},{b:'Psalms',c:5,v:3},{b:'James',c:5,v:16},
+  {b:'Psalms',c:63,v:1},{b:'Psalms',c:119,v:105},{b:'John',c:17,v:17},{b:'Colossians',c:3,v:16},{b:'Psalms',c:119,v:9},
+  {b:'Acts',c:17,v:11},{b:'Romans',c:12,v:1},{b:'Galatians',c:2,v:20},{b:'Galatians',c:5,v:22},{b:'Ephesians',c:4,v:32},
+  {b:'Philippians',c:4,v:8},{b:'Colossians',c:3,v:2},{b:'1 Peter',c:1,v:15},{b:'James',c:1,v:22},{b:'Matthew',c:5,v:13},
+  {b:'1 Corinthians',c:10,v:31},{b:'Micah',c:6,v:8},{b:'2 Timothy',c:2,v:15},{b:'Psalms',c:23,v:1},{b:'Psalms',c:34,v:17},
+  {b:'Isaiah',c:40,v:28},{b:'John',c:14,v:1},{b:'Romans',c:8,v:38},{b:'2 Corinthians',c:12,v:9},{b:'Hebrews',c:13,v:5},
+  {b:'1 Peter',c:5,v:6},{b:'Lamentations',c:3,v:22},{b:'Revelation',c:21,v:4},{b:'Psalms',c:121,v:1},{b:'Nahum',c:1,v:7},
+  {b:'Jeremiah',c:29,v:11},{b:'Psalms',c:27,v:14},{b:'Isaiah',c:41,v:10},{b:'Philippians',c:4,v:13},{b:'2 Timothy',c:1,v:7},
+  {b:'Psalms',c:55,v:22},{b:'Matthew',c:11,v:28},{b:'1 Peter',c:5,v:7},{b:'Psalms',c:23,v:5},{b:'Romans',c:15,v:13},
+  {b:'Psalms',c:118,v:24},{b:'Proverbs',c:16,v:3},{b:'Psalms',c:37,v:7},{b:'Psalms',c:91,v:1},{b:'Ephesians',c:6,v:10},
+  {b:'James',c:1,v:2},{b:'1 Corinthians',c:10,v:13},{b:'2 Corinthians',c:5,v:17},{b:'Galatians',c:6,v:9},{b:'Hebrews',c:12,v:1},
+  {b:'Psalms',c:119,v:11},{b:'Proverbs',c:4,v:23},{b:'Matthew',c:5,v:16},{b:'Colossians',c:3,v:23},{b:'1 John',c:1,v:9},
+  {b:'Psalms',c:51,v:10},{b:'Romans',c:12,v:12},{b:'Philippians',c:1,v:6},{b:'Psalms',c:139,v:14},{b:'Jeremiah',c:17,v:7},
+  {b:'Isaiah',c:43,v:2},{b:'Deuteronomy',c:7,v:9},{b:'Psalms',c:16,v:8},{b:'Proverbs',c:18,v:10},{b:'Psalms',c:34,v:8},
+  {b:'1 Chronicles',c:16,v:11},{b:'Psalms',c:100,v:4},{b:'Psalms',c:103,v:1},{b:'Isaiah',c:30,v:15},{b:'Habakkuk',c:3,v:17},
+  {b:'Matthew',c:28,v:20},{b:'John',c:16,v:33},{b:'Romans',c:5,v:3},{b:'2 Corinthians',c:4,v:16},{b:'James',c:4,v:7},
+  {b:'1 John',c:4,v:4},{b:'Psalms',c:46,v:10},{b:'Isaiah',c:54,v:17},{b:'Proverbs',c:3,v:7},{b:'Psalms',c:119,v:165},
+  {b:'Matthew',c:22,v:37},{b:'John',c:15,v:5},{b:'Acts',c:1,v:8},{b:'Romans',c:8,v:1},{b:'Ephesians',c:3,v:20},
+  {b:'Philippians',c:2,v:5},{b:'Colossians',c:1,v:9},{b:'1 Thessalonians',c:5,v:16},{b:'2 Timothy',c:3,v:16},{b:'Hebrews',c:4,v:12},
+  {b:'1 Peter',c:2,v:9},{b:'Revelation',c:3,v:20},{b:'Psalms',c:119,v:130},{b:'Proverbs',c:2,v:6},{b:'Ecclesiastes',c:3,v:1},
+  {b:'Isaiah',c:55,v:8},{b:'Jeremiah',c:32,v:17},{b:'Lamentations',c:3,v:24},{b:'Micah',c:7,v:7},{b:'Zephaniah',c:3,v:17},
+  {b:'Psalms',c:18,v:2},{b:'Psalms',c:28,v:7},{b:'Psalms',c:40,v:1},{b:'Psalms',c:42,v:11},{b:'Psalms',c:62,v:1},
+  {b:'Psalms',c:73,v:26},{b:'Psalms',c:84,v:11},{b:'Psalms',c:103,v:12},{b:'Psalms',c:119,v:50},{b:'Psalms',c:138,v:8},
+  {b:'Proverbs',c:16,v:9},{b:'Isaiah',c:12,v:2},{b:'Isaiah',c:35,v:10},{b:'Isaiah',c:41,v:13},{b:'Isaiah',c:64,v:8},
+  {b:'Matthew',c:6,v:9},{b:'Matthew',c:6,v:34},{b:'Mark',c:9,v:23},{b:'Luke',c:1,v:37},{b:'John',c:1,v:12},
+  {b:'John',c:8,v:12},{b:'John',c:10,v:10},{b:'John',c:14,v:27},{b:'Acts',c:2,v:38},{b:'Romans',c:1,v:16},
+  {b:'Romans',c:8,v:31},{b:'1 Corinthians',c:2,v:9},{b:'1 Corinthians',c:13,v:13},{b:'2 Corinthians',c:1,v:3},{b:'Galatians',c:5,v:1},
+  {b:'Ephesians',c:4,v:29},{b:'Philippians',c:3,v:13},{b:'Colossians',c:4,v:2},{b:'1 Timothy',c:4,v:12},{b:'2 Timothy',c:4,v:7},
+  {b:'Hebrews',c:10,v:23},{b:'James',c:1,v:5},{b:'1 Peter',c:1,v:3},{b:'1 John',c:3,v:1},{b:'Revelation',c:1,v:17},
+  {b:'Psalms',c:1,v:1},{b:'Psalms',c:19,v:7},{b:'Psalms',c:25,v:4},{b:'Psalms',c:32,v:8},{b:'Psalms',c:37,v:23},
+  {b:'Psalms',c:119,v:133},{b:'Proverbs',c:9,v:10},{b:'Proverbs',c:22,v:6},{b:'Isaiah',c:40,v:29},{b:'Jeremiah',c:29,v:12},
+  {b:'Matthew',c:5,v:3},{b:'Matthew',c:11,v:29},{b:'Luke',c:6,v:31},{b:'John',c:3,v:3},{b:'John',c:13,v:34},
+  {b:'Romans',c:8,v:18},{b:'1 Corinthians',c:15,v:57},{b:'2 Corinthians',c:9,v:8},{b:'Galatians',c:6,v:2},{b:'Ephesians',c:5,v:1},
+  {b:'Philippians',c:4,v:19},{b:'Colossians',c:3,v:12},{b:'1 Thessalonians',c:4,v:16},{b:'2 Timothy',c:1,v:9},{b:'Hebrews',c:12,v:28},
+  {b:'James',c:3,v:17},{b:'1 Peter',c:3,v:15},{b:'2 Peter',c:1,v:5},{b:'1 John',c:5,v:14},{b:'Jude',c:1,v:24},
+  {b:'Psalms',c:4,v:8},{b:'Psalms',c:9,v:9},{b:'Psalms',c:13,v:5},{b:'Psalms',c:28,v:7},{b:'Psalms',c:29,v:11},
+  {b:'Psalms',c:30,v:5},{b:'Psalms',c:31,v:24},{b:'Psalms',c:33,v:20},{b:'Psalms',c:34,v:1},{b:'Psalms',c:34,v:4},
+  {b:'Psalms',c:34,v:15},{b:'Psalms',c:37,v:1},{b:'Psalms',c:37,v:25},{b:'Psalms',c:37,v:37},{b:'Psalms',c:40,v:17},
+  {b:'Psalms',c:42,v:1},{b:'Psalms',c:51,v:1},{b:'Psalms',c:51,v:17},{b:'Psalms',c:57,v:7},{b:'Psalms',c:61,v:1},
+  {b:'Psalms',c:62,v:5},{b:'Psalms',c:63,v:7},{b:'Psalms',c:68,v:19},{b:'Psalms',c:71,v:3},{b:'Psalms',c:73,v:24},
+  {b:'Psalms',c:84,v:1},{b:'Psalms',c:86,v:5},{b:'Psalms',c:86,v:11},{b:'Psalms',c:90,v:12},{b:'Psalms',c:91,v:4},
+  {b:'Psalms',c:91,v:11},{b:'Psalms',c:94,v:19},{b:'Psalms',c:95,v:1},{b:'Psalms',c:96,v:1},{b:'Psalms',c:100,v:1},
+  {b:'Psalms',c:103,v:8},{b:'Psalms',c:103,v:13},{b:'Psalms',c:107,v:1},{b:'Psalms',c:111,v:10},{b:'Psalms',c:112,v:7},
+  {b:'Psalms',c:115,v:1},{b:'Psalms',c:116,v:1},{b:'Psalms',c:116,v:12},{b:'Psalms',c:118,v:1},{b:'Psalms',c:118,v:6},
+  {b:'Psalms',c:118,v:14},{b:'Psalms',c:119,v:18},{b:'Psalms',c:119,v:37},{b:'Psalms',c:119,v:71},{b:'Psalms',c:119,v:89},
+  {b:'Psalms',c:119,v:114},{b:'Psalms',c:121,v:3},{b:'Psalms',c:121,v:7},{b:'Psalms',c:126,v:5},{b:'Psalms',c:130,v:5},
+  {b:'Psalms',c:133,v:1},{b:'Psalms',c:136,v:1},{b:'Psalms',c:139,v:1},{b:'Psalms',c:139,v:7},{b:'Psalms',c:139,v:23},
+  {b:'Psalms',c:143,v:8},{b:'Psalms',c:145,v:8},{b:'Psalms',c:145,v:14},{b:'Psalms',c:145,v:18},{b:'Psalms',c:147,v:3},
+  {b:'Psalms',c:147,v:5},{b:'Psalms',c:150,v:6},{b:'Proverbs',c:1,v:7},{b:'Proverbs',c:3,v:9},{b:'Proverbs',c:3,v:11},
+  {b:'Proverbs',c:3,v:25},{b:'Proverbs',c:4,v:18},{b:'Proverbs',c:10,v:22},{b:'Proverbs',c:11,v:25},{b:'Proverbs',c:13,v:20},
+  {b:'Proverbs',c:14,v:26},{b:'Proverbs',c:15,v:1},{b:'Proverbs',c:15,v:16},{b:'Proverbs',c:15,v:33},{b:'Proverbs',c:16,v:7},
+  {b:'Proverbs',c:17,v:17},{b:'Proverbs',c:17,v:22},{b:'Proverbs',c:19,v:21},{b:'Proverbs',c:20,v:22},{b:'Proverbs',c:24,v:16},
+  {b:'Proverbs',c:27,v:17},{b:'Proverbs',c:28,v:13},{b:'Proverbs',c:29,v:25},{b:'Proverbs',c:30,v:5},{b:'Isaiah',c:9,v:6},
+  {b:'Isaiah',c:12,v:4},{b:'Isaiah',c:25,v:1},{b:'Isaiah',c:33,v:2},{b:'Isaiah',c:38,v:16},{b:'Isaiah',c:40,v:8},
+  {b:'Isaiah',c:41,v:14},{b:'Isaiah',c:43,v:1},{b:'Isaiah',c:43,v:18},{b:'Isaiah',c:44,v:22},{b:'Isaiah',c:45,v:22},
+  {b:'Isaiah',c:48,v:17},{b:'Isaiah',c:49,v:15},{b:'Isaiah',c:53,v:4},{b:'Isaiah',c:53,v:6},{b:'Isaiah',c:55,v:1},
+  {b:'Isaiah',c:55,v:6},{b:'Isaiah',c:55,v:11},{b:'Isaiah',c:57,v:15},{b:'Isaiah',c:58,v:11},{b:'Isaiah',c:60,v:1},
+  {b:'Isaiah',c:61,v:1},{b:'Isaiah',c:61,v:3},{b:'Isaiah',c:61,v:10},{b:'Jeremiah 1 Jeremiah',c:17,v:5},{b:'Jeremiah',c:31,v:3},
+  {b:'Jeremiah',c:31,v:33},{b:'Ezekiel',c:36,v:26},{b:'Daniel',c:2,v:20},{b:'Daniel',c:6,v:26},{b:'Hosea',c:6,v:3},
+  {b:'Joel',c:2,v:12},{b:'Joel',c:2,v:32},{b:'Amos',c:5,v:4},{b:'Jonah',c:2,v:9},{b:'Micah',c:7,v:18},
+  {b:'Habakkuk',c:3,v:2},{b:'Zechariah',c:4,v:6},{b:'Malachi',c:3,v:10},{b:'Malachi',c:4,v:2},{b:'Matthew',c:4,v:4},
+  {b:'Matthew',c:5,v:14},{b:'Matthew',c:5,v:44},{b:'Matthew',c:6,v:6},{b:'Matthew',c:6,v:25},{b:'Matthew',c:7,v:13},
+  {b:'Matthew',c:10,v:32},{b:'Matthew',c:11,v:25},{b:'Matthew',c:16,v:24},{b:'Matthew',c:18,v:20},{b:'Matthew',c:19,v:26},
+  {b:'Matthew',c:24,v:35},{b:'Matthew',c:25,v:40},{b:'Mark',c:10,v:27},{b:'Mark',c:11,v:24},{b:'Mark',c:12,v:30},
+  {b:'Luke',c:1,v:49},{b:'Luke',c:6,v:27},{b:'Luke',c:12,v:32},{b:'Luke',c:18,v:1},{b:'Luke',c:18,v:27},
+  {b:'Luke',c:21,v:19},{b:'John',c:1,v:1},{b:'John',c:1,v:4},{b:'John',c:1,v:29},{b:'John',c:3,v:36},
+  {b:'John',c:4,v:14},{b:'John',c:4,v:24},{b:'John',c:5,v:24},{b:'John',c:6,v:35},{b:'John',c:6,v:47},
+  {b:'John',c:8,v:31},{b:'John',c:8,v:36},{b:'John',c:10,v:9},{b:'John',c:10,v:27},{b:'John',c:11,v:25}
+];
 
 /* ════ INIT ════ */
 document.addEventListener('DOMContentLoaded',()=>{
@@ -1392,7 +1466,9 @@ async function jumpRR(bookName, chIdx, verseNum){
 /* ════ VOD ════ */
 let vodMeta=null;
 async function loadVOD(){
-  const d=new Date(),r=VOD[(d.getDate()+d.getMonth())%VOD.length];
+  const d=new Date(),start=new Date(d.getFullYear(),0,0),
+        doy=Math.floor((d-start)/86400000); // day of year 1-366
+  const r=VOD[(doy-1)%VOD.length];
   try{
     const data=await fetchBook(r.b);if(!data)return;
     const v=data.chapters[r.c-1].verses[r.v-1];
