@@ -1153,6 +1153,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <div id="sp-flame">🔥</div>
     <div id="sp-count"></div>
     <div id="sp-label">day streak</div>
+    <div id="sp-last" style="font-size:11px;color:var(--text-m);margin-bottom:4px"></div>
     <div id="sp-best"></div>
     <div id="sp-milestones"></div>
     <div id="sp-tip">Read a chapter, doctrine, or Romans Road each day to keep your streak</div>
@@ -3097,7 +3098,17 @@ const MILESTONES = [
   {days:365, ico:'🏆', label:'365 Days'},
 ];
 
-function todayStr(){ return new Date().toISOString().slice(0,10); }
+function todayStr(){
+  const d = new Date();
+  // Use LOCAL date so timezone doesn't cause missed-day false positives
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function yesterdayStr(){
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 
 function loadStreak(){
   S.streak     = LS.get('kjv_streak', 0);
@@ -3111,7 +3122,7 @@ function recordActivity(){
   const today = todayStr();
   if(S.streakLast === today) return; // already counted today
 
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+  const yesterday = yesterdayStr();
   if(S.streakLast === yesterday){
     S.streak++;                      // consecutive day
   } else {
@@ -3160,6 +3171,11 @@ function showStreakInfo(){
   document.getElementById('sp-best').textContent = S.streakBest > S.streak
     ? `Personal best: ${S.streakBest} days` : S.streakBest > 0
     ? `Personal best: ${S.streakBest} days` : '';
+
+  // Show last read date for diagnostics
+  const lastEl = document.getElementById('sp-last');
+  if(lastEl) lastEl.textContent = S.streakLast
+    ? `Last read: ${S.streakLast}` : '';
 
   const ms = MILESTONES.map(m => `
     <div class="sp-badge ${S.streak >= m.days || S.streakMilestones.includes(m.days) ? 'earned' : ''}">
