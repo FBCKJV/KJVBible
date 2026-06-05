@@ -757,6 +757,48 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #vpop-dict-row .vd-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:5px}
 .vd-word{display:inline-block;color:var(--gold);font-family:'Crimson Pro',serif;font-size:14px;font-weight:600;cursor:pointer;margin-right:8px;padding:1px 0;border-bottom:1px dotted var(--gold-d)}
 .vd-word:active{opacity:.7}
+
+/* ── VERSE CLIPBOARD ── */
+#clip-badge{display:none;align-items:center;gap:3px;background:var(--surface);
+  border:1px solid var(--border);border-radius:10px;padding:3px 8px;
+  font-size:11px;font-weight:700;color:var(--gold);cursor:pointer;transition:all .15s}
+#clip-badge.on{display:flex}
+#clip-badge-n{font-size:13px}
+
+#clip-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:490;
+  display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+#clip-overlay.on{display:flex}
+#clip-inner{background:var(--bg2);border:1px solid var(--border);
+  border-radius:18px 18px 0 0;width:100%;max-width:700px;
+  max-height:80vh;display:flex;flex-direction:column;animation:su .22s ease;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+#clip-hdr{display:flex;align-items:center;padding:14px 16px 10px;
+  border-bottom:1px solid var(--border);flex-shrink:0}
+#clip-hdr-title{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold);flex:1}
+#clip-body{overflow-y:auto;padding:10px 14px;flex:1;display:flex;flex-direction:column;gap:6px}
+.clip-item{display:flex;align-items:center;gap:8px;background:var(--surface);
+  border:1px solid var(--border);border-radius:8px;padding:9px 12px}
+.clip-item-ref{font-family:'IM Fell English',serif;font-size:14px;color:var(--gold);flex:1}
+.clip-item-preview{font-family:'Crimson Pro',serif;font-size:11px;color:var(--text-m);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+.clip-ord{display:flex;flex-direction:column;gap:2px}
+.clip-ord button{background:none;border:1px solid var(--border);color:var(--text-m);
+  border-radius:4px;width:22px;height:18px;font-size:10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0;transition:all .15s}
+.clip-ord button:active{background:var(--bg3);color:var(--gold)}
+.clip-rm{background:none;border:none;color:var(--text-m);font-size:16px;
+  cursor:pointer;padding:2px 4px;line-height:1}
+#clip-add-hint{font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);
+  text-align:center;padding:20px;font-style:italic}
+#clip-foot{padding:10px 14px 14px;display:flex;gap:8px;flex-shrink:0;
+  border-top:1px solid var(--border)}
+#clip-gen-btn{flex:1;background:var(--gold);color:var(--bg);border:none;
+  border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer}
+#clip-gen-btn:disabled{opacity:.4;cursor:default}
+#clip-clear-btn{background:var(--surface);border:1px solid var(--border);
+  color:var(--text-d);border-radius:8px;padding:11px 14px;font-size:13px;cursor:pointer}
+
+/* Combined card overlay reuses scr-overlay */
 </style>
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
@@ -767,6 +809,8 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       });
     });
   </script>
+  <script data-goatcounter="https://fbckjv.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 
@@ -784,6 +828,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     All
   </button>
+  <div id="clip-badge" onclick="openClipboard()" title="Verse card clipboard"><span>📋</span><span id="clip-badge-n">0</span></div>
   <button id="btn-help" class="hbtn" onclick="showTips()" title="Tips & Help">?</button>
   <button id="share-btn" onclick="showSharePop()" title="Share this app">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -1081,6 +1126,21 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   </div>
 </div>
 
+<!-- VERSE CLIPBOARD -->
+<div id="clip-overlay" onclick="if(event.target===this)closeClipboard()">
+  <div id="clip-inner">
+    <div id="clip-hdr">
+      <div id="clip-hdr-title">📋 Verse Card</div>
+      <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer" onclick="closeClipboard()">✕</button>
+    </div>
+    <div id="clip-body"></div>
+    <div id="clip-foot">
+      <button id="clip-clear-btn" onclick="clearClipboard()">Clear</button>
+      <button id="clip-gen-btn" onclick="generateCombinedCard()" disabled>📸 Generate Card</button>
+    </div>
+  </div>
+</div>
+
 <!-- MILESTONE TOAST -->
 <div id="milestone-toast">
   <div id="mt-icon"></div>
@@ -1189,6 +1249,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       <button class="pa" onclick="singleScreenshot()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Screenshot
+      </button>
+      <button class="pa" id="vpop-clip-btn" onclick="addToClipboard(S.popRef,S.popTxt)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        Add to Card
       </button>
       <button class="pa" onclick="copyVerse()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
@@ -1930,7 +1994,7 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
 
   // Font size based on text length
   const charCount = bodyText.length;
-  const BFONT = charCount > 400 ? 19 : charCount > 200 ? 23 : 27;
+  const BFONT = charCount > 700 ? 16 : charCount > 400 ? 19 : charCount > 200 ? 23 : 27;
   const lineH  = BFONT * 1.85;
   ctx.font = `italic ${BFONT}px Georgia, serif`;
   const bodyLines = wrapText(ctx, bodyText, W - PAD * 2);
@@ -1983,7 +2047,8 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
   const textAreaTop    = RULE2_Y + 24;
   const textAreaBottom = RULE3_Y - 16;
   const textAreaH      = textAreaBottom - textAreaTop;
-  const TEXT_Y         = textAreaTop + (textAreaH - bodyH) / 2 + BFONT * 0.8;
+  const rawTY  = textAreaTop + (textAreaH - bodyH) / 2 + BFONT * 0.8;
+  const TEXT_Y = Math.max(textAreaTop + BFONT, rawTY); // never overlap reference
 
   drawBody(ctx, bodyLines, PAD, TEXT_Y, lineH, BFONT, t);
 
@@ -4407,6 +4472,210 @@ function submitMemWord(){}  /* no-op — input bar removed */
     });
   });
 })();
+
+/* ════════════════════════════════
+   VERSE CLIPBOARD
+════════════════════════════════ */
+S.clipboard = []; // session-only, max 3
+
+function updateClipBadge(){
+  const n   = S.clipboard.length;
+  const badge = document.getElementById('clip-badge');
+  const num   = document.getElementById('clip-badge-n');
+  if(badge){ badge.classList.toggle('on', n > 0); if(num) num.textContent = n; }
+  const gen = document.getElementById('clip-gen-btn');
+  if(gen) gen.disabled = n < 1;
+}
+
+function addToClipboard(ref, txt){
+  if(S.clipboard.find(v => v.ref === ref)){
+    showToast('Already in card'); return;
+  }
+  if(S.clipboard.length >= 3){
+    showToast('Max 3 verses — remove one first'); return;
+  }
+  S.clipboard.push({ref, txt});
+  updateClipBadge();
+  updateVpopClipBtn();
+  showToast(`${ref} added to card`);
+  closePop();
+}
+
+function updateVpopClipBtn(){
+  const btn = document.getElementById('vpop-clip-btn');
+  if(!btn) return;
+  const already = S.clipboard.find(v => v.ref === S.popRef);
+  btn.style.opacity = already ? '0.5' : '1';
+  btn.title = already ? 'Already in card' : 'Add to verse card';
+}
+
+function openClipboard(){
+  renderClipBody();
+  document.getElementById('clip-overlay').classList.add('on');
+  history.pushState({screen:S.screen, modal:'clip'}, '', '');
+}
+
+function closeClipboard(){
+  document.getElementById('clip-overlay').classList.remove('on');
+}
+
+function clearClipboard(){
+  S.clipboard = [];
+  updateClipBadge();
+  renderClipBody();
+}
+
+function removeClipItem(idx){
+  S.clipboard.splice(idx, 1);
+  updateClipBadge();
+  renderClipBody();
+}
+
+function moveClipItem(idx, dir){
+  const to = idx + dir;
+  if(to < 0 || to >= S.clipboard.length) return;
+  [S.clipboard[idx], S.clipboard[to]] = [S.clipboard[to], S.clipboard[idx]];
+  renderClipBody();
+}
+
+function renderClipBody(){
+  const el = document.getElementById('clip-body');
+  if(!el) return;
+  if(S.clipboard.length === 0){
+    el.innerHTML = '<div id="clip-add-hint">Tap a verse → <strong>Add to Card</strong><br>to build a combined verse card (max 3)</div>';
+    return;
+  }
+  el.innerHTML = S.clipboard.map((v, i) => `
+    <div class="clip-item">
+      <div class="clip-ord">
+        <button onclick="moveClipItem(${i},-1)" ${i===0?'disabled':''}>▲</button>
+        <button onclick="moveClipItem(${i},1)" ${i===S.clipboard.length-1?'disabled':''}>▼</button>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="clip-item-ref">${v.ref}</div>
+        <div class="clip-item-preview">${v.txt.substring(0,60)}…</div>
+      </div>
+      <button class="clip-rm" onclick="removeClipItem(${i})">×</button>
+    </div>`).join('');
+}
+
+/* ── Generate combined portrait card ── */
+function generateCombinedCard(){
+  if(S.clipboard.length === 0) return;
+  closeClipboard();
+  const canvas = document.getElementById('scr-canvas');
+  drawCombinedCard(canvas);
+  document.getElementById('scr-overlay').classList.add('on');
+}
+
+function drawCombinedCard(canvas){
+  const W   = 540, PAD = 40;
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const ctx = canvas.getContext('2d');
+  const t   = CARD_THEMES[S.cardTheme||'dark'];
+  const FONT = 20, LH = FONT * 1.8;
+
+  // Pre-measure all verse blocks
+  ctx.font = `italic ${FONT}px Georgia,serif`;
+  const blocks = S.clipboard.map(v => ({
+    ref:   v.ref,
+    lines: wrapText(ctx, v.txt, W - PAD*2),
+  }));
+  const blockH   = b => b.lines.length * LH + 70; // text + ref header
+  const dividerH = 36;
+  const totalBodyH = blocks.reduce((s,b)=>s+blockH(b),0) + (blocks.length-1)*dividerH;
+  const H = PAD + 30 + 16 + 8 + totalBodyH + 50;
+
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  const dispW = 200;
+  canvas.style.width  = dispW + 'px';
+  canvas.style.height = (dispW * H / W) + 'px';
+  ctx.resetTransform(); ctx.scale(dpr, dpr);
+
+  // BG
+  const grd = ctx.createLinearGradient(0,0,W,H);
+  grd.addColorStop(0,t.bg1); grd.addColorStop(1,t.bg2);
+  ctx.fillStyle=grd; rr(ctx,0,0,W,H,20); ctx.fill();
+  ctx.strokeStyle=t.border; ctx.lineWidth=1.5;
+  rr(ctx,2,2,W-4,H-4,19); ctx.stroke();
+
+  // Logo watermark
+  if(_logoImg.complete && _logoImg.naturalWidth){
+    const ls = Math.min(W,H)*0.35;
+    ctx.globalAlpha=0.05;
+    ctx.drawImage(_logoImg,W/2-ls/2,H/2-ls/2,ls,ls);
+    ctx.globalAlpha=1;
+  }
+
+  // Church name
+  let y = PAD + 16;
+  ctx.textAlign='center'; ctx.fillStyle=t.ref; ctx.globalAlpha=0.5;
+  ctx.font='400 13px Georgia,serif';
+  ctx.fillText('Faith Baptist Church', W/2, y); ctx.globalAlpha=1;
+
+  y += 14;
+  ctx.strokeStyle=t.border; ctx.lineWidth=1; ctx.globalAlpha=0.5;
+  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+  ctx.globalAlpha=1;
+  y += 20;
+
+  // Draw each verse block
+  blocks.forEach((b, i) => {
+    // Reference
+    ctx.textAlign='center'; ctx.fillStyle=t.ref;
+    ctx.font=`700 22px Georgia,serif`;
+    ctx.fillText(b.ref, W/2, y); y += 26;
+
+    // Rule under ref
+    ctx.strokeStyle=t.border; ctx.lineWidth=1; ctx.globalAlpha=0.4;
+    ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+    ctx.globalAlpha=1; y += FONT + 4;
+
+    // Verse text
+    ctx.textAlign='left'; ctx.fillStyle=t.body||t.ref;
+    ctx.font=`italic ${FONT}px Georgia,serif`;
+    b.lines.forEach(line => {
+      ctx.fillText(line, PAD, y); y += LH;
+    });
+    y += 10;
+
+    // Divider ornament between verses
+    if(i < blocks.length - 1){
+      ctx.textAlign='center'; ctx.fillStyle=t.ref; ctx.globalAlpha=0.4;
+      ctx.font=`12px serif`;
+      ctx.fillText('· ✦ ·', W/2, y + 12);
+      ctx.globalAlpha=1; y += dividerH;
+    }
+  });
+
+  // Bottom rule + KJV
+  y += 8;
+  ctx.strokeStyle=t.border; ctx.lineWidth=1; ctx.globalAlpha=0.4;
+  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+  ctx.globalAlpha=1; y += 18;
+  ctx.textAlign='center'; ctx.fillStyle=t.ref; ctx.globalAlpha=0.35;
+  ctx.font='400 12px Georgia,serif';
+  ctx.fillText('King James Version · Faith Baptist Church', W/2, y);
+  ctx.globalAlpha=1;
+
+  // Corners
+  drawCorners(ctx, PAD, W, H, t);
+}
+
+// Handle back button for clip overlay
+window.addEventListener('popstate', function clipPopstate(e){
+  if(document.getElementById('clip-overlay').classList.contains('on')){
+    closeClipboard();
+  }
+}, {capture:true});
+
+// Update clip button state when vpop opens
+const _origOpenVPop = openVPop;
+openVPop = function(ref, txt){
+  _origOpenVPop(ref, txt);
+  updateVpopClipBtn();
+};
 
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
