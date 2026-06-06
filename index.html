@@ -799,6 +799,13 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   color:var(--text-d);border-radius:8px;padding:11px 14px;font-size:13px;cursor:pointer}
 
 /* Combined card overlay reuses scr-overlay */
+
+/* ── Search testament filter ── */
+#s-filter{display:flex;gap:6px;padding:6px 0 2px}
+.sf-btn{flex:1;background:var(--surface);border:1px solid var(--border);
+  color:var(--text-d);border-radius:8px;padding:6px;font-size:12px;
+  font-weight:600;cursor:pointer;transition:all .15s;text-align:center}
+.sf-btn.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 </style>
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
@@ -922,6 +929,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
         <div class="s-wrap">
           <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           <input type="search" id="s-input" placeholder="Verse ref, keywords, or phrase…" oninput="handleSearch(this.value)" autocomplete="off">
+        </div>
+        <div id="s-filter">
+          <button class="sf-btn on" onclick="setSearchFilter('all')">All</button>
+          <button class="sf-btn" onclick="setSearchFilter('ot')">Old Testament</button>
+          <button class="sf-btn" onclick="setSearchFilter('nt')">New Testament</button>
         </div>
         <div id="s-results"><div id="s-status">Enter a word, phrase, or reference (e.g. Matthew 24:24)</div></div>
       </div>
@@ -2814,38 +2826,71 @@ const STOP = new Set(['the','a','an','and','or','but','in','on','of','to','for',
 
 /* Try to parse query as Bible reference */
 function parseReference(raw) {
-  const q = raw.trim();
-  // Match: optional-number + bookname + chapter + optional(:verse)
-  // e.g. "Matthew 24:24", "1 Peter 3:21", "Matt 24", "Ps 23:1"
-  const m = q.match(/^(\d\s+)?([a-zA-Z][a-zA-Z ]{1,18}?)\s+(\d{1,3})\s*(?:[:.]\s*(\d{1,3}))?$/i);
+  // Strip punctuation like ? ! . from query
+  const q = raw.trim().replace(/[?!.,;]+$/, '');
+  // Match: book + chapter + optional verse + optional verse-end range
+  const m = q.match(/^(\d\s+)?([a-zA-Z][a-zA-Z ]{1,18}?)\s+(\d{1,3})\s*(?:[:.]\s*(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?)?$/i);
   if (!m) return null;
 
-  const prefix  = (m[1]||'').trim();          // "1","2","3" or ""
-  const rawName = m[2].trim();                 // "Peter", "Corinthians", etc.
+  const prefix  = (m[1]||'').trim();
+  const rawName = m[2].trim();
   const chapter = parseInt(m[3]);
   const verse   = m[4] ? parseInt(m[4]) : null;
+  const verseEnd = m[5] ? parseInt(m[5]) : null;
 
-  // Build lookup keys
   const full  = (prefix ? prefix+rawName : rawName).toLowerCase().replace(/\s+/g,'');
   const short = rawName.toLowerCase().replace(/\s+/g,'');
   const withSpace = (prefix ? prefix+' '+rawName : rawName).toLowerCase();
 
   let book = BOOK_ALIASES[full] || BOOK_ALIASES[short];
-
-  // Try prefix match against full canonical names
   if (!book) book = BOOKS.find(b => b.toLowerCase().startsWith(withSpace));
-  // Try just the raw book name prefix
   if (!book) book = BOOKS.find(b => b.toLowerCase().replace(/\s+/g,'').startsWith(full));
 
   if (!book || chapter < 1) return null;
-  return { book, chIdx: chapter - 1, verse };
+  return { book, chIdx: chapter - 1, verse, verseEnd };
 }
 
-/* Fuzzy-ish word match: "saves" matches "save","saveth","saved" */
+// KJV variant expansion — searching "brother" also matches "brethren" etc.
+const KJV_VARIANTS = {
+  'brother':['brother','brethren'],'brethren':['brother','brethren'],
+  'thee':['thee','thou'],'thou':['thee','thou'],
+  'thy':['thy','your'],'ye':['ye','you'],
+  'hath':['hath','have'],'doth':['doth','does'],
+  'saith':['saith','say','said'],'spake':['spake','spoke'],
+  'wilt':['wilt','will'],'shalt':['shalt','shall'],
+  'knoweth':['knoweth','know','knows'],'believeth':['believeth','believe','believes'],
+  'loveth':['loveth','love','loves'],'cometh':['cometh','come','comes'],
+  'goeth':['goeth','go','goes'],'giveth':['giveth','give','gives'],
+};
+
+/* Fuzzy word match with KJV variant support */
 function wordMatches(text, word) {
-  if (text.includes(word)) return true;
-  if (word.length > 4) return text.includes(word.slice(0,-1)); // strip last char
+  const variants = KJV_VARIANTS[word] || [word];
+  for (const v of variants) {
+    if (text.includes(v)) return true;
+    if (v.length > 4 && text.includes(v.slice(0,-1))) return true;
+  }
   return false;
+}
+
+// Testament filter state
+S.searchFilter = 'all';
+function setSearchFilter(f){
+  S.searchFilter = f;
+  document.querySelectorAll('.sf-btn').forEach((b,i)=>{
+    b.classList.toggle('on', ['all','ot','nt'][i]===f);
+  });
+  // Re-run current search with new filter
+  const inp = document.getElementById('s-input') || document.querySelector('#search-panel input');
+  if(inp && inp.value.trim().length >= 2) doSearch(inp.value.trim());
+}
+
+function isOT(bookName){ return BOOKS.indexOf(bookName) < 39; }
+function isNT(bookName){ return BOOKS.indexOf(bookName) >= 39; }
+function passesFilter(bookName){
+  if(S.searchFilter==='ot') return isOT(bookName);
+  if(S.searchFilter==='nt') return isNT(bookName);
+  return true;
 }
 
 let sTimer = null;
@@ -2862,9 +2907,11 @@ function handleSearch(q) {
 
 async function doSearch(raw) {
   const el = document.getElementById('s-results');
+  // Strip trailing punctuation for reference check
+  const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
 
-  // ── 1. Reference search (e.g. "Matthew 24:24", "1 Peter 3") ──
-  const ref = parseReference(raw);
+  // ── 1. Reference search ──
+  const ref = parseReference(cleaned);
   if (ref) {
     const data = await fetchBook(ref.book);
     if (!data) { el.innerHTML = `<div id="s-status">Could not load ${ref.book}</div>`; return; }
@@ -2872,16 +2919,21 @@ async function doSearch(raw) {
     const ch    = data.chapters[chIdx];
 
     if (ref.verse) {
-      // Single verse jump
-      const v   = ch.verses[ref.verse - 1] || ch.verses.find(x => parseInt(x.verse) === ref.verse);
-      const ref2 = `${ref.book} ${chIdx+1}:${ref.verse}`;
+      const endV = ref.verseEnd || ref.verse;
+      // Show verse or verse range
+      const verses = ch.verses.filter(v => {
+        const vn = parseInt(v.verse);
+        return vn >= ref.verse && vn <= endV;
+      });
+      const refLabel = endV > ref.verse
+        ? `${ref.book} ${chIdx+1}:${ref.verse}–${endV}`
+        : `${ref.book} ${chIdx+1}:${ref.verse}`;
       el.innerHTML = `
-        <div class="rc ref-jump" onclick="jumpToRef('${ref2.replace(/'/g,"\\'")}')">
-          <div class="rc-ref">↗ Jump to ${ref2}</div>
-          ${v ? `<div class="rc-txt">${v.text}</div>` : ''}
+        <div class="rc ref-jump" onclick="jumpToRef('${(ref.book+' '+(chIdx+1)+':'+ref.verse).replace(/'/g,"\\'")}')">
+          <div class="rc-ref">↗ Jump to ${refLabel}</div>
+          ${verses.map(v=>`<div class="rc-txt"><strong style="color:var(--gold);font-size:11px">${v.verse}</strong> ${v.text}</div>`).join('')}
         </div>`;
     } else {
-      // Whole chapter
       el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${ch.verses.length} verses — ${ref.book} ${chIdx+1}</div>`
         + ch.verses.map(v => {
             const r = `${ref.book} ${chIdx+1}:${v.verse}`;
@@ -2892,42 +2944,34 @@ async function doSearch(raw) {
   }
 
   // ── 2. Keyword search ──
-  const lower = raw.toLowerCase();
-  // Split into keywords, filter stop words, keep words ≥ 3 chars
-  const allWords  = lower.split(/\s+/).filter(w => w.length >= 2);
-  const keywords  = allWords.filter(w => !STOP.has(w) && w.length >= 3);
-  const searchOn  = keywords.length > 0 ? keywords : allWords.filter(w => w.length >= 2);
+  // Strip punctuation from query before processing
+  const lower = cleaned.toLowerCase().replace(/[?!.,;:'"]+/g,'');
+  const allWords = lower.split(/\s+/).filter(w => w.length >= 2);
+  const keywords = allWords.filter(w => !STOP.has(w) && w.length >= 3);
+  const searchOn = keywords.length > 0 ? keywords : allWords.filter(w => w.length >= 2);
 
   if (searchOn.length === 0) { el.innerHTML = '<div id="s-status">Please enter a search term</div>'; return; }
 
   const results = [];
-  const MAX     = 100;
-  const isPhrase = raw.includes('"') || searchOn.length === 1;
+  const MAX = 100;
 
   for (const bookName of BOOKS) {
     if (results.length >= MAX) break;
+    if (!passesFilter(bookName)) continue;
     const data = await fetchBook(bookName);
     if (!data) continue;
 
     for (const ch of data.chapters) {
       for (const v of ch.verses) {
         const txt = v.text.toLowerCase();
-
-        let matched;
-        if (isPhrase && searchOn.length === 1) {
-          // Single keyword — partial match
-          matched = wordMatches(txt, searchOn[0]);
-        } else {
-          // AND: all keywords must match (with fuzzy)
-          matched = searchOn.every(w => wordMatches(txt, w));
-        }
-
+        const matched = searchOn.every(w => wordMatches(txt, w));
         if (matched) {
           results.push({
             ref: `${bookName} ${ch.chapter}:${v.verse}`,
             txt: v.text,
-            // Score: exact phrase bonus + keyword density
-            score: (lower.length > 4 && txt.includes(lower) ? 10 : 0) + searchOn.filter(w => txt.includes(w)).length
+            book: bookName,
+            score: searchOn.filter(w => wordMatches(txt, w)).length
+              + (txt.includes(lower.slice(0,20)) ? 5 : 0)
           });
           if (results.length >= MAX) break;
         }
@@ -2936,20 +2980,18 @@ async function doSearch(raw) {
     }
   }
 
-  // Sort by score descending
   results.sort((a, b) => b.score - a.score);
 
   if (!results.length) {
-    // Try OR fallback if AND found nothing
-    el.innerHTML = `<div id="s-status">No exact matches. Try fewer or different words.</div>`;
+    el.innerHTML = `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
     return;
   }
 
-  // Highlight all matched keywords
-  const reStr = searchOn.map(w => w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+  const reStr = searchOn.map(w => (KJV_VARIANTS[w]||[w]).concat([w]).map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')).join('|');
   const re    = new RegExp(`(${reStr})`, 'gi');
+  const filterLabel = S.searchFilter==='ot' ? ' · Old Testament' : S.searchFilter==='nt' ? ' · New Testament' : '';
 
-  el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${results.length}${results.length>=MAX?'+':''} result${results.length!==1?'s':''} for "<strong style="color:var(--gold)">${raw}</strong>"</div>`
+  el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${results.length}${results.length>=MAX?'+':''} result${results.length!==1?'s':''}${filterLabel} for "<strong style="color:var(--gold)">${cleaned}</strong>"</div>`
     + results.map(r => `<div class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')">
         <div class="rc-ref">${r.ref}</div>
         <div class="rc-txt">${r.txt.replace(re,'<mark>$1</mark>')}</div>
