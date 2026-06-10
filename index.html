@@ -2966,84 +2966,132 @@ async function doSearch(raw) {
 
   if (searchOn.length === 0) { el.innerHTML = '<div id="s-status">Please enter a search term</div>'; return; }
 
-  const results = [];
-  const MAX = 500;
-  const PER_BOOK = 8; // cap per book so common words spread across the Bible
+  // ── Progressive search: scan all books, count accurately, show results up to MAX ──
+  const MAX = 300;
+  S._searchResults = [];
+  S._searchQuery   = cleaned;
+  S._searchOn      = searchOn;
+  S._searchLower   = lower;
+  S._bookFilter    = null;
+  S._bookCounts    = {};
+  S._totalCount    = 0;
+
+  el.innerHTML = `<div id="s-status">Searching…</div>`;
+  const strip = document.getElementById('s-book-strip');
+  if(strip) strip.style.display = 'none';
 
   for (const bookName of BOOKS) {
-    if (results.length >= MAX) break;
     if (!passesFilter(bookName)) continue;
     const data = await fetchBook(bookName);
     if (!data) continue;
+
     let bookCount = 0;
     for (const ch of data.chapters) {
       for (const v of ch.verses) {
         const txt = v.text.toLowerCase();
-        const matched = searchOn.every(w => wordMatches(txt, w));
-        if (matched) {
-          results.push({
-            ref: `${bookName} ${ch.chapter}:${v.verse}`,
-            txt: v.text,
-            book: bookName,
-            score: searchOn.filter(w => wordMatches(txt, w)).length
-              + (txt.includes(lower.slice(0,20)) ? 5 : 0)
-          });
+        if (searchOn.every(w => wordMatches(txt, w))) {
           bookCount++;
-          if (results.length >= MAX || bookCount >= PER_BOOK) break;
+          // Store results up to MAX (first MAX matches across all books)
+          if (S._searchResults.length < MAX) {
+            S._searchResults.push({
+              ref: `${bookName} ${ch.chapter}:${v.verse}`,
+              txt: v.text,
+              book: bookName,
+              score: searchOn.filter(w => wordMatches(txt, w)).length
+                + (txt.includes(lower.slice(0,20)) ? 5 : 0)
+            });
+          }
         }
       }
-      if (results.length >= MAX || bookCount >= PER_BOOK) break;
+    }
+
+    if (bookCount > 0) {
+      S._bookCounts[bookName] = bookCount;
+      S._totalCount += bookCount;
+      // Update UI after each book with results
+      renderBookStrip();
+      if (S._searchResults.length > 0 && Object.keys(S._bookCounts).length === 1) {
+        renderSearchPage(0); // show first results immediately
+      }
     }
   }
 
-  results.sort((a, b) => b.score - a.score);
-
-  if (!results.length) {
+  // Final render
+  if (!S._searchResults.length) {
     el.innerHTML = `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
+    if(strip) strip.style.display = 'none';
     return;
   }
-
-  S._searchResults = results;
-  S._searchQuery   = cleaned;
-  S._bookFilter    = null; // reset filter on new search
-  renderBookStrip();
   renderSearchPage(0);
 }
 
 function renderBookStrip(){
   const strip = document.getElementById('s-book-strip');
   if(!strip) return;
-  const results = S._searchResults || [];
-  if(!results.length){ strip.style.display='none'; return; }
+  const counts = S._bookCounts || {};
+  const books  = Object.keys(counts);
+  if(!books.length){ strip.style.display='none'; return; }
 
-  // Count occurrences per book
-  const counts = {};
-  results.forEach(r => { counts[r.book] = (counts[r.book]||0) + 1; });
-  const books = Object.keys(counts);
-  if(books.length <= 1){ strip.style.display='none'; return; }
+  const total = S._totalCount || 0;
+  const scanning = Object.keys(counts).length < BOOKS.filter(b=>passesFilter(b)).length;
 
   strip.style.display = 'flex';
+  const allLabel = scanning ? `${total}…` : total.toLocaleString();
   strip.innerHTML =
-    `<span class="s-bchip on" onclick="setBookFilter(null)">All<span class="s-bchip-n">${results.length}</span></span>` +
+    `<span class="s-bchip ${!S._bookFilter?'on':''}" onclick="setBookFilter(null)">All<span class="s-bchip-n">${allLabel}</span></span>` +
     books.map(b =>
-      `<span class="s-bchip" onclick="setBookFilter('${b.replace(/'/g,"\\'")}')"><span>${b}</span><span class="s-bchip-n">${counts[b]}</span></span>`
+      `<span class="s-bchip ${S._bookFilter===b?'on':''}" onclick="setBookFilter('${b.replace(/'/g,"\\'")}')"><span>${b}</span><span class="s-bchip-n">${counts[b].toLocaleString()}</span></span>`
     ).join('');
 }
 
 function setBookFilter(book){
   S._bookFilter = book;
-  // Update chip active state
-  document.querySelectorAll('.s-bchip').forEach(c => {
-    const name = c.querySelector('span')?.textContent;
-    c.classList.toggle('on', book === null ? name==='All' : name===book);
-  });
+  renderBookStrip(); // update chip highlight
+
+  if(book){
+    // Show ALL results for this specific book (fetch if needed)
+    showAllInBook(book);
+  } else {
+    renderSearchPage(0);
+  }
+}
+
+async function showAllInBook(bookName){
+  const el = document.getElementById('s-results');
+  el.innerHTML = `<div id="s-status">Loading ${bookName}…</div>`;
+
+  const searchOn = S._searchOn || [];
+  const lower    = S._searchLower || '';
+  const data = await fetchBook(bookName);
+  if(!data){ el.innerHTML = `<div id="s-status">Could not load ${bookName}</div>`; return; }
+
+  const bookResults = [];
+  for(const ch of data.chapters){
+    for(const v of ch.verses){
+      const txt = v.text.toLowerCase();
+      if(searchOn.every(w => wordMatches(txt, w))){
+        bookResults.push({
+          ref: `${bookName} ${ch.chapter}:${v.verse}`,
+          txt: v.text, book: bookName,
+          score: searchOn.filter(w=>wordMatches(txt,w)).length + (txt.includes(lower.slice(0,20))?5:0)
+        });
+      }
+    }
+  }
+
+  // Temporarily replace _searchResults with this book's results for pagination
+  const saved = S._searchResults;
+  S._searchResults = bookResults;
   renderSearchPage(0);
+  S._searchResults = saved; // restore
+  // Keep book results available for pagination
+  S._bookPageResults = bookResults;
 }
 
 function renderSearchPage(startIdx){
   const el      = document.getElementById('s-results');
-  const results = S._searchResults || [];
-  const filtered = S._bookFilter ? results.filter(r => r.book === S._bookFilter) : results;
+  const allResults = (S._bookFilter && S._bookPageResults) ? S._bookPageResults : (S._searchResults || []);
+  const filtered = S._bookFilter ? allResults.filter(r => r.book === S._bookFilter) : allResults;
   const cleaned = S._searchQuery  || '';
   const PAGE    = 25;
   const page    = filtered.slice(startIdx, startIdx + PAGE);
