@@ -2967,7 +2967,7 @@ async function doSearch(raw) {
   if (searchOn.length === 0) { el.innerHTML = '<div id="s-status">Please enter a search term</div>'; return; }
 
   // ── Progressive search: scan all books, count accurately, show results up to MAX ──
-  const MAX = 300;
+  const MAX = Infinity; // store all results, paginate in display
   S._searchResults = [];
   S._searchQuery   = cleaned;
   S._searchOn      = searchOn;
@@ -2991,16 +2991,14 @@ async function doSearch(raw) {
         const txt = v.text.toLowerCase();
         if (searchOn.every(w => wordMatches(txt, w))) {
           bookCount++;
-          // Store results up to MAX (first MAX matches across all books)
-          if (S._searchResults.length < MAX) {
-            S._searchResults.push({
+          // Store all results
+          S._searchResults.push({
               ref: `${bookName} ${ch.chapter}:${v.verse}`,
               txt: v.text,
               book: bookName,
               score: searchOn.filter(w => wordMatches(txt, w)).length
                 + (txt.includes(lower.slice(0,20)) ? 5 : 0)
             });
-          }
         }
       }
     }
@@ -3093,10 +3091,12 @@ function renderSearchPage(startIdx){
   const allResults = (S._bookFilter && S._bookPageResults) ? S._bookPageResults : (S._searchResults || []);
   const filtered = S._bookFilter ? allResults.filter(r => r.book === S._bookFilter) : allResults;
   const cleaned = S._searchQuery  || '';
-  const PAGE    = 25;
+  const PAGE    = 300;
   const page    = filtered.slice(startIdx, startIdx + PAGE);
   const total   = filtered.length;
-  const MAX     = 500;
+  const MAX     = Infinity;
+  const curPage = Math.floor(startIdx / PAGE) + 1;
+  const totalPages = Math.ceil(total / PAGE);
 
   const sw = cleaned.toLowerCase().replace(/[?!.,;:'"]+/g,'').split(/\s+/).filter(w=>w.length>=2&&!STOP.has(w));
   const reStr = sw.length ? sw.map(w=>(KJV_VARIANTS[w]||[w]).concat([w]).map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')).join('|') : null;
@@ -3105,9 +3105,10 @@ function renderSearchPage(startIdx){
   const filterLabel = (S.searchFilter==='ot')?' · Old Testament':(S.searchFilter==='nt')?' · New Testament':'';
   const bookLabel   = S._bookFilter ? ` · ${S._bookFilter}` : '';
   const capNote = (S._searchResults||[]).length>=500 ? ' · up to 8 per book' : '';
+  const pageNote = totalPages > 1 ? ` · page ${curPage} of ${totalPages}` : '';
 
   if (startIdx===0) {
-    el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${total}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${cleaned}</strong>"</div>`;
+    el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${total.toLocaleString()}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${cleaned}</strong>"${pageNote}</div>`;
   } else {
     const old = el.querySelector('button');
     if(old) old.remove();
@@ -3120,11 +3121,20 @@ function renderSearchPage(startIdx){
     el.insertAdjacentHTML('beforeend', `<div class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')"><div class="rc-ref">${r.ref}</div><div class="rc-txt">${hi}</div></div>`);
   });
 
-  const remaining = total - startIdx - PAGE;
-  if (remaining > 0) {
-    el.insertAdjacentHTML('beforeend', `<button onclick="renderSearchPage(${startIdx+PAGE})" style="width:100%;margin-top:8px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer">Show more · ${remaining} remaining</button>`);
-  } else if (startIdx > 0) {
-    el.insertAdjacentHTML('beforeend', `<div class="s-end" style="text-align:center;font-size:12px;color:var(--text-m);padding:8px">— All ${total} results shown —</div>`);
+  // Page navigation chips
+  if(totalPages > 1){
+    const visPages = [];
+    for(let p = 1; p <= totalPages; p++){
+      if(p === 1 || p === totalPages || Math.abs(p - curPage) <= 2) visPages.push(p);
+      else if(visPages[visPages.length-1] !== '…') visPages.push('…');
+    }
+    const pagerHTML = `<div style="display:flex;gap:6px;flex-wrap:wrap;padding:10px 0 4px;align-items:center">
+      ${visPages.map(p => p==='…'
+        ? `<span style="color:var(--text-m);font-size:13px">…</span>`
+        : `<button onclick="renderSearchPage(${(p-1)*PAGE})" style="background:${p===curPage?'var(--gold)':'var(--surface)'};color:${p===curPage?'var(--bg)':'var(--text-d)'};border:1px solid ${p===curPage?'var(--gold)':'var(--border)'};border-radius:6px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer;min-width:36px">P${p}</button>`
+      ).join('')}
+    </div>`;
+    el.insertAdjacentHTML('beforeend', pagerHTML);
   }
 }
 
