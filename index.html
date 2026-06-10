@@ -806,6 +806,16 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   color:var(--text-d);border-radius:8px;padding:6px;font-size:12px;
   font-weight:600;cursor:pointer;transition:all .15s;text-align:center}
 .sf-btn.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+
+/* ── Search book strip ── */
+#s-book-strip{display:flex;gap:6px;overflow-x:auto;padding:4px 0 8px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-shrink:0}
+#s-book-strip::-webkit-scrollbar{display:none}
+.s-bchip{flex-shrink:0;background:var(--surface);border:1px solid var(--border);
+  color:var(--text-d);border-radius:12px;padding:4px 10px;font-size:12px;
+  cursor:pointer;white-space:nowrap;transition:all .15s;line-height:1.4}
+.s-bchip.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.s-bchip-n{font-size:10px;opacity:.7;margin-left:2px}
 </style>
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
@@ -935,6 +945,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
           <button class="sf-btn" onclick="setSearchFilter('ot')">Old Testament</button>
           <button class="sf-btn" onclick="setSearchFilter('nt')">New Testament</button>
         </div>
+        <div id="s-book-strip" style="display:none"></div>
         <div id="s-results"><div id="s-status">Enter a word, phrase, or reference (e.g. Matthew 24:24)</div></div>
       </div>
 
@@ -2883,6 +2894,7 @@ function setSearchFilter(f){
   // Re-run current search with new filter
   const inp = document.getElementById('s-input') || document.querySelector('#search-panel input');
   if(inp && inp.value.trim().length >= 2) doSearch(inp.value.trim());
+  else { renderBookStrip(); renderSearchPage(0); }
 }
 
 function isOT(bookName){ return BOOKS.indexOf(bookName) < 39; }
@@ -2902,6 +2914,8 @@ function handleSearch(q) {
     return;
   }
   document.getElementById('s-results').innerHTML = '<div id="s-status">Searching…</div>';
+  const strip = document.getElementById('s-book-strip');
+  if(strip) strip.style.display = 'none';
   sTimer = setTimeout(() => doSearch(raw), 350);
 }
 
@@ -2953,14 +2967,15 @@ async function doSearch(raw) {
   if (searchOn.length === 0) { el.innerHTML = '<div id="s-status">Please enter a search term</div>'; return; }
 
   const results = [];
-  const MAX = 100;
+  const MAX = 500;
+  const PER_BOOK = 8; // cap per book so common words spread across the Bible
 
   for (const bookName of BOOKS) {
     if (results.length >= MAX) break;
     if (!passesFilter(bookName)) continue;
     const data = await fetchBook(bookName);
     if (!data) continue;
-
+    let bookCount = 0;
     for (const ch of data.chapters) {
       for (const v of ch.verses) {
         const txt = v.text.toLowerCase();
@@ -2973,10 +2988,11 @@ async function doSearch(raw) {
             score: searchOn.filter(w => wordMatches(txt, w)).length
               + (txt.includes(lower.slice(0,20)) ? 5 : 0)
           });
-          if (results.length >= MAX) break;
+          bookCount++;
+          if (results.length >= MAX || bookCount >= PER_BOOK) break;
         }
       }
-      if (results.length >= MAX) break;
+      if (results.length >= MAX || bookCount >= PER_BOOK) break;
     }
   }
 
@@ -2987,17 +3003,82 @@ async function doSearch(raw) {
     return;
   }
 
-  const reStr = searchOn.map(w => (KJV_VARIANTS[w]||[w]).concat([w]).map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')).join('|');
-  const re    = new RegExp(`(${reStr})`, 'gi');
-  const filterLabel = S.searchFilter==='ot' ? ' · Old Testament' : S.searchFilter==='nt' ? ' · New Testament' : '';
-
-  el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${results.length}${results.length>=MAX?'+':''} result${results.length!==1?'s':''}${filterLabel} for "<strong style="color:var(--gold)">${cleaned}</strong>"</div>`
-    + results.map(r => `<div class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')">
-        <div class="rc-ref">${r.ref}</div>
-        <div class="rc-txt">${r.txt.replace(re,'<mark>$1</mark>')}</div>
-      </div>`).join('');
+  S._searchResults = results;
+  S._searchQuery   = cleaned;
+  S._bookFilter    = null; // reset filter on new search
+  renderBookStrip();
+  renderSearchPage(0);
 }
 
+function renderBookStrip(){
+  const strip = document.getElementById('s-book-strip');
+  if(!strip) return;
+  const results = S._searchResults || [];
+  if(!results.length){ strip.style.display='none'; return; }
+
+  // Count occurrences per book
+  const counts = {};
+  results.forEach(r => { counts[r.book] = (counts[r.book]||0) + 1; });
+  const books = Object.keys(counts);
+  if(books.length <= 1){ strip.style.display='none'; return; }
+
+  strip.style.display = 'flex';
+  strip.innerHTML =
+    `<span class="s-bchip on" onclick="setBookFilter(null)">All<span class="s-bchip-n">${results.length}</span></span>` +
+    books.map(b =>
+      `<span class="s-bchip" onclick="setBookFilter('${b.replace(/'/g,"\\'")}')"><span>${b}</span><span class="s-bchip-n">${counts[b]}</span></span>`
+    ).join('');
+}
+
+function setBookFilter(book){
+  S._bookFilter = book;
+  // Update chip active state
+  document.querySelectorAll('.s-bchip').forEach(c => {
+    const name = c.querySelector('span')?.textContent;
+    c.classList.toggle('on', book === null ? name==='All' : name===book);
+  });
+  renderSearchPage(0);
+}
+
+function renderSearchPage(startIdx){
+  const el      = document.getElementById('s-results');
+  const results = S._searchResults || [];
+  const filtered = S._bookFilter ? results.filter(r => r.book === S._bookFilter) : results;
+  const cleaned = S._searchQuery  || '';
+  const PAGE    = 25;
+  const page    = filtered.slice(startIdx, startIdx + PAGE);
+  const total   = filtered.length;
+  const MAX     = 500;
+
+  const sw = cleaned.toLowerCase().replace(/[?!.,;:'"]+/g,'').split(/\s+/).filter(w=>w.length>=2&&!STOP.has(w));
+  const reStr = sw.length ? sw.map(w=>(KJV_VARIANTS[w]||[w]).concat([w]).map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')).join('|') : null;
+  const re = reStr ? new RegExp(`(${reStr})`, 'gi') : null;
+
+  const filterLabel = (S.searchFilter==='ot')?' · Old Testament':(S.searchFilter==='nt')?' · New Testament':'';
+  const bookLabel   = S._bookFilter ? ` · ${S._bookFilter}` : '';
+  const capNote = (S._searchResults||[]).length>=500 ? ' · up to 8 per book' : '';
+
+  if (startIdx===0) {
+    el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${total}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${cleaned}</strong>"</div>`;
+  } else {
+    const old = el.querySelector('button');
+    if(old) old.remove();
+    const oldEnd = el.querySelector('.s-end');
+    if(oldEnd) oldEnd.remove();
+  }
+
+  page.forEach(r => {
+    const hi = re ? r.txt.replace(re,'<mark>$1</mark>') : r.txt;
+    el.insertAdjacentHTML('beforeend', `<div class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')"><div class="rc-ref">${r.ref}</div><div class="rc-txt">${hi}</div></div>`);
+  });
+
+  const remaining = total - startIdx - PAGE;
+  if (remaining > 0) {
+    el.insertAdjacentHTML('beforeend', `<button onclick="renderSearchPage(${startIdx+PAGE})" style="width:100%;margin-top:8px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer">Show more · ${remaining} remaining</button>`);
+  } else if (startIdx > 0) {
+    el.insertAdjacentHTML('beforeend', `<div class="s-end" style="text-align:center;font-size:12px;color:var(--text-m);padding:8px">— All ${total} results shown —</div>`);
+  }
+}
 
 /* ════ KJV DICTIONARY ════ */
 
