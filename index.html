@@ -816,6 +816,27 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   cursor:pointer;white-space:nowrap;transition:all .15s;line-height:1.4}
 .s-bchip.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 .s-bchip-n{font-size:10px;opacity:.7;margin-left:2px}
+
+/* ── Chapter picker ── */
+#ch-picker{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:310;
+  display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(5px)}
+#ch-picker.on{display:flex}
+#ch-picker-inner{background:var(--bg2);border:1px solid var(--border);
+  border-radius:18px 18px 0 0;width:100%;max-width:700px;
+  max-height:72vh;display:flex;flex-direction:column;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+#ch-picker-hdr{display:flex;align-items:center;padding:14px 16px 10px;
+  border-bottom:1px solid var(--border);flex-shrink:0}
+#ch-picker-book{font-family:'IM Fell English',serif;font-size:18px;
+  color:var(--gold);flex:1;text-align:center}
+#ch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;
+  padding:12px 14px 16px;overflow-y:auto}
+.ch-num-btn{background:var(--surface);border:1px solid var(--border);
+  color:var(--text-d);border-radius:7px;padding:10px 4px;text-align:center;
+  font-size:14px;font-weight:600;cursor:pointer;transition:all .12s}
+.ch-num-btn.cur{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.ch-num-btn:active{opacity:.6}
+#reader-loc{cursor:pointer}
 </style>
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
@@ -891,7 +912,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <!-- READER -->
   <div class="screen" id="screen-reader">
     <div id="reader-topbar">
-      <div id="reader-loc" onclick="goToChapters()"></div>
+      <div id="reader-loc" onclick="openChPicker()" title="Jump to chapter"></div>
     </div>
     <div id="parallel-strip">
       <span class="par-lbl">⇄ Parallels</span>
@@ -1146,6 +1167,17 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- CHAPTER PICKER -->
+<div id="ch-picker" onclick="if(event.target===this)closeChPicker()">
+  <div id="ch-picker-inner">
+    <div id="ch-picker-hdr">
+      <div id="ch-picker-book"></div>
+      <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;padding:0 4px" onclick="closeChPicker()">✕</button>
+    </div>
+    <div id="ch-grid"></div>
   </div>
 </div>
 
@@ -1921,8 +1953,8 @@ function openNote(){document.getElementById('note-area').value=S.notes[S.popRef]
 function cancelNote(){document.getElementById('note-area-wrap').classList.remove('on');}
 function saveNote(){const t=document.getElementById('note-area').value.trim();if(t)S.notes[S.popRef]=t;else delete S.notes[S.popRef];LS.set('kjv_notes',S.notes);cancelNote();refreshVBlock(S.popRef);}
 function openNoteChip(e,ref){e.stopPropagation();openVPop(ref,document.querySelector(`[data-ref="${ref}"] .vtxt`).textContent);setTimeout(openNote,50);}
-function copyVerse(){const t=`"${S.popTxt}" — ${S.popRef} (KJV)`;navigator.clipboard?.writeText(t);}
-function shareVerse(){const t=`"${S.popTxt}"\n— ${S.popRef} (KJV)`;if(navigator.share)navigator.share({title:'Bible Verse',text:t});else navigator.clipboard?.writeText(t);}
+function copyVerse(){const t=`${S.popRef}  ${S.popTxt}`;navigator.clipboard?.writeText(t);}
+function shareVerse(){const t=`${S.popRef}  ${S.popTxt}`;if(navigator.share)navigator.share({title:'Bible Verse',text:t});else navigator.clipboard?.writeText(t);}
 function singleScreenshot(){S.scrVerses=[{ref:S.popRef,vnum:S.popRef.split(':')[1],txt:S.popTxt}];closePop();openScrOverlay(S.scrVerses,S.popRef);}
 
 function refreshVBlock(ref){
@@ -2837,8 +2869,8 @@ const STOP = new Set(['the','a','an','and','or','but','in','on','of','to','for',
 
 /* Try to parse query as Bible reference */
 function parseReference(raw) {
-  // Strip punctuation like ? ! . from query
-  const q = raw.trim().replace(/[?!.,;]+$/, '');
+  // Normalize: strip trailing punctuation, collapse spaces around : and -
+  const q = raw.trim().replace(/[?!.,;]+$/,'').replace(/\s*[:.:]\s*/g,':').replace(/\s*[-–]\s*/g,'-');
   // Match: book + chapter + optional verse + optional verse-end range
   const m = q.match(/^(\d\s+)?([a-zA-Z][a-zA-Z ]{1,18}?)\s+(\d{1,3})\s*(?:[:.]\s*(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?)?$/i);
   if (!m) return null;
@@ -2861,17 +2893,43 @@ function parseReference(raw) {
   return { book, chIdx: chapter - 1, verse, verseEnd };
 }
 
-// KJV variant expansion — searching "brother" also matches "brethren" etc.
+// KJV variant expansion — modern→KJV and KJV→modern equivalents
 const KJV_VARIANTS = {
-  'brother':['brother','brethren'],'brethren':['brother','brethren'],
-  'thee':['thee','thou'],'thou':['thee','thou'],
-  'thy':['thy','your'],'ye':['ye','you'],
-  'hath':['hath','have'],'doth':['doth','does'],
-  'saith':['saith','say','said'],'spake':['spake','spoke'],
+  // Pronouns
+  'thee':['thee','thou','you'],'thou':['thee','thou','you'],
+  'thy':['thy','your'],'thine':['thine','your','yours'],
+  'ye':['ye','you'],'you':['you','ye','thee','thou'],
+  'yourself':['yourself','thyself'],'thyself':['thyself','yourself'],
+  // KJV verb forms
+  'hath':['hath','have','has'],'have':['have','hath','has'],
+  'has':['has','hath','have'],
+  'doth':['doth','does','do'],'doest':['doest','do','does'],
+  'saith':['saith','say','said','says'],'said':['said','saith'],
+  'spake':['spake','spoke','speak'],'spoke':['spoke','spake'],
   'wilt':['wilt','will'],'shalt':['shalt','shall'],
-  'knoweth':['knoweth','know','knows'],'believeth':['believeth','believe','believes'],
-  'loveth':['loveth','love','loves'],'cometh':['cometh','come','comes'],
-  'goeth':['goeth','go','goes'],'giveth':['giveth','give','gives'],
+  'art':['art','are'],'wast':['wast','was'],
+  'canst':['canst','can'],'wouldest':['wouldest','would'],
+  // Show/shew
+  'show':['show','shew'],'shew':['shew','show','showed','shown'],
+  'showing':['showing','shewing'],'shewing':['shewing','showing'],
+  // Know/believe/love variants
+  'knoweth':['knoweth','know','knows'],'know':['know','knoweth','knew'],
+  'believeth':['believeth','believe','believes'],'believe':['believe','believeth'],
+  'loveth':['loveth','love','loves'],'love':['love','loveth','loved'],
+  'cometh':['cometh','come','comes'],'goeth':['goeth','go','goes'],
+  'giveth':['giveth','give','gives'],'giveth':['giveth','give','gives'],
+  'seeketh':['seeketh','seek','seeks'],'keepeth':['keepeth','keep','keeps'],
+  'doeth':['doeth','do','does'],
+  // Common KJV terms
+  'brethren':['brethren','brother','brothers'],
+  'brother':['brother','brethren'],
+  'approved':['approved','approveth'],
+  'approved':['approved','approveth'],
+  'study':['study','studieth'],
+  // Modern → archaic
+  'ask':['ask','asketh'],'asked':['asked','asketh'],
+  'sent':['sent','sendeth'],'send':['send','sendeth'],
+  'speak':['speak','spake','spoken','speaketh'],
 };
 
 /* Fuzzy word match with KJV variant support */
@@ -2991,6 +3049,17 @@ async function doSearch(raw) {
         const txt = v.text.toLowerCase();
         if (searchOn.every(w => wordMatches(txt, w))) {
           bookCount++;
+          // Proximity boost: keywords appearing close together score higher
+          let proxBoost = 0;
+          if (searchOn.length > 1) {
+            const pos = searchOn.map(w => {
+              const vars = KJV_VARIANTS[w] || [w];
+              for(const vv of vars){ const i = txt.indexOf(vv); if(i>=0) return i; }
+              return txt.length;
+            });
+            const span = Math.max(...pos) - Math.min(...pos);
+            proxBoost = span < 30 ? 8 : span < 60 ? 4 : span < 100 ? 2 : 0;
+          }
           // Store all results
           S._searchResults.push({
               ref: `${bookName} ${ch.chapter}:${v.verse}`,
@@ -2998,6 +3067,7 @@ async function doSearch(raw) {
               book: bookName,
               score: searchOn.filter(w => wordMatches(txt, w)).length
                 + (txt.includes(lower.slice(0,20)) ? 5 : 0)
+                + proxBoost
             });
         }
       }
@@ -4873,6 +4943,35 @@ openVPop = function(ref, txt){
   _origOpenVPop(ref, txt);
   updateVpopClipBtn();
 };
+
+/* ════ CHAPTER PICKER ════ */
+function openChPicker(){
+  if(!S.bookData) return;
+  document.getElementById('ch-picker-book').textContent = S.book;
+  const n = S.bookData.chapters.length;
+  document.getElementById('ch-grid').innerHTML =
+    Array.from({length:n},(_,i)=>
+      `<div class="ch-num-btn ${i===S.ch?'cur':''}" onclick="jumpToCh(${i})">${i+1}</div>`
+    ).join('');
+  document.getElementById('ch-picker').classList.add('on');
+  history.pushState({modal:'ch-picker'},'','');
+}
+
+function closeChPicker(){
+  document.getElementById('ch-picker').classList.remove('on');
+}
+
+function jumpToCh(idx){
+  closeChPicker();
+  selectCh(idx);
+}
+
+// Handle back button for chapter picker
+window.addEventListener('popstate', function(e){
+  if(document.getElementById('ch-picker').classList.contains('on')){
+    closeChPicker();
+  }
+}, {capture:true});
 
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
