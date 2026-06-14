@@ -1208,6 +1208,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <div id="sp-flame">🔥</div>
     <div id="sp-count"></div>
     <div id="sp-label">day streak</div>
+    <div id="sp-shields"></div>
     <div id="sp-last" style="font-size:11px;color:var(--text-m);margin-bottom:4px"></div>
     <div id="sp-best"></div>
     <div id="sp-milestones"></div>
@@ -3362,30 +3363,53 @@ function yesterdayStr(){
 }
 
 function loadStreak(){
-  S.streak     = LS.get('kjv_streak', 0);
-  S.streakBest = LS.get('kjv_streak_best', 0);
-  S.streakLast = LS.get('kjv_streak_last', '');
+  S.streak         = LS.get('kjv_streak', 0);
+  S.streakBest     = LS.get('kjv_streak_best', 0);
+  S.streakLast     = LS.get('kjv_streak_last', '');
   S.streakMilestones = LS.get('kjv_streak_ms', []);
+  S.streakTokens   = parseInt(LS.get('kjv_streak_tokens', '0')) || 0;
+  S.streakLastTs   = parseInt(LS.get('kjv_streak_ts', '0')) || 0;
   updateStreakBadge();
 }
 
 function recordActivity(){
-  const today = todayStr();
+  const today     = todayStr();
+  const yesterday = yesterdayStr();
+  const now       = Date.now();
+
   if(S.streakLast === today) return; // already counted today
 
-  const yesterday = yesterdayStr();
-  if(S.streakLast === yesterday){
-    S.streak++;                      // consecutive day
+  // Grace window: 26 hours covers timezone edge cases
+  const hoursElapsed = S.streakLastTs ? (now - S.streakLastTs) / 3600000 : 999;
+  const consecutive  = S.streakLast === yesterday || hoursElapsed <= 26;
+
+  if(consecutive){
+    S.streak++;
+  } else if(S.streakTokens > 0){
+    // Auto-use a shield token to protect the streak
+    S.streakTokens--;
+    LS.set('kjv_streak_tokens', S.streakTokens);
+    const left = S.streakTokens;
+    setTimeout(() => showToast(`🛡️ Streak shield used! ${left} shield${left!==1?'s':''} remaining`), 300);
   } else {
-    S.streak = 1;                    // streak broken — start fresh
+    S.streak = 1;
   }
 
-  S.streakLast = today;
+  S.streakLast   = today;
+  S.streakLastTs = now;
   if(S.streak > S.streakBest) S.streakBest = S.streak;
 
   LS.set('kjv_streak', S.streak);
   LS.set('kjv_streak_best', S.streakBest);
   LS.set('kjv_streak_last', S.streakLast);
+  LS.set('kjv_streak_ts', S.streakLastTs.toString());
+
+  // Award a shield token every 7 days (cap at 3)
+  if(S.streak > 0 && S.streak % 7 === 0 && S.streakTokens < 3){
+    S.streakTokens++;
+    LS.set('kjv_streak_tokens', S.streakTokens);
+    setTimeout(() => showToast(`🛡️ Streak shield earned! ${S.streakTokens}/3`), 500);
+  }
 
   updateStreakBadge();
   checkMilestone();
@@ -3419,14 +3443,23 @@ function updateStreakBadge(){
 
 function showStreakInfo(){
   document.getElementById('sp-count').textContent = S.streak;
-  document.getElementById('sp-best').textContent = S.streakBest > S.streak
-    ? `Personal best: ${S.streakBest} days` : S.streakBest > 0
+  document.getElementById('sp-best').textContent = S.streakBest > 0
     ? `Personal best: ${S.streakBest} days` : '';
 
-  // Show last read date for diagnostics
+  // Shield tokens
+  const shieldsEl = document.getElementById('sp-shields');
+  if(shieldsEl){
+    const tokens = S.streakTokens || 0;
+    shieldsEl.innerHTML = `
+      <div style="display:flex;justify-content:center;gap:6px;margin:6px 0 2px">
+        ${Array.from({length:3},(_,i)=>`<span style="font-size:24px;opacity:${i<tokens?1:0.2}">🛡️</span>`).join('')}
+      </div>
+      <div style="font-size:11px;color:var(--text-m);text-align:center">${tokens}/3 shields · earned every 7 days</div>`;
+  }
+
+  // Last read diagnostic
   const lastEl = document.getElementById('sp-last');
-  if(lastEl) lastEl.textContent = S.streakLast
-    ? `Last read: ${S.streakLast}` : '';
+  if(lastEl) lastEl.textContent = S.streakLast ? `Last read: ${S.streakLast}` : '';
 
   const ms = MILESTONES.map(m => `
     <div class="sp-badge ${S.streak >= m.days || S.streakMilestones.includes(m.days) ? 'earned' : ''}">
