@@ -662,20 +662,79 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
 /* ── BOOK CHECKLIST ── */
 #book-checklist{margin-top:18px;border-top:1px solid var(--border);padding-top:14px}
-.bc-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.bc-title{font-family:'IM Fell English',serif;color:var(--gold);font-size:17px;flex:1}
-.bc-count{font-size:12px;color:var(--text-m)}
-.bc-prog{background:var(--border);border-radius:4px;height:6px;margin-bottom:14px;overflow:hidden}
-.bc-fill{background:var(--gold);height:100%;border-radius:4px;transition:width .4s}
-.bc-slabel{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:8px 0 5px;border-bottom:1px solid var(--border);margin-bottom:6px}
-.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:4px}
-.bc-item{display:flex;align-items:center;gap:5px;padding:5px 6px;border-radius:6px;cursor:pointer;transition:background .1s;-webkit-tap-highlight-color:transparent}
-.bc-item:active{background:var(--bg3)}
-.bc-chk{font-size:15px;flex-shrink:0;line-height:1}
-.bc-name{font-family:'Crimson Pro',serif;font-size:13px;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.bc-item.done .bc-name{color:var(--text-m)}
-.bc-share-btn{width:100%;margin-top:12px;background:var(--surface);border:1px solid var(--gold-d);color:var(--gold);border-radius:8px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
-.bc-share-btn:hover{background:var(--bg3)}
+/* ── DAY TOAST ── */
+#day-toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:8px 18px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:500;white-space:nowrap}
+#day-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── PLAN GAMIFICATION ── */
+#plan-nav-banner{display:none;position:sticky;top:0;z-index:50;background:rgba(14,8,0,.92);border-bottom:2px solid var(--gold-d);padding:8px 14px;flex-direction:row;align-items:center;gap:10px;backdrop-filter:blur(4px)}
+#plan-nav-banner.on{display:flex}
+#plan-nav-banner .pnb-label{flex:1;font-size:13px;color:var(--gold);font-family:'Crimson Pro',serif}
+#plan-nav-banner .pnb-next{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer}
+#plan-nav-banner .pnb-close{background:none;border:none;color:var(--text-m);font-size:18px;cursor:pointer;line-height:1;padding:0 4px}
+.plan-complete-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:700;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)}
+.plan-complete-overlay.on{display:flex}
+#plan-complete-modal{background:var(--bg2);border:1px solid var(--gold-d);border-radius:20px;padding:32px 24px;text-align:center;max-width:340px;width:92%;animation:su .25s ease;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.pcm-ico{font-size:52px;margin-bottom:8px}
+.pcm-title{font-family:'IM Fell English',serif;font-size:24px;color:var(--gold);margin-bottom:4px}
+.pcm-reading{font-size:13px;color:var(--text-m);font-family:'Crimson Pro',serif;margin-bottom:14px}
+.pcm-streak-wrap{background:rgba(201,148,58,.1);border:1px solid var(--gold-d);border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.pcm-streak-num{font-size:36px;font-weight:700;color:var(--gold);line-height:1}
+.pcm-streak-lbl{font-size:12px;color:var(--text-m);margin-top:2px}
+.pcm-badges{display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.pcm-badge{display:flex;flex-direction:column;align-items:center;gap:4px}
+.pcm-badge-ico{font-size:32px}
+.pcm-badge-name{font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:center;max-width:60px}
+.pcm-btn{background:var(--gold);color:var(--bg);border:none;border-radius:12px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
+.plans-title{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold);padding:16px 14px 12px;border-bottom:1px solid var(--border)}
+.plan-cards-wrap{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all .15s}
+.plan-card-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.plan-ico{font-size:22px}
+.plan-name{font-family:'IM Fell English',serif;font-size:17px;color:var(--text)}
+.plan-desc{font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif;margin-bottom:10px}
+.plan-start-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;width:100%}
+.ap-header{padding:14px;border-bottom:1px solid var(--border)}
+.ap-title{font-family:'IM Fell English',serif;font-size:19px;color:var(--gold);margin-bottom:8px}
+.ap-prog-bar{height:6px;background:var(--border);border-radius:6px;overflow:hidden;margin-bottom:5px}
+.ap-prog-fill{height:100%;background:var(--gold);border-radius:6px;transition:width .4s}
+.ap-prog-lbl{font-size:12px;color:var(--text-m)}
+.ap-change{background:none;border:1px solid var(--border);color:var(--text-m);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;margin-top:8px}
+.today-card{margin:12px 14px;background:rgba(201,148,58,.08);border:1px solid var(--gold-d);border-radius:14px;padding:14px}
+.today-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.today-reading{font-family:'IM Fell English',serif;font-size:17px;color:var(--text);margin-bottom:10px}
+.today-chs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.ch-pill{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:20px;padding:5px 12px;font-size:13px;cursor:pointer;transition:all .15s;font-family:'Crimson Pro',serif}
+.ch-pill:active{border-color:var(--gold);color:var(--gold)}
+.ch-pill.done{background:rgba(76,175,80,.12);border-color:rgba(76,175,80,.4);color:var(--text-m)}
+.today-complete-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer}
+.today-complete-btn.done{background:rgba(76,175,80,.2);color:var(--text-m);cursor:default}
+.plan-section-hdr{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:12px 14px 6px}
+.plan-ch-grid{padding:0 14px 14px;display:flex;flex-wrap:wrap;gap:6px}
+.plan-ch-tile{min-width:52px;padding:8px 8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--text-d);cursor:pointer;text-align:center;transition:all .15s;font-family:'Crimson Pro',serif;line-height:1.3}
+.plan-ch-tile.done{background:rgba(76,175,80,.1);border-color:rgba(76,175,80,.35);color:var(--text-m)}
+.plan-ch-tile.today{border-color:var(--gold-d);background:rgba(201,148,58,.12);color:var(--gold);font-weight:700}
+.day-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.day-row.today{background:var(--bg3)}
+.day-num{font-size:11px;color:var(--text-m);width:48px;flex-shrink:0}
+.day-label{flex:1;font-family:'Crimson Pro',serif;font-size:15px;color:var(--text)}
+.day-check{font-size:16px;flex-shrink:0}
+.day-row.completed .day-label{color:var(--text-m)}
+.day-row.today .day-num{color:var(--gold);font-weight:700}
+.plan-streak-bar{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.psb-fire{font-size:24px}
+.psb-info{flex:1}
+.psb-streak{font-size:22px;font-weight:700;color:var(--gold);line-height:1}
+.psb-lbl{font-size:11px;color:var(--text-m);margin-top:1px}
+.psb-best{font-size:11px;color:var(--text-m);text-align:right}
+.plan-badges-section{padding:12px 14px}
+.pbs-hdr{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-bottom:10px}
+.plan-badge-grid{display:flex;flex-wrap:wrap;gap:10px}
+.plan-badge{display:flex;flex-direction:column;align-items:center;gap:3px;width:58px}
+.plan-badge-ico{font-size:24px;filter:grayscale(1) opacity(.3);transition:filter .3s}
+.plan-badge-ico.earned{filter:none}
+.plan-badge-lbl{font-size:9px;color:var(--text-m);text-align:center;line-height:1.2}
+.plan-badge-lbl.earned{color:var(--gold)}
 
 /* Checklist screenshot overlay */
 #cl-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:510;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;backdrop-filter:blur(8px)}
@@ -1015,6 +1074,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <div id="reader-body">
       <div id="ch-title"></div>
       <div id="ch-sub"></div>
+      <div id="plan-nav-banner">
+        <span class="pnb-label" id="pnb-label"></span>
+        <button class="pnb-next" id="pnb-next-btn"></button>
+        <button class="pnb-close" onclick="dismissPlanBanner()">✕</button>
+      </div>
       <div id="verses"></div>
     </div>
   
@@ -1093,6 +1157,22 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 </div>
 
 <div id="day-toast"></div>
+
+<!-- PLAN DAY COMPLETE MODAL -->
+<!-- PLAN DAY COMPLETE MODAL -->
+<div class="plan-complete-overlay" id="plan-complete-modal-wrap" onclick="if(event.target===this)closePlanCompleteModal()">
+  <div id="plan-complete-modal">
+    <div class="pcm-ico" id="pcm-ico">📖</div>
+    <div class="pcm-title" id="pcm-title">Day Complete!</div>
+    <div class="pcm-reading" id="pcm-reading"></div>
+    <div class="pcm-streak-wrap">
+      <div class="pcm-streak-num" id="pcm-streak-num">1</div>
+      <div class="pcm-streak-lbl" id="pcm-streak-lbl">day reading streak</div>
+    </div>
+    <div class="pcm-badges" id="pcm-badges"></div>
+    <button class="pcm-btn" onclick="closePlanCompleteModal()">Keep Reading →</button>
+  </div>
+</div>
 
 <!-- PARALLEL PANEL -->
 <div id="par-panel" onclick="closeParPanel(event)">
@@ -1746,7 +1826,7 @@ async function selectBook(name){
   showScreen('chapters');
 }
 
-function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();planTrackChapter(S.book,i);}
+function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();updatePlanNavBanner();}
 
 /* ════ RENDER READER ════ */
 function renderReader(){
@@ -1803,6 +1883,8 @@ function renderReader(){
   });
   document.getElementById('screen-reader').scrollTop=0;
   updateHeaderState();
+  // Inject plan chapter-done bar if reading from plan
+  injectPlanChapterBar();
 }
 
 /* ════ MULTI-SELECT ════ */
@@ -4135,7 +4217,7 @@ const PLAN_DEFS = {
   biy: { id:'biy',  name:'Bible in a Year', desc:'365 days · 3–4 chapters per day', icon:'📅', days:365 },
 };
 
-// Returns [{bi, ci}] array for a given plan day (0-indexed)
+// Returns [[bi,ci], ...] array for a given plan day (0-indexed)
 function getPlanDayReadings(planId, dayIdx){
   if(planId === 'prov') return [[19, dayIdx]];
   if(planId === 'nt30') return NT30_DAYS[dayIdx] || [];
@@ -4143,7 +4225,6 @@ function getPlanDayReadings(planId, dayIdx){
   return [];
 }
 
-// Human-readable label for a day's reading
 function planDayLabel(planId, dayIdx){
   const readings = getPlanDayReadings(planId, dayIdx);
   const groups = {};
@@ -4157,12 +4238,56 @@ function planDayLabel(planId, dayIdx){
   }).join(', ');
 }
 
-// Plan state helpers
 function loadPlan(){ return LS.get('kjv_active_plan', null); }
-// plan = {id, startDate, done:[], chDone:[]}
-
 function activePlan(){ return loadPlan(); }
 
+/* ── PLAN GAMIFICATION PERSISTENCE ── */
+function planGetProgress(){ return LS.get('kjv_plan_progress', {streak:0,streakLast:'',streakBest:0,dayDates:{},badges:[]}); }
+function planSaveProgress(p){ LS.set('kjv_plan_progress', p); }
+
+/* ── PLAN BADGE DEFINITIONS ── */
+const PLAN_BADGES = [
+  // Streak badges
+  {id:'plan_s3',   ico:'🔥',  name:'3-Day Streak',    desc:'Read 3 days in a row',              check: p => p.streakBest >= 3 },
+  {id:'plan_s7',   ico:'🌟',  name:'Week Streak',      desc:'Read 7 days in a row',              check: p => p.streakBest >= 7 },
+  {id:'plan_s30',  ico:'🏅',  name:'Month Streak',     desc:'Read 30 days in a row',             check: p => p.streakBest >= 30 },
+  // Completion badges
+  {id:'plan_1day', ico:'📖',  name:'First Day',        desc:'Complete your first reading day',   check: p => Object.keys(p.dayDates||{}).length >= 1 },
+  {id:'plan_10',   ico:'📚',  name:'10 Days',          desc:'Complete 10 reading days',          check: p => Object.keys(p.dayDates||{}).length >= 10 },
+  {id:'plan_30',   ico:'🎯',  name:'30 Days',          desc:'Complete 30 reading days',          check: p => Object.keys(p.dayDates||{}).length >= 30 },
+  // Book badges — awarded when all chapters of a book are read via plan
+  {id:'b_matthew', ico:'✝️',  name:'Matthew',          desc:'Read Matthew via a plan',           check: p => (p.booksRead||[]).includes('Matthew') },
+  {id:'b_john',    ico:'🕊️',  name:'John',             desc:'Read John via a plan',              check: p => (p.booksRead||[]).includes('John') },
+  {id:'b_romans',  ico:'📜',  name:'Romans',           desc:'Read Romans via a plan',            check: p => (p.booksRead||[]).includes('Romans') },
+  {id:'b_psalms',  ico:'🎵',  name:'Psalms',           desc:'Read Psalms via a plan',            check: p => (p.booksRead||[]).includes('Psalms') },
+  {id:'b_proverbs',ico:'🦁',  name:'Proverbs',         desc:'Read Proverbs via a plan',          check: p => (p.booksRead||[]).includes('Proverbs') },
+  {id:'b_genesis', ico:'🌍',  name:'Genesis',          desc:'Read Genesis via a plan',           check: p => (p.booksRead||[]).includes('Genesis') },
+  {id:'b_revelation',ico:'📯',name:'Revelation',       desc:'Read Revelation via a plan',        check: p => (p.booksRead||[]).includes('Revelation') },
+  {id:'b_isaiah',  ico:'📣',  name:'Isaiah',           desc:'Read Isaiah via a plan',            check: p => (p.booksRead||[]).includes('Isaiah') },
+  {id:'plan_nt',   ico:'🌅',  name:'NT Complete',      desc:'Complete the NT in 30 Days plan',   check: p => (p.plansCompleted||[]).includes('nt30') },
+  {id:'plan_biy',  ico:'🏆',  name:'Bible in a Year',  desc:'Complete the Bible in a Year plan', check: p => (p.plansCompleted||[]).includes('biy') },
+  {id:'plan_prov', ico:'🌿',  name:'Wisdom Seeker',    desc:'Complete Proverbs in a Month',      check: p => (p.plansCompleted||[]).includes('prov') },
+];
+
+function planCheckBadges(progress, newBadgesOut){
+  if(!progress.badges) progress.badges = [];
+  PLAN_BADGES.forEach(b => {
+    if(!progress.badges.includes(b.id) && b.check(progress)){
+      progress.badges.push(b.id);
+      if(newBadgesOut) newBadgesOut.push(b);
+    }
+  });
+}
+
+function planRecordBookRead(plan, bi){
+  const progress = planGetProgress();
+  if(!progress.booksRead) progress.booksRead = [];
+  const bookName = BOOKS[bi];
+  if(!progress.booksRead.includes(bookName)) progress.booksRead.push(bookName);
+  planSaveProgress(progress);
+}
+
+/* ── PLAN STATE ── */
 function startPlan(id){
   const plan = {id, startDate: todayStr(), done:[], chDone:[]};
   LS.set('kjv_active_plan', plan);
@@ -4171,35 +4296,124 @@ function startPlan(id){
 }
 
 function getCurrentDay(plan){
-  // First uncompleted day
   const def = PLAN_DEFS[plan.id];
   for(let d=0; d<def.days; d++){
     if(!plan.done.includes(d)) return d;
   }
-  return def.days; // all done
+  return def.days;
 }
 
-function markDayComplete(dayIdx){
+function markDayComplete(dayIdx, silent=false){
   const plan = activePlan();
   if(!plan || plan.done.includes(dayIdx)) return;
   plan.done.push(dayIdx);
   LS.set('kjv_active_plan', plan);
-  // Show toast
-  const toast = document.getElementById('day-toast');
-  const def = PLAN_DEFS[plan.id];
-  toast.textContent = `✓ Day ${dayIdx+1} complete! ${plan.done.length}/${def.days} days`;
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'), 3000);
   recordActivity();
+
+  // Update plan progress streak
+  const progress = planGetProgress();
+  if(!progress.dayDates) progress.dayDates = {};
+  const today = todayStr();
+  const yesterday = yesterdayStr();
+
+  if(!progress.dayDates[dayIdx]){
+    progress.dayDates[dayIdx] = today;
+    // Streak logic
+    if(progress.streakLast === today){
+      // already counted today — no change to streak count
+    } else if(progress.streakLast === yesterday){
+      progress.streak = (progress.streak||0) + 1;
+    } else {
+      progress.streak = 1;
+    }
+    progress.streakLast = today;
+    if((progress.streak||0) > (progress.streakBest||0)) progress.streakBest = progress.streak;
+  }
+
+  // Check if all chapters of any book are now done via plan
+  const def = PLAN_DEFS[plan.id];
+  const allChDone = new Set(plan.chDone.map(k => k));
+  BOOKS.forEach((bk, bi) => {
+    if((progress.booksRead||[]).includes(bk)) return;
+    // We don't know chapter counts without fetching — check if all plan readings for this book are done
+    const totalInPlan = [];
+    for(let d=0; d<def.days; d++){
+      getPlanDayReadings(plan.id, d).forEach(([b,c]) => { if(b===bi) totalInPlan.push(`${b}:${c}`); });
+    }
+    if(totalInPlan.length > 0 && totalInPlan.every(k => allChDone.has(k))){
+      if(!progress.booksRead) progress.booksRead = [];
+      if(!progress.booksRead.includes(bk)) progress.booksRead.push(bk);
+    }
+  });
+
+  // Check plan completion
+  if(plan.done.length >= def.days){
+    if(!progress.plansCompleted) progress.plansCompleted = [];
+    if(!progress.plansCompleted.includes(plan.id)) progress.plansCompleted.push(plan.id);
+  }
+
+  const newBadges = [];
+  planCheckBadges(progress, newBadges);
+  planSaveProgress(progress);
+
+  if(!silent){
+    showPlanCompleteModal(dayIdx, progress, newBadges);
+  } else {
+    // Fallback simple toast
+    const toast = document.getElementById('day-toast');
+    const planDef = PLAN_DEFS[plan.id];
+    toast.textContent = `✓ Day ${dayIdx+1} complete! ${plan.done.length}/${planDef.days} days`;
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 3000);
+  }
   renderPlansScreen();
 }
 
+function showPlanCompleteModal(dayIdx, progress, newBadges){
+  const streak = progress.streak || 1;
+  const isNewBest = streak > 1 && streak === (progress.streakBest||0);
+
+  document.getElementById('pcm-ico').textContent = newBadges.length ? '🏅' : streak >= 7 ? '🔥' : '📖';
+  document.getElementById('pcm-title').textContent = 'Day Complete!';
+  document.getElementById('pcm-reading').textContent = planDayLabel(activePlan().id, dayIdx);
+  document.getElementById('pcm-streak-num').textContent = streak;
+  document.getElementById('pcm-streak-lbl').textContent =
+    streak === 1 ? 'day streak — keep going!' :
+    isNewBest ? `day streak — new best! 🎉` :
+    streak >= 30 ? `day streak — incredible!` :
+    streak >= 7 ? `day streak — on fire!` :
+    `day reading streak`;
+
+  const badgesEl = document.getElementById('pcm-badges');
+  badgesEl.innerHTML = newBadges.map(b =>
+    `<div class="pcm-badge"><span class="pcm-badge-ico">${b.ico}</span><span class="pcm-badge-name">${b.name}</span></div>`
+  ).join('');
+
+  document.getElementById('plan-complete-modal-wrap').classList.add('on');
+}
+
+function closePlanCompleteModal(){
+  document.getElementById('plan-complete-modal-wrap').classList.remove('on');
+}
+
+/* ── GRACE DAYS per plan ── */
+const PLAN_GRACE = { prov:0, biy:0, nt30:2 };
+
+/* ── PLAN TRACKING (only called from plan navigation, not free reading) ── */
 function planTrackChapter(bookName, chIdx){
   const plan = activePlan();
   if(!plan) return;
   const bi = BOOKS.indexOf(bookName);
   const key = `${bi}:${chIdx}`;
-  if(!plan.chDone.includes(key)) plan.chDone.push(key);
+  if(!plan.chDone) plan.chDone = [];
+  const alreadyDone = plan.chDone.includes(key);
+  if(!alreadyDone) plan.chDone.push(key);
+
+  // Show light toast for individual chapter completion
+  if(!alreadyDone){
+    const chLabel = `${bookName} ${chIdx+1}`;
+    showPlanChToast(`✓ ${chLabel} complete`);
+  }
 
   // Check if current day is now fully read
   const curDay = getCurrentDay(plan);
@@ -4210,26 +4424,239 @@ function planTrackChapter(bookName, chIdx){
     if(allDone) markDayComplete(curDay);
     else LS.set('kjv_active_plan', plan);
   }
+  updatePlanNavBanner();
+  injectPlanChapterBar();
 }
 
-// ── RENDER PLANS SCREEN ──
+function showPlanChToast(msg){
+  // Reuse day-toast for light chapter confirmations
+  const t = document.getElementById('day-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+/* ── CHAPTER DONE BAR (injected at bottom of reader when in plan context) ── */
+function injectPlanChapterBar(){
+  // Remove any existing bar
+  const old = document.getElementById('plan-ch-bar');
+  if(old) old.remove();
+
+  const plan = activePlan();
+  if(!plan || !planNavContext) return;
+
+  const {dayIdx, readings} = planNavContext;
+  const bi = BOOKS.indexOf(S.book);
+  if(bi < 0) return;
+  const key = `${bi}:${S.ch}`;
+  const inPlan = readings.some(([b,c]) => b===bi && c===S.ch);
+  if(!inPlan) return;
+
+  const isDone = (plan.chDone||[]).includes(key);
+  const bar = document.createElement('div');
+  bar.id = 'plan-ch-bar';
+  bar.style.cssText = `padding:18px 14px 28px;text-align:center;border-top:1px solid var(--border);margin-top:16px`;
+
+  if(isDone){
+    // Find next unread in this day
+    const nextUnread = readings.find(([b,c]) => !(plan.chDone||[]).includes(`${b}:${c}`));
+    if(nextUnread){
+      const [nb,nc] = nextUnread;
+      const nextIdx = readings.indexOf(nextUnread);
+      bar.innerHTML = `
+        <div style="font-size:12px;color:var(--text-m);margin-bottom:10px;font-family:'Crimson Pro',serif">✓ Chapter complete — next up:</div>
+        <button onclick="openPlanChapter(${nb},${nc},${dayIdx},${nextIdx})" style="background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%">
+          ${BOOKS[nb]} ${nc+1} →
+        </button>`;
+    } else {
+      bar.innerHTML = `
+        <div style="font-size:14px;color:var(--text-m);font-family:'Crimson Pro',serif;margin-bottom:10px">✅ Day ${dayIdx+1} complete!</div>
+        <button onclick="showScreen('plans');dismissPlanBanner()" style="background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%">
+          ← Back to Plans
+        </button>`;
+    }
+  } else {
+    bar.innerHTML = `
+      <button onclick="markThisChapterDone()" style="background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%">
+        ✓ Mark Chapter Complete
+      </button>
+      <div style="font-size:11px;color:var(--text-m);margin-top:8px">Day ${dayIdx+1} · ${BOOKS[bi]} ${S.ch+1}</div>`;
+  }
+
+  document.getElementById('verses').appendChild(bar);
+}
+
+function markThisChapterDone(){
+  const plan = activePlan();
+  if(!plan || !planNavContext) return;
+  planTrackChapter(S.book, S.ch);
+  // Re-inject bar to show next chapter button
+  injectPlanChapterBar();
+  updatePlanNavBanner();
+}
+
+/* ── PLAN NAV BANNER ── */
+let planNavContext = null;
+
+function openPlanChapter(bi, ci, dayIdx, readingIdx){
+  const plan = activePlan(); if(!plan) return;
+  const bookName = BOOKS[bi];
+  const readings = getPlanDayReadings(plan.id, dayIdx);
+  planNavContext = {dayIdx, readings, currentIdx: readingIdx||0};
+  fetchBook(bookName).then(data=>{
+    if(!data) return;
+    S.book=bookName; S.ch=ci; S.bookData=data;
+    renderReader(); showScreen('reader');
+    recordActivity();
+    updatePlanNavBanner();
+    // Don't auto-mark on open — user must reach end of chapter
+  });
+}
+
+function updatePlanNavBanner(){
+  const banner = document.getElementById('plan-nav-banner');
+  const plan = activePlan();
+  if(!plan || !planNavContext){ banner.classList.remove('on'); return; }
+
+  const {dayIdx, readings} = planNavContext;
+  const bi = BOOKS.indexOf(S.book);
+  const inPlan = readings.some(([b,c]) => b===bi && c===S.ch);
+  if(!inPlan){ banner.classList.remove('on'); return; }
+
+  const isDone = (plan.chDone||[]).includes(`${bi}:${S.ch}`);
+  const dayDone = plan.done.includes(dayIdx);
+  const remaining = readings.filter(([b,c]) => !(plan.chDone||[]).includes(`${b}:${c}`)).length;
+  const label = document.getElementById('pnb-label');
+  const btn = document.getElementById('pnb-next-btn');
+
+  if(dayDone){
+    label.textContent = `✅ Day ${dayIdx+1} complete!`;
+    btn.textContent = '← Plans';
+    btn.onclick = ()=>{ showScreen('plans'); dismissPlanBanner(); };
+  } else {
+    label.textContent = `Day ${dayIdx+1} · ${remaining} chapter${remaining!==1?'s':''} remaining`;
+    btn.textContent = '← Plans';
+    btn.onclick = ()=>{ showScreen('plans'); dismissPlanBanner(); };
+  }
+  banner.classList.add('on');
+}
+
+function dismissPlanBanner(){
+  document.getElementById('plan-nav-banner').classList.remove('on');
+  planNavContext = null;
+}
+
+/* ── MARK DAY COMPLETE ── */
+function markDayComplete(dayIdx, silent=false){
+  const plan = activePlan();
+  if(!plan || plan.done.includes(dayIdx)) return;
+  plan.done.push(dayIdx);
+  LS.set('kjv_active_plan', plan);
+  recordActivity();
+
+  const progress = planGetProgress();
+  if(!progress.dayDates) progress.dayDates = {};
+  const today = todayStr();
+  const yesterday = yesterdayStr();
+  const grace = PLAN_GRACE[plan.id] || 0;
+
+  if(!progress.dayDates[dayIdx]){
+    progress.dayDates[dayIdx] = today;
+
+    if(progress.streakLast === today){
+      // already incremented today
+    } else {
+      // Check if within grace window
+      const lastDate = progress.streakLast;
+      let withinGrace = false;
+      if(grace > 0 && lastDate){
+        const last = new Date(lastDate);
+        const now = new Date(today);
+        const diffDays = Math.round((now - last) / 86400000);
+        withinGrace = diffDays > 0 && diffDays <= grace + 1;
+      }
+      const consecutive = progress.streakLast === yesterday;
+      if(consecutive || withinGrace){
+        progress.streak = (progress.streak||0) + 1;
+      } else {
+        progress.streak = 1;
+      }
+      progress.streakLast = today;
+      if((progress.streak||0) > (progress.streakBest||0)) progress.streakBest = progress.streak;
+    }
+  }
+
+  // Check book completion — any book whose plan readings are all in chDone
+  const def = PLAN_DEFS[plan.id];
+  if(!progress.booksRead) progress.booksRead = [];
+  const allPlanReadings = {};
+  for(let d=0; d<def.days; d++){
+    getPlanDayReadings(plan.id, d).forEach(([b,c])=>{
+      if(!allPlanReadings[b]) allPlanReadings[b]=[];
+      allPlanReadings[b].push(`${b}:${c}`);
+    });
+  }
+  Object.entries(allPlanReadings).forEach(([biStr, keys])=>{
+    const bk = BOOKS[parseInt(biStr)];
+    if(!progress.booksRead.includes(bk) && keys.every(k=>(plan.chDone||[]).includes(k))){
+      progress.booksRead.push(bk);
+    }
+  });
+
+  // Check plan completion
+  if(!progress.plansCompleted) progress.plansCompleted = [];
+  if(plan.done.length >= def.days && !progress.plansCompleted.includes(plan.id)){
+    progress.plansCompleted.push(plan.id);
+  }
+
+  const newBadges = [];
+  planCheckBadges(progress, newBadges);
+  planSaveProgress(progress);
+  renderPlansScreen();
+
+  if(!silent) showPlanCompleteModal(dayIdx, progress, newBadges);
+}
+
+/* ── OPEN PLAN DAY ── */
+function openPlanDay(dayIdx){
+  const plan = activePlan(); if(!plan) return;
+  const readings = getPlanDayReadings(plan.id, dayIdx);
+  if(!readings.length) return;
+  // Jump to first unread chapter, or chapter 1 if all done
+  const firstUnread = readings.findIndex(([b,c]) => !(plan.chDone||[]).includes(`${b}:${c}`));
+  const idx = firstUnread >= 0 ? firstUnread : 0;
+  openPlanChapter(readings[idx][0], readings[idx][1], dayIdx, idx);
+}
+
+function abandonPlan(){
+  if(confirm('Abandon this plan and choose a new one?')){
+    LS.set('kjv_active_plan', null);
+    planNavContext = null;
+    document.getElementById('plan-nav-banner').classList.remove('on');
+    renderPlansScreen();
+  }
+}
 function renderPlansScreen(){
   const el = document.getElementById('plans-inner');
   const plan = activePlan();
+  const progress = planGetProgress();
 
   if(!plan){
-    // Plan selection
     el.innerHTML = `
-      <div style="font-family:'IM Fell English',serif;font-size:20px;color:var(--gold);margin-bottom:14px">Reading Plans</div>
-      ${Object.values(PLAN_DEFS).map(p => `
-        <div class="plan-card">
-          <div class="plan-card-top">
-            <span class="plan-ico">${p.icon}</span>
-            <span class="plan-name">${p.name}</span>
-          </div>
-          <div class="plan-desc">${p.desc}</div>
-          <button class="plan-start-btn" onclick="startPlan('${p.id}')">Start Plan</button>
-        </div>`).join('')}
+      <div class="plans-title">✦ Reading Plans</div>
+      <div class="plan-cards-wrap">
+        ${Object.values(PLAN_DEFS).map(p => `
+          <div class="plan-card">
+            <div class="plan-card-top">
+              <span class="plan-ico">${p.icon}</span>
+              <span class="plan-name">${p.name}</span>
+            </div>
+            <div class="plan-desc">${p.desc}</div>
+            <button class="plan-start-btn" onclick="startPlan('${p.id}')">Begin Plan</button>
+          </div>`).join('')}
+      </div>
+      ${renderPlanProgressSection(progress)}
       <div id="book-checklist"></div>`;
     renderBookChecklist();
     return;
@@ -4240,75 +4667,140 @@ function renderPlansScreen(){
   const pct = Math.round((plan.done.length / def.days) * 100);
   const allDone = curDay >= def.days;
 
-  // Today's chapter pills
-  const todayReadings = allDone ? [] : getPlanDayReadings(plan.id, curDay);
-  const todayPills = todayReadings.map(([bi,ci]) => {
-    const ref = `${BOOKS[bi]} ${ci+1}`;
-    const done = plan.chDone.includes(`${bi}:${ci}`);
-    return `<div class="ch-pill ${done?'done':''}" onclick="openPlanChapter(${bi},${ci})">${done?'✓ ':''}${ref}</div>`;
-  }).join('');
+  // For Proverbs and NT: show full chapter grid. For BIY: show today card + day list.
+  const useGrid = (plan.id === 'prov' || plan.id === 'nt30');
 
-  const todayDone = plan.done.includes(curDay);
+  let mainContent = '';
+
+  if(allDone){
+    mainContent = `<div style="text-align:center;padding:40px 20px;font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">
+      🏆 Plan Complete!<br>
+      <span style="font-size:15px;color:var(--text-m);font-family:'Crimson Pro',serif;display:block;margin-top:8px">Well done — thou good and faithful servant</span>
+    </div>`;
+  } else if(useGrid){
+    // Full chapter grid view
+    if(plan.id === 'prov'){
+      mainContent = `
+        <div class="plan-section-hdr">Proverbs — 31 Chapters</div>
+        <div class="plan-ch-grid">
+          ${Array.from({length:31},(_,i)=>{
+            const done = plan.done.includes(i);
+            const isToday = i === curDay;
+            return `<div class="plan-ch-tile ${done?'done':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
+              ${done?'✓ ':''}Ch ${i+1}
+            </div>`;
+          }).join('')}
+        </div>`;
+    } else {
+      // NT30 — group by day showing reading label
+      mainContent = `
+        <div class="plan-section-hdr">New Testament — 30 Days</div>
+        <div style="padding:0 14px 14px">
+          ${Array.from({length:def.days},(_,i)=>{
+            const done = plan.done.includes(i);
+            const isToday = i === curDay;
+            const label = planDayLabel(plan.id, i);
+            return `<div class="day-row ${done?'completed':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
+              <span class="day-num">Day ${i+1}</span>
+              <span class="day-label">${label}</span>
+              <span class="day-check">${done?'✅':isToday?'📖':''}</span>
+            </div>`;
+          }).join('')}
+        </div>`;
+    }
+  } else {
+    // BIY: today card + full day list
+    const todayReadings = getPlanDayReadings(plan.id, curDay);
+    const todayPills = todayReadings.map(([bi,ci], idx) => {
+      const ref = `${BOOKS[bi]} ${ci+1}`;
+      const done = plan.chDone.includes(`${bi}:${ci}`);
+      return `<div class="ch-pill ${done?'done':''}" onclick="openPlanChapter(${bi},${ci},${curDay},${idx})">${done?'✓ ':''}${ref}</div>`;
+    }).join('');
+    const todayDone = plan.done.includes(curDay);
+
+    mainContent = `
+      <div class="today-card">
+        <div class="today-lbl">✦ Today's Reading</div>
+        <div class="today-reading">Day ${curDay+1} — ${planDayLabel(plan.id, curDay)}</div>
+        <div class="today-chs">${todayPills}</div>
+        <button class="today-complete-btn ${todayDone?'done':''}" onclick="${todayDone?'':' markDayComplete('+curDay+')'}">
+          ${todayDone ? '✓ Day Complete' : '✓ Mark Day Complete'}
+        </button>
+      </div>
+      <div class="plan-section-hdr">All Days</div>
+      <div>
+        ${Array.from({length:def.days},(_,i)=>{
+          const done = plan.done.includes(i);
+          const isToday = i === curDay;
+          const label = planDayLabel(plan.id, i);
+          return `<div class="day-row ${done?'completed':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
+            <span class="day-num">Day ${i+1}</span>
+            <span class="day-label">${label}</span>
+            <span class="day-check">${done?'✅':isToday?'📖':''}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
 
   el.innerHTML = `
-    <div id="active-plan-header">
+    <div class="ap-header">
       <div class="ap-title">${def.icon} ${def.name}</div>
       <div class="ap-prog-bar"><div class="ap-prog-fill" style="width:${pct}%"></div></div>
       <div class="ap-prog-lbl">${plan.done.length} of ${def.days} days complete (${pct}%)</div>
       <button class="ap-change" onclick="abandonPlan()">✕ Change Plan</button>
     </div>
-
-    ${allDone ? `
-      <div style="text-align:center;padding:30px;font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">
-        🏆 Plan Complete!<br>
-        <span style="font-size:14px;color:var(--text-m);font-family:'Crimson Pro',serif">Well done — thou good and faithful servant</span>
-      </div>` : `
-    <div id="today-card">
-      <div class="today-lbl">✦ Today's Reading</div>
-      <div class="today-day">Day ${curDay+1} of ${def.days} — ${planDayLabel(plan.id, curDay)}</div>
-      <div class="today-chs">${todayPills}</div>
-      <button class="today-complete-btn ${todayDone?'done':''}" onclick="${todayDone?'':' markDayComplete('+curDay+')'}">
-        ${todayDone ? '✓ Day Complete' : '✓ Mark Day Complete'}
-      </button>
-    </div>`}
-
-    <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);padding:6px 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px">All Days</div>
-    ${Array.from({length:def.days},(_,i)=>{
-      const done = plan.done.includes(i);
-      const isToday = i === curDay;
-      const label = planDayLabel(plan.id, i);
-      return `<div class="day-row ${done?'completed':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
-        <span class="day-num">Day ${i+1}</span>
-        <span class="day-label">${label}</span>
-        <span class="day-check">${done?'✅':isToday?'📖':''}</span>
-      </div>`;
-    }).join('')}
+    ${mainContent}
+    ${renderPlanProgressSection(progress)}
     <div id="book-checklist"></div>`;
   renderBookChecklist();
 }
 
-function openPlanChapter(bi, ci){
-  const plan = activePlan(); if(!plan) return;
-  const bookName = BOOKS[bi];
-  fetchBook(bookName).then(data => {
-    if(!data) return;
-    S.book=bookName; S.ch=ci; S.bookData=data;
-    renderReader(); showScreen('reader');
-    planTrackChapter(bookName, ci);
-    recordActivity();
-  });
+function renderPlanProgressSection(progress){
+  const streak = progress.streak || 0;
+  const best = progress.streakBest || 0;
+  const total = Object.keys(progress.dayDates||{}).length;
+  if(total === 0 && streak === 0) return '';
+
+  const earnedBadges = PLAN_BADGES.filter(b => (progress.badges||[]).includes(b.id));
+  const unearnedBadges = PLAN_BADGES.filter(b => !(progress.badges||[]).includes(b.id));
+
+  return `
+    <div class="plan-streak-bar">
+      <span class="psb-fire">🔥</span>
+      <div class="psb-info">
+        <div class="psb-streak">${streak} day${streak!==1?'s':''}</div>
+        <div class="psb-lbl">Reading streak · ${total} total days completed</div>
+      </div>
+      <div class="psb-best">Best: ${best}</div>
+    </div>
+    <div class="plan-badges-section">
+      <div class="pbs-hdr">Plan Badges</div>
+      <div class="plan-badge-grid">
+        ${PLAN_BADGES.map(b => {
+          const earned = (progress.badges||[]).includes(b.id);
+          return `<div class="plan-badge" title="${b.desc}">
+            <span class="plan-badge-ico${earned?' earned':''}">${b.ico}</span>
+            <span class="plan-badge-lbl${earned?' earned':''}">${b.name}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
 }
 
 function openPlanDay(dayIdx){
-  // Open first chapter of that day
   const plan = activePlan(); if(!plan) return;
   const readings = getPlanDayReadings(plan.id, dayIdx);
-  if(readings.length) openPlanChapter(readings[0][0], readings[0][1]);
+  // Find first unread chapter, or start from beginning
+  const firstUnread = readings.findIndex(([b,c]) => !plan.chDone.includes(`${b}:${c}`));
+  const idx = firstUnread >= 0 ? firstUnread : 0;
+  if(readings.length) openPlanChapter(readings[idx][0], readings[idx][1], dayIdx, idx);
 }
 
 function abandonPlan(){
   if(confirm('Abandon current plan and choose a new one?')){
     LS.set('kjv_active_plan', null);
+    planNavContext = null;
+    document.getElementById('plan-nav-banner').classList.remove('on');
     renderPlansScreen();
   }
 }
