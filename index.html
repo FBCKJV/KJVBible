@@ -739,7 +739,12 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #mem-prog-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s}
 #mem-prog-lbl{font-size:11px;color:var(--text-m);margin-bottom:2px}
 .mem-cat{margin-bottom:14px}
-.mem-cat-hdr{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.mem-cat-hdr{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.mem-cat-hdr:active{opacity:.7}
+.mem-cat-chevron{font-size:11px;color:var(--text-m);transition:transform .2s;display:inline-block}
+.mem-cat.collapsed .mem-cat-chevron{transform:rotate(-90deg)}
+.mem-cat-body{overflow:hidden;transition:max-height .25s ease}
+.mem-cat.collapsed .mem-cat-body{max-height:0!important}
 .mem-verse-btn{display:flex;align-items:center;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:6px;cursor:pointer;text-align:left;gap:8px;transition:border-color .15s}
 .mem-verse-btn:hover{border-color:var(--gold-d)}
 .mem-verse-ref{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);font-weight:600;flex:1}
@@ -4852,6 +4857,16 @@ function memBack(){
 })();
 
 /* ── SELECT SCREEN ── */
+// Track which categories are collapsed (persisted in LS)
+function memGetCollapsed(){ return new Set(LS.get('kjv_mem_collapsed',[])); }
+function memToggleCat(catKey){
+  const c = memGetCollapsed();
+  c.has(catKey) ? c.delete(catKey) : c.add(catKey);
+  LS.set('kjv_mem_collapsed',[...c]);
+  const el = document.getElementById('memcat-'+catKey);
+  if(el) el.classList.toggle('collapsed', c.has(catKey));
+}
+
 function renderMemSelect(){
   document.getElementById('mem-select').style.display='block';
   document.getElementById('mem-game').style.display='none';
@@ -4859,6 +4874,7 @@ function renderMemSelect(){
   const ms = memGetMastery();
   const stats = memGetStats(ms);
   const refs = ms.refs || {};
+  const collapsed = memGetCollapsed();
 
   const el=document.getElementById('mem-select');
   el.innerHTML=`
@@ -4869,23 +4885,33 @@ function renderMemSelect(){
     <div style="padding:0 14px 8px;display:flex;align-items:center;justify-content:flex-end">
       <div id="mem-streak-chip">✏️ <span class="msc-num">${ms.streak||0}</span> day streak</div>
     </div>
-    ${MEM_VERSES.map(cat=>`
-      <div class="mem-cat">
-        <div class="mem-cat-hdr">${cat.icon} ${cat.cat}</div>
-        ${cat.verses.map(ref=>{
-          const r = refs[ref];
-          const isMastered = r && r.mastered;
-          const isPracticed = r && !r.mastered;
-          const dot = isMastered ? '✅' : isPracticed ? '🔄' : '⬜';
-          const cls = isMastered ? 'mastered' : isPracticed ? 'practiced' : '';
-          const preview = isMastered ? 'mastered ✓' : isPracticed ? `practiced ${r.timesCompleted}×` : 'tap to begin →';
-          return `<button class="mem-verse-btn ${cls}" onclick="startMem('${ref.replace(/'/g,"\\'") }')">
-            <span class="mem-verse-ref">${ref}</span>
-            <span class="mem-verse-preview">${preview}</span>
-            <span class="mem-status-dot">${dot}</span>
-          </button>`;
-        }).join('')}
-      </div>`).join('')}
+    <div style="padding:0 14px">
+    ${MEM_VERSES.map(cat=>{
+      const catKey = cat.cat.replace(/\s+/g,'_');
+      const isCollapsed = collapsed.has(catKey);
+      const catMastered = cat.verses.filter(r=>refs[r]&&refs[r].mastered).length;
+      const catTotal = cat.verses.length;
+      const verses = cat.verses.map(ref=>{
+        const r = refs[ref];
+        const isMastered = r && r.mastered;
+        const isPracticed = r && !r.mastered;
+        const dot = isMastered ? '\u2705' : isPracticed ? '\uD83D\uDD04' : '\u2B1C';
+        const cls = isMastered ? 'mastered' : isPracticed ? 'practiced' : '';
+        const preview = isMastered ? 'mastered \u2713' : isPracticed ? 'practiced '+r.timesCompleted+'\u00D7' : 'tap to begin \u2192';
+        return '<button class="mem-verse-btn '+cls+'" onclick="startMem(\''+ref.replace(/'/g,"\\'")+'\')">'
+          +'<span class="mem-verse-ref">'+ref+'</span>'
+          +'<span class="mem-verse-preview">'+preview+'</span>'
+          +'<span class="mem-status-dot">'+dot+'</span>'
+          +'</button>';
+      }).join('');
+      const ht = isCollapsed ? '0' : (catTotal*60)+'px';
+      const sm = catMastered>0 ? '<span style="font-size:11px;color:var(--text-m)"> '+catMastered+'/'+catTotal+'</span>' : '';
+      return '<div class="mem-cat'+(isCollapsed?' collapsed':'')+'" id="memcat-'+catKey+'">'
+        +'<div class="mem-cat-hdr" onclick="memToggleCat(\''+catKey+'\')"><span>'+cat.icon+' '+cat.cat+sm+'</span><span class="mem-cat-chevron">\u25BE</span></div>'
+        +'<div class="mem-cat-body" style="max-height:'+ht+'">'+verses+'</div>'
+        +'</div>';
+    }).join('')}
+    </div>
     <div class="mem-badge-hdr">Badges</div>
     <div id="mem-badges">
       ${MEM_BADGES.map(b=>{
