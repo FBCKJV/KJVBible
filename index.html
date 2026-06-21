@@ -764,8 +764,8 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #mem-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── BADGE UNLOCK TOAST ── */
-#mem-badge-toast{position:fixed;top:-80px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold-d);border-radius:12px;padding:10px 18px;text-align:center;z-index:600;transition:top .35s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-#mem-badge-toast.show{top:72px}
+#mem-badge-toast{position:fixed;top:-120px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold-d);border-radius:12px;padding:10px 18px;text-align:center;z-index:600;transition:top .35s;box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none}
+#mem-badge-toast.show{top:80px;pointer-events:auto}
 #mem-badge-toast .mbt-ico{font-size:28px}
 #mem-badge-toast .mbt-lbl{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 #mem-badge-toast .mbt-name{font-size:14px;color:var(--text);margin-top:1px}
@@ -4715,14 +4715,16 @@ function memGetStats(ms){
   };
 }
 
-function memRecordComplete(ref, mode){
+function memRecordComplete(ref, mode, elapsed){
   const ms = memGetMastery();
   if(!ms.refs) ms.refs = {};
-  const existing = ms.refs[ref] || { mastered:false, timesCompleted:0, bestMode:null };
+  const existing = ms.refs[ref] || {mastered:false,timesCompleted:0,bestMode:null,bestTimeChallenge:null,bestTimeGuided:null};
   existing.timesCompleted++;
-  if(mode === 'challenge') existing.mastered = true;
-  if(!existing.bestMode || (mode==='challenge' && existing.bestMode!=='challenge')) existing.bestMode = mode;
-  ms.refs[ref] = existing;
+  if(mode==='challenge') existing.mastered=true;
+  if(!existing.bestMode||(mode==='challenge'&&existing.bestMode!=='challenge')) existing.bestMode=mode;
+  const btKey = mode==='challenge'?'bestTimeChallenge':'bestTimeGuided';
+  if(existing[btKey]===null||existing[btKey]===undefined||elapsed<existing[btKey]) existing[btKey]=elapsed;
+  ms.refs[ref]=existing;
 
   // Update mem streak
   const today = new Date().toISOString().slice(0,10);
@@ -4745,6 +4747,7 @@ function memRecordComplete(ref, mode){
       setTimeout(()=>memShowBadgeToast(b), 600);
     }
   });
+  return ms.refs[ref];
 }
 
 /* ── MEMORY STREAK DISPLAY ── */
@@ -4990,19 +4993,28 @@ function resetMem(){
   updateMemDisplay();updateMemProgress();
 }
 
+function fmtTime(s){const m=Math.floor(s/60);return m>0?`${m}m ${s%60}s`:`${s}s`;}
+
 function showMemCongrats(){
   const elapsed = Math.round((Date.now()-M.startTime)/1000);
-  const mins = Math.floor(elapsed/60), secs = elapsed%60;
-  const timeStr = mins>0?`${mins}m ${secs}s`:`${secs}s`;
   const isMastered = M.mode==='challenge';
 
-  // Record in persistence
-  memRecordComplete(M.ref, M.mode);
+  // Record in persistence, get back saved record with best times
+  const rec = memRecordComplete(M.ref, M.mode, elapsed);
+
+  // Build time display: current + best if different
+  const btKey = M.mode==='challenge'?'bestTimeChallenge':'bestTimeGuided';
+  const best = rec[btKey];
+  const isNewBest = best===elapsed && rec.timesCompleted>1 || rec.timesCompleted===1;
+  let timeDisplay = `⏱ ${fmtTime(elapsed)}`;
+  if(rec.timesCompleted>1 && best!==null){
+    timeDisplay += best===elapsed ? ' 🏅 Best!' : `  •  Best: ${fmtTime(best)}`;
+  }
 
   // Populate congrats panel
   document.getElementById('mc-ico').textContent = isMastered?'🏆':'🎉';
   document.getElementById('mc-title').textContent = isMastered?'Verse Mastered!':'Verse Complete!';
-  document.getElementById('mc-time').textContent = `⏱ ${timeStr}`;
+  document.getElementById('mc-time').textContent = timeDisplay;
   document.getElementById('mc-mode-lbl').textContent = M.mode==='guided'?'🔤 Guided':'⬜ Challenge';
   document.getElementById('mc-verse-echo').textContent = `"${M.verseText}" — ${M.ref}`;
   document.getElementById('mc-sub').textContent = isMastered
