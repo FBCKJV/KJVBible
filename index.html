@@ -4887,7 +4887,7 @@ function renderMemSelect(){
     </div>
     <div style="padding:0 14px">
     ${MEM_VERSES.map(cat=>{
-      const catKey = cat.cat.replace(/\s+/g,'_');
+      const catKey = cat.cat.replace(/\s+/g,'_').replace(/'/g,'');
       const isCollapsed = collapsed.has(catKey);
       const catMastered = cat.verses.filter(r=>refs[r]&&refs[r].mastered).length;
       const catTotal = cat.verses.length;
