@@ -719,6 +719,22 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 /* ── MEM OVERLAY ── */
 #mem-overlay{position:fixed;inset:0;background:var(--bg);z-index:520;display:none;flex-direction:column}
 #mem-overlay.on{display:flex}
+#mem-hdr{display:flex;align-items:center;gap:10px;padding:11px 14px;
+  border-bottom:1px solid var(--border);flex-shrink:0;
+  background:linear-gradient(to bottom,var(--bg2),var(--bg))}
+#mem-back{background:var(--surface);border:1px solid var(--border);color:var(--text-d);
+  border-radius:8px;padding:5px 12px;font-size:13px;font-weight:600;
+  cursor:pointer;display:none;font-family:'Inter',sans-serif;flex-shrink:0}
+#mem-back:active{opacity:.7}
+#mem-hdr-center{flex:1;text-align:center}
+#mem-hdr-title{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);line-height:1.2;display:block}
+#mem-hdr-sub{font-family:'Inter',sans-serif;font-size:8.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--text-m);display:block;margin-top:1px}
+#mem-close-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-m);
+  border-radius:8px;padding:5px 11px;font-size:13px;cursor:pointer;
+  flex-shrink:0;font-family:'Inter',sans-serif}
+#mem-close-btn:active{opacity:.7}
+#mem-select{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 /* Inline input */
 .mem-inline-input{
@@ -1260,9 +1276,12 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 <!-- VERSE MEMORY OVERLAY -->
 <div id="mem-overlay">
   <div id="mem-hdr">
-    <button id="mem-back" onclick="memBack()">← Back</button>
-    <div id="mem-hdr-title">✏️ Verse Memory</div>
-    <button id="mem-close-btn" onclick="closeMemorize()">✕</button>
+    <button id="mem-back" onclick="memBack()">&#8592; Back</button>
+    <div id="mem-hdr-center">
+      <span id="mem-hdr-title">⚔ Sword Drill</span>
+      <span id="mem-hdr-sub">Verse Memorization</span>
+    </div>
+    <button id="mem-close-btn" onclick="closeMemorize()">Close ✕</button>
   </div>
 
   <!-- Verse selection -->
@@ -4877,7 +4896,8 @@ function closeMemorize(){
 function memBack(){
   document.getElementById('mem-game').style.display='none';
   document.getElementById('mem-select').style.display='block';
-  document.getElementById('mem-hdr-title').textContent='✏️ Verse Memory';
+  document.getElementById('mem-hdr-title').textContent='⚔ Sword Drill';
+  document.getElementById('mem-hdr-sub').textContent='Verse Memorization';
   document.getElementById('mem-back').style.display='none';
   M.active=null; M.peeking=false;
   renderMemSelect(); // refresh status dots
@@ -5016,6 +5036,7 @@ function tokeniseVerse(text){
 /* ── START ── */
 async function startMem(refStr){
   document.getElementById('mem-hdr-title').textContent=refStr;
+  const sub=document.getElementById('mem-hdr-sub'); if(sub) sub.textContent=M.mode==='challenge'?'Challenge Mode':'Guided Mode';
   document.getElementById('mem-back').style.display='block';
   document.getElementById('mem-select').style.display='none';
   document.getElementById('mem-game').style.display='flex';
