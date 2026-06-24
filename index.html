@@ -4921,11 +4921,10 @@ function renderMemSelect(){
           +'<span class="mem-status-dot">'+dot+'</span>'
           +'</button>';
       }).join('');
-      const ht = isCollapsed ? '0' : (catTotal*60)+'px';
       const sm = catMastered>0 ? '<span style="font-size:11px;color:var(--text-m)"> '+catMastered+'/'+catTotal+'</span>' : '';
       return '<div class="mem-cat'+(!isCollapsed?' open':'')+'" id="memcat-'+catKey+'">'
-        +'<div class="mem-cat-hdr" onclick="memToggleCat(\''+catKey+'\')"><span>'+cat.icon+' '+cat.cat+sm+'</span><span class="mem-cat-chevron">\u25BE</span></div>'
-        +'<div class="mem-cat-body" style="max-height:'+ht+'">'+verses+'</div>'
+        +'<div class="mem-cat-hdr" onclick="memToggleCat(\''+catKey+'\')"><span>'+cat.icon+' '+cat.cat+sm+'</span><span class="mem-cat-chevron">&#9654;</span></div>'
+        +'<div class="mem-cat-body">'+verses+'</div>'
         +'</div>';
     }).join('')}
     </div>
