@@ -1276,6 +1276,14 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
       <!-- Warning -->
       <div class="tips-section">
+        <div class="tips-section-lbl">🔊 Read Aloud</div>
+        <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt">Tap the <strong>🔊 button</strong> in the chapter header to read the current chapter aloud. Each verse highlights gold as it is spoken. Tap again to pause, tap once more to resume.</span></div>
+        <div class="tip-row"><span class="tip-ico">⚡</span><span class="tip-txt">Use the <strong>＋ and － buttons</strong> in the bottom bar to adjust reading speed from 0.5× (slow) to 2.0× (fast). Reading stops automatically when you change chapters or leave the reader.</span></div>
+        <div class="tip-row"><span class="tip-ico">🤖</span><span class="tip-txt"><strong>Android (Chrome):</strong> The app automatically selects a male English voice ("Google UK English Male") when available. No setup needed.</span></div>
+        <div class="tip-row"><span class="tip-ico">🍎</span><span class="tip-txt"><strong>iPhone / iPad:</strong> For a better male reading voice, go to <strong>Settings → Accessibility → Spoken Content → Voices → English</strong> and download <strong>Daniel (UK)</strong> or <strong>Aaron (US)</strong>. The app will use it automatically. Note: Chrome on iOS uses the same voices as Safari — this is an Apple system limitation.</span></div>
+      </div>
+
+      <div class="tips-section">
         <div class="tips-section-lbl">⚠️ Important</div>
         <div class="tip-row"><span class="tip-ico">⚠️</span><span class="tip-txt"><strong>Do not clear your browser cache</strong> for this site — doing so permanently deletes your bookmarks, highlights, notes, reading streak, and plan progress. Your data is stored on your device only</span></div>
       </div>
@@ -5665,8 +5673,28 @@ const TTS={active:false,paused:false,verseIdx:0,verses:[],rate:1.0,voice:null};
 
 function ttsInit(){
   if(!('speechSynthesis' in window)) return;
-  const btn=document.getElementById('tts-btn');
-  if(btn) btn.style.display='block';
+  const btn = document.getElementById('tts-btn');
+  if(btn) btn.style.display = 'block';
+
+  function pickVoice(){
+    const voices = speechSynthesis.getVoices();
+    if(!voices.length) return;
+
+    // Priority: Google UK English Male → any male → en-GB → en (non-female) → default
+    const male = voices.find(v=>v.name.toLowerCase().includes('uk english male'))
+      || voices.find(v=>v.name.toLowerCase().includes('male'))
+      || voices.find(v=>v.lang==='en-GB')
+      || voices.find(v=>v.lang.startsWith('en') && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('samantha') && !v.name.toLowerCase().includes('zira') && !v.name.toLowerCase().includes('salli') && !v.name.toLowerCase().includes('joanna'))
+      || voices.find(v=>v.lang.startsWith('en'))
+      || voices[0];
+
+    TTS.voice = male || null;
+    console.log('TTS voice:', TTS.voice?.name);
+  }
+
+  // Voices may not be ready yet — wait for voiceschanged
+  pickVoice();
+  speechSynthesis.addEventListener('voiceschanged', pickVoice);
 }
 
 function toggleTTS(){
