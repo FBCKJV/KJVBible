@@ -5680,13 +5680,22 @@ function ttsInit(){
     const voices = speechSynthesis.getVoices();
     if(!voices.length) return;
 
-    // Priority: Google UK English Male → any male → en-GB → en (non-female) → default
-    const male = voices.find(v=>v.name.toLowerCase().includes('uk english male'))
-      || voices.find(v=>v.name.toLowerCase().includes('male'))
-      || voices.find(v=>v.lang==='en-GB')
-      || voices.find(v=>v.lang.startsWith('en') && !v.name.toLowerCase().includes('female') && !v.name.toLowerCase().includes('samantha') && !v.name.toLowerCase().includes('zira') && !v.name.toLowerCase().includes('salli') && !v.name.toLowerCase().includes('joanna'))
-      || voices.find(v=>v.lang.startsWith('en'))
-      || voices[0];
+    // Log all available voices for diagnostics
+    const enVoices = voices.filter(v=>v.lang.startsWith('en'));
+    console.log('Available EN voices:', enVoices.map(v=>v.name+'|'+v.lang).join(', '));
+
+    const FEMALE_WORDS = ['female','samantha','zira','salli','joanna','karen','victoria',
+                          'moira','fiona','tessa','allison','ava','susan','kathy','vicki'];
+    const isFemale = v => FEMALE_WORDS.some(w => v.name.toLowerCase().includes(w));
+    const isMale   = v => v.name.toLowerCase().includes('male');
+
+    const male =
+      voices.find(v => v.name === 'Google UK English Male')           ||
+      voices.find(v => v.name === 'Google US English Male')           ||
+      voices.find(v => isMale(v) && v.lang.startsWith('en'))          ||
+      voices.find(v => v.lang.startsWith('en') && !isFemale(v))       ||
+      voices.find(v => v.lang.startsWith('en'))                        ||
+      voices[0];
 
     TTS.voice = male || null;
     const vname = TTS.voice ? TTS.voice.name : 'default';
