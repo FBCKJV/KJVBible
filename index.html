@@ -2354,7 +2354,10 @@ function downloadScreenshot(){
   a.href=document.getElementById('scr-canvas').toDataURL('image/png');
   a.click();
 }
-function closeScrOverlay(e){if(!e||e.target===document.getElementById('scr-overlay'))document.getElementById('scr-overlay').classList.remove('on');}
+function closeScrOverlay(e){
+  const ov = document.getElementById('scr-overlay');
+  if(!e||e.target===ov){ ov.classList.remove('on'); ov.style.zIndex=''; }
+}
 
 /* ════ NAV ════ */
 function prevCh(){
@@ -5492,7 +5495,9 @@ function openSwordCertificate(){
   drawSwordCertificate(canvas);
   const refEl = document.getElementById('scr-ref');
   if(refEl) refEl.textContent = '⚔️ Sword Drill Certificate';
-  document.getElementById('scr-overlay').classList.add('on');
+  const ov = document.getElementById('scr-overlay');
+  ov.style.zIndex = '530'; // above mem-overlay (520)
+  ov.classList.add('on');
   history.pushState({screen:S.screen, modal:'scr'}, '', '');
 }
 
