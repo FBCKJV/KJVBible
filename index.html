@@ -719,9 +719,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 /* ── MEM OVERLAY ── */
 #mem-overlay{position:fixed;inset:0;background:var(--bg);z-index:520;display:none;flex-direction:column}
 #mem-overlay.on{display:flex}
-#mem-select{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
-#mem-game{flex:1;display:none;flex-direction:column;overflow:hidden;position:relative}
-#mem-congrats{display:none;flex-direction:column;align-items:center;gap:10px;padding:24px 16px;text-align:center;flex-shrink:0}
 
 /* Inline input */
 .mem-inline-input{
@@ -737,18 +734,62 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .mem-inline-input.correct{background:rgba(76,175,80,.25);border-color:#4CAF50;animation:mem-flash-ok .35s ease}
 .mem-inline-input.wrong{background:rgba(220,60,60,.25);border-color:#dc3c3c;animation:mem-flash-bad .35s ease}
 
-/* ✔ check button next to inline input (iOS fix) */
-.mem-check-btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  vertical-align:baseline;margin-left:4px;
-  background:var(--gold);color:var(--bg);
-  border:none;border-radius:4px;
-  width:24px;height:22px;font-size:13px;
-  cursor:pointer;flex-shrink:0;line-height:1;
-  touch-action:manipulation;
-}
+.mem-verse-btn.mastered .mem-verse-ref{color:var(--gold)}
+.mc-ico{font-size:36px}
+.mc-title{font-family:'IM Fell English',serif;font-size:22px;color:var(--text)}
+.mc-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:9px 18px;font-size:14px;cursor:pointer;transition:all .15s}
+.mc-btn.primary{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:600}
+.mc-btns{display:flex;gap:10px;justify-content:center;margin-top:4px}
+@keyframes mem-flash-ok{0%{background:rgba(76,175,80,.5)}100%{background:rgba(76,175,80,.25)}}
+@keyframes mem-flash-bad{0%,50%{background:rgba(220,60,60,.35)}100%{background:rgba(220,60,60,.25)}}
 
-/* Category expand/collapse */
+/* ── MEM MASTERY / SELECT ── */
+#mem-select{overflow-y:auto;flex:1}
+#mem-stats-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 4px;font-size:12px;color:var(--text-m)}
+#mem-stats-bar .msb-count{font-weight:700;color:var(--gold)}
+#mem-streak-chip{display:flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 9px;font-size:12px;color:var(--text-d)}
+#mem-streak-chip .msc-num{font-weight:700;color:var(--gold)}
+.mem-verse-btn{position:relative}
+.mem-status-dot{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;line-height:1}
+.mem-verse-btn.practiced .mem-verse-preview{color:var(--text-m)}
+.mem-verse-btn.mastered .mem-verse-ref{color:var(--gold)}
+
+/* ── BADGES PANEL ── */
+#mem-badges{padding:0 14px 14px;display:flex;flex-wrap:wrap;gap:8px}
+.mem-badge-hdr{padding:12px 14px 6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m)}
+.mbadge{display:flex;flex-direction:column;align-items:center;gap:3px;width:64px;cursor:default}
+.mbadge-ico{font-size:26px;filter:grayscale(1) opacity(.35);transition:filter .3s}
+.mbadge-ico.earned{filter:none}
+.mbadge-lbl{font-size:9px;color:var(--text-m);text-align:center;line-height:1.2}
+.mbadge-lbl.earned{color:var(--gold)}
+
+/* ── CONGRATS SCREEN ── */
+.mc-verse-echo{font-family:'Crimson Pro',serif;font-size:17px;line-height:1.65;color:var(--text);padding:12px 16px;background:var(--surface);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;text-align:left;max-width:100%;margin:0 4px}
+.mc-meta{display:flex;gap:12px;font-size:12px;color:var(--text-m);align-items:center}
+.mc-meta span{display:flex;align-items:center;gap:4px}
+.mc-mastered-badge{background:rgba(201,148,58,.15);border:1px solid var(--gold-d);color:var(--gold);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;display:none}
+.mc-mastered-badge.show{display:inline-block}
+
+/* ── CONFETTI CANVAS ── */
+#mem-confetti{position:absolute;inset:0;pointer-events:none;z-index:10}
+
+/* ── IN-GAME STREAK BAR ── */
+#mem-game-streak{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-m);padding:0 14px 6px}
+#mem-game-streak .mgs-fire{font-size:14px}
+#mem-game-streak .mgs-num{font-weight:700;color:var(--gold)}
+
+/* ── SIMPLE TOAST ── */
+#mem-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:8px 18px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:600;white-space:nowrap}
+#mem-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── BADGE UNLOCK TOAST ── */
+#mem-badge-toast{position:fixed;top:-120px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold-d);border-radius:12px;padding:10px 18px;text-align:center;z-index:600;transition:top .35s;box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none}
+#mem-badge-toast.show{top:80px;pointer-events:auto}
+#mem-badge-toast .mbt-ico{font-size:28px}
+#mem-badge-toast .mbt-lbl{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+#mem-badge-toast .mbt-name{font-size:14px;color:var(--text);margin-top:1px}
+
+/* Inline input */
 .mem-cat{margin-bottom:14px}
 .mem-cat-hdr{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
 .mem-cat-hdr:active{opacity:.7}
@@ -768,10 +809,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .mc-btns{display:flex;gap:10px;justify-content:center;margin-top:4px}
 @keyframes mem-flash-ok{0%{background:rgba(76,175,80,.5)}100%{background:rgba(76,175,80,.25)}}
 @keyframes mem-flash-bad{0%,50%{background:rgba(220,60,60,.35)}100%{background:rgba(220,60,60,.25)}}
+#mem-game{display:none;flex-direction:column;overflow:hidden;position:relative}
 #mem-congrats{display:none;flex-direction:column;align-items:center;gap:10px;padding:24px 16px;text-align:center;flex-shrink:0}
 
 /* ── MEM MASTERY / SELECT ── */
-#mem-select{overflow-y:auto;flex:1}
+
 #mem-stats-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 4px;font-size:12px;color:var(--text-m)}
 #mem-stats-bar .msb-count{font-weight:700;color:var(--gold)}
 #mem-streak-chip{display:flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 9px;font-size:12px;color:var(--text-d)}
