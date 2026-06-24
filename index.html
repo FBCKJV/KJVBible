@@ -4878,10 +4878,10 @@ function memToggleCat(catKey){
   const el = document.getElementById('memcat-'+catKey);
   if(!el) return;
   const nowOpen = el.classList.toggle('open');
-  // Persist open/closed state
   const c = memGetCollapsed();
   nowOpen ? c.delete(catKey) : c.add(catKey);
   LS.set('kjv_mem_collapsed',[...c]);
+  if(nowOpen) setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'nearest'}),60);
 }
 
 function renderMemSelect(){
