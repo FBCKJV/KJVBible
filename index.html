@@ -5677,12 +5677,9 @@ function ttsInit(){
   if(btn) btn.style.display = 'block';
 
   function pickVoice(){
+    if(TTS.voice) return;  // already locked in — don't re-pick
     const voices = speechSynthesis.getVoices();
     if(!voices.length) return;
-
-    // Log all available voices for diagnostics
-    const enVoices = voices.filter(v=>v.lang.startsWith('en'));
-    console.log('Available EN voices:', enVoices.map(v=>v.name+'|'+v.lang).join(', '));
 
     const FEMALE_WORDS = ['female','samantha','zira','salli','joanna','karen','victoria',
                           'moira','fiona','tessa','allison','ava','susan','kathy','vicki'];
@@ -5700,7 +5697,8 @@ function ttsInit(){
     TTS.voice = male || null;
     const vname = TTS.voice ? TTS.voice.name : 'default';
     const lbl = document.getElementById('tts-label');
-    if(lbl && !TTS.active) lbl.textContent = '🔊 Voice: ' + vname;
+    if(lbl) lbl.textContent = '🔊 Voice: ' + vname;
+    console.log('TTS voice selected:', vname);
   }
 
   // Voices may not be ready yet — wait for voiceschanged
