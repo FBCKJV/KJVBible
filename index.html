@@ -4988,7 +4988,10 @@ function renderMemSelect(){
     <div style="height:8px"></div>
     ${pack2Block}
     </div>
-    <div class="mem-badge-hdr">Badges</div>
+    <div class="mem-badge-hdr" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Badges</span>
+      <button onclick="openSwordCertificate()" style="background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif">⚔️ Certificate</button>
+    </div>
     <div id="mem-badges">
       ${MEM_BADGES.map(b=>{
         const earned = (ms.badges||[]).includes(b.id);
@@ -5462,7 +5465,161 @@ function repairStreak(){
   showToast('Streak repaired — open any chapter to count today');
 }
 
-/* ════ CHAPTER PICKER ════ */
+/* ════ SWORD DRILL CERTIFICATE ════ */
+function openSwordCertificate(){
+  const canvas = document.getElementById('scr-canvas');
+  drawSwordCertificate(canvas);
+  const refEl = document.getElementById('scr-ref');
+  if(refEl) refEl.textContent = '⚔️ Sword Drill Certificate';
+  document.getElementById('scr-overlay').classList.add('on');
+  history.pushState({screen:S.screen, modal:'scr'}, '', '');
+}
+
+function drawSwordCertificate(canvas){
+  const ms           = memGetMastery();
+  const stats        = memGetStats(ms);
+  const earnedBadges = MEM_BADGES.filter(b=>(ms.badges||[]).includes(b.id));
+  const pack1Done    = PACK1_REFS.every(r=>(ms.refs||{})[r]?.mastered);
+  const pack2Done    = PACK2_REFS.every(r=>(ms.refs||{})[r]?.mastered);
+
+  const W   = 540;
+  const PAD = 44;
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const t   = CARD_THEMES[S.cardTheme||'dark'];
+  const ctx = canvas.getContext('2d');
+
+  // ── Pre-calculate height ──
+  const BADGE_COLS = Math.min(4, Math.max(1, earnedBadges.length));
+  const badgeRows  = earnedBadges.length > 0 ? Math.ceil(earnedBadges.length/BADGE_COLS) : 0;
+  const packLines  = (pack1Done?1:0) + (pack2Done?1:0);
+  const H = 110                  // top padding + header
+    + 44                         // rule + stats line
+    + packLines * 24             // pack completion lines
+    + (ms.streak>0 ? 26 : 0)    // streak
+    + (earnedBadges.length>0 ? 50 + badgeRows*82 : 0)  // badge section
+    + 80;                        // rule + quote + bottom padding
+
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = '200px';
+  canvas.style.height = (200 * H / W) + 'px';
+  ctx.resetTransform();
+  ctx.scale(dpr, dpr);
+
+  // ── Background ──
+  const grd = ctx.createLinearGradient(0,0,W,H);
+  grd.addColorStop(0, t.bg1); grd.addColorStop(1, t.bg2);
+  ctx.fillStyle = grd;
+  rr(ctx,0,0,W,H,18); ctx.fill();
+  ctx.strokeStyle = t.border; ctx.lineWidth = 1.5;
+  rr(ctx,2,2,W-4,H-4,17); ctx.stroke();
+
+  // ── Logo watermark ──
+  if(_logoImg.complete && _logoImg.naturalWidth){
+    const ls = Math.min(W, H) * 0.62;
+    ctx.globalAlpha = 0.07;
+    ctx.drawImage(_logoImg, W/2-ls/2, H/2-ls/2, ls, ls);
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Corners ──
+  drawCorners(ctx, PAD, W, H, t);
+
+  let y = 52;
+  ctx.textAlign = 'center';
+
+  // ── ⚔️ SWORD DRILL header ──
+  ctx.font = '400 13px Georgia,serif';
+  ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
+  ctx.fillText('⚔  SWORD DRILL', W/2, y);
+  ctx.globalAlpha = 1;
+  y += 28;
+
+  ctx.font = 'italic 400 28px "IM Fell English",Georgia,serif';
+  ctx.fillStyle = t.ref;
+  ctx.fillText('Certificate of Achievement', W/2, y);
+  y += 22;
+
+  // Top rule
+  ctx.strokeStyle = t.border; ctx.lineWidth = 1;
+  ctx.globalAlpha = 0.45;
+  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+  ctx.globalAlpha = 1;
+  y += 28;
+
+  // ── Mastery stats ──
+  ctx.font = '400 20px "IM Fell English",Georgia,serif';
+  ctx.fillStyle = t.ref;
+  ctx.fillText(`${stats.mastered} of ${stats.total} verses mastered`, W/2, y);
+  y += 26;
+
+  // ── Pack completions ──
+  if(pack1Done || pack2Done){
+    ctx.font = 'italic 14px Georgia,serif';
+    ctx.fillStyle = t.ref; ctx.globalAlpha = 0.65;
+    if(pack1Done){ ctx.fillText('Foundation Pack Complete', W/2, y); y += 22; }
+    if(pack2Done){ ctx.fillText('Wisdom Pack Complete', W/2, y); y += 22; }
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Streak ──
+  if(ms.streak > 0){
+    ctx.font = 'italic 14px Georgia,serif';
+    ctx.fillStyle = t.ref; ctx.globalAlpha = 0.65;
+    ctx.fillText(`${ms.streak} day memory streak`, W/2, y);
+    ctx.globalAlpha = 1;
+    y += 24;
+  }
+
+  // ── Earned Badges ──
+  if(earnedBadges.length > 0){
+    y += 10;
+    ctx.strokeStyle = t.border; ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.35;
+    ctx.beginPath(); ctx.moveTo(PAD+20,y); ctx.lineTo(W-PAD-20,y); ctx.stroke();
+    ctx.globalAlpha = 1;
+    y += 18;
+
+    ctx.font = '700 10px "Inter",sans-serif';
+    ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
+    ctx.letterSpacing = '0.15em';
+    ctx.fillText('EARNED BADGES', W/2, y);
+    ctx.letterSpacing = '0em';
+    ctx.globalAlpha = 1;
+    y += 18;
+
+    const bW = W / BADGE_COLS;
+    earnedBadges.forEach((b,i)=>{
+      const col = i % BADGE_COLS;
+      const row = Math.floor(i / BADGE_COLS);
+      const bx  = bW * col + bW/2;
+      const by  = y + row * 82;
+      // Icon
+      ctx.font = '30px serif';
+      ctx.fillStyle = t.ref; ctx.globalAlpha = 1;
+      ctx.fillText(b.ico, bx, by + 34);
+      // Name
+      ctx.font = '400 11px Georgia,serif';
+      ctx.fillStyle = t.ref; ctx.globalAlpha = 0.75;
+      ctx.fillText(b.name, bx, by + 52);
+      ctx.globalAlpha = 1;
+    });
+    y += badgeRows * 82 + 8;
+  }
+
+  // ── Bottom rule + Hebrews 4:12 ──
+  y += 8;
+  ctx.strokeStyle = t.border; ctx.lineWidth = 1;
+  ctx.globalAlpha = 0.4;
+  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
+  ctx.globalAlpha = 1;
+  y += 22;
+
+  ctx.font = 'italic 13px "Crimson Pro",Georgia,serif';
+  ctx.fillStyle = t.ref; ctx.globalAlpha = 0.5;
+  ctx.fillText('"...sharper than any twoedged sword"  —  Hebrews 4:12 (KJV)', W/2, y);
+  ctx.globalAlpha = 1;
+}
 function openChPicker(){
   if(!S.bookData) return;
   document.getElementById('ch-picker-book').textContent = S.book;
