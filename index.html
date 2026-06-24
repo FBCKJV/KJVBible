@@ -1169,6 +1169,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div id="mem-hdr">
     <button id="mem-back" onclick="memBack()">← Back</button>
     <div id="mem-hdr-title">✏️ Verse Memory</div>
+    <div id="mem-hdr-stats" style="display:flex;align-items:center;gap:8px;font-size:12px">
+      <span id="mem-mastered-count" style="color:var(--gold)"></span>
+      <span id="mem-streak-chip" style="color:var(--text-m)"></span>
+    </div>
     <button id="mem-close-btn" onclick="closeMemorize()">✕</button>
   </div>
 
@@ -1192,12 +1196,19 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <div id="mem-verse-scroll">
       <div id="mem-verse-text"></div>
       <div id="mem-congrats">
-        <div class="mc-ico">🎉</div>
-        <div class="mc-title">Verse Complete!</div>
-        <div class="mc-sub">Well done — hide it in thine heart</div>
-        <div class="mc-btns">
-          <button class="mc-btn" onclick="resetMem()">↩ Try Again</button>
-          <button class="mc-btn primary" onclick="memBack()">Choose Another</button>
+        <canvas id="mem-confetti" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2"></canvas>
+        <div style="position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px 16px;text-align:center;width:100%">
+          <div class="mc-ico" id="mc-ico">🎉</div>
+          <div class="mc-title" id="mc-title">Verse Complete!</div>
+          <div class="mc-sub" id="mc-sub">Well done — hide it in thine heart</div>
+          <div id="mc-mastered" style="display:none;background:rgba(201,148,58,.15);border:1px solid var(--gold);border-radius:8px;padding:6px 16px;font-size:13px;color:var(--gold);font-weight:700">🏆 Verse Mastered!</div>
+          <div id="mc-time" style="font-size:13px;color:var(--text-m)"></div>
+          <div id="mc-streak-mem" style="font-size:13px;color:var(--gold)"></div>
+          <div id="mc-verse-full" style="font-family:'Crimson Pro',serif;font-style:italic;font-size:16px;color:var(--text);line-height:1.6;background:var(--surface);border-left:3px solid var(--gold);padding:10px 14px;border-radius:4px;text-align:left;max-width:100%;margin-top:4px"></div>
+          <div class="mc-btns">
+            <button class="mc-btn" onclick="resetMem()">↩ Try Again</button>
+            <button class="mc-btn primary" onclick="memBack()">Choose Another</button>
+          </div>
         </div>
       </div>
     </div>
@@ -4634,9 +4645,48 @@ const MEM_VERSES = [
   ]},
 ];
 
-const M = { ref:null,tokens:[],revealed:new Set(),mode:'guided',active:null,peeking:false };
+const M = { ref:null,tokens:[],revealed:new Set(),mode:'guided',active:null,peeking:false,startTime:0 };
 
-function openMemorize(){ document.getElementById('mem-overlay').classList.add('on'); renderMemSelect(); }
+// ── Memory mastery (persisted) ──
+const MEM_BADGES = [
+  {id:'first',  ico:'📖', name:'First Steps',       check:()=>Object.keys(getMastery()).length>=1},
+  {id:'chal',   ico:'⚔️', name:'Challenge Accepted', check:()=>Object.values(getMastery()).some(v=>v.mastered)},
+  {id:'roman',  ico:'✝️', name:'Roman\'s Road',       check:()=>['Romans 3:23','Romans 5:8','Romans 6:23','Romans 10:9','Romans 10:13'].every(r=>getMastery()[r]?.mastered)},
+  {id:'gospel', ico:'🕊️', name:'Gospel Ready',        check:()=>['John 3:16','Acts 4:12','John 14:6','Ephesians 2:8','Acts 16:31','Titus 3:5'].every(r=>getMastery()[r]?.mastered)},
+  {id:'ten',    ico:'💯', name:'Scripture Hidden',    check:()=>Object.values(getMastery()).filter(v=>v.mastered).length>=10},
+  {id:'all',    ico:'🏆', name:'Heart Full',           check:()=>{const m=getMastery();const all=MEM_VERSES.flatMap(c=>c.verses);return all.every(r=>m[r]?.mastered);}},
+];
+function getMastery(){ try{return JSON.parse(localStorage.getItem('kjv_mem_mastery')||'{}')}catch{return{}} }
+function saveMastery(m){ try{localStorage.setItem('kjv_mem_mastery',JSON.stringify(m))}catch{} }
+function getMemStreak(){ return parseInt(localStorage.getItem('kjv_mem_streak')||'0') }
+function getMemStreakDate(){ return localStorage.getItem('kjv_mem_streak_date')||'' }
+function bumpMemStreak(){
+  const today=todayStr(), last=getMemStreakDate();
+  let s=getMemStreak();
+  if(last===today) return; // already counted
+  const d=new Date(); d.setDate(d.getDate()-1);
+  const yes=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  s = last===yes ? s+1 : 1;
+  localStorage.setItem('kjv_mem_streak', s);
+  localStorage.setItem('kjv_mem_streak_date', today);
+  return s;
+}
+function checkMemBadges(){
+  const earned = JSON.parse(localStorage.getItem('kjv_mem_badges')||'[]');
+  MEM_BADGES.forEach(b=>{
+    if(!earned.includes(b.id) && b.check()){
+      earned.push(b.id);
+      localStorage.setItem('kjv_mem_badges', JSON.stringify(earned));
+      showToast(`${b.ico} Badge earned: ${b.name}!`);
+    }
+  });
+}
+
+function openMemorize(){
+  document.getElementById('mem-overlay').classList.add('on');
+  updateMemHdrStats();
+  renderMemSelect();
+}
 function closeMemorize(){ document.getElementById('mem-overlay').classList.remove('on'); M.active=null; M.peeking=false; }
 function memBack(){
   document.getElementById('mem-game').style.display='none';
@@ -4700,6 +4750,7 @@ async function startMem(refStr){
   if(!v)return;
   M.ref=refStr; M.tokens=tokeniseVerse(v.text);
   M.revealed=new Set(); M.active=null; M.peeking=false;
+  M.startTime=Date.now();
   M.mode=document.getElementById('mmb-guided').classList.contains('on')?'guided':'challenge';
   const rb=document.getElementById('mem-reveal-btn');
   if(rb){rb.classList.remove('on');rb.textContent='👁 Show';}
@@ -4839,8 +4890,89 @@ function resetMem(){
 }
 
 function showMemCongrats(){
+  const elapsed = M.startTime ? Math.round((Date.now()-M.startTime)/1000) : 0;
+  const isChallenge = M.mode==='challenge';
+
+  // ── Update mastery ──
+  const mastery = getMastery();
+  const key = M.ref;
+  if(!mastery[key]) mastery[key]={timesCompleted:0,mastered:false,bestTime:null};
+  mastery[key].timesCompleted++;
+  if(elapsed>0 && (!mastery[key].bestTime || elapsed<mastery[key].bestTime))
+    mastery[key].bestTime=elapsed;
+  if(isChallenge) mastery[key].mastered=true;
+  saveMastery(mastery);
+
+  // Bump memory streak
+  const newStreak = bumpMemStreak();
+
+  // Check badges
+  checkMemBadges();
+
+  // ── Update congrats UI ──
   document.getElementById('mem-verse-text').style.display='none';
   document.getElementById('mem-congrats').style.display='flex';
+
+  const ico   = document.getElementById('mc-ico');
+  const title = document.getElementById('mc-title');
+  const sub   = document.getElementById('mc-sub');
+  const mast  = document.getElementById('mc-mastered');
+  const time  = document.getElementById('mc-time');
+  const sChip = document.getElementById('mc-streak-mem');
+  const vFull = document.getElementById('mc-verse-full');
+
+  if(ico)   ico.textContent   = isChallenge ? '🏆' : '🎉';
+  if(title) title.textContent = isChallenge ? 'Verse Mastered!' : 'Verse Complete!';
+  if(sub)   sub.textContent   = isChallenge ? '"Thy word have I hid in mine heart" — Ps 119:11' : 'Well done — hide it in thine heart';
+  if(mast)  mast.style.display = isChallenge ? 'block' : 'none';
+  if(time&&elapsed>0) time.textContent = `Completed in ${elapsed} second${elapsed!==1?'s':''}`;
+  if(sChip&&newStreak) sChip.textContent = `✏️ Memory streak: ${newStreak} day${newStreak!==1?'s':''}🔥`;
+
+  // Full verse text
+  if(vFull && M.tokens.length){
+    vFull.textContent = '"' + M.tokens.map(t=>t.pre+t.word+t.post).join(' ') + '"';
+  }
+
+  // Update header stats
+  updateMemHdrStats();
+
+  // ── Confetti (Challenge mode only) ──
+  if(isChallenge) launchConfetti();
+}
+
+function launchConfetti(){
+  const canvas = document.getElementById('mem-confetti');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * (window.devicePixelRatio||1);
+  canvas.height = canvas.offsetHeight * (window.devicePixelRatio||1);
+  ctx.scale(window.devicePixelRatio||1, window.devicePixelRatio||1);
+  const W = canvas.offsetWidth, H = canvas.offsetHeight;
+  const colors = ['#c9943a','#e8c56a','#ffffff','#4CAF50','#f0e6d0','#8a5e18'];
+  const particles = Array.from({length:80},()=>({
+    x: Math.random()*W, y: -10-Math.random()*20,
+    vx: (Math.random()-0.5)*4, vy: 2+Math.random()*3,
+    size: 4+Math.random()*6,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    rot: Math.random()*360, rv: (Math.random()-0.5)*8,
+    shape: Math.random()>0.5?'rect':'circle',
+  }));
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rv; p.vy+=0.05;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.globalAlpha=Math.max(0,1-frame/90);
+      ctx.fillStyle=p.color;
+      if(p.shape==='rect') ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      else { ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+      ctx.restore();
+    });
+    if(++frame<100) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,W,H);
+  }
+  draw();
 }
 
 function submitMemWord(){}  /* no-op — input bar removed */
