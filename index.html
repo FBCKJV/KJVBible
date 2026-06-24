@@ -662,79 +662,20 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
 /* ── BOOK CHECKLIST ── */
 #book-checklist{margin-top:18px;border-top:1px solid var(--border);padding-top:14px}
-/* ── DAY TOAST ── */
-#day-toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:8px 18px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:500;white-space:nowrap}
-#day-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ── PLAN GAMIFICATION ── */
-#plan-nav-banner{display:none;position:sticky;top:0;z-index:50;background:rgba(14,8,0,.92);border-bottom:2px solid var(--gold-d);padding:8px 14px;flex-direction:row;align-items:center;gap:10px;backdrop-filter:blur(4px)}
-#plan-nav-banner.on{display:flex}
-#plan-nav-banner .pnb-label{flex:1;font-size:13px;color:var(--gold);font-family:'Crimson Pro',serif}
-#plan-nav-banner .pnb-next{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:700;cursor:pointer}
-#plan-nav-banner .pnb-close{background:none;border:none;color:var(--text-m);font-size:18px;cursor:pointer;line-height:1;padding:0 4px}
-.plan-complete-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:700;background:rgba(0,0,0,.7);backdrop-filter:blur(6px)}
-.plan-complete-overlay.on{display:flex}
-#plan-complete-modal{background:var(--bg2);border:1px solid var(--gold-d);border-radius:20px;padding:32px 24px;text-align:center;max-width:340px;width:92%;animation:su .25s ease;box-shadow:0 8px 40px rgba(0,0,0,.6)}
-.pcm-ico{font-size:52px;margin-bottom:8px}
-.pcm-title{font-family:'IM Fell English',serif;font-size:24px;color:var(--gold);margin-bottom:4px}
-.pcm-reading{font-size:13px;color:var(--text-m);font-family:'Crimson Pro',serif;margin-bottom:14px}
-.pcm-streak-wrap{background:rgba(201,148,58,.1);border:1px solid var(--gold-d);border-radius:12px;padding:12px 16px;margin-bottom:12px}
-.pcm-streak-num{font-size:36px;font-weight:700;color:var(--gold);line-height:1}
-.pcm-streak-lbl{font-size:12px;color:var(--text-m);margin-top:2px}
-.pcm-badges{display:flex;gap:12px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
-.pcm-badge{display:flex;flex-direction:column;align-items:center;gap:4px}
-.pcm-badge-ico{font-size:32px}
-.pcm-badge-name{font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:center;max-width:60px}
-.pcm-btn{background:var(--gold);color:var(--bg);border:none;border-radius:12px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%}
-.plans-title{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold);padding:16px 14px 12px;border-bottom:1px solid var(--border)}
-.plan-cards-wrap{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
-.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;transition:all .15s}
-.plan-card-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
-.plan-ico{font-size:22px}
-.plan-name{font-family:'IM Fell English',serif;font-size:17px;color:var(--text)}
-.plan-desc{font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif;margin-bottom:10px}
-.plan-start-btn{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;width:100%}
-.ap-header{padding:14px;border-bottom:1px solid var(--border)}
-.ap-title{font-family:'IM Fell English',serif;font-size:19px;color:var(--gold);margin-bottom:8px}
-.ap-prog-bar{height:6px;background:var(--border);border-radius:6px;overflow:hidden;margin-bottom:5px}
-.ap-prog-fill{height:100%;background:var(--gold);border-radius:6px;transition:width .4s}
-.ap-prog-lbl{font-size:12px;color:var(--text-m)}
-.ap-change{background:none;border:1px solid var(--border);color:var(--text-m);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;margin-top:8px}
-.today-card{margin:12px 14px;background:rgba(201,148,58,.08);border:1px solid var(--gold-d);border-radius:14px;padding:14px}
-.today-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-.today-reading{font-family:'IM Fell English',serif;font-size:17px;color:var(--text);margin-bottom:10px}
-.today-chs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.ch-pill{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:20px;padding:5px 12px;font-size:13px;cursor:pointer;transition:all .15s;font-family:'Crimson Pro',serif}
-.ch-pill:active{border-color:var(--gold);color:var(--gold)}
-.ch-pill.done{background:rgba(76,175,80,.12);border-color:rgba(76,175,80,.4);color:var(--text-m)}
-.today-complete-btn{width:100%;background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer}
-.today-complete-btn.done{background:rgba(76,175,80,.2);color:var(--text-m);cursor:default}
-.plan-section-hdr{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:12px 14px 6px}
-.plan-ch-grid{padding:0 14px 14px;display:flex;flex-wrap:wrap;gap:6px}
-.plan-ch-tile{min-width:52px;padding:8px 8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:12px;color:var(--text-d);cursor:pointer;text-align:center;transition:all .15s;font-family:'Crimson Pro',serif;line-height:1.3}
-.plan-ch-tile.done{background:rgba(76,175,80,.1);border-color:rgba(76,175,80,.35);color:var(--text-m)}
-.plan-ch-tile.today{border-color:var(--gold-d);background:rgba(201,148,58,.12);color:var(--gold);font-weight:700}
-.day-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
-.day-row.today{background:var(--bg3)}
-.day-num{font-size:11px;color:var(--text-m);width:48px;flex-shrink:0}
-.day-label{flex:1;font-family:'Crimson Pro',serif;font-size:15px;color:var(--text)}
-.day-check{font-size:16px;flex-shrink:0}
-.day-row.completed .day-label{color:var(--text-m)}
-.day-row.today .day-num{color:var(--gold);font-weight:700}
-.plan-streak-bar{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.psb-fire{font-size:24px}
-.psb-info{flex:1}
-.psb-streak{font-size:22px;font-weight:700;color:var(--gold);line-height:1}
-.psb-lbl{font-size:11px;color:var(--text-m);margin-top:1px}
-.psb-best{font-size:11px;color:var(--text-m);text-align:right}
-.plan-badges-section{padding:12px 14px}
-.pbs-hdr{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-bottom:10px}
-.plan-badge-grid{display:flex;flex-wrap:wrap;gap:10px}
-.plan-badge{display:flex;flex-direction:column;align-items:center;gap:3px;width:58px}
-.plan-badge-ico{font-size:24px;filter:grayscale(1) opacity(.3);transition:filter .3s}
-.plan-badge-ico.earned{filter:none}
-.plan-badge-lbl{font-size:9px;color:var(--text-m);text-align:center;line-height:1.2}
-.plan-badge-lbl.earned{color:var(--gold)}
+.bc-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bc-title{font-family:'IM Fell English',serif;color:var(--gold);font-size:17px;flex:1}
+.bc-count{font-size:12px;color:var(--text-m)}
+.bc-prog{background:var(--border);border-radius:4px;height:6px;margin-bottom:14px;overflow:hidden}
+.bc-fill{background:var(--gold);height:100%;border-radius:4px;transition:width .4s}
+.bc-slabel{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);padding:8px 0 5px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:4px}
+.bc-item{display:flex;align-items:center;gap:5px;padding:5px 6px;border-radius:6px;cursor:pointer;transition:background .1s;-webkit-tap-highlight-color:transparent}
+.bc-item:active{background:var(--bg3)}
+.bc-chk{font-size:15px;flex-shrink:0;line-height:1}
+.bc-name{font-family:'Crimson Pro',serif;font-size:13px;color:var(--text);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bc-item.done .bc-name{color:var(--text-m)}
+.bc-share-btn{width:100%;margin-top:12px;background:var(--surface);border:1px solid var(--gold-d);color:var(--gold);border-radius:8px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.bc-share-btn:hover{background:var(--bg3)}
 
 /* Checklist screenshot overlay */
 #cl-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:510;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:12px;backdrop-filter:blur(8px)}
@@ -779,91 +720,9 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 /* ── MEM OVERLAY ── */
 #mem-overlay{position:fixed;inset:0;background:var(--bg);z-index:520;display:none;flex-direction:column}
 #mem-overlay.on{display:flex}
-#mem-hdr{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0;gap:8px}
-#mem-hdr-title{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold);flex:1;text-align:center}
-#mem-back{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer}
-#mem-close-btn{background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;line-height:1;padding:4px}
+#mem-select{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #mem-game{flex:1;display:none;flex-direction:column;overflow:hidden;position:relative}
-#mem-game-top{padding:10px 14px 6px;border-bottom:1px solid var(--border);flex-shrink:0}
-#mem-verse-scroll{flex:1;overflow-y:auto;padding:16px 14px}
-#mem-verse-text{font-family:'Crimson Pro',serif;font-size:20px;line-height:2;color:var(--text)}
-.mem-token{display:inline}
-.mem-known{display:inline;color:var(--text)}
-.mem-blank-span{display:inline-block;min-width:24px;border-bottom:2px solid var(--gold-d);color:var(--text-m);cursor:pointer;text-align:center;letter-spacing:.05em;transition:border-color .15s}
-.mem-blank-span:hover{border-color:var(--gold)}
-.mem-mode-row{display:flex;gap:8px;margin-bottom:8px}
-.mem-mode-btn{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:6px 8px;font-size:13px;cursor:pointer;transition:all .15s}
-.mem-mode-btn.on{background:rgba(201,148,58,.18);border-color:var(--gold-d);color:var(--gold);font-weight:600}
-#mem-prog-wrap{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:5px}
-#mem-prog-fill{height:100%;background:var(--gold);border-radius:4px;transition:width .3s}
-#mem-prog-lbl{font-size:11px;color:var(--text-m);margin-bottom:2px}
-.mem-cat{margin-bottom:14px}
-.mem-cat-hdr{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.mem-cat-hdr:active{opacity:.7}
-.mem-cat-chevron{font-size:11px;color:var(--text-m);transition:transform .2s;display:inline-block}
-.mem-cat.collapsed .mem-cat-chevron{transform:rotate(-90deg)}
-.mem-cat-body{overflow:hidden;transition:max-height .25s ease}
-.mem-cat.collapsed .mem-cat-body{max-height:0!important}
-.mem-verse-btn{display:flex;align-items:center;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:6px;cursor:pointer;text-align:left;gap:8px;transition:border-color .15s}
-.mem-verse-btn:hover{border-color:var(--gold-d)}
-.mem-verse-ref{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);font-weight:600;flex:1}
-.mem-verse-preview{font-size:12px;color:var(--text-m)}
-.mem-verse-btn.mastered .mem-verse-ref{color:var(--gold)}
-.mc-ico{font-size:36px}
-.mc-title{font-family:'IM Fell English',serif;font-size:22px;color:var(--text)}
-.mc-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:9px 18px;font-size:14px;cursor:pointer;transition:all .15s}
-.mc-btn.primary{background:var(--gold);color:var(--bg);border-color:var(--gold);font-weight:600}
-.mc-btns{display:flex;gap:10px;justify-content:center;margin-top:4px}
-@keyframes mem-flash-ok{0%{background:rgba(76,175,80,.5)}100%{background:rgba(76,175,80,.25)}}
-@keyframes mem-flash-bad{0%,50%{background:rgba(220,60,60,.35)}100%{background:rgba(220,60,60,.25)}}
 #mem-congrats{display:none;flex-direction:column;align-items:center;gap:10px;padding:24px 16px;text-align:center;flex-shrink:0}
-
-/* ── MEM MASTERY / SELECT ── */
-#mem-select{overflow-y:auto;flex:1}
-#mem-stats-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 4px;font-size:12px;color:var(--text-m)}
-#mem-stats-bar .msb-count{font-weight:700;color:var(--gold)}
-#mem-streak-chip{display:flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:3px 9px;font-size:12px;color:var(--text-d)}
-#mem-streak-chip .msc-num{font-weight:700;color:var(--gold)}
-.mem-verse-btn{position:relative}
-.mem-status-dot{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:13px;line-height:1}
-.mem-verse-btn.practiced .mem-verse-preview{color:var(--text-m)}
-.mem-verse-btn.mastered .mem-verse-ref{color:var(--gold)}
-
-/* ── BADGES PANEL ── */
-#mem-badges{padding:0 14px 14px;display:flex;flex-wrap:wrap;gap:8px}
-.mem-badge-hdr{padding:12px 14px 6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m)}
-.mbadge{display:flex;flex-direction:column;align-items:center;gap:3px;width:64px;cursor:default}
-.mbadge-ico{font-size:26px;filter:grayscale(1) opacity(.35);transition:filter .3s}
-.mbadge-ico.earned{filter:none}
-.mbadge-lbl{font-size:9px;color:var(--text-m);text-align:center;line-height:1.2}
-.mbadge-lbl.earned{color:var(--gold)}
-
-/* ── CONGRATS SCREEN ── */
-#mem-congrats{gap:12px}
-.mc-verse-echo{font-family:'Crimson Pro',serif;font-size:17px;line-height:1.65;color:var(--text);padding:12px 16px;background:var(--surface);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;text-align:left;max-width:100%;margin:0 4px}
-.mc-meta{display:flex;gap:12px;font-size:12px;color:var(--text-m);align-items:center}
-.mc-meta span{display:flex;align-items:center;gap:4px}
-.mc-mastered-badge{background:rgba(201,148,58,.15);border:1px solid var(--gold-d);color:var(--gold);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;display:none}
-.mc-mastered-badge.show{display:inline-block}
-
-/* ── CONFETTI CANVAS ── */
-#mem-confetti{position:absolute;inset:0;pointer-events:none;z-index:10}
-
-/* ── IN-GAME STREAK BAR ── */
-#mem-game-streak{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-m);padding:0 14px 6px}
-#mem-game-streak .mgs-fire{font-size:14px}
-#mem-game-streak .mgs-num{font-weight:700;color:var(--gold)}
-
-/* ── SIMPLE TOAST ── */
-#mem-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:8px 18px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:600;white-space:nowrap}
-#mem-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ── BADGE UNLOCK TOAST ── */
-#mem-badge-toast{position:fixed;top:-120px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--gold-d);border-radius:12px;padding:10px 18px;text-align:center;z-index:600;transition:top .35s;box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none}
-#mem-badge-toast.show{top:80px;pointer-events:auto}
-#mem-badge-toast .mbt-ico{font-size:28px}
-#mem-badge-toast .mbt-lbl{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-#mem-badge-toast .mbt-name{font-size:14px;color:var(--text);margin-top:1px}
 
 /* Inline input */
 .mem-inline-input{
@@ -878,6 +737,40 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .mem-inline-input::placeholder{color:var(--gold-d);font-style:normal}
 .mem-inline-input.correct{background:rgba(76,175,80,.25);border-color:#4CAF50;animation:mem-flash-ok .35s ease}
 .mem-inline-input.wrong{background:rgba(220,60,60,.25);border-color:#dc3c3c;animation:mem-flash-bad .35s ease}
+
+/* ✔ check button next to inline input (iOS fix) */
+.mem-check-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  vertical-align:baseline;margin-left:4px;
+  background:var(--gold);color:var(--bg);
+  border:none;border-radius:4px;
+  width:24px;height:22px;font-size:13px;
+  cursor:pointer;flex-shrink:0;line-height:1;
+  touch-action:manipulation;
+}
+
+/* Category expand/collapse */
+.mem-cat{border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.mem-cat-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px;font-size:15px;font-weight:600;
+  color:var(--gold);cursor:pointer;user-select:none;
+  background:var(--surface);
+}
+.mem-cat-hdr:active{background:var(--bg3)}
+.mem-cat-arrow{font-size:11px;color:var(--text-m);transition:transform .2s}
+.mem-cat.open .mem-cat-arrow{transform:rotate(90deg)}
+.mem-cat-body{display:none;padding:6px 8px 8px}
+.mem-cat.open .mem-cat-body{display:block}
+.mem-verse-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;background:var(--bg);border:1px solid var(--border);
+  border-radius:7px;padding:10px 12px;margin-bottom:5px;
+  cursor:pointer;text-align:left;
+}
+.mem-verse-btn:last-child{margin-bottom:0}
+.mem-verse-ref{font-family:'IM Fell English',serif;font-size:15px;color:var(--text)}
+.mem-verse-preview{font-size:12px;color:var(--text-m);flex-shrink:0}
 
 /* Peek (reveal) mode */
 .mem-peek{color:var(--text-m);font-style:italic;border-bottom:1px dotted var(--text-m);cursor:pointer}
@@ -1074,11 +967,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <div id="reader-body">
       <div id="ch-title"></div>
       <div id="ch-sub"></div>
-      <div id="plan-nav-banner">
-        <span class="pnb-label" id="pnb-label"></span>
-        <button class="pnb-next" id="pnb-next-btn"></button>
-        <button class="pnb-close" onclick="dismissPlanBanner()">✕</button>
-      </div>
       <div id="verses"></div>
     </div>
   
@@ -1158,22 +1046,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
 <div id="day-toast"></div>
 
-<!-- PLAN DAY COMPLETE MODAL -->
-<!-- PLAN DAY COMPLETE MODAL -->
-<div class="plan-complete-overlay" id="plan-complete-modal-wrap" onclick="if(event.target===this)closePlanCompleteModal()">
-  <div id="plan-complete-modal">
-    <div class="pcm-ico" id="pcm-ico">📖</div>
-    <div class="pcm-title" id="pcm-title">Day Complete!</div>
-    <div class="pcm-reading" id="pcm-reading"></div>
-    <div class="pcm-streak-wrap">
-      <div class="pcm-streak-num" id="pcm-streak-num">1</div>
-      <div class="pcm-streak-lbl" id="pcm-streak-lbl">day reading streak</div>
-    </div>
-    <div class="pcm-badges" id="pcm-badges"></div>
-    <button class="pcm-btn" onclick="closePlanCompleteModal()">Keep Reading →</button>
-  </div>
-</div>
-
 <!-- PARALLEL PANEL -->
 <div id="par-panel" onclick="closeParPanel(event)">
   <div id="par-panel-inner">
@@ -1252,7 +1124,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then copy, share, highlight, bookmark, or create a screenshot card</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
         <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The flame badge</strong> in the header tracks your daily reading streak — tap it to see your progress and milestone badges</span></div>
-        <div class="tip-row"><span class="tip-ico">🛡️</span><span class="tip-txt"><strong>Streak shields</strong> are earned automatically every 7 days of consecutive reading (up to 3 held at once) — if you miss a day, a shield is used automatically to protect your streak</span></div>
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
@@ -1260,19 +1131,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
       </div>
 
-
-      <!-- Verse Memory -->
-      <div class="tips-section">
-        <div class="tips-section-lbl">✏️ Verse Memory Game</div>
-        <div class="tip-row"><span class="tip-ico">✏️</span><span class="tip-txt"><strong>Open Verse Memory</strong> from the home screen card or the Plans tab — it's a fill-in-the-blank game to help you hide Scripture in your heart</span></div>
-        <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Guided mode</strong> shows the first letter of each word as a hint — good for learning a verse for the first time</span></div>
-        <div class="tip-row"><span class="tip-ico">⬜</span><span class="tip-txt"><strong>Challenge mode</strong> shows only blank dashes with no hints — completing a verse here marks it as <strong>Mastered</strong></span></div>
-        <div class="tip-row"><span class="tip-ico">👁</span><span class="tip-txt"><strong>Tap 👁 Show</strong> to peek at all the words if you're stuck — then tap any word to jump straight to typing it</span></div>
-        <div class="tip-row"><span class="tip-ico">⬜🔄✅</span><span class="tip-txt"><strong>Status icons</strong> on the verse list show your progress — ⬜ not started, 🔄 practiced in Guided mode, ✅ mastered in Challenge mode</span></div>
-        <div class="tip-row"><span class="tip-ico">🏆</span><span class="tip-txt"><strong>Badges</strong> are awarded for milestones — completing Roman's Road, mastering 10 verses, finishing the Great Commission set, and more. Check your badges at the bottom of the verse list</span></div>
-        <div class="tip-row"><span class="tip-ico">✏️🔥</span><span class="tip-txt"><strong>Memory streak</strong> counts consecutive days you complete at least one verse — visible inside the game above the mode buttons</span></div>
-        <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Try Again</strong> resets the current verse so you can practice it again — your mastery status and badges are already saved</span></div>
-      </div>
 
       <!-- Offline -->
       <div class="tips-section">
@@ -1299,7 +1157,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       <!-- Warning -->
       <div class="tips-section">
         <div class="tips-section-lbl">⚠️ Important</div>
-        <div class="tip-row"><span class="tip-ico">⚠️</span><span class="tip-txt"><strong>Do not clear your browser cache</strong> for this site — doing so permanently deletes your bookmarks, highlights, notes, reading streak, plan progress, and verse memory mastery &amp; badges. Your data is stored on your device only</span></div>
+        <div class="tip-row"><span class="tip-ico">⚠️</span><span class="tip-txt"><strong>Do not clear your browser cache</strong> for this site — doing so permanently deletes your bookmarks, highlights, notes, reading streak, and plan progress. Your data is stored on your device only</span></div>
       </div>
 
     </div>
@@ -1319,17 +1177,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
   <!-- Game view -->
   <div id="mem-game">
-    <canvas id="mem-confetti"></canvas>
     <div id="mem-game-top">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
         <div id="mem-game-ref" style="flex:1"></div>
         <button id="mem-reveal-btn" onclick="toggleMemReveal()">👁 Show</button>
-      </div>
-      <div id="mem-game-streak">
-        <span class="mgs-fire">✏️</span>
-        <span>Memory streak:</span>
-        <span class="mgs-num" id="mgs-num">0</span>
-        <span id="mgs-days">days</span>
       </div>
       <div class="mem-mode-row">
         <button class="mem-mode-btn on" id="mmb-guided" onclick="setMemMode('guided')">🔤 Guided</button>
@@ -1341,15 +1192,9 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
     <div id="mem-verse-scroll">
       <div id="mem-verse-text"></div>
       <div id="mem-congrats">
-        <div class="mc-ico" id="mc-ico">🎉</div>
-        <div class="mc-title" id="mc-title">Verse Complete!</div>
-        <div class="mc-mastered-badge" id="mc-mastered-badge">🏆 Mastered!</div>
-        <div class="mc-meta" id="mc-meta">
-          <span id="mc-time">⏱ —</span>
-          <span id="mc-mode-lbl">🔤 Guided</span>
-        </div>
-        <div class="mc-verse-echo" id="mc-verse-echo"></div>
-        <div class="mc-sub" id="mc-sub">Well done — hide it in thine heart</div>
+        <div class="mc-ico">🎉</div>
+        <div class="mc-title">Verse Complete!</div>
+        <div class="mc-sub">Well done — hide it in thine heart</div>
         <div class="mc-btns">
           <button class="mc-btn" onclick="resetMem()">↩ Try Again</button>
           <button class="mc-btn primary" onclick="memBack()">Choose Another</button>
@@ -1359,16 +1204,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
   </div>
 </div>
-
-<!-- Badge unlock toast -->
-<div id="mem-badge-toast">
-  <div class="mbt-ico" id="mbt-ico"></div>
-  <div class="mbt-lbl">Badge Unlocked!</div>
-  <div class="mbt-name" id="mbt-name"></div>
-</div>
-
-<!-- Simple toast -->
-<div id="mem-toast"></div>
 
 <!-- CHAPTER PICKER -->
 <div id="ch-picker" onclick="if(event.target===this)closeChPicker()">
@@ -1826,7 +1661,7 @@ async function selectBook(name){
   showScreen('chapters');
 }
 
-function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();updatePlanNavBanner();}
+function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();planTrackChapter(S.book,i);}
 
 /* ════ RENDER READER ════ */
 function renderReader(){
@@ -1883,8 +1718,6 @@ function renderReader(){
   });
   document.getElementById('screen-reader').scrollTop=0;
   updateHeaderState();
-  // Inject plan chapter-done bar if reading from plan
-  injectPlanChapterBar();
 }
 
 /* ════ MULTI-SELECT ════ */
@@ -2707,503 +2540,6 @@ const KJV_DICT = {
   "wormwood": "An extremely bitter plant; used for bitterness, sorrow, and judgment (Rev. 8:11).",
   "wroth": "Very angry; full of wrath — more intense than mere anger (Gen. 4:5).",
   "yea": "Yes; indeed; truly — an emphatic affirmation (Matt. 5:37).",
-  // ── Webster's 1828 expanded entries ──
-  "abased": "[a.] Lowered; humbled.",
-  "abba": "[n.] Father; religious superior; -- in the Syriac, Coptic, and Ethiopic churches, a title given to the bishops, and by the bishops to",
-  "abide": "[v.] To wait; to pause; to delay.",
-  "abomination": "[n.] The feeling of extreme disgust and hatred; abhorrence; detestation; loathing; as, he holds tobacco",
-  "abound": "[v.] To be in great plenty; to be very prevalent; to be plentiful. The wild boar which abounds in some parts of the continent of Europe. Chambers. Where sin abounded grace did much more abound.",
-  "afflict": "[v.] To strike or cast down; to overthrow.",
-  "affliction": "[n.] The cause of continued pain of body or mind, as sickness, losses, etc.; an instance of grievous distress; a pain or grief.",
-  "albeit": "[conj.] Even though; although; notwithstanding. Chaucer.",
-  "almighty": "[a.] Unlimited in might; omnipotent; all-powerful; irresistible. I am the Almighty God.",
-  "aloft": "[adv.] On high; in the air; high above",
-  "altar": "[n.] A raised structure (as a square or oblong erection of stone or wood) on which sacrifices are offered or incense burned to a deity. Noah builded an altar unto the Lord.",
-  "ambassage": "[n.] Same as Embassage.",
-  "amiable": "[a.] Lovable; lovely; pleasing. So amiable a prospect.",
-  "amiss": "[adv.] Astray; faultily; improperly; wrongly; ill. What error drives our eyes and ears amiss Shak. Ye ask and receive not, because ye ask amiss.",
-  "anathema": "[n.] A ban or curse pronounced with religious solemnity by ecclesiastical authority, and accompanied by excommunication. Hence: Denunciation of anything as accursed.",
-  "ancient": "[a.] Old; that happened or existed in former times, usually at a great distance of time; belonging to times long past; specifically applied to the times before the fall of the Roman empire; -- opposed to modern;",
-  "anguish": "[n.] Extreme pain, either of body or mind; excruciating distress. But they hearkened not unto Moses for anguish of spirit, and for cruel bondage. Ex. vi. 9. Anguish as of her that bringeth forth her first child.",
-  "anoint": "[v.] To smear or rub over with oil or an unctuous substance; also, to spread over, as oil. And fragrant oils the stiffened limbs anoint. Dryden. He anointed the eyes of the blind man with the clay.",
-  "apostle": "[n.] Literally: One sent forth; a messenger. Specifically: One of the twelve disciples of Christ, specially chosen as his companions and witnesses, and sent forth to preach",
-  "apothecary": "[n.] One who prepares and sells drugs or compounds for",
-  "apparel": "[n.] External clothing; vesture; garments; dress; garb; external habiliments or array.",
-  "appease": "[v.] To make quiet; to calm; to reduce to a state of peace; to still; to pacify; to dispel (anger or hatred); as, to appease the tumult of the ocean, or of the passions; to appease hunger",
-  "appertain": "[v.] To belong or pertain, whether by right, nature, appointment, or custom; to relate. Things appertaining to this life. Hooker. Give it unto him to whom it appertaineth.",
-  "ark": "[n.] A chest, or coffer. Bearing that precious relic in an",
-  "array": "[n.] Order; a regular and imposing arrangement; disposition in regular lines; hence, order of battle; as, drawn up in battle array.",
-  "artificer": "[n.] An artistic worker; a mechanic or manufacturer; one whose occupation requires skill or knowledge of a particular kind, as",
-  "assembly": "[n.] A company of persons collected together in one place, and usually for some common purpose, esp.",
-  "avarice": "[n.] An excessive or inordinate desire of gain; greediness after wealth; covetousness; cupidity.",
-  "avenge": "[v.] To take vengeance for; to exact satisfaction for by punishing the injuring party; to vindicate by inflicting pain or evil on a wrongdoer. He will avenge the blood of his servants.",
-  "babe": "[n.] An infant; a young child of either sex;",
-  "balm": "[n.] An aromatic plant of the",
-  "baptism": "[n.] The act of baptizing; the application of water to a person, as a sacrament or religious ceremony, by which he is initiated into the visible church of Christ.",
-  "barbarian": "[n.] A foreigner. [Historical] Therefore if I know not the meaning of the voice, I shall be unto him that speaketh a barbarian, and he that speaketh shall be a barbarian",
-  "beatitude": "[n.] Felicity of the highest kind;",
-  "behold": "[v.] To have in sight; to see clearly; to look at; to regard with the eyes. When he beheld the serpent of brass, he lived. Num. xxi. 9. Behold the Lamb of God, which taketh away the sin of the world.",
-  "beloved": "[p.] Greatly loved; dear to the heart. Antony, so well beloved of Cæsar. Shak. This is my beloved Son.",
-  "bereave": "[v.] To make destitute; to deprive; to strip; -- with of before the person or thing taken away. Madam, you have bereft me of all words. Shak.",
-  "beseech": "[v.] To ask or entreat with urgency; to supplicate; to implore. I beseech you, punish me not with your hard thoughts. Shak. But Eve . . .",
-  "beset": "[v.] To set or stud (anything) with ornaments or prominent objects. A robe of azure beset with drops of gold. Spectator.",
-  "bestow": "[v.] To lay up in store; to deposit for safe keeping; to stow; to place; to put. \"He bestowed it in a pouch.\" Sir W. Scott.",
-  "betray": "[v.] To deliver into the hands of an enemy by treachery or fraud, in violation of trust; to give up treacherously or faithlessly; as, an officer betrayed",
-  "betroth": "[v.] To contract to any one for a marriage; to engage or promise in order to marriage; to affiance; -- used esp. of a woman.",
-  "bier": "[n.] A handbarrow or portable frame on which a corpse is placed or borne to",
-  "billow": "[n.] A great wave or surge of the sea or other water, caused usually by violent wind.",
-  "bind": "[v.] To tie, or confine with a cord, band, ligature, chain, etc.; to fetter; to make fast; as, to bind grain in bundles; to bind",
-  "blameless": "[a.] Free from blame; without fault; innocent; guiltless; -- sometimes followed by of. A bishop then must be blameless. 1 Tim. iii. 2.",
-  "blasphemy": "[n.] An indignity offered to God in words, writing, or signs; impiously irreverent words or signs addressed to, or used in reference to, God; speaking evil of God;",
-  "bless": "[v.] To make or pronounce holy; to consecrate And God blessed the seventh day, and sanctified it.",
-  "blessed": "[a.] Hallowed; consecrated; worthy of blessing or adoration; heavenly; holy. O, run; prevent them with thy humble ode, And lay it lowly at his blessed",
-  "blessing": "[n.] The act of one",
-  "blind": "[a.] Destitute of the sense of seeing, either by natural defect or by deprivation; without sight.",
-  "bliss": "[n.] Orig., blithesomeness; gladness; now, the highest degree of happiness; blessedness; exalted felicity; heavenly joy.",
-  "blood": "[n.] The fluid which circulates in the principal vascular system of animals, carrying nourishment to all parts of the body, and bringing away waste products to be excreted.",
-  "blot": "[v.] To spot, stain, or bespatter, as with ink.",
-  "boast": "[v.] To vaunt one\'s self; to brag; to say or tell things which are intended to give others a high opinion of one\'s self or of things belonging to one\'s self; as, to boast of one\'s exploits courage, descent, wealth.",
-  "boisterous": "[a.] Rough or rude; unbending; unyielding; strong; powerful.",
-  "bondage": "[n.] The state of being bound; condition of being under restraint; restraint of personal liberty by compulsion; involuntary servitude; slavery; captivity.",
-  "bondman": "[n.] A man slave, or one bound to service",
-  "breastplate": "[n.] A plate of metal covering the breast as defensive armor. Before his old rusty breastplate could be scoured, and his cracked headpiece",
-  "bride": "[n.] A woman newly married, or about to be married. Has by his own experience tried How much the wife is dearer than the bride. Lyttleton. I will show thee the bride, the Lamb\'s wife.",
-  "broken": "[a.] Separated into parts or pieces by violence; divided into fragments; as, a broken chain or rope; a",
-  "brother": "[n.] A male person who has the same father and mother with another person, or who has one of them only.",
-  "buckler": "[n.] A kind of shield, of various shapes and sizes, worn on one of the arms (usually the left) for protecting the front of",
-  "buffet": "[n.] A cupboard or set of shelves, either movable or fixed at one side of a room, for the display of plate, china, etc., a sideboard.",
-  "burden": "[n.] That which is borne or carried; a load.",
-  "burdensome": "[a.] Grievous to be borne; causing uneasiness or fatigue; oppressive.",
-  "byword": "[n.] A common saying; a proverb; a saying that has a general currency.",
-  "candlestick": "[n.] An instrument or utensil for supporting",
-  "canker": "[n.] A corroding or sloughing ulcer; esp. a spreading gangrenous ulcer or collection of ulcers in or about the mouth; -- called also water canker, canker of the mouth,",
-  "captain": "[n.] A head, or chief officer; as:",
-  "captive": "[n.] A prisoner taken by force or stratagem, esp., by an enemy, in war; one kept in bondage or in the power of another.",
-  "captivity": "[n.] The state of being a captive or a prisoner. More celebrated in his captivity that in his greatest",
-  "careful": "[a.] Full of care; anxious; solicitous [Archaic] Be careful [Rev. Ver. \"anxious\"] for nothing. Phil. iv. 6.",
-  "carnal": "[a.] Of or pertaining to the body or is appetites; animal; fleshly; sensual; given to sensual indulgence; lustful; human or worldly as opposed to spiritual. For ye are yet carnal. 1 Car. iii. 3.",
-  "cease": "[v.] To come to an end; to stop; to leave off or give over; to desist; as, the noise ceased",
-  "censure": "[n.] Judgment either favorable or unfavorable; opinion.",
-  "centurion": "[n.] A military officer who commanded a minor division of the Roman army; a captain of a century. A centurion of the hand called the Italian band.",
-  "chasten": "[v.] To correct by punishment; to inflict pain upon the purpose of reclaiming; to discipline; as, to chasten a son with a rod. For whom the Lord loveth he chasteneth.",
-  "chastise": "[v.] To inflict pain upon, by means of stripes, or in any other manner, for the purpose of punishment or reformation; to punish, as with stripes.",
-  "churl": "[n.] A rustic; a countryman or laborer. \"A peasant or churl.\" Spenser. Your rank is all reversed; let men of cloth Bow to the stalwart churls in",
-  "cipher": "[n.] A character [0] which, standing by itself, expresses nothing, but when placed at the right hand of a whole number, increases its",
-  "circumcision": "[n.] The act of cutting off the prepuce or foreskin of males, or the internal labia",
-  "clean": "[a.] Free from dirt or filth; as,",
-  "cleave": "[v.] To adhere closely; to stick; to hold fast; to cling. My bones cleave to my skin. Ps. cii. 5. The diseases of Egypt . . . shall cleave unto thee.",
-  "clothe": "[v.] To put garments on; to cover with clothing; to dress.",
-  "commandment": "[n.] An order or injunction given by authority; a command; a charge; a precept; a mandate. A new commandment I give unto you, that ye love one another.",
-  "commodious": "[a.] Adapted to its use or purpose, or to wants and necessities; serviceable; spacious and convenient; roomy and comfortable; as, a commodious house.",
-  "compassed": "[a.] Rounded; arched. She came . . .",
-  "condemnation": "[n.] The act of condemning or pronouncing to be wrong; censure; blame; disapprobation. In every other sense of condemnation, as blame, censure, reproof, private judgment, and the",
-  "congregation": "[n.] The act of congregating, or bringing together, or of collecting into one aggregate or mass.",
-  "conscience": "[n.] Knowledge of one\'s own thoughts or actions; consciousness. The sweetest cordial we receive, at last, Is conscience of our virtuous actions",
-  "consecrate": "[a.] Consecrated; devoted; dedicated; sacred.",
-  "consolation": "[n.] The act of consoling; the state of being consoled; allevation of misery or distress of mind; refreshment of spirit; comfort; that which consoles or comforts",
-  "consort": "[n.] One who shares the lot of another; a companion; a partner; especially, a wife or husband. Milton.",
-  "contrite": "[a.] Thoroughly bruised or broken.",
-  "converge": "[v.] To tend to one point; to incline and approach nearer together; as, lines converge.",
-  "corn": "[n.] A thickening of the epidermis at some point, esp. on the toees, by friction or pressure.",
-  "corrupt": "[a.] Changed from a sound to a putrid state; spoiled; tainted; vitiated; unsound.",
-  "counsel": "[n.] Interchange of opinions; mutual advising; consultation. All the chief priest and elders of the people took counsel against Jesus, to put him to death.",
-  "countenance": "[n.] Appearance or expression of the face; look; aspect; mien.",
-  "covet": "[v.] To wish for with eagerness; to desire possession of; -- used in a good sen Covet earnestly the best gifts. 1. Cor. xxii. 31.",
-  "crafty": "[a.] Relating to, or characterized by, craft or skill; dexterous.",
-  "crooked": "[a.] Characterized by a crook or curve; not straight; turning; bent; twisted; deformed. \"Crooked paths.\" Locke.",
-  "crown": "[n.] p. p. of Crow.",
-  "cry": "[v.] To make a loud call or cry; to call or exclaim vehemently or earnestly; to shout; to vociferate; to proclaim; to pray; to implore. And about the ninth hour, Jesus cried with a loud voice.",
-  "cup": "[n.] A small vessel, used commonly to drink from; as, a tin cup, a silver cup, a wine cup;",
-  "darkness": "[n.] The absence of light; blackness; obscurity; gloom. And darkness was upon the face of the deep.",
-  "daughter": "[n.] The female offspring of the human species; a female child of any age; -- applied also to the",
-  "debtor": "[n.] One who owes a debt; one who is indebted; -- correlative to creditor. [I \'ll] bring your latter hazard back again, And thankfully rest debtor for the",
-  "deceit": "[n.] An attempt or disposition to deceive or lead into error; any declaration, artifice, or practice, which misleads another, or causes him to believe what is false; a contrivance to entrap; deception; a wily device; fraud.",
-  "decree": "[n.] An order from one having authority, deciding what is to be done by a subordinate; also, a determination by one having power, deciding what is to be done or to take place; edict, law;",
-  "decrepit": "[a.] Broken down with age; wasted and enfeebled by the infirmities of old age; feeble; worn out. \"Beggary or decrepit age.\" Milton.",
-  "defile": "[v.] To march off in a line, file by file; to",
-  "delight": "[n.] A high degree of gratification of mind; a high-wrought state of pleasurable feeling; lively pleasure; extreme satisfaction; joy.",
-  "deliverance": "[n.] The act of delivering or freeing from restraint, captivity, peril, and the like; rescue; as, the deliverance of a captive. He hath sent me to heal the broken-hearted, to preach deliverance to the captives.",
-  "delusion": "[n.] The act of deluding; deception; a misleading of the",
-  "den": "[n.] A small cavern or hollow place in the side of a hill, or among rocks; esp., a cave used by a wild beast for shelter or concealment; as, a lion\'s den; a den",
-  "depart": "[v.] To part; to divide; to separate.",
-  "desolate": "[a.] Destitute or deprived of inhabitants; deserted; uninhabited; hence, gloomy; as, a desolate isle; a desolate wilderness; a desolate house. I will make Jerusalem . .",
-  "desolation": "[n.] The act of desolating or laying waste; destruction of inhabitants; depopulation. Unto the end of the war desolations are determined.",
-  "despoil": "[v.] To strip, as of clothing; to divest or unclothe.",
-  "devise": "[v.] To form in the mind by new combinations of ideas, new applications of principles, or new arrangement of parts; to formulate by thought; to contrive; to excogitate; to invent; to plan; to scheme;",
-  "devoted": "[a.] Consecrated to a purpose; strongly attached; zealous; devout; as, a devoted admirer. -- De*vot\"ed*ly, adv.",
-  "devout": "[a.] Devoted to religion or to religious feelings and duties; absorbed in religious exercises; given to devotion; pious; reverent; religious. A devout man, and one that feared God.",
-  "dew": "[n.] Moisture from the atmosphere condensed by cool bodies upon their surfaces, particularly at night.",
-  "diligent": "[a.] Prosecuted with careful attention and effort; careful; painstaking; not careless or negligent. The judges shall make diligent inquisition.",
-  "disciple": "[n.] One who receives instruction from another; a scholar; a learner; especially, a follower who has learned to believe in the truth of the doctrine of his teacher; an adherent in doctrine; as, the disciples of Plato;",
-  "distaff": "[n.] The staff for holding a bunch of flax, tow, or wool, from which the thread is drawn in spinning by hand.",
-  "divination": "[n.] The act of divining; a foreseeing or foretelling of future events; the pretended art discovering secret or future by preternatural means. There shall not be found among you any one that . .",
-  "dominion": "[n.] Sovereign or supreme authority; the power of governing and controlling; independent right of possession, use, and control; sovereignty; supremacy.",
-  "dote": "[n.] A marriage portion.",
-  "dove": "[n.] A pigeon of the genus Columba and various related genera.",
-  "dowry": "[n.] A gift; endowment.",
-  "dread": "[v.] To fear in a great degree; to regard, or look forward to, with terrific apprehension. When at length the moment dreaded through so many years came close, the dark cloud passed away from Johnson\'s",
-  "dream": "[n.] The thoughts, or series of thoughts, or imaginary transactions, which occupy the mind during sleep; a sleeping vision. Dreams are but interludes which fancy makes. Dryden.",
-  "dross": "[n.] The scum or refuse matter which is thrown off, or falls from, metals in smelting the ore, or in the process of melting; recrement.",
-  "dumb": "[a.] Destitute of the power of speech; unable; to utter articulate sounds; as, the dumb brutes.",
-  "dust": "[n.] Fine, dry particles of earth or other matter, so comminuted that they may be raised and wafted by the wind; that which is crumbled too minute portions; fine powder; as, clouds of dust;",
-  "dwell": "[v.] To delay; to linger.",
-  "dwelling": "[n.] Habitation; place or house in which a person lives; abode; domicile. Hazor shall be a dwelling for dragons. Jer. xlix. 33.",
-  "earnest": "[n.] Seriousness; reality; fixed determination; eagerness; intentness. Take heed that this jest do not one day turn to earnest. Sir P. Sidney.",
-  "edification": "[n.] The act of edifying, or the state of being edified; a building up, especially in a moral or spiritual sense; moral, intellectual, or spiritual improvement; instruction.",
-  "edify": "[v.] To build; to construct. [Archaic] There was a holy chapel",
-  "effeminate": "[a.] Having some characteristic of a woman, as delicacy, luxuriousness, etc.; soft or delicate to an unmanly degree; womanish; weak.",
-  "elder": "[a.] Older; more aged, or existing longer. Let the elder men among us emulate their own earlier deeds. Jowett (Thucyd.",
-  "embolden": "[v.] To give boldness or courage to; to encourage. Shak. The self-conceit which emboldened him to undertake this dangerous office.",
-  "enmity": "[n.] The quality of being an enemy; hostile or unfriendly disposition.",
-  "epistle": "[n.] A writing directed or sent to a person or persons; a written communication; a letter; -- applied usually to formal, didactic, or elegant letters.",
-  "equity": "[n.] Equality of rights; natural justice or right; the giving, or desiring to give, to each man his due, according to reason, and the law of God to man; fairness in determination of conflicting claims; impartiality.",
-  "esteem": "[v.] To set a value on; to appreciate the worth of; to estimate; to value; to reckon. Then he forsook God, which made him, and lightly esteemed the Rock of his salvation.",
-  "exalt": "[v.] To raise high; to elevate; to lift up. I will exalt my throne above the stars of God. Is. xiv. 13.",
-  "excellency": "[n.] Excellence; virtue; dignity; worth; superiority. His excellency is over Israel. Ps. lxviii. 34.",
-  "execration": "[n.] The act of cursing; a curse dictated by violent feelings of hatred; imprecation; utter detestation expressed.",
-  "faithful": "[a.] Full of faith, or having faith; disposed to believe, especially in the declarations and promises of God.",
-  "fallen": "[a.] Dropped; prostrate; degraded; ruined; decreased; dead.",
-  "famine": "[n.] General scarcity of food; dearth; a want of provisions; destitution. \"Worn with famine.\" Milton. There was a famine in the land. Gen. xxvi. 1.",
-  "fast": "[v.] To abstain from food; to omit to take nourishment in whole or in part; to go hungry.",
-  "fear": "[n.] A variant of Fere, a mate, a companion.",
-  "feast": "[n.] A festival; a holiday; a solemn, or more commonly, a joyous, anniversary. The seventh day shall be a feast to the Lord. Ex. xiii. 6. Now his parents went to Jerusalem every year at the feast of the passover.",
-  "feeble": "[a.] Deficient in physical strenght; weak; infirm; debilitated. Carried all the feeble of them upon asses.",
-  "fellowship": "[n.] The state or relation of being",
-  "fervent": "[a.] Hot; glowing; boiling; burning; as, a fervent summer. The elements shall melt with fervent heat.",
-  "filthy": "[a.] Defiled with filth, whether material or moral; nasty; dirty; polluted; foul; impure; obscene. \"In the filthy-mantled pool.\" Shak. He which is filthy let him be filthy still.",
-  "firm": "[a.] Fixed; hence, closely compressed; compact; substantial; hard; solid; -- applied to the matter of bodies; as, firm flesh; firm muscles,",
-  "firstborn": "[a.] First brought forth; first in the order of nativity; eldest; hence, most excellent; most distinguished",
-  "fleshly": "[a.] Of or pertaining to the flesh; corporeal.",
-  "flock": "[n.] A company or collection of living creatures; -- especially applied to sheep and birds, rarely to persons or (except in the plural) to cattle and other large animals; as, a flock of ravenous fowl. Milton. The heathen .",
-  "flourish": "[v.] To grow luxuriantly; to increase and enlarge, as a healthy growing plant; a thrive. A tree thrives and flourishes in a kindly . . .",
-  "foolish": "[a.] Marked with, or exhibiting, folly; void of understanding; weak in intellect; without judgment or discretion; silly; unwise.",
-  "footstool": "[n.] A low stool to support the feet of one",
-  "forebear": "[n.] An ancestor.",
-  "foreknowledge": "[n.] Knowledge of a thing before it happens, or of whatever is to happen; prescience.",
-  "forlorn": "[a.] Deserted abandoned; lost. Of fortune and of hope at once forlorn. Spenser.",
-  "frankincense": "[n.] A fragrant, aromatic resin, or gum resin, burned as an incense in religious rites or for",
-  "frugal": "[a.] Economical in the use or appropriation of resources; not wasteful or lavish; wise in the expenditure or application of force, materials, time, etc.; characterized by frugality; sparing; economical; saving;",
-  "fruitful": "[a.] Full of fruit; producing fruit abundantly; bearing results; prolific; fertile; liberal; bountiful; as, a fruitful tree, or season, or soil; a fruitful wife. -- Fruit\"ful*ly, adv.",
-  "gainsay": "[v.] To contradict; to deny; to controvert; to dispute; to forbid. I will give you a mouth and wisdom which all your adversaries shall not be able to gainsay nor resist.",
-  "garment": "[n.] Any article of clothing, as a coat, a gown, etc. No man putteth a piece of new cloth unto old garment.",
-  "garner": "[n.] A granary; a building or place where grain is stored",
-  "gather": "[v.] To bring together; to collect, as a number of separate things, into one place, or into one aggregate body; to assemble; to muster; to congregate.",
-  "genealogy": "[n.] An account or history of the descent of a person or family from an ancestor; enumeration of ancestors and their children in the natural order of succession;",
-  "generation": "[n.] The act of generating or begetting; procreation, as",
-  "gentile": "[n.] One of a non-Jewish nation; one neither a Jew nor a Christian; a worshiper of false gods;",
-  "gentle": "[a.] Well-born; of a good family or respectable birth, though not noble. British society is divided into nobility, gentry, and yeomanry, and families are either noble, gentle, or simple.",
-  "gentleness": "[n.] The quality or state of being gentle, well-born, mild, benevolent, docile, etc.; gentility; softness of manners, disposition, etc.; mildness.",
-  "gift": "[n.] Anything given; anything voluntarily transferred by one person to another without compensation; a present; an offering. Shall I receive by gift, what of my own, . . .",
-  "girdle": "[n.] A griddle. [Scot. & Prov.",
-  "glean": "[v.] To gather after a reaper; to collect in scattered or fragmentary parcels, as the grain left by a reaper, or grapes left after the gathering.",
-  "glorify": "[v.] To make glorious by bestowing glory upon; to confer honor and distinction upon; to elevate to power or happiness, or to celestial glory. Jesus was not yet glorified.",
-  "glory": "[n.] Praise, honor, admiration, or distinction, accorded by common consent to a person or thing; high reputation; honorable fame; renown. Glory to God in the highest. Luke ii. 14.",
-  "goat": "[n.] A hollow-horned ruminant of the genus Capra, of several species and varieties, esp. the domestic goat (C.",
-  "godly": "[a.] Pious; reverencing God, and his character and laws; obedient to the commands of God from love for, and reverence of, his character; conformed to God\'s law; devout; righteous; as, a",
-  "goodly": "[adv.] Excellently.",
-  "goodness": "[n.] The quality of being good in any of its various senses; excellence; virtue; kindness; benevolence; as, the goodness of timber, of a soil, of food; goodness of character, of disposition, of conduct, etc.",
-  "gospel": "[n.] Glad tidings; especially, the good news concerning Christ, the Kingdom of God, and salvation. And Jesus went about all Galilee, teaching in their synagogues, and preaching the gospel of the kingdom.",
-  "guilt": "[n.] The criminality and consequent exposure to punishment resulting from willful disobedience of law, or from morally wrong action; teh state of one who has broken a moral or political law; crime; criminality;",
-  "hardened": "[a.] Made hard, or compact; made unfeeling or callous; made obstinate or obdurate; confirmed in error",
-  "harvest": "[n.] The gathering of a crop of any kind; the ingathering of the crops; also, the season of gathering grain and fruits, late summer or early autumn. Seedtime and harvest . . . shall not cease.",
-  "hearth": "[n.] The pavement or floor of brick, stone, or metal in a chimney, on which a fire is made; the floor of a fireplace; also, a corresponding part of a stove. There was a fire on the hearth burning before him.",
-  "heaven": "[n.] The expanse of space surrounding the earth; esp., that which seems to be over the earth like a great arch or dome; the firmament; the sky; the place where the sun, moon, and stars appear;",
-  "heavenly": "[a.] Pertaining to, resembling, or inhabiting heaven; celestial; not earthly; as, heavenly regions; heavenly music. As is the heavenly, such are they also that are heavenly.",
-  "heed": "[v.] To mind; to regard with care; to take notice of; to attend to; to observe.",
-  "heir": "[n.] One who inherits, or is entitled to succeed to the possession of, any property after the death of its owner; one on whom the law bestows the title or property of another at the death of",
-  "herald": "[n.] An officer whose business was to denounce or proclaim war, to challenge to battle, to proclaim peace, and to bear messages from the commander of an army.",
-  "herb": "[n.] A plant whose stem does not become woody and permanent, but dies, at least down to the ground,",
-  "heritage": "[a.] That which is inherited, or passes from heir to heir; inheritance.",
-  "hew": "[v.] To cut with an ax; to fell with a sharp instrument; -- often with down, or",
-  "hire": "[pron.] See Here,",
-  "holocaust": "[n.] A burnt sacrifice; an offering, the whole of which was consumed by fire, among the Jews and some pagan",
-  "holy": "[a.] Set apart to the service or worship of God; hallowed; sacred; reserved from profane or common use; holy vessels; a",
-  "host": "[n.] The consecrated wafer, believed to be the body of Christ, which in the Mass is offered as a sacrifice; also, the bread",
-  "humble": "[a.] Near the ground; not high or lofty; not pretentious or magnificent; unpretending; unassuming; as, a humble cottage.",
-  "humiliation": "[n.] The act of humiliating or humbling; abasement of pride; mortification.",
-  "humility": "[n.] The state or quality of being humble; freedom from pride and arrogance; lowliness of mind; a modest estimate of one\'s own worth; a sense of one\'s own unworthiness through imperfection and sinfulness; self-abasement;",
-  "hunger": "[n.] An uneasy sensation occasioned normally by the want of food; a craving or desire",
-  "hungered": "[a.] Hungry; pinched for food.",
-  "idolatry": "[n.] The worship of idols, images, or anything which is not God; the worship of false gods.",
-  "ignorant": "[a.] Destitute of knowledge; uninstructed or uninformed; untaught; unenlightened. He that doth not know those things which are of use for him to know, is but an ignorant man, whatever he may know",
-  "imagery": "[n.] The work of one who makes images or visible representation of objects; imitation work; images in general, or in mass. \"Painted imagery.\" Shak.",
-  "immortal": "[a.] Not mortal; exempt from liability to die; undying; imperishable; lasting forever; having unlimited, or eternal, existance. Unto the King eternal, immortal, invisible.",
-  "impure": "[a.] Not pure; not clean; dirty; foul; filthy; containing something which is unclean or unwholesome; mixed or impregnated extraneous substances; adulterated; as, impure water or air; impure drugs, food, etc.",
-  "increase": "[v.] To become greater or more in size, quantity, number, degree, value, intensity, power, authority, reputation, wealth; to grow; to augment; to advance; -- opposed to decrease.",
-  "indignation": "[n.] The feeling excited by that which is unworthy, base, or disgraceful; anger mingled with contempt, disgust, or",
-  "infirmity": "[n.] The state of being infirm; feebleness; an imperfection or weakness; esp., an unsound, unhealthy, or debilitated state; a disease; a malady; as, infirmity of body or mind.",
-  "inheritance": "[n.] The act or state of inheriting; as, the inheritance of an estate; the inheritance of mental or",
-  "inquire": "[v.] To ask a question; to seek for truth or information by putting queries. We will call the damsel, and inquire. Gen. xxiv. 57. Then David inquired of the Lord yet again. And the Lord answered him.",
-  "inspiration": "[n.] The act of inspiring or breathing in; breath; specif. (Physiol.), the drawing of air into the lungs, accomplished in mammals by elevation of the chest walls and flattening of the diaphragm; -- the opposite",
-  "instruct": "[a.] Arranged; furnished; provided.",
-  "instruction": "[n.] The act of instructing, teaching, or furnishing with knowledge; information.",
-  "intercede": "[v.] To pass between; to intervene. He supposed that a vast period interceded between that origination and the age wherein he lived.",
-  "iron": "[n.] The most common and most useful metallic element, being of almost universal occurrence, usually in the form of an oxide (as hematite, magnetite, etc.), or a hydrous oxide (as limonite, turgite, etc.).",
-  "jealousy": "[n.] The quality of being jealous; earnest concern or solicitude; painful apprehension of rivalship in cases nearly affecting one\'s happiness; painful suspicion of the faithfulness of husband, wife,",
-  "jot": "[n.] An iota; a point; a tittle; the smallest particle. Cf. Bit, n. Till heaven and earth pass, one jot or one tittle shall in no wise pass from the law, till all be fulfilled.",
-  "jubilee": "[n.] Every fiftieth year, being the year following the completion of each seventh sabbath of years, at which time all the slaves of Hebrew blood were liberated,",
-  "judgment": "[n.] The act of judging; the operation of the mind, involving comparison and discrimination, by which a knowledge of the values and relations of thins, whether of moral qualities, intellectual concepts, logical propositions,",
-  "just": "[a.] Conforming or conformable to rectitude or justice; not doing wrong to any; violating no right or obligation; upright; righteous; honest; true; -- said both of persons",
-  "kindle": "[v.] To bring forth young. Shak. The poor beast had but lately",
-  "kindness": "[n.] The state or quality of being kind, in any of its various senses; manifestation of kind feeling or disposition beneficence.",
-  "kindred": "[n.] Relationship by birth or marriage; consanguinity; affinity; kin.",
-  "kingdom": "[n.] The rank, quality, state, or attributes of a king; royal authority; sovereign power; rule; dominion; monarchy. Thy kingdom is an everlasting kingdom.",
-  "kinsman": "[n.] A man of the same race or family; one related",
-  "knowing": "[a.] Skilful; well informed; intelligent; as, a knowing man; a knowing dog.",
-  "lame": "[a.] Moving with pain or difficulty on account of injury, defect, or temporary obstruction of a function; as, a lame leg, arm,",
-  "lament": "[v.] To express or feel sorrow; to weep or wail; to mourn. Jeremiah lamented for Josiah. 2 Chron. xxxv. 25. Ye shall weep and lament, but the world shall rejoice.",
-  "lamp": "[n.] A thin plate or lamina.",
-  "lean": "[v.] To conceal.",
-  "leaven": "[n.] Any substance that produces, or is designed to produce, fermentation, as in dough or liquids;",
-  "liberality": "[n.] The quality or state of being liberal; liberal disposition or practice; freedom from narrowness or prejudice; generosity; candor; charity.",
-  "lineage": "[n.] Descent in a line from a common progenitor; progeny; race; descending line of offspring or ascending line of parentage.",
-  "linen": "[a.] Made of linen; as, linen cloth; a",
-  "linger": "[v.] To delay; to loiter; to remain or wait long; to be slow or reluctant in parting or moving; to be slow in deciding; to be in suspense; to hesitate.",
-  "longing": "[n.] An eager desire; a craving; a morbid appetite; an earnest wish; an aspiration.",
-  "lord": "[n.] A hump-backed person; -- so called sportively.",
-  "lowly": "[a.] Not high; not elevated in place; low.",
-  "magnify": "[v.] To make great, or greater; to increase the dimensions of; to amplify; to enlarge, either in fact or in appearance; as, the microscope magnifies the object by a thousand diameters. The least error in a small quantity .",
-  "maiden": "[n.] An unmarried woman; a girl or woman who has not experienced sexual intercourse; a virgin; a maid. She employed the residue of her life to repairing of highways, building of bridges, and endowing of",
-  "majestic": "[a.] Possessing or exhibiting majesty; of august dignity, stateliness, or imposing grandeur; lofty; noble; grand.",
-  "malice": "[n.] Enmity of heart; malevolence; ill will; a spirit delighting in harm or misfortune to another; a disposition to injure another; a malignant design",
-  "manger": "[n.] A trough or open box in which fodder is placed for horses or cattle",
-  "manna": "[n.] The food supplied to the Israelites in their journey through the wilderness of Arabia; hence, divinely supplied food.",
-  "manner": "[n.] Mode of action; way of performing or effecting anything; method; style; form; fashion. The nations which thou hast removed, and placed in the cities of Samaria, know not the manner of the God of the land.",
-  "mantle": "[n.] A loose garment to be worn over other garments; an enveloping robe; a cloak. Hence, figuratively, a covering or concealing envelope.",
-  "mark": "[n.] A license of reprisals.",
-  "martyr": "[n.] One who, by his death, bears witness to the truth of the gospel; one who is put to death for his religion; as, Stephen was the first Christian",
-  "marvel": "[n.] That which causes wonder; a prodigy; a miracle. I will do marvels such as have not been done. Ex. xxxiv. 10.",
-  "meek": "[a.] Mild of temper; not easily provoked or orritated; patient under injuries; not vain, or haughty, or resentful; forbearing; submissive. Not the man Moses was very meek.",
-  "meekness": "[n.] The quality or state of",
-  "merciful": "[a.] Full of mercy; having or exercising mercy; disposed to pity and spare offenders; unwilling to punish. The Lord, the Lord God, merciful and gracious. Ex. xxxiv. 6.",
-  "messenger": "[n.] One who bears a message; the bearer of a verbal or written communication, notice, or invitation, from one person to another, or to a public body; specifically, an office servant who",
-  "mighty": "[a.] Possessing might; having great power or authority. Wise in heart, and mighty in strength.",
-  "mindful": "[a.] Bearing in mind; regardful; attentive; heedful; observant. What is man, that thou art mindful of him Ps. viii. 4. I promise you to be mindful of your admonitions. Hammond. -- Mind\"ful*ly, adv.",
-  "minister": "[n.] A servant; a subordinate; an officer or assistant of inferior rank; hence, an agent, an instrument. Moses rose up, and his minister Joshua. Ex. xxiv. 13.",
-  "miracle": "[n.] A wonder or wonderful thing.",
-  "mirth": "[n.] Merriment; gayety accompanied with laughter; jollity. Then will I cause to cease ... from the streets of Jerusalem, the voice of mirth.",
-  "modesty": "[n.] The quality or state of being modest; that lowly temper which accompanies a moderate estimate of one\'s own worth and importance; absence of self-assertion, arrogance, and presumption; humility respecting one\'s",
-  "mourn": "[v.] To express or to feel grief or sorrow; to grieve; to be sorrowful; to lament; to be in a state of grief or sadness. Abraham came to mourn for Sarah, and to weep for her.",
-  "mournful": "[a.] Full of sorrow; expressing, or intended to express, sorrow; mourning; grieving; sad; also, causing sorrow; saddening; grievous; as, a mournful person; mournful looks, tones, loss.",
-  "multitude": "[n.] A great number of persons collected together; a numerous collection of persons; a crowd; an assembly. But when he saw the multitudes, he was moved with compassion on them.",
-  "murmur": "[n.] A low, confused, and indistinct sound, like that of",
-  "mutual": "[a.] Reciprocally acting or related; reciprocally receiving and giving; reciprocally given and received; reciprocal; interchanged; as, a mutual love, advantage, assistance, aversion, etc.",
-  "myrrh": "[n.] A gum resin, usually of a yellowish brown or amber color, of an aromatic odor, and a bitter, slightly pungent taste.",
-  "naked": "[a.] Having no clothes on; uncovered; nude; bare; as, a naked body; a naked limb; a",
-  "nation": "[n.] A part, or division, of the people of the earth, distinguished from the rest by common descent, language, or institutions; a race; a stock. All nations, and kindreds, and people, and tongues.",
-  "necromancer": "[n.] One who practices necromancy; a sorcerer;",
-  "nether": "[a.] Situated down or below; lying beneath, or in the lower part; having a lower position; belonging to the region below; lower; under; -- opposed to upper.",
-  "nourishment": "[n.] The act of nourishing, or the state of being nourished; nutrition.",
-  "oath": "[n.] A solemn affirmation or declaration, made with a reverent appeal to God for the truth of what",
-  "obedient": "[a.] Subject in will or act to authority; willing to obey; submissive to restraint, control, or command.",
-  "offspring": "[n.] The act of production; generation.",
-  "oppress": "[v.] To impose excessive burdens upon; to overload; hence, to treat with unjust rigor or with cruelty. Wyclif.",
-  "oracle": "[n.] The answer of a god, or some person reputed to be a god, to an inquiry respecting some affair or future event, as the success of an enterprise or battle.",
-  "ordain": "[v.] To set in order; to arrange according to rule; to regulate; to set; to establish. \"Battle well ordained.\" Spenser.",
-  "ordinance": "[n.] Orderly arrangement; preparation; provision. Spenser.",
-  "overseer": "[n.] One who oversees; a superintendent; a supervisor; as, an overseer of a mill; specifically, one or certain public officers; as, an overseer of the poor; an overseer",
-  "parable": "[a.] Procurable.",
-  "pardon": "[n.] The act of pardoning; forgiveness, as of an offender, or of an offense; release from penalty; remission of punishment; absolution. Pardon, my lord, for me and for my tidings. Shak.",
-  "passover": "[n.] A feast of the Jews, instituted to commemorate the sparing of the Hebrews in Egypt, when God, smiting the firstborn of the Egyptians, passed over the houses of the Israelites which were marked with the blood of",
-  "patience": "[n.] The state or quality of being patient; the power of suffering with fortitude; uncomplaining endurance of evils or wrongs, as toil, pain, poverty, insult, oppression, calamity, etc. Strenthened with all might, . .",
-  "patron": "[n.] One who protects, supports, or countenances; a defender.",
-  "peace": "[n.] A state of quiet or tranquillity; freedom from disturbance or agitation; calm; repose; specifically:",
-  "perceive": "[v.] To obtain knowledge of through the senses; to receive impressions from by means of the bodily organs; to take cognizance of the existence, character, or identity of, by means of the senses; to see, hear, or feel;",
-  "perdition": "[n.] Entire loss; utter destruction; ruin; esp., the utter loss of the soul, or of final happiness in a future state; future misery or eternal death.",
-  "perish": "[v.] To be destroyed; to pass away; to become nothing; to be lost; to die; hence, to wither; to waste away. I perish with hunger! Luke xv. 17.",
-  "perverse": "[a.] Turned aside; hence, specifically, turned away from the right; willfully erring; wicked; perverted.",
-  "pestilence": "[n.] Specifically, the disease known as the plague; hence, any contagious or infectious epidemic disease that is virulent and devastating. The pestilence That walketh in darkness.",
-  "petition": "[n.] A prayer; a supplication; an imploration; an entreaty; especially, a request of a solemn or formal kind; a prayer to the Supreme Being, or to a person of superior power, rank, or authority;",
-  "pierce": "[v.] To thrust into, penetrate, or transfix, with a",
-  "piety": "[n.] Veneration or reverence of the Supreme Being, and love of his character; loving obedience to the will of God, and earnest devotion to his service.",
-  "pillar": "[n.] The general and popular term for a firm, upright, insulated support for a superstructure; a pier, column, or post; also, a column or shaft not supporting a superstructure, as one erected for a monument or",
-  "pitfall": "[n.] A pit deceitfully covered to entrap wild beasts or men; a trap of any kind.",
-  "plague": "[n.] That which smites, wounds, or troubles; a blow; a calamity; any afflictive evil or torment; a great trail or vexation. Shak. And men blasphemed God for the plague of hail. Wyclif.",
-  "plead": "[v.] To argue in support of a claim, or in defense against the claim of another; to urge reasons for or against a thing; to attempt to persuade one by argument or supplication; to speak by way of persuasion;",
-  "pleasing": "[a.] Giving pleasure or satisfaction; causing agreeable emotion; agreeable; delightful; as, a pleasing prospect; pleasing manners. \"Pleasing harmony.\" Shak. \"Pleasing features.\" Macaulay.",
-  "plenteous": "[a.] Containing plenty; abundant; copious; plentiful; sufficient for every purpose; as, a",
-  "poor": "[a.] Destitute of property; wanting in material riches or goods; needy; indigent.",
-  "portion": "[n.] That which is divided off or separated, as a part from a whole; a separated part",
-  "possess": "[v.] To occupy in person; to hold or actually have in one\'s own keeping; to have and to hold. Houses and fields and vineyards shall be possessed again in this land.",
-  "posterity": "[n.] The race that proceeds from a progenitor; offspring to the furthest generation; the aggregate number of persons who are descended from an ancestor of a generation; descendants; -- contrasted with ancestry;",
-  "potter": "[n.] One whose occupation is to make earthen vessels. Ps. ii. 9.",
-  "praise": "[v.] To commend; to applaud; to express approbation of; to laud; -- applied to a person or his acts. \"I praise well thy wit.\" Chaucer. Let her own works praise her in the gates.",
-  "prayer": "[n.] One who prays;",
-  "precept": "[n.] Any commandment, instruction, or order intended as an authoritative rule of action; esp., a command respecting moral conduct; an injunction; a rule. For precept must be upon precept.",
-  "pride": "[n.] A small European lamprey (Petromyzon branchialis); -- called also prid,",
-  "priest": "[n.] A presbyter elder; a minister; specifically:",
-  "principality": "[n.] Sovereignty; supreme power; hence, superiority; predominance; high, or the highest, station. Sir P. Sidney. Your principalities shall come down, even the crown of your glory.",
-  "prison": "[n.] A place where persons are confined, or restrained of personal liberty; hence, a place or state o Bring my soul out of prison, that I may praise thy name. Ps. cxlii. 7. The tyrant Æolus, . .",
-  "proceeding": "[n.] The act of one who proceeds, or who prosecutes a design or transaction; progress or movement from one thing to another; a measure or step taken in a course of business; a transaction; as, an illegal proceeding;",
-  "procession": "[n.] The act of proceeding, moving on, advancing, or issuing; regular, orderly, or ceremonious progress; continuous course. Bp. Pearson.",
-  "proclaim": "[v.] To make known by public announcement; to give wide publicity to; to publish abroad; to promulgate; to declare; as, to proclaim war or peace. To proclaim liberty to the captives.",
-  "prodigal": "[a.] Given to extravagant expenditure; expending money or other things without necessity; recklessly or viciously profuse; lavish; wasteful; not frugal or economical; as, a prodigal man; the prodigal son; prodigal giving;",
-  "profane": "[a.] Not sacred or holy; not possessing peculiar sanctity; unconsecrated; hence, relating to matters other than sacred; secular; -- opposed to sacred, religious, or inspired; as, a",
-  "profit": "[n.] Acquisition beyond expenditure; excess of value received for producing, keeping, or selling, over cost; hence, pecuniary gain in any transaction or occupation; emolument; as, a profit on the sale",
-  "prohibit": "[v.] To forbid by authority; to interdict; as, God prohibited Adam from eating of the fruit of a certain tree; we prohibit a person from doing a thing, and also the doing of the thing;",
-  "prophecy": "[n.] A declaration of something to come; a foretelling; a prediction; esp., an inspired foretelling. He hearkens after prophecies and dreams. Shak. Prophecy came not in old time by the will of man. 2.",
-  "prophet": "[n.] One who prophesies, or foretells events; a predicter;",
-  "proselyte": "[n.] A new convert especially a convert to some religion or religious sect, or to some particular opinion, system, or party; thus, a Gentile converted to Judaism, or a pagan converted to Christianity, is",
-  "prosperity": "[n.] The state of being prosperous; advance or gain in anything good or desirable; successful progress in any business or enterprise; attainment of the object desired; good fortune; success; as, commercial prosperity;",
-  "proud": "[a.] Feeling or manifesting pride, in a good or bad sense; as:",
-  "provender": "[n.] Dry food for domestic animals, as hay, straw, corn, oats, or a mixture of ground grain; feed. \"Hay or other provender.\" Mortimer.",
-  "providence": "[n.] The act of providing or preparing for future use or application; a making ready; preparation.",
-  "provoke": "[v.] To call forth; to call into being or action; esp., to incense to action, a faculty or passion, as love, hate, or ambition; hence, commonly, to incite, as a person, to action by a challenge, by taunts, or by defiance;",
-  "prudence": "[n.] The quality or state of being prudent; wisdom in the way of caution and provision; discretion; carefulness; hence, also, economy; frugality.",
-  "psalm": "[n.] A sacred song; a poetical composition for use in the praise or worship of God.",
-  "pure": "[a.] Separate from all heterogeneous or extraneous matter; free from mixture or combination; clean; mere; simple; unmixed; as, pure water; pure clay; pure air; pure compassion.",
-  "purification": "[n.] The act of purifying; the act or operation of separating and removing from anything that which is impure or noxious, or heterogeneous or foreign to it; as, the purification of liquors, or",
-  "ransom": "[n.] The release of a captive, or of captive, or of captured property, by payment of a consideration; redemption; as, prisoners hopeless of",
-  "rapture": "[n.] A seizing by violence; a hurrying along; rapidity with violence.",
-  "rebuke": "[v.] To check, silence, or put down, with reproof; to restrain by expression of disapprobation; to reprehend sharply and summarily; to chide; to reprove;",
-  "recompense": "[v.] To render an equivalent to, for service, loss, etc.; to requite; to remunerate; to compensate.",
-  "redeem": "[v.] To purchase back; to regain possession of by payment of a stipulated price; to repurchase. If a man sell a dwelling house in a walled city, then he may redeem it within a whole year after it is sold.",
-  "refuge": "[n.] Shelter or protection from danger or distress. Rocks, dens, and caves! But I in none of these Find place or",
-  "rejoice": "[v.] To feel joy; to experience gladness in a high degree; to have pleasurable satisfaction; to be delighted. \"O, rejoice beyond a common joy.\" Shak. I will be glad and rejoice in thy mercy.",
-  "relent": "[v.] To become less rigid or hard; to yield; to dissolve; to melt; to deliquesce. He stirred the coals till relente gan The wax again the fire. Chaucer. [Salt of tartar] placed in a cellar will . . .",
-  "remnant": "[a.] Remaining; yet left. \"Because of the remnant dregs of his disease.\" Fuller.",
-  "remorse": "[n.] The anguish, like gnawing pain, excited by a sense of guilt; compunction of conscience for a crime committed, or for the sins of one\'s",
-  "repent": "[a.] Prostrate and rooting; -- said of",
-  "repentance": "[n.] The act of repenting, or the state of being penitent; sorrow for what one has done or omitted to do; especially, contrition for sin. Chaucer. Godly sorrow worketh repentance to salvation. 2.",
-  "reproach": "[v.] To come back to, or come home to, as a matter of blame; to bring shame or disgrace upon; to disgrace.",
-  "reprove": "[v.] To convince. When he is come, he will reprove the world of sin, and of righteousness, and of judgment.",
-  "restore": "[v.] To bring back to its former state; to bring back from a state of ruin, decay, disease, or the like; to repair; to renew;",
-  "resurrection": "[n.] A rising again; the resumption",
-  "retribution": "[n.] The act of retributing; repayment. In good offices and due retributions, we may not be pinching and niggardly.",
-  "reveal": "[v.] To make known (that which has been concealed or kept secret); to unveil; to disclose; to show.",
-  "revelation": "[n.] The act of revealing, disclosing, or discovering to others what was before unknown",
-  "reverence": "[n.] Profound respect and esteem mingled with fear and affection, as for a holy being or place; the disposition to revere; veneration.",
-  "reward": "[v.] To give in return, whether good or evil; -- commonly in a good sense; to requite; to recompense; to repay; to compensate.",
-  "righteous": "[a.] Doing, or according with, that which is right; yielding to all their due; just; equitable; especially, free from wrong, guilt, or sin; holy; as, a righteous man or act; a",
-  "righteousness": "[n.] The quality or state of being righteous; holiness; purity; uprightness; rectitude.",
-  "rise": "[v.] To move from a lower position to a higher; to ascend; to mount up. Specifically: -- (a) To go upward by walking, climbing, flying, or any other voluntary motion; as, a bird rises in the air; a fish rises to",
-  "rod": "[n.] A straight and slender stick; a wand; hence, any slender bar, as of wood or metal (applied to various purposes).",
-  "rubble": "[n.] Water-worn or rough broken stones; broken bricks, etc., used in coarse masonry, or to fill up between the facing courses of walls. Inside [the wall] there was rubble or mortar. Jowett (Thucyd.",
-  "ruler": "[n.] One who rules; one who exercises sway or authority; a governor. And he made him ruler over all the land. Gen. xii. 43.",
-  "sabbath": "[n.] A season or day of rest; one day in seven appointed for rest or worship, the observance of which was enjoined upon the Jews in the Decalogue,",
-  "sacred": "[a.] Set apart by solemn religious ceremony; especially, in a good sense, made holy; set apart to religious use; consecrated; not profane or common; as, a sacred place; a sacred day;",
-  "sacrifice": "[n.] The offering of anything to God, or to a god; consecratory rite.",
-  "sadness": "[n.] Heaviness; firmness.",
-  "saint": "[n.] A person sanctified; a holy or godly person; one eminent for piety and virtue; any true Christian, as being redeemed and consecrated to God. Them that are sanctified in Christ Jesus, called to be saints.",
-  "salvation": "[n.] The act of saving; preservation or deliverance from destruction, danger, or",
-  "sanctify": "[v.] To make sacred or holy; to set apart to a holy or religious use; to consecrate by appropriate rites; to hallow. God blessed the seventh day and sanctified it. Gen. ii. 3. Moses . . .",
-  "sanctuary": "[n.] A sacred place; a consecrated spot; a holy and inviolable site.",
-  "scatter": "[v.] To strew about; to sprinkle around; to throw down loosely; to deposit or place here and there, esp. in an open or sparse order.",
-  "scourge": "[n.] A lash; a strap or cord; especially, a lash used to inflict pain or punishment; an instrument of punishment or discipline; a whip.",
-  "scribe": "[n.] One who writes; a draughtsman; a writer for another; especially, an offical or public writer; an amanuensis or secretary; a notary;",
-  "scroll": "[n.] A roll of paper or parchment; a writing formed into a roll; a schedule; a list. The heavens shall be rolled together as a scroll. Isa. xxxiv. 4.",
-  "seal": "[n.] Any aquatic carnivorous mammal of the families Phocidæ",
-  "seek": "[a.] Sick. Chaucer.",
-  "selah": "[n.] A word of doubtful meaning, occuring frequently in the Psalms; by some, supposed to signify silence or a pause in the musical performance of",
-  "separate": "[v.] To disunite; to divide; to disconnect; to sever; to part in any manner. From the fine gold I separate the alloy. Dryden. Separate thyself, I pray thee, from me.",
-  "servant": "[n.] One who serves, or does services, voluntarily or on compulsion; a person who is employed by another for menial offices, or for other labor, and is subject to his command;",
-  "severity": "[n.] The quality or state of being severe.",
-  "shadow": "[n.] Shade within defined limits; obscurity or deprivation of light, apparent on a surface, and representing the form of the body which intercepts the rays of light; as, the shadow of a man, of a tree, or of",
-  "shepherd": "[n.] A man employed in tending, feeding, and guarding sheep, esp.",
-  "sign": "[n.] That by which anything is made known or represented; that which furnishes evidence; a mark; a token; an indication; a proof.",
-  "sin": "[adv.] Old form of Since. Sin that his lord was twenty year of",
-  "sinew": "[n.] A tendon or tendonous tissue.",
-  "sing": "[v.] To utter sounds with musical inflections or melodious modulations of voice, as fancy may dictate, or according to the notes of a song or tune, or of a given part (as alto, tenor, etc.) in a chorus or",
-  "sinner": "[n.] One who has sinned; especially, one who has sinned without repenting; hence, a persistent and incorrigible transgressor; one condemned by the law",
-  "slander": "[n.] A false tale or report maliciously uttered, tending to injure the reputation of another; the malicious utterance of defamatory reports; the dissemination of malicious tales or suggestions to the injury",
-  "slaughter": "[n.] The act of killing.",
-  "sluggard": "[n.] A person habitually lazy, idle, and inactive; a drone. Go to the ant, thou sluggard; considered her ways, and be wise.",
-  "smite": "[v.] To strike; to inflict a blow upon with the hand, or with any instrument held in the hand, or with a missile thrown by the hand; as, to smite with the fist, with a rod, sword, spear,",
-  "sober": "[a.] Temperate in the use of spirituous liquors; habitually temperate; as, a sober man. That we may hereafter live a godly, righteous, and sober life, to the glory of Thy holy name. Bk.",
-  "sojourn": "[v.] To dwell for a time; to dwell or live in a place as a temporary resident or as a stranger, not considering the place as a permanent habitation; to delay; to tarry.",
-  "sojourner": "[n.] One who sojourns. We are strangers before thee, and sojourners. 1.",
-  "solemn": "[a.] Marked with religious rites and pomps; enjoined by, or connected with, religion; sacred.",
-  "sorrow": "[n.] The uneasiness or pain of mind which is produced by the loss of any good, real or supposed, or by diseappointment in the expectation of good; grief at having suffered or occasioned evil; regret; unhappiness; sadness.",
-  "soul": "[a.] Sole. Chaucer.",
-  "sovereignty": "[n.] The quality or state of being sovereign, or of being a sovereign; the exercise of, or right to exercise, supreme power; dominion; sway; supremacy; independence; also, that which is sovereign; a sovereign state;",
-  "spare": "[v.] To use frugally or stintingly, as that which is scarce or valuable; to retain or keep unused; to save. \"No cost would he spare.\" Chaucer.",
-  "speak": "[v.] To utter words or articulate sounds, as human beings; to express thoughts by words; as, the organs may be so obstructed that a man may not be able to speak.",
-  "spirit": "[n.] Air set in motion by breathing; breath; hence, sometimes, life itself.",
-  "spiritual": "[a.] Consisting of spirit; not material; incorporeal; as, a spiritual substance or being. It is sown a natural body, it is raised a spiritual body.",
-  "statute": "[n.] An act of the legislature of a state or country, declaring, commanding, or prohibiting something; a positive law; the written will of the legislature expressed with all the requisite forms of legislation;",
-  "stead": "[n.] Place, or spot, in general. Chaucer. Fly, therefore, fly this fearful stead",
-  "steadfast": "[a.] Firmly fixed or established; fast fixed; firm.",
-  "steward": "[n.] A man employed in a large family, or on a large estate, to manage the domestic concerns, supervise other servants, collect the rents or income, keep accounts, and the like.",
-  "strife": "[n.] The act of striving; earnest endeavor.",
-  "strive": "[v.] To make efforts; to use exertions; to endeavor with earnestness; to labor hard.",
-  "strong": "[a.] Having active physical power, or great physical power to act; having a power of exerting great bodily force; vigorous. That our oxen may be strong to labor.",
-  "stronghold": "[n.] A fastness; a fort or fortress; fortfield place; a place",
-  "subdue": "[v.] To bring under; to conquer by force or the exertion of superior power, and bring into permanent subjection; to reduce under dominion; to vanquish. I will subdue all thine enemies.",
-  "subjection": "[n.] The act of subjecting, or of bringing under the dominion of another; the act of subduing. The conquest of the kingdom, and subjection of the rebels.",
-  "suppliant": "[a.] Asking earnestly and submissively; entreating; beseeching; supplicating.",
-  "supplication": "[n.] The act of supplicating; humble and earnest prayer, as",
-  "surety": "[n.] The state of being sure; certainty; security. Know of a surety, that thy seed shall be a stranger in a land that is not theirs. Gen. xv. 13. For the more surety they looked round about.",
-  "sustenance": "[n.] The act of sustaining; support; maintenance; subsistence; as, the sustenance of the body; the sustenance",
-  "swear": "[v.] To affirm or utter a solemn declaration, with an appeal to God for the truth of what is affirmed; to make a promise, threat, or resolve on oath;",
-  "synagogue": "[n.] A congregation or assembly of Jews met for the purpose of worship, or the performance of",
-  "tabernacle": "[n.] A slightly built or temporary habitation; especially,",
-  "temple": "[n.] A contrivence used in a loom for keeping the web",
-  "tender": "[n.] One who tends; one who takes care of any person or thing;",
-  "testify": "[v.] To make a solemn declaration, verbal or written, to establish some fact; to give testimony for the purpose of communicating to others a knowledge of something not known to them. Jesus . .",
-  "testimony": "[n.] A solemn declaration or affirmation made for the purpose of establishing or proving",
-  "thankful": "[a.] Obtaining or deserving thanks; thankworthy. Ladies, look here; this is the thankful glass That mends the looker\'s eyes; this is the well That washes what it",
-  "thanksgiving": "[n.] The act of rending thanks, or expressing gratitude for favors or mercies. Every creature of God is good, and nothing to be refused, if it be received with thanksgiving. 1 Tim. iv. 4.",
-  "theophany": "[n.] A manifestation of God to man by actual appearance, usually as",
-  "throne": "[n.] A chair of state, commonly a royal seat, but sometimes the seat of a prince, bishop, or other high dignitary. The noble king is set up in his throne. Chaucer.",
-  "tithe": "[n.] A tenth; the tenth part of anything; specifically, the tenthpart of the increase arising from the profits of land and stock, allotted to the clergy for their support, as in England,",
-  "token": "[n.] Something intended or supposed to represent or indicate another thing or an event; a sign; a symbol; as, the rainbow is a token of God\'s covenant established",
-  "tongue": "[n.] an organ situated in the floor of the mouth of most vertebrates and connected with the",
-  "transgressor": "[n.] One who transgresses; one who breaks a law, or violates a command; one who violates any known rule or principle of rectitude; a sinner. The way of transgressors is hard.",
-  "trial": "[n.] The act of trying or testing in any manner.",
-  "tribe": "[n.] A family, race, or series of generations, descending from the same progenitor, and kept distinct, as in the case of the twelve tribes of Israel, descended from the twelve sons",
-  "tribute": "[n.] An annual or stated sum of money or other valuable thing, paid by one ruler or nation to another, either as an acknowledgment of submission, or as the price of peace and protection, or by virtue of some treaty;",
-  "triumph": "[n.] A magnificent and imposing ceremonial performed in honor of a general who had gained a decisive victory over a",
-  "trouble": "[v.] To put into confused motion; to disturb; to agitate. An angel went down at a certain season into the pool, and troubled the water. John v. 4.",
-  "trust": "[n.] Assured resting of the mind on the integrity, veracity, justice, friendship, or other sound principle, of another person; confidence; reliance; reliance.",
-  "truth": "[n.] The quality or being true; as: -- (a) Conformity to fact or reality; exact accordance with that which is, or has been; or",
-  "tumult": "[n.] The commotion or agitation of a multitude, usually accompanied with great noise, uproar, and confusion of voices; hurly-burly; noisy confusion.",
-  "turbulence": "[n.] The quality or state of being turbulent; a disturbed state; tumult; disorder; agitation. Shak. The years of . . .",
-  "uncircumcised": "[n.] Not circumcised; hence, not of",
-  "unclean": "[a.] Not clean; foul; dirty; filthy.",
-  "understanding": "[a.] Knowing; intelligent; skillful; as, he is an",
-  "unjust": "[a.] Acting contrary to the standard of right; not animated or controlled by justice; false; dishonest; as, an unjust man",
-  "upright": "[a.] In an erect position or posture; perpendicular; vertical, or nearly vertical; pointing upward; as, an upright tree. With chattering teeth, and bristling hair upright. Dryden.",
-  "utter": "[a.] Outer. \"Thine utter eyen.\" Chaucer. \"By him a shirt and utter mantle laid.\" Chapman.",
-  "vainglory": "[n.] Excessive vanity excited by one\'s own performances; empty pride; undue elation of mind; vain show; boastfulness.",
-  "vanish": "[v.] To pass from a visible to an invisible state; to go out of sight; to disappear; to fade; as, vapor vanishes from the sight by being dissipated; a ship vanishes from the sight of spectators on land.",
-  "vanity": "[n.] The quality or state of being vain; want of substance to satisfy desire; emptiness; unsubstantialness; unrealness; falsity. Vanity of vanities, saith the Preacher, vanity of vanities; all is vanity.",
-  "vengeance": "[n.] Punishment inflicted in return for an injury or an offense; retribution; -- often, in a bad sense, passionate or unrestrained revenge. To me belongeth vengeance and recompense.",
-  "venture": "[n.] An undertaking of chance or danger; the risking of something upon an event which can not be foreseen with certainty; a hazard; a risk; a speculation.",
-  "vessel": "[n.] A hollow or concave utensil for holding anything; a hollow receptacle of any kind, as a hogshead, a barrel, a firkin, a bottle, a kettle, a cup, a bowl, etc.",
-  "vexation": "[n.] The act of vexing, or the state of being vexed; agitation; disquiet; trouble; irritation. Passions too violent . . . afford us nothing but vexation and pain.",
-  "vigil": "[n.] Abstinence from sleep, whether at a time when sleep is customary or not; the act of keeping awake, or the state of being awake, or the state of being awake; sleeplessness; wakefulness; watch.",
-  "vile": "[a.] Low; base; worthless; mean; despicable. A poor man in vile raiment. James ii. 2. The craft either of fishing, which was Peter\'s, or of making tents, which was Paul\'s, were [was] more vile than the science",
-  "vindicate": "[v.] To lay claim to; to assert a right to; to claim. Is thine alone the seed that strews the plain The birds of heaven shall vindicate their",
-  "vine": "[n.] Any woody climbing plant which",
-  "vineyard": "[n.] An inclosure or yard for grapevines; a plantation of vines",
-  "vision": "[n.] The act of seeing external objects; actual sight.",
-  "visitation": "[n.] The act of visiting, or the state of being visited; access for inspection or examination.",
-  "vow": "[n.] A solemn promise made to God, or to some deity; an act by which one consecrates or devotes himself, absolutely or conditionally, wholly or in part, for a longer or shorter time, to some act, service, or condition;",
-  "wait": "[v.] To watch; to observe; to take notice.",
-  "wandering": "[n.] a. & n. from Wander, v. Wandering albatross (Zoöl.), the great white albatross.",
-  "warn": "[v.] To refuse. [Written also wern, worn.] Chaucer.",
-  "watchman": "[n.] One set to watch; a person who keeps guard; a guard;",
-  "wayward": "[a.] Taking one\'s own way; disobedient; froward; perverse; willful. My wife is in a wayward mood. Shak. Wayward beauty doth not fancy move. Fairfax. Wilt thou forgive the wayward thought Keble.",
-  "wealth": "[n.] Weal; welfare; prosperity; good.",
-  "weary": "[a.] Having the strength exhausted by toil or exertion; worn out in respect to strength, endurance, etc.; tired; fatigued. I care not for my spirits if my legs were not weary. Shak.",
-  "weeping": "[n.] The act of one who weeps; lamentation with tears; shedding",
-  "whole": "[a.] Containing the total amount, number, etc.; comprising all the parts; free from deficiency; all; total; entire; as, the whole earth; the whole solar system; the whole army; the",
-  "wicked": "[a.] Having a wick; -- used chiefly in composition; as, a two-wicked lamp.",
-  "wickedness": "[n.] The quality or state of being wicked; departure from the rules of the divine or the moral law; evil disposition or practices; immorality; depravity; sinfulness. God saw that the wickedness of man was great.",
-  "wilderness": "[n.] A tract of land, or a region, uncultivated and uninhabited by human beings, whether a forest or a wide, barren plain; a wild; a waste; a desert; a pathless waste of any kind.",
-  "wisdom": "[n.] The quality of being wise; knowledge, and the capacity to make due use of it; knowledge of the best ends and the best means; discernment and judgment; discretion; sagacity; skill; dexterity.",
-  "wise": "[a.] Having knowledge; knowing; enlightened; of extensive information; erudite; learned. They are wise to do evil, but to do good they have no knowledge.",
-  "witness": "[n.] Attestation of a fact or an event; testimony. May we with . . . the witness of a good conscience, pursue him with any further revenge Shak. If I bear witness of myself, my witness is not true.",
-  "woe": "[n.] Grief; sorrow; misery; heavy calamity. Thus saying, from her side the fatal key, Sad instrument of all our woe, she took. Milton.",
-  "womb": "[n.] The belly; the abdomen. Chaucer. And he coveted to fill his woman of the cods that the hogs eat, and no man gave him. Wyclif (Luke xv.",
-  "wonder": "[n.] That emotion which is excited by novelty, or the presentation to the sight or mind of something new, unusual, strange, great, extraordinary, or not well understood; surprise; astonishment; admiration; amazement.",
-  "wool": "[n.] The soft and curled, or crisped, species of hair which grows on sheep and some other animals, and which in fineness sometimes approaches to fur;",
-  "world": "[n.] The earth and the surrounding heavens; the creation; the system of created things; existent creation; the universe. The invisible things of him from the creation of the world are clearly seen.",
-  "worship": "[n.] Excellence of character; dignity; worth; worthiness. Shak. A man of worship and honour. Chaucer.",
-  "worthy": "[a.] Having worth or excellence; possessing merit; valuable; deserving; estimable; excellent; virtuous.",
-  "wrath": "[n.] Violent anger; vehement exasperation; indignation; rage; fury; ire. Wrath is a fire, and jealousy a weed. Spenser. When the wrath of king Ahasuerus was appeased.",
-  "zeal": "[n.] Passionate ardor in the pursuit of anything; eagerness in favor of a person or cause; ardent and active interest; engagedness; enthusiasm; fervor.",
-  "zealous": "[a.] Filled with, or characterized by, zeal; warmly engaged, or ardent, in behalf of an object.",
 };
 
 const DOCTRINES = [
@@ -3955,13 +3291,29 @@ function dictCard(word, def){
 
 /* ── Dictionary verse trigger ── */
 // Only these truly archaic/obscure words show the Abc badge
+const DICT_HARD = new Set([
+  'hart','hind','roe','roebuck','pygarg','chamois','coney','kine','whelp','ossifrage',
+  'spikenard','hyssop','calamus','cassia','camphire','tares','fitches','rie',
+  'froward','bewray','bolled','chapiter','concupiscence','daysman','dissimulation',
+  'emerods','eschew','holpen','husbandman','knop','leasing','lucre','mortify',
+  'ouches','peradventure','pilled','privily','purloining','ringstraked','scrip',
+  'sodden','sottish','stanch','straitly','succour','tabret','timbrel','twain',
+  'winefat','withal','wont','propitiation','impute','reprobate','peculiar',
+  'carriage','camphire','comely','flagons','subtil','subtilty','broided',
+  'latchet','damsel','palsy','maimed','penury','requite','bewail','fain',
+  'botch','besom','betimes','feign','holden','jangling','raiment','rend',
+  'ruddy','vex','wen','froward','wroth','mote','nigh','usury','tabernacle',
+  'shekel','talent','mite','farthing','cubit','ephah','homer','hin',
+  'sackcloth','phylactery','corban','mammon','raca','centurion',
+]);
+
 function getVerseDictWords(text){
   const seen=new Set(),results=[];
   (text.toLowerCase().match(/[a-z']+/g)||[]).forEach(raw=>{
-    const variants=[raw,raw.replace(/s$/,''),raw.replace(/ed$/,''),raw.replace(/eth$/,''),raw.replace(/est$/,''),raw.replace(/ing$/,''),raw.replace(/ly$/,'')];
+    const variants=[raw,raw.replace(/s$/,''),raw.replace(/ed$/,''),raw.replace(/eth$/,''),raw.replace(/est$/,'')];
     for(const w of variants){
       if(seen.has(w))break;
-      if(KJV_DICT[w]){seen.add(w);results.push({word:w,def:KJV_DICT[w]});break;}
+      if(DICT_HARD.has(w)&&KJV_DICT[w]){seen.add(w);results.push({word:w,def:KJV_DICT[w]});break;}
     }
   });
   return results;
@@ -4217,7 +3569,7 @@ const PLAN_DEFS = {
   biy: { id:'biy',  name:'Bible in a Year', desc:'365 days · 3–4 chapters per day', icon:'📅', days:365 },
 };
 
-// Returns [[bi,ci], ...] array for a given plan day (0-indexed)
+// Returns [{bi, ci}] array for a given plan day (0-indexed)
 function getPlanDayReadings(planId, dayIdx){
   if(planId === 'prov') return [[19, dayIdx]];
   if(planId === 'nt30') return NT30_DAYS[dayIdx] || [];
@@ -4225,6 +3577,7 @@ function getPlanDayReadings(planId, dayIdx){
   return [];
 }
 
+// Human-readable label for a day's reading
 function planDayLabel(planId, dayIdx){
   const readings = getPlanDayReadings(planId, dayIdx);
   const groups = {};
@@ -4238,56 +3591,12 @@ function planDayLabel(planId, dayIdx){
   }).join(', ');
 }
 
+// Plan state helpers
 function loadPlan(){ return LS.get('kjv_active_plan', null); }
+// plan = {id, startDate, done:[], chDone:[]}
+
 function activePlan(){ return loadPlan(); }
 
-/* ── PLAN GAMIFICATION PERSISTENCE ── */
-function planGetProgress(){ return LS.get('kjv_plan_progress', {streak:0,streakLast:'',streakBest:0,dayDates:{},badges:[]}); }
-function planSaveProgress(p){ LS.set('kjv_plan_progress', p); }
-
-/* ── PLAN BADGE DEFINITIONS ── */
-const PLAN_BADGES = [
-  // Streak badges
-  {id:'plan_s3',   ico:'🔥',  name:'3-Day Streak',    desc:'Read 3 days in a row',              check: p => p.streakBest >= 3 },
-  {id:'plan_s7',   ico:'🌟',  name:'Week Streak',      desc:'Read 7 days in a row',              check: p => p.streakBest >= 7 },
-  {id:'plan_s30',  ico:'🏅',  name:'Month Streak',     desc:'Read 30 days in a row',             check: p => p.streakBest >= 30 },
-  // Completion badges
-  {id:'plan_1day', ico:'📖',  name:'First Day',        desc:'Complete your first reading day',   check: p => Object.keys(p.dayDates||{}).length >= 1 },
-  {id:'plan_10',   ico:'📚',  name:'10 Days',          desc:'Complete 10 reading days',          check: p => Object.keys(p.dayDates||{}).length >= 10 },
-  {id:'plan_30',   ico:'🎯',  name:'30 Days',          desc:'Complete 30 reading days',          check: p => Object.keys(p.dayDates||{}).length >= 30 },
-  // Book badges — awarded when all chapters of a book are read via plan
-  {id:'b_matthew', ico:'✝️',  name:'Matthew',          desc:'Read Matthew via a plan',           check: p => (p.booksRead||[]).includes('Matthew') },
-  {id:'b_john',    ico:'🕊️',  name:'John',             desc:'Read John via a plan',              check: p => (p.booksRead||[]).includes('John') },
-  {id:'b_romans',  ico:'📜',  name:'Romans',           desc:'Read Romans via a plan',            check: p => (p.booksRead||[]).includes('Romans') },
-  {id:'b_psalms',  ico:'🎵',  name:'Psalms',           desc:'Read Psalms via a plan',            check: p => (p.booksRead||[]).includes('Psalms') },
-  {id:'b_proverbs',ico:'🦁',  name:'Proverbs',         desc:'Read Proverbs via a plan',          check: p => (p.booksRead||[]).includes('Proverbs') },
-  {id:'b_genesis', ico:'🌍',  name:'Genesis',          desc:'Read Genesis via a plan',           check: p => (p.booksRead||[]).includes('Genesis') },
-  {id:'b_revelation',ico:'📯',name:'Revelation',       desc:'Read Revelation via a plan',        check: p => (p.booksRead||[]).includes('Revelation') },
-  {id:'b_isaiah',  ico:'📣',  name:'Isaiah',           desc:'Read Isaiah via a plan',            check: p => (p.booksRead||[]).includes('Isaiah') },
-  {id:'plan_nt',   ico:'🌅',  name:'NT Complete',      desc:'Complete the NT in 30 Days plan',   check: p => (p.plansCompleted||[]).includes('nt30') },
-  {id:'plan_biy',  ico:'🏆',  name:'Bible in a Year',  desc:'Complete the Bible in a Year plan', check: p => (p.plansCompleted||[]).includes('biy') },
-  {id:'plan_prov', ico:'🌿',  name:'Wisdom Seeker',    desc:'Complete Proverbs in a Month',      check: p => (p.plansCompleted||[]).includes('prov') },
-];
-
-function planCheckBadges(progress, newBadgesOut){
-  if(!progress.badges) progress.badges = [];
-  PLAN_BADGES.forEach(b => {
-    if(!progress.badges.includes(b.id) && b.check(progress)){
-      progress.badges.push(b.id);
-      if(newBadgesOut) newBadgesOut.push(b);
-    }
-  });
-}
-
-function planRecordBookRead(plan, bi){
-  const progress = planGetProgress();
-  if(!progress.booksRead) progress.booksRead = [];
-  const bookName = BOOKS[bi];
-  if(!progress.booksRead.includes(bookName)) progress.booksRead.push(bookName);
-  planSaveProgress(progress);
-}
-
-/* ── PLAN STATE ── */
 function startPlan(id){
   const plan = {id, startDate: todayStr(), done:[], chDone:[]};
   LS.set('kjv_active_plan', plan);
@@ -4296,124 +3605,35 @@ function startPlan(id){
 }
 
 function getCurrentDay(plan){
+  // First uncompleted day
   const def = PLAN_DEFS[plan.id];
   for(let d=0; d<def.days; d++){
     if(!plan.done.includes(d)) return d;
   }
-  return def.days;
+  return def.days; // all done
 }
 
-function markDayComplete(dayIdx, silent=false){
+function markDayComplete(dayIdx){
   const plan = activePlan();
   if(!plan || plan.done.includes(dayIdx)) return;
   plan.done.push(dayIdx);
   LS.set('kjv_active_plan', plan);
-  recordActivity();
-
-  // Update plan progress streak
-  const progress = planGetProgress();
-  if(!progress.dayDates) progress.dayDates = {};
-  const today = todayStr();
-  const yesterday = yesterdayStr();
-
-  if(!progress.dayDates[dayIdx]){
-    progress.dayDates[dayIdx] = today;
-    // Streak logic
-    if(progress.streakLast === today){
-      // already counted today — no change to streak count
-    } else if(progress.streakLast === yesterday){
-      progress.streak = (progress.streak||0) + 1;
-    } else {
-      progress.streak = 1;
-    }
-    progress.streakLast = today;
-    if((progress.streak||0) > (progress.streakBest||0)) progress.streakBest = progress.streak;
-  }
-
-  // Check if all chapters of any book are now done via plan
+  // Show toast
+  const toast = document.getElementById('day-toast');
   const def = PLAN_DEFS[plan.id];
-  const allChDone = new Set(plan.chDone.map(k => k));
-  BOOKS.forEach((bk, bi) => {
-    if((progress.booksRead||[]).includes(bk)) return;
-    // We don't know chapter counts without fetching — check if all plan readings for this book are done
-    const totalInPlan = [];
-    for(let d=0; d<def.days; d++){
-      getPlanDayReadings(plan.id, d).forEach(([b,c]) => { if(b===bi) totalInPlan.push(`${b}:${c}`); });
-    }
-    if(totalInPlan.length > 0 && totalInPlan.every(k => allChDone.has(k))){
-      if(!progress.booksRead) progress.booksRead = [];
-      if(!progress.booksRead.includes(bk)) progress.booksRead.push(bk);
-    }
-  });
-
-  // Check plan completion
-  if(plan.done.length >= def.days){
-    if(!progress.plansCompleted) progress.plansCompleted = [];
-    if(!progress.plansCompleted.includes(plan.id)) progress.plansCompleted.push(plan.id);
-  }
-
-  const newBadges = [];
-  planCheckBadges(progress, newBadges);
-  planSaveProgress(progress);
-
-  if(!silent){
-    showPlanCompleteModal(dayIdx, progress, newBadges);
-  } else {
-    // Fallback simple toast
-    const toast = document.getElementById('day-toast');
-    const planDef = PLAN_DEFS[plan.id];
-    toast.textContent = `✓ Day ${dayIdx+1} complete! ${plan.done.length}/${planDef.days} days`;
-    toast.classList.add('show');
-    setTimeout(()=>toast.classList.remove('show'), 3000);
-  }
+  toast.textContent = `✓ Day ${dayIdx+1} complete! ${plan.done.length}/${def.days} days`;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'), 3000);
+  recordActivity();
   renderPlansScreen();
 }
 
-function showPlanCompleteModal(dayIdx, progress, newBadges){
-  const streak = progress.streak || 1;
-  const isNewBest = streak > 1 && streak === (progress.streakBest||0);
-
-  document.getElementById('pcm-ico').textContent = newBadges.length ? '🏅' : streak >= 7 ? '🔥' : '📖';
-  document.getElementById('pcm-title').textContent = 'Day Complete!';
-  document.getElementById('pcm-reading').textContent = planDayLabel(activePlan().id, dayIdx);
-  document.getElementById('pcm-streak-num').textContent = streak;
-  document.getElementById('pcm-streak-lbl').textContent =
-    streak === 1 ? 'day streak — keep going!' :
-    isNewBest ? `day streak — new best! 🎉` :
-    streak >= 30 ? `day streak — incredible!` :
-    streak >= 7 ? `day streak — on fire!` :
-    `day reading streak`;
-
-  const badgesEl = document.getElementById('pcm-badges');
-  badgesEl.innerHTML = newBadges.map(b =>
-    `<div class="pcm-badge"><span class="pcm-badge-ico">${b.ico}</span><span class="pcm-badge-name">${b.name}</span></div>`
-  ).join('');
-
-  document.getElementById('plan-complete-modal-wrap').classList.add('on');
-}
-
-function closePlanCompleteModal(){
-  document.getElementById('plan-complete-modal-wrap').classList.remove('on');
-}
-
-/* ── GRACE DAYS per plan ── */
-const PLAN_GRACE = { prov:0, biy:0, nt30:2 };
-
-/* ── PLAN TRACKING (only called from plan navigation, not free reading) ── */
 function planTrackChapter(bookName, chIdx){
   const plan = activePlan();
   if(!plan) return;
   const bi = BOOKS.indexOf(bookName);
   const key = `${bi}:${chIdx}`;
-  if(!plan.chDone) plan.chDone = [];
-  const alreadyDone = plan.chDone.includes(key);
-  if(!alreadyDone) plan.chDone.push(key);
-
-  // Show light toast for individual chapter completion
-  if(!alreadyDone){
-    const chLabel = `${bookName} ${chIdx+1}`;
-    showPlanChToast(`✓ ${chLabel} complete`);
-  }
+  if(!plan.chDone.includes(key)) plan.chDone.push(key);
 
   // Check if current day is now fully read
   const curDay = getCurrentDay(plan);
@@ -4424,239 +3644,26 @@ function planTrackChapter(bookName, chIdx){
     if(allDone) markDayComplete(curDay);
     else LS.set('kjv_active_plan', plan);
   }
-  updatePlanNavBanner();
-  injectPlanChapterBar();
 }
 
-function showPlanChToast(msg){
-  // Reuse day-toast for light chapter confirmations
-  const t = document.getElementById('day-toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(()=>t.classList.remove('show'), 2500);
-}
-
-/* ── CHAPTER DONE BAR (injected at bottom of reader when in plan context) ── */
-function injectPlanChapterBar(){
-  // Remove any existing bar
-  const old = document.getElementById('plan-ch-bar');
-  if(old) old.remove();
-
-  const plan = activePlan();
-  if(!plan || !planNavContext) return;
-
-  const {dayIdx, readings} = planNavContext;
-  const bi = BOOKS.indexOf(S.book);
-  if(bi < 0) return;
-  const key = `${bi}:${S.ch}`;
-  const inPlan = readings.some(([b,c]) => b===bi && c===S.ch);
-  if(!inPlan) return;
-
-  const isDone = (plan.chDone||[]).includes(key);
-  const bar = document.createElement('div');
-  bar.id = 'plan-ch-bar';
-  bar.style.cssText = `padding:18px 14px 28px;text-align:center;border-top:1px solid var(--border);margin-top:16px`;
-
-  if(isDone){
-    // Find next unread in this day
-    const nextUnread = readings.find(([b,c]) => !(plan.chDone||[]).includes(`${b}:${c}`));
-    if(nextUnread){
-      const [nb,nc] = nextUnread;
-      const nextIdx = readings.indexOf(nextUnread);
-      bar.innerHTML = `
-        <div style="font-size:12px;color:var(--text-m);margin-bottom:10px;font-family:'Crimson Pro',serif">✓ Chapter complete — next up:</div>
-        <button onclick="openPlanChapter(${nb},${nc},${dayIdx},${nextIdx})" style="background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%">
-          ${BOOKS[nb]} ${nc+1} →
-        </button>`;
-    } else {
-      bar.innerHTML = `
-        <div style="font-size:14px;color:var(--text-m);font-family:'Crimson Pro',serif;margin-bottom:10px">✅ Day ${dayIdx+1} complete!</div>
-        <button onclick="showScreen('plans');dismissPlanBanner()" style="background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:12px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%">
-          ← Back to Plans
-        </button>`;
-    }
-  } else {
-    bar.innerHTML = `
-      <button onclick="markThisChapterDone()" style="background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:14px 28px;font-size:15px;font-weight:700;cursor:pointer;width:100%">
-        ✓ Mark Chapter Complete
-      </button>
-      <div style="font-size:11px;color:var(--text-m);margin-top:8px">Day ${dayIdx+1} · ${BOOKS[bi]} ${S.ch+1}</div>`;
-  }
-
-  document.getElementById('verses').appendChild(bar);
-}
-
-function markThisChapterDone(){
-  const plan = activePlan();
-  if(!plan || !planNavContext) return;
-  planTrackChapter(S.book, S.ch);
-  // Re-inject bar to show next chapter button
-  injectPlanChapterBar();
-  updatePlanNavBanner();
-}
-
-/* ── PLAN NAV BANNER ── */
-let planNavContext = null;
-
-function openPlanChapter(bi, ci, dayIdx, readingIdx){
-  const plan = activePlan(); if(!plan) return;
-  const bookName = BOOKS[bi];
-  const readings = getPlanDayReadings(plan.id, dayIdx);
-  planNavContext = {dayIdx, readings, currentIdx: readingIdx||0};
-  fetchBook(bookName).then(data=>{
-    if(!data) return;
-    S.book=bookName; S.ch=ci; S.bookData=data;
-    renderReader(); showScreen('reader');
-    recordActivity();
-    updatePlanNavBanner();
-    // Don't auto-mark on open — user must reach end of chapter
-  });
-}
-
-function updatePlanNavBanner(){
-  const banner = document.getElementById('plan-nav-banner');
-  const plan = activePlan();
-  if(!plan || !planNavContext){ banner.classList.remove('on'); return; }
-
-  const {dayIdx, readings} = planNavContext;
-  const bi = BOOKS.indexOf(S.book);
-  const inPlan = readings.some(([b,c]) => b===bi && c===S.ch);
-  if(!inPlan){ banner.classList.remove('on'); return; }
-
-  const isDone = (plan.chDone||[]).includes(`${bi}:${S.ch}`);
-  const dayDone = plan.done.includes(dayIdx);
-  const remaining = readings.filter(([b,c]) => !(plan.chDone||[]).includes(`${b}:${c}`)).length;
-  const label = document.getElementById('pnb-label');
-  const btn = document.getElementById('pnb-next-btn');
-
-  if(dayDone){
-    label.textContent = `✅ Day ${dayIdx+1} complete!`;
-    btn.textContent = '← Plans';
-    btn.onclick = ()=>{ showScreen('plans'); dismissPlanBanner(); };
-  } else {
-    label.textContent = `Day ${dayIdx+1} · ${remaining} chapter${remaining!==1?'s':''} remaining`;
-    btn.textContent = '← Plans';
-    btn.onclick = ()=>{ showScreen('plans'); dismissPlanBanner(); };
-  }
-  banner.classList.add('on');
-}
-
-function dismissPlanBanner(){
-  document.getElementById('plan-nav-banner').classList.remove('on');
-  planNavContext = null;
-}
-
-/* ── MARK DAY COMPLETE ── */
-function markDayComplete(dayIdx, silent=false){
-  const plan = activePlan();
-  if(!plan || plan.done.includes(dayIdx)) return;
-  plan.done.push(dayIdx);
-  LS.set('kjv_active_plan', plan);
-  recordActivity();
-
-  const progress = planGetProgress();
-  if(!progress.dayDates) progress.dayDates = {};
-  const today = todayStr();
-  const yesterday = yesterdayStr();
-  const grace = PLAN_GRACE[plan.id] || 0;
-
-  if(!progress.dayDates[dayIdx]){
-    progress.dayDates[dayIdx] = today;
-
-    if(progress.streakLast === today){
-      // already incremented today
-    } else {
-      // Check if within grace window
-      const lastDate = progress.streakLast;
-      let withinGrace = false;
-      if(grace > 0 && lastDate){
-        const last = new Date(lastDate);
-        const now = new Date(today);
-        const diffDays = Math.round((now - last) / 86400000);
-        withinGrace = diffDays > 0 && diffDays <= grace + 1;
-      }
-      const consecutive = progress.streakLast === yesterday;
-      if(consecutive || withinGrace){
-        progress.streak = (progress.streak||0) + 1;
-      } else {
-        progress.streak = 1;
-      }
-      progress.streakLast = today;
-      if((progress.streak||0) > (progress.streakBest||0)) progress.streakBest = progress.streak;
-    }
-  }
-
-  // Check book completion — any book whose plan readings are all in chDone
-  const def = PLAN_DEFS[plan.id];
-  if(!progress.booksRead) progress.booksRead = [];
-  const allPlanReadings = {};
-  for(let d=0; d<def.days; d++){
-    getPlanDayReadings(plan.id, d).forEach(([b,c])=>{
-      if(!allPlanReadings[b]) allPlanReadings[b]=[];
-      allPlanReadings[b].push(`${b}:${c}`);
-    });
-  }
-  Object.entries(allPlanReadings).forEach(([biStr, keys])=>{
-    const bk = BOOKS[parseInt(biStr)];
-    if(!progress.booksRead.includes(bk) && keys.every(k=>(plan.chDone||[]).includes(k))){
-      progress.booksRead.push(bk);
-    }
-  });
-
-  // Check plan completion
-  if(!progress.plansCompleted) progress.plansCompleted = [];
-  if(plan.done.length >= def.days && !progress.plansCompleted.includes(plan.id)){
-    progress.plansCompleted.push(plan.id);
-  }
-
-  const newBadges = [];
-  planCheckBadges(progress, newBadges);
-  planSaveProgress(progress);
-  renderPlansScreen();
-
-  if(!silent) showPlanCompleteModal(dayIdx, progress, newBadges);
-}
-
-/* ── OPEN PLAN DAY ── */
-function openPlanDay(dayIdx){
-  const plan = activePlan(); if(!plan) return;
-  const readings = getPlanDayReadings(plan.id, dayIdx);
-  if(!readings.length) return;
-  // Jump to first unread chapter, or chapter 1 if all done
-  const firstUnread = readings.findIndex(([b,c]) => !(plan.chDone||[]).includes(`${b}:${c}`));
-  const idx = firstUnread >= 0 ? firstUnread : 0;
-  openPlanChapter(readings[idx][0], readings[idx][1], dayIdx, idx);
-}
-
-function abandonPlan(){
-  if(confirm('Abandon this plan and choose a new one?')){
-    LS.set('kjv_active_plan', null);
-    planNavContext = null;
-    document.getElementById('plan-nav-banner').classList.remove('on');
-    renderPlansScreen();
-  }
-}
+// ── RENDER PLANS SCREEN ──
 function renderPlansScreen(){
   const el = document.getElementById('plans-inner');
   const plan = activePlan();
-  const progress = planGetProgress();
 
   if(!plan){
+    // Plan selection
     el.innerHTML = `
-      <div class="plans-title">✦ Reading Plans</div>
-      <div class="plan-cards-wrap">
-        ${Object.values(PLAN_DEFS).map(p => `
-          <div class="plan-card">
-            <div class="plan-card-top">
-              <span class="plan-ico">${p.icon}</span>
-              <span class="plan-name">${p.name}</span>
-            </div>
-            <div class="plan-desc">${p.desc}</div>
-            <button class="plan-start-btn" onclick="startPlan('${p.id}')">Begin Plan</button>
-          </div>`).join('')}
-      </div>
-      ${renderPlanProgressSection(progress)}
+      <div style="font-family:'IM Fell English',serif;font-size:20px;color:var(--gold);margin-bottom:14px">Reading Plans</div>
+      ${Object.values(PLAN_DEFS).map(p => `
+        <div class="plan-card">
+          <div class="plan-card-top">
+            <span class="plan-ico">${p.icon}</span>
+            <span class="plan-name">${p.name}</span>
+          </div>
+          <div class="plan-desc">${p.desc}</div>
+          <button class="plan-start-btn" onclick="startPlan('${p.id}')">Start Plan</button>
+        </div>`).join('')}
       <div id="book-checklist"></div>`;
     renderBookChecklist();
     return;
@@ -4667,140 +3674,75 @@ function renderPlansScreen(){
   const pct = Math.round((plan.done.length / def.days) * 100);
   const allDone = curDay >= def.days;
 
-  // For Proverbs and NT: show full chapter grid. For BIY: show today card + day list.
-  const useGrid = (plan.id === 'prov' || plan.id === 'nt30');
+  // Today's chapter pills
+  const todayReadings = allDone ? [] : getPlanDayReadings(plan.id, curDay);
+  const todayPills = todayReadings.map(([bi,ci]) => {
+    const ref = `${BOOKS[bi]} ${ci+1}`;
+    const done = plan.chDone.includes(`${bi}:${ci}`);
+    return `<div class="ch-pill ${done?'done':''}" onclick="openPlanChapter(${bi},${ci})">${done?'✓ ':''}${ref}</div>`;
+  }).join('');
 
-  let mainContent = '';
-
-  if(allDone){
-    mainContent = `<div style="text-align:center;padding:40px 20px;font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">
-      🏆 Plan Complete!<br>
-      <span style="font-size:15px;color:var(--text-m);font-family:'Crimson Pro',serif;display:block;margin-top:8px">Well done — thou good and faithful servant</span>
-    </div>`;
-  } else if(useGrid){
-    // Full chapter grid view
-    if(plan.id === 'prov'){
-      mainContent = `
-        <div class="plan-section-hdr">Proverbs — 31 Chapters</div>
-        <div class="plan-ch-grid">
-          ${Array.from({length:31},(_,i)=>{
-            const done = plan.done.includes(i);
-            const isToday = i === curDay;
-            return `<div class="plan-ch-tile ${done?'done':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
-              ${done?'✓ ':''}Ch ${i+1}
-            </div>`;
-          }).join('')}
-        </div>`;
-    } else {
-      // NT30 — group by day showing reading label
-      mainContent = `
-        <div class="plan-section-hdr">New Testament — 30 Days</div>
-        <div style="padding:0 14px 14px">
-          ${Array.from({length:def.days},(_,i)=>{
-            const done = plan.done.includes(i);
-            const isToday = i === curDay;
-            const label = planDayLabel(plan.id, i);
-            return `<div class="day-row ${done?'completed':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
-              <span class="day-num">Day ${i+1}</span>
-              <span class="day-label">${label}</span>
-              <span class="day-check">${done?'✅':isToday?'📖':''}</span>
-            </div>`;
-          }).join('')}
-        </div>`;
-    }
-  } else {
-    // BIY: today card + full day list
-    const todayReadings = getPlanDayReadings(plan.id, curDay);
-    const todayPills = todayReadings.map(([bi,ci], idx) => {
-      const ref = `${BOOKS[bi]} ${ci+1}`;
-      const done = plan.chDone.includes(`${bi}:${ci}`);
-      return `<div class="ch-pill ${done?'done':''}" onclick="openPlanChapter(${bi},${ci},${curDay},${idx})">${done?'✓ ':''}${ref}</div>`;
-    }).join('');
-    const todayDone = plan.done.includes(curDay);
-
-    mainContent = `
-      <div class="today-card">
-        <div class="today-lbl">✦ Today's Reading</div>
-        <div class="today-reading">Day ${curDay+1} — ${planDayLabel(plan.id, curDay)}</div>
-        <div class="today-chs">${todayPills}</div>
-        <button class="today-complete-btn ${todayDone?'done':''}" onclick="${todayDone?'':' markDayComplete('+curDay+')'}">
-          ${todayDone ? '✓ Day Complete' : '✓ Mark Day Complete'}
-        </button>
-      </div>
-      <div class="plan-section-hdr">All Days</div>
-      <div>
-        ${Array.from({length:def.days},(_,i)=>{
-          const done = plan.done.includes(i);
-          const isToday = i === curDay;
-          const label = planDayLabel(plan.id, i);
-          return `<div class="day-row ${done?'completed':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
-            <span class="day-num">Day ${i+1}</span>
-            <span class="day-label">${label}</span>
-            <span class="day-check">${done?'✅':isToday?'📖':''}</span>
-          </div>`;
-        }).join('')}
-      </div>`;
-  }
+  const todayDone = plan.done.includes(curDay);
 
   el.innerHTML = `
-    <div class="ap-header">
+    <div id="active-plan-header">
       <div class="ap-title">${def.icon} ${def.name}</div>
       <div class="ap-prog-bar"><div class="ap-prog-fill" style="width:${pct}%"></div></div>
       <div class="ap-prog-lbl">${plan.done.length} of ${def.days} days complete (${pct}%)</div>
       <button class="ap-change" onclick="abandonPlan()">✕ Change Plan</button>
     </div>
-    ${mainContent}
-    ${renderPlanProgressSection(progress)}
+
+    ${allDone ? `
+      <div style="text-align:center;padding:30px;font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">
+        🏆 Plan Complete!<br>
+        <span style="font-size:14px;color:var(--text-m);font-family:'Crimson Pro',serif">Well done — thou good and faithful servant</span>
+      </div>` : `
+    <div id="today-card">
+      <div class="today-lbl">✦ Today's Reading</div>
+      <div class="today-day">Day ${curDay+1} of ${def.days} — ${planDayLabel(plan.id, curDay)}</div>
+      <div class="today-chs">${todayPills}</div>
+      <button class="today-complete-btn ${todayDone?'done':''}" onclick="${todayDone?'':' markDayComplete('+curDay+')'}">
+        ${todayDone ? '✓ Day Complete' : '✓ Mark Day Complete'}
+      </button>
+    </div>`}
+
+    <div style="font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);padding:6px 0 8px;border-bottom:1px solid var(--border);margin-bottom:8px">All Days</div>
+    ${Array.from({length:def.days},(_,i)=>{
+      const done = plan.done.includes(i);
+      const isToday = i === curDay;
+      const label = planDayLabel(plan.id, i);
+      return `<div class="day-row ${done?'completed':''} ${isToday?'today':''}" onclick="openPlanDay(${i})">
+        <span class="day-num">Day ${i+1}</span>
+        <span class="day-label">${label}</span>
+        <span class="day-check">${done?'✅':isToday?'📖':''}</span>
+      </div>`;
+    }).join('')}
     <div id="book-checklist"></div>`;
   renderBookChecklist();
 }
 
-function renderPlanProgressSection(progress){
-  const streak = progress.streak || 0;
-  const best = progress.streakBest || 0;
-  const total = Object.keys(progress.dayDates||{}).length;
-  if(total === 0 && streak === 0) return '';
-
-  const earnedBadges = PLAN_BADGES.filter(b => (progress.badges||[]).includes(b.id));
-  const unearnedBadges = PLAN_BADGES.filter(b => !(progress.badges||[]).includes(b.id));
-
-  return `
-    <div class="plan-streak-bar">
-      <span class="psb-fire">🔥</span>
-      <div class="psb-info">
-        <div class="psb-streak">${streak} day${streak!==1?'s':''}</div>
-        <div class="psb-lbl">Reading streak · ${total} total days completed</div>
-      </div>
-      <div class="psb-best">Best: ${best}</div>
-    </div>
-    <div class="plan-badges-section">
-      <div class="pbs-hdr">Plan Badges</div>
-      <div class="plan-badge-grid">
-        ${PLAN_BADGES.map(b => {
-          const earned = (progress.badges||[]).includes(b.id);
-          return `<div class="plan-badge" title="${b.desc}">
-            <span class="plan-badge-ico${earned?' earned':''}">${b.ico}</span>
-            <span class="plan-badge-lbl${earned?' earned':''}">${b.name}</span>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
+function openPlanChapter(bi, ci){
+  const plan = activePlan(); if(!plan) return;
+  const bookName = BOOKS[bi];
+  fetchBook(bookName).then(data => {
+    if(!data) return;
+    S.book=bookName; S.ch=ci; S.bookData=data;
+    renderReader(); showScreen('reader');
+    planTrackChapter(bookName, ci);
+    recordActivity();
+  });
 }
 
 function openPlanDay(dayIdx){
+  // Open first chapter of that day
   const plan = activePlan(); if(!plan) return;
   const readings = getPlanDayReadings(plan.id, dayIdx);
-  // Find first unread chapter, or start from beginning
-  const firstUnread = readings.findIndex(([b,c]) => !plan.chDone.includes(`${b}:${c}`));
-  const idx = firstUnread >= 0 ? firstUnread : 0;
-  if(readings.length) openPlanChapter(readings[idx][0], readings[idx][1], dayIdx, idx);
+  if(readings.length) openPlanChapter(readings[0][0], readings[0][1]);
 }
 
 function abandonPlan(){
   if(confirm('Abandon current plan and choose a new one?')){
     LS.set('kjv_active_plan', null);
-    planNavContext = null;
-    document.getElementById('plan-nav-banner').classList.remove('on');
     renderPlansScreen();
   }
 }
@@ -5692,213 +4634,50 @@ const MEM_VERSES = [
   ]},
 ];
 
-/* ── BADGE DEFINITIONS ── */
-const MEM_BADGES = [
-  { id:'first_steps',   ico:'📖', name:'First Steps',        desc:'Complete any verse in Guided mode',          check: ms => ms.practiced >= 1 },
-  { id:'challenger',    ico:'⚔️',  name:'Challenge Accepted', desc:'Complete any verse in Challenge mode',       check: ms => ms.mastered >= 1 },
-  { id:'romans_road',   ico:'✝️',  name:"Roman's Road",       desc:'Master all 6 Roman\'s Road verses',          check: ms => ['Romans 3:23','Romans 6:23','Romans 5:8','Romans 10:9','Romans 10:13','Romans 8:1'].every(r=>ms.masteredRefs.includes(r)) },
-  { id:'gospel_ready',  ico:'🕊️',  name:'Gospel Ready',       desc:'Master all 6 Salvation verses',             check: ms => ['John 3:16','Acts 16:31','Ephesians 2:8','Ephesians 2:9','John 14:6','Titus 3:5'].every(r=>ms.masteredRefs.includes(r)) },
-  { id:'ambassador',    ico:'🌍',  name:'Ambassador',         desc:'Complete all Great Commission verses',       check: ms => ['Matthew 28:19','Matthew 28:20','Mark 16:15','Acts 1:8','Proverbs 11:30'].every(r=>ms.practicedRefs.includes(r)) },
-  { id:'ten_mastered',  ico:'💯',  name:'Scripture Hidden',   desc:'Master 10 verses',                          check: ms => ms.mastered >= 10 },
-  { id:'all_mastered',  ico:'🏆',  name:'Heart Full',         desc:'Master all verses',                         check: ms => ms.mastered >= MEM_VERSES.reduce((a,c)=>a+c.verses.length,0) },
-];
+const M = { ref:null,tokens:[],revealed:new Set(),mode:'guided',active:null,peeking:false };
 
-const M = { ref:null,tokens:[],revealed:new Set(),mode:'guided',active:null,peeking:false,startTime:0,verseText:'' };
-
-/* ── PERSISTENCE ── */
-function memGetMastery(){
-  return LS.get('kjv_mem_mastery', { refs:{}, streak:0, streakLast:'', badges:[] });
-}
-function memSaveMastery(ms){ LS.set('kjv_mem_mastery', ms); }
-
-function memGetStats(ms){
-  const refs = ms.refs || {};
-  const masteredRefs = Object.keys(refs).filter(r=>refs[r].mastered);
-  const practicedRefs = Object.keys(refs);
-  return {
-    mastered: masteredRefs.length,
-    practiced: practicedRefs.length,
-    masteredRefs,
-    practicedRefs,
-    total: MEM_VERSES.reduce((a,c)=>a+c.verses.length,0)
-  };
-}
-
-function memRecordComplete(ref, mode, elapsed){
-  const ms = memGetMastery();
-  if(!ms.refs) ms.refs = {};
-  const existing = ms.refs[ref] || {mastered:false,timesCompleted:0,bestMode:null,bestTimeChallenge:null,bestTimeGuided:null};
-  existing.timesCompleted++;
-  if(mode==='challenge') existing.mastered=true;
-  if(!existing.bestMode||(mode==='challenge'&&existing.bestMode!=='challenge')) existing.bestMode=mode;
-  const btKey = mode==='challenge'?'bestTimeChallenge':'bestTimeGuided';
-  if(existing[btKey]===null||existing[btKey]===undefined||elapsed<existing[btKey]) existing[btKey]=elapsed;
-  ms.refs[ref]=existing;
-
-  // Update mem streak
-  const today = new Date().toISOString().slice(0,10);
-  if(ms.streakLast !== today){
-    const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
-    ms.streak = (ms.streakLast === yesterday) ? (ms.streak||0)+1 : 1;
-    ms.streakLast = today;
-  }
-
-  memSaveMastery(ms);
-  memUpdateStreakDisplay(ms);
-
-  // Check badges
-  const stats = memGetStats(ms);
-  if(!ms.badges) ms.badges = [];
-  MEM_BADGES.forEach(b=>{
-    if(!ms.badges.includes(b.id) && b.check(stats)){
-      ms.badges.push(b.id);
-      memSaveMastery(ms);
-      setTimeout(()=>memShowBadgeToast(b), 600);
-    }
-  });
-  return ms.refs[ref];
-}
-
-/* ── MEMORY STREAK DISPLAY ── */
-function memUpdateStreakDisplay(ms){
-  const n = (ms && ms.streak) || 0;
-  const el = document.getElementById('mgs-num');
-  const dl = document.getElementById('mgs-days');
-  if(el) el.textContent = n;
-  if(dl) dl.textContent = n === 1 ? 'day' : 'days';
-}
-
-/* ── BADGE TOAST ── */
-function memShowBadgeToast(badge){
-  const t = document.getElementById('mem-badge-toast');
-  if(!t) return;
-  document.getElementById('mbt-ico').textContent = badge.ico;
-  document.getElementById('mbt-name').textContent = badge.name;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3500);
-}
-
-/* ── SIMPLE TOAST ── */
-function showToast(msg){
-  const t = document.getElementById('mem-toast');
-  if(!t){ console.log(msg); return; }
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(()=>t.classList.remove('show'), 2500);
-}
-
-/* ── OPEN / CLOSE / BACK ── */
-function openMemorize(){
-  document.getElementById('mem-overlay').classList.add('on');
-  history.pushState({screen:'mem-overlay'},'','');
-  const ms = memGetMastery();
-  memUpdateStreakDisplay(ms);
-  renderMemSelect();
-}
-function closeMemorize(){
-  document.getElementById('mem-overlay').classList.remove('on');
-  M.active=null; M.peeking=false;
-}
+function openMemorize(){ document.getElementById('mem-overlay').classList.add('on'); renderMemSelect(); }
+function closeMemorize(){ document.getElementById('mem-overlay').classList.remove('on'); M.active=null; M.peeking=false; }
 function memBack(){
   document.getElementById('mem-game').style.display='none';
   document.getElementById('mem-select').style.display='block';
   document.getElementById('mem-hdr-title').textContent='✏️ Verse Memory';
   document.getElementById('mem-back').style.display='none';
   M.active=null; M.peeking=false;
-  renderMemSelect(); // refresh status dots
-}
-
-/* ── POPSTATE HANDLER for mem overlay ── */
-(function(){
-  const origHandler = window.onpopstate;
-  window.addEventListener('popstate', function(e){
-    const overlay = document.getElementById('mem-overlay');
-    if(overlay && overlay.classList.contains('on')){
-      // If we're in the game view, go back to select; otherwise close overlay
-      const game = document.getElementById('mem-game');
-      if(game && game.style.display !== 'none'){
-        memBack();
-      } else {
-        closeMemorize();
-      }
-      // Re-push so the browser doesn't actually navigate away
-      history.pushState({screen:'mem-overlay'},'','');
-      return;
-    }
-  }, {capture:true});
-})();
-
-/* ── SELECT SCREEN ── */
-// Track which categories are collapsed (persisted in LS)
-function memGetCollapsed(){ return new Set(LS.get('kjv_mem_collapsed',[])); }
-function memToggleCat(catKey){
-  const c = memGetCollapsed();
-  c.has(catKey) ? c.delete(catKey) : c.add(catKey);
-  LS.set('kjv_mem_collapsed',[...c]);
-  const el = document.getElementById('memcat-'+catKey);
-  if(el) el.classList.toggle('collapsed', c.has(catKey));
 }
 
 function renderMemSelect(){
   document.getElementById('mem-select').style.display='block';
   document.getElementById('mem-game').style.display='none';
   document.getElementById('mem-back').style.display='none';
-  const ms = memGetMastery();
-  const stats = memGetStats(ms);
-  const refs = ms.refs || {};
-  const collapsed = memGetCollapsed();
-
   const el=document.getElementById('mem-select');
-  el.innerHTML=`
-    <div id="mem-stats-bar">
-      <span>Choose a verse — tap any blank and type</span>
-      <span class="msb-count">${stats.mastered}/${stats.total} mastered</span>
+  el.innerHTML=`<div style="padding:12px 14px 4px">
+    <div style="font-size:13px;color:var(--text-m);margin-bottom:12px;font-style:italic;font-family:'Crimson Pro',serif">
+      Tap a category to expand, then choose a verse.
     </div>
-    <div style="padding:0 14px 8px;display:flex;align-items:center;justify-content:flex-end">
-      <div id="mem-streak-chip">✏️ <span class="msc-num">${ms.streak||0}</span> day streak</div>
-    </div>
-    <div style="padding:0 14px">
-    ${MEM_VERSES.map(cat=>{
-      const catKey = cat.cat.replace(/\s+/g,'_').replace(/'/g,'');
-      const isCollapsed = collapsed.has(catKey);
-      const catMastered = cat.verses.filter(r=>refs[r]&&refs[r].mastered).length;
-      const catTotal = cat.verses.length;
-      const verses = cat.verses.map(ref=>{
-        const r = refs[ref];
-        const isMastered = r && r.mastered;
-        const isPracticed = r && !r.mastered;
-        const dot = isMastered ? '\u2705' : isPracticed ? '\uD83D\uDD04' : '\u2B1C';
-        const cls = isMastered ? 'mastered' : isPracticed ? 'practiced' : '';
-        const preview = isMastered ? 'mastered \u2713' : isPracticed ? 'practiced '+r.timesCompleted+'\u00D7' : 'tap to begin \u2192';
-        return '<button class="mem-verse-btn '+cls+'" onclick="startMem(\''+ref.replace(/'/g,"\\'")+'\')">'
-          +'<span class="mem-verse-ref">'+ref+'</span>'
-          +'<span class="mem-verse-preview">'+preview+'</span>'
-          +'<span class="mem-status-dot">'+dot+'</span>'
-          +'</button>';
-      }).join('');
-      const ht = isCollapsed ? '0' : (catTotal*60)+'px';
-      const sm = catMastered>0 ? '<span style="font-size:11px;color:var(--text-m)"> '+catMastered+'/'+catTotal+'</span>' : '';
-      return '<div class="mem-cat'+(isCollapsed?' collapsed':'')+'" id="memcat-'+catKey+'">'
-        +'<div class="mem-cat-hdr" onclick="memToggleCat(\''+catKey+'\')"><span>'+cat.icon+' '+cat.cat+sm+'</span><span class="mem-cat-chevron">\u25BE</span></div>'
-        +'<div class="mem-cat-body" style="max-height:'+ht+'">'+verses+'</div>'
-        +'</div>';
-    }).join('')}
-    </div>
-    <div class="mem-badge-hdr">Badges</div>
-    <div id="mem-badges">
-      ${MEM_BADGES.map(b=>{
-        const earned = (ms.badges||[]).includes(b.id);
-        return `<div class="mbadge" title="${b.desc}">
-          <span class="mbadge-ico${earned?' earned':''}">${b.ico}</span>
-          <span class="mbadge-lbl${earned?' earned':''}">${b.name}</span>
-        </div>`;
-      }).join('')}
-    </div>
-    <div style="height:20px"></div>`;
+    ${MEM_VERSES.map((cat,ci)=>`
+      <div class="mem-cat${ci===0?' open':''}" id="mem-cat-${ci}">
+        <div class="mem-cat-hdr" onclick="toggleMemCat(${ci})">
+          <span>${cat.icon} ${cat.cat}</span>
+          <span class="mem-cat-arrow">▶</span>
+        </div>
+        <div class="mem-cat-body">
+          ${cat.verses.map(ref=>`
+            <button class="mem-verse-btn" onclick="startMem('${ref.replace(/'/g,"\\'") }')">
+              <span class="mem-verse-ref">${ref}</span>
+              <span class="mem-verse-preview">tap to begin →</span>
+            </button>`).join('')}
+        </div>
+      </div>`).join('')}
+    </div>`;
 }
 
-/* ── TOKENISE ── */
+function toggleMemCat(ci){
+  const el=document.getElementById(`mem-cat-${ci}`);
+  if(!el)return;
+  el.classList.toggle('open');
+}
+
 function tokeniseVerse(text){
   return text.trim().split(/\s+/).map(w=>{
     const m=w.match(/^([^a-zA-Z]*)([a-zA-Z][a-zA-Z'-]*)([^a-zA-Z]*)$/);
@@ -5906,7 +4685,6 @@ function tokeniseVerse(text){
   });
 }
 
-/* ── START ── */
 async function startMem(refStr){
   document.getElementById('mem-hdr-title').textContent=refStr;
   document.getElementById('mem-back').style.display='block';
@@ -5920,8 +4698,8 @@ async function startMem(refStr){
   if(!data)return;
   const v=data.chapters[parsed.chIdx]?.verses[(parsed.verse||1)-1];
   if(!v)return;
-  M.ref=refStr; M.tokens=tokeniseVerse(v.text); M.verseText=v.text;
-  M.revealed=new Set(); M.active=null; M.peeking=false; M.startTime=Date.now();
+  M.ref=refStr; M.tokens=tokeniseVerse(v.text);
+  M.revealed=new Set(); M.active=null; M.peeking=false;
   M.mode=document.getElementById('mmb-guided').classList.contains('on')?'guided':'challenge';
   const rb=document.getElementById('mem-reveal-btn');
   if(rb){rb.classList.remove('on');rb.textContent='👁 Show';}
@@ -5950,28 +4728,64 @@ function updateMemDisplay(){
 
 function activateMem(idx){
   if(M.revealed.has(idx))return;
+  // Cancel existing input
   const ex=document.querySelector('.mem-inline-input');
-  if(ex){ const pi=parseInt(ex.dataset.idx); ex.replaceWith(createBlankSpan(pi)); }
+  if(ex){
+    const pi=parseInt(ex.dataset.idx);
+    // Remove paired check button if present
+    const cb=ex.nextSibling;
+    if(cb&&cb.classList&&cb.classList.contains('mem-check-btn')) cb.remove();
+    ex.replaceWith(createBlankSpan(pi));
+  }
   M.active=idx;
   const t=M.tokens[idx];
   const target=document.querySelector(`[data-idx="${idx}"]`);
   if(!target)return;
+
   const inp=document.createElement('input');
   inp.type='text'; inp.className='mem-inline-input'; inp.dataset.idx=idx;
   inp.autocomplete='off'; inp.setAttribute('autocorrect','off');
   inp.setAttribute('autocapitalize','off'); inp.spellcheck=false;
+  inp.setAttribute('enterkeyhint','done');
   if(M.mode==='guided') inp.placeholder=t.word[0]+'…';
   inp.style.width=Math.max(32,Math.min(t.word.length*11,180))+'px';
-  inp.addEventListener('keydown',e=>{
-    if(e.key==='Enter'){e.preventDefault();checkInlineWord(idx,inp.value.trim(),inp);}
+
+  // ── iOS fix: explicit ✔ check button ──
+  const checkBtn=document.createElement('button');
+  checkBtn.className='mem-check-btn';
+  checkBtn.textContent='✓';
+  checkBtn.setAttribute('aria-label','Check answer');
+  // pointerdown fires BEFORE blur — prevent blur so input keeps its value
+  checkBtn.addEventListener('pointerdown', e=>{
+    e.preventDefault(); // prevents blur on input
+    checkInlineWord(idx, inp.value.trim(), inp);
   });
+
+  // Enter key (keydown + keyup for iOS compat)
+  const handleEnter = e => {
+    if(e.key==='Enter'||e.keyCode===13){
+      e.preventDefault();
+      checkInlineWord(idx, inp.value.trim(), inp);
+    }
+  };
+  inp.addEventListener('keydown', handleEnter);
+  inp.addEventListener('keyup', handleEnter);
+
+  // Blur: only dismiss if not about to check (give pointerdown time to fire)
   inp.addEventListener('blur',()=>{
     setTimeout(()=>{
       const still=document.querySelector(`.mem-inline-input[data-idx="${idx}"]`);
-      if(still&&M.active===idx){still.replaceWith(createBlankSpan(idx));M.active=null;}
-    },250);
+      if(still&&M.active===idx){
+        const cb=still.nextSibling;
+        if(cb&&cb.classList&&cb.classList.contains('mem-check-btn')) cb.remove();
+        still.replaceWith(createBlankSpan(idx));
+        M.active=null;
+      }
+    },400); // increased from 250ms — gives pointerdown time to fire first on iOS
   });
+
   target.replaceWith(inp);
+  inp.after(checkBtn);
   setTimeout(()=>{inp.focus();inp.scrollIntoView({behavior:'smooth',block:'center'});},30);
 }
 
@@ -5983,6 +4797,7 @@ function checkInlineWord(idx,typed,inputEl){
     inputEl.classList.add('correct');
     setTimeout(()=>{
       updateMemDisplay(); updateMemProgress();
+      // Auto-advance: next unrevealed after idx, then wrap
       for(let i=idx+1;i<M.tokens.length;i++){if(!M.revealed.has(i)){activateMem(i);return;}}
       for(let i=0;i<idx;i++){if(!M.revealed.has(i)){activateMem(i);return;}}
     },350);
@@ -6015,7 +4830,7 @@ function setMemMode(mode){
 }
 
 function resetMem(){
-  M.revealed.clear();M.active=null;M.peeking=false; M.startTime=Date.now();
+  M.revealed.clear();M.active=null;M.peeking=false;
   const rb=document.getElementById('mem-reveal-btn');
   if(rb){rb.classList.remove('on');rb.textContent='👁 Show';}
   document.getElementById('mem-congrats').style.display='none';
@@ -6023,89 +4838,9 @@ function resetMem(){
   updateMemDisplay();updateMemProgress();
 }
 
-function fmtTime(s){const m=Math.floor(s/60);return m>0?`${m}m ${s%60}s`:`${s}s`;}
-
 function showMemCongrats(){
-  const elapsed = Math.round((Date.now()-M.startTime)/1000);
-  const isMastered = M.mode==='challenge';
-  const btKey = M.mode==='challenge'?'bestTimeChallenge':'bestTimeGuided';
-
-  // Capture prior best BEFORE recording so we can compare
-  const msBefore = memGetMastery();
-  const priorBest = msBefore.refs?.[M.ref]?.[btKey] ?? null;
-  const priorCount = msBefore.refs?.[M.ref]?.timesCompleted ?? 0;
-
-  // Record in persistence, get back saved record with updated best times
-  const rec = memRecordComplete(M.ref, M.mode, elapsed);
-
-  // Build time display
-  let timeDisplay = `⏱ ${fmtTime(elapsed)}`;
-  if(priorCount > 0 && priorBest !== null){
-    // Not first run — show best comparison
-    if(elapsed < priorBest){
-      timeDisplay += ' 🏅 New best!';
-    } else {
-      timeDisplay += `  •  Best: ${fmtTime(priorBest)}`;
-    }
-  }
-
-  // Populate congrats panel
-  document.getElementById('mc-ico').textContent = isMastered?'🏆':'🎉';
-  document.getElementById('mc-title').textContent = isMastered?'Verse Mastered!':'Verse Complete!';
-  document.getElementById('mc-time').textContent = timeDisplay;
-  document.getElementById('mc-mode-lbl').textContent = M.mode==='guided'?'🔤 Guided':'⬜ Challenge';
-  document.getElementById('mc-verse-echo').textContent = `"${M.verseText}" — ${M.ref}`;
-  document.getElementById('mc-sub').textContent = isMastered
-    ? 'Hidden in thine heart — well done!'
-    : 'Try Challenge mode to mark it mastered';
-  const mastBadge = document.getElementById('mc-mastered-badge');
-  if(mastBadge) mastBadge.classList.toggle('show', isMastered);
-
   document.getElementById('mem-verse-text').style.display='none';
   document.getElementById('mem-congrats').style.display='flex';
-
-  // Confetti only on Challenge completion
-  if(isMastered) memLaunchConfetti();
-}
-
-/* ── CONFETTI ── */
-function memLaunchConfetti(){
-  const canvas = document.getElementById('mem-confetti');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-  const COLORS = ['#c9943a','#f5e6c8','#4CAF50','#ffffff','#e8c56a'];
-  const pieces = Array.from({length:60},()=>({
-    x: Math.random()*canvas.width,
-    y: -10 - Math.random()*canvas.height*0.3,
-    r: 4+Math.random()*5,
-    c: COLORS[Math.floor(Math.random()*COLORS.length)],
-    vx: (Math.random()-0.5)*3,
-    vy: 2+Math.random()*3,
-    rot: Math.random()*360,
-    vr: (Math.random()-0.5)*8,
-    shape: Math.random()>0.5?'rect':'circle'
-  }));
-  let frame=0;
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    pieces.forEach(p=>{
-      ctx.save();
-      ctx.translate(p.x,p.y);
-      ctx.rotate(p.rot*Math.PI/180);
-      ctx.fillStyle = p.c;
-      ctx.globalAlpha = Math.max(0, 1 - frame/90);
-      if(p.shape==='circle'){ ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill(); }
-      else { ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r); }
-      ctx.restore();
-      p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.vy+=0.05;
-    });
-    frame++;
-    if(frame<100) requestAnimationFrame(draw);
-    else ctx.clearRect(0,0,canvas.width,canvas.height);
-  }
-  draw();
 }
 
 function submitMemWord(){}  /* no-op — input bar removed */
