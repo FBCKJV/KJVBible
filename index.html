@@ -883,7 +883,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #mem-badge-toast .mbt-name{font-size:14px;color:var(--text);margin-top:1px}
 
 /* Inline input */
-/* Peek (reveal) mode */
+/* ── Text-to-Speech ── */
+.tts-reading { background:rgba(201,148,58,.18)!important; border-radius:3px; transition:background .3s; }
+#tts-btn.active { color:var(--gold)!important; }
+#tts-bar.on { display:flex!important; }
 .mem-peek{color:var(--text-m);font-style:italic;border-bottom:1px dotted var(--text-m);cursor:pointer}
 
 /* Reveal button */
@@ -1059,6 +1062,14 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div class="screen" id="screen-reader">
     <div id="reader-topbar">
       <div id="reader-loc" onclick="openChPicker()" title="Jump to chapter"></div>
+      <button id="tts-btn" onclick="toggleTTS()" title="Read aloud" style="display:none;background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;color:var(--text-m);font-size:18px;line-height:1;transition:color .15s">🔊</button>
+    </div>
+    <div id="tts-bar" style="display:none;position:sticky;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:8px 14px;display:none;align-items:center;gap:10px;z-index:50;flex-shrink:0">
+      <span id="tts-label" style="flex:1;font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);font-style:italic">Ready to read</span>
+      <button onclick="ttsSlower()" style="background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer">－</button>
+      <span id="tts-speed-lbl" style="font-size:12px;color:var(--text-m);min-width:28px;text-align:center">1×</span>
+      <button onclick="ttsFaster()" style="background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer">＋</button>
+      <button onclick="stopTTS()" style="background:var(--surface);border:1px solid var(--border);color:var(--text-m);border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">■ Stop</button>
     </div>
     <div id="parallel-strip">
       <span class="par-lbl">⇄ Parallels</span>
@@ -1637,6 +1648,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   applyFont(S.fontSize);
   buildBooks();
   loadStreak();
+  ttsInit();
   // Seed history stack
   history.replaceState({screen:'books'}, '', '');
   showScreen('books', false);
@@ -1795,7 +1807,7 @@ async function selectBook(name){
   showScreen('chapters');
 }
 
-function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();planTrackChapter(S.book,i);}
+function selectCh(i){if(TTS.active)stopTTS();S.ch=i;renderReader();showScreen('reader');recordActivity();planTrackChapter(S.book,i);}
 
 /* ════ RENDER READER ════ */
 function renderReader(){
@@ -1819,6 +1831,7 @@ function renderReader(){
     const d=document.createElement('div');
     d.className=`vblock ${hl?'hl-'+hl:''} ${isBM?'bookmarked':''}`.trim();
     d.dataset.ref=ref; d.dataset.vnum=v.verse; d.dataset.txt=v.text;
+    d.dataset.verse=v.verse;
 
     let inner=`<span class="vnum">${v.verse}</span><div><span class="vtxt">${v.text}</span>`;
     if(note) inner+=`<div class="vnote-chip" onclick="openNoteChip(event,'${ref}')">📝 ${note.substring(0,50)}${note.length>50?'…':''}</div>`;
@@ -2396,6 +2409,7 @@ function showScreen(name, pushHistory=true){
   document.getElementById('screen-'+name)?.classList.add('on');
   document.getElementById('bn-'+name)?.classList.add('on');
   S.screen=name; updateHeaderState();
+  if(name!=='reader' && TTS.active) stopTTS();
   if(name==='saved')  renderSaved();
   if(name==='plans')  renderPlansScreen();
   if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();addXRefMarkers();}, 80);
@@ -5646,6 +5660,80 @@ function drawSwordCertificate(canvas){
   ctx.fillText('"...sharper than any twoedged sword"  —  Hebrews 4:12 (KJV)', W/2, y);
   ctx.globalAlpha = 1;
 }
+/* ════ TEXT-TO-SPEECH ════ */
+const TTS={active:false,paused:false,verseIdx:0,verses:[],rate:1.0,voice:null};
+
+function ttsInit(){
+  if(!('speechSynthesis' in window)) return;
+  const btn=document.getElementById('tts-btn');
+  if(btn) btn.style.display='block';
+}
+
+function toggleTTS(){
+  if(!('speechSynthesis' in window)) return;
+  if(TTS.active){
+    if(speechSynthesis.speaking && !speechSynthesis.paused){
+      speechSynthesis.pause(); TTS.paused=true;
+      document.getElementById('tts-btn').textContent='▶️';
+      document.getElementById('tts-label').textContent='Paused — tap to resume';
+    } else if(speechSynthesis.paused){
+      speechSynthesis.resume(); TTS.paused=false;
+      document.getElementById('tts-btn').textContent='🔊';
+    }
+  } else { startTTS(); }
+}
+
+function startTTS(){
+  if(!S.bookData) return;
+  speechSynthesis.cancel();
+  const ch=S.bookData.chapters[S.ch];
+  if(!ch) return;
+  TTS.verses=ch.verses; TTS.verseIdx=0;
+  TTS.active=true; TTS.paused=false;
+  document.getElementById('tts-btn').classList.add('active');
+  document.getElementById('tts-btn').textContent='🔊';
+  document.getElementById('tts-bar').classList.add('on');
+  speakVerse();
+}
+
+function speakVerse(){
+  if(!TTS.active||TTS.verseIdx>=TTS.verses.length){stopTTS();return;}
+  const v=TTS.verses[TTS.verseIdx];
+  // Highlight
+  document.querySelectorAll('.tts-reading').forEach(el=>el.classList.remove('tts-reading'));
+  const el=document.querySelector(`[data-verse="${v.verse}"]`);
+  if(el){el.classList.add('tts-reading');el.scrollIntoView({behavior:'smooth',block:'center'});}
+  document.getElementById('tts-label').textContent=
+    `${S.book} ${S.ch+1}:${v.verse}  (${TTS.verseIdx+1} of ${TTS.verses.length})`;
+  const utt=new SpeechSynthesisUtterance(v.text);
+  utt.rate=TTS.rate; utt.pitch=1; utt.lang='en-US';
+  if(TTS.voice) utt.voice=TTS.voice;
+  utt.onend=()=>{if(!TTS.active)return;TTS.verseIdx++;setTimeout(speakVerse,380);};
+  utt.onerror=()=>{TTS.verseIdx++;setTimeout(speakVerse,200);};
+  speechSynthesis.speak(utt);
+}
+
+function stopTTS(){
+  speechSynthesis.cancel();
+  TTS.active=false; TTS.paused=false; TTS.verseIdx=0;
+  document.querySelectorAll('.tts-reading').forEach(el=>el.classList.remove('tts-reading'));
+  const btn=document.getElementById('tts-btn');
+  const bar=document.getElementById('tts-bar');
+  if(btn){btn.classList.remove('active');btn.textContent='🔊';}
+  if(bar) bar.classList.remove('on');
+}
+
+function ttsFaster(){
+  TTS.rate=Math.min(2.0,Math.round((TTS.rate+0.25)*100)/100);
+  document.getElementById('tts-speed-lbl').textContent=TTS.rate+'×';
+  if(TTS.active&&!TTS.paused){speechSynthesis.cancel();speakVerse();}
+}
+function ttsSlower(){
+  TTS.rate=Math.max(0.5,Math.round((TTS.rate-0.25)*100)/100);
+  document.getElementById('tts-speed-lbl').textContent=TTS.rate+'×';
+  if(TTS.active&&!TTS.paused){speechSynthesis.cancel();speakVerse();}
+}
+
 function openChPicker(){
   if(!S.bookData) return;
   document.getElementById('ch-picker-book').textContent = S.book;
