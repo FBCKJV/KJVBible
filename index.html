@@ -5689,7 +5689,9 @@ function ttsInit(){
       || voices[0];
 
     TTS.voice = male || null;
-    console.log('TTS voice:', TTS.voice?.name);
+    const vname = TTS.voice ? TTS.voice.name : 'default';
+    const lbl = document.getElementById('tts-label');
+    if(lbl && !TTS.active) lbl.textContent = '🔊 Voice: ' + vname;
   }
 
   // Voices may not be ready yet — wait for voiceschanged
@@ -5734,8 +5736,9 @@ function speakVerse(){
   document.getElementById('tts-label').textContent=
     `${S.book} ${S.ch+1}:${v.verse}  (${TTS.verseIdx+1} of ${TTS.verses.length})`;
   const utt=new SpeechSynthesisUtterance(v.text);
-  utt.rate=TTS.rate; utt.pitch=1; utt.lang='en-US';
-  if(TTS.voice) utt.voice=TTS.voice;
+  utt.rate=TTS.rate; utt.pitch=1;
+  if(TTS.voice){ utt.voice=TTS.voice; utt.lang=TTS.voice.lang; }
+  else { utt.lang='en-US'; }
   utt.onend=()=>{if(!TTS.active)return;TTS.verseIdx++;setTimeout(speakVerse,380);};
   utt.onerror=()=>{TTS.verseIdx++;setTimeout(speakVerse,200);};
   speechSynthesis.speak(utt);
