@@ -1018,6 +1018,9 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   </script>
   <script data-goatcounter="https://fbckjv.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -1306,11 +1309,14 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       </div>
 
       <div class="tips-section">
-        <div class="tips-section-lbl">💾 Backup &amp; Restore Your Data</div>
-        <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt">Moving to a new device or URL? Tap <strong>Export Data</strong> to copy all your streaks, badges, bookmarks, highlights and progress as a code. Then tap <strong>Import Data</strong> on your new device to restore everything.</span></div>
-        <div style="display:flex;gap:8px;margin:8px 0 4px">
-          <button onclick="exportAppData()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📤 Export Data</button>
-          <button onclick="importAppData()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📥 Import Data</button>
+        <div class="tips-section-lbl">☁️ Backup &amp; Restore Your Data</div>
+        <div class="tip-row"><span class="tip-ico">🔑</span><span class="tip-txt">Your data is automatically backed up to the cloud. Tap <strong>My Restore Code</strong> to see your unique 6-character code — write it down or screenshot it. On a new device or browser, tap <strong>Enter Code</strong> and your streaks, badges, bookmarks and progress are fully restored.</span></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:6px 0 4px;font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);text-align:center;letter-spacing:.05em" id="rc-display">
+          Restore Code: <strong id="rc-code" onclick="showRestoreCode()" style="cursor:pointer;text-decoration:underline">tap to reveal' id='rc-code-val</strong>
+        </div>
+        <div style="display:flex;gap:8px;margin:4px 0">
+          <button onclick="showRestoreCode()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📤 My Restore Code</button>
+          <button onclick="promptRestore()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📥 Enter Code</button>
         </div>
       </div>
 
@@ -1698,6 +1704,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   applyFont(S.fontSize);
   buildBooks();
   loadStreak();
+  fbInit();
   scourbyInit();
   // Seed history stack
   history.replaceState({screen:'books'}, '', '');
@@ -2218,13 +2225,13 @@ function showVpopDictList(){
 }
 
 function closePop(e){if(!e||e.target===document.getElementById('vpop'))document.getElementById('vpop').classList.remove('on');}
-function setHL(c){if(c)S.highlights[S.popRef]=c;else delete S.highlights[S.popRef];LS.set('kjv_hl',S.highlights);updateHLPicker();refreshVBlock(S.popRef);}
+function setHL(c){if(c)S.highlights[S.popRef]=c;else delete S.highlights[S.popRef];LS.set('kjv_hl',S.highlights);fbSyncSoon();updateHLPicker();refreshVBlock(S.popRef);}
 function updateHLPicker(){const cur=S.highlights[S.popRef];document.querySelectorAll('.hl-dot').forEach(d=>d.classList.toggle('active',d.dataset.c===cur));}
-function toggleBM(){const i=S.bookmarks.findIndex(b=>b.ref===S.popRef);if(i>=0)S.bookmarks.splice(i,1);else S.bookmarks.unshift({ref:S.popRef,text:S.popTxt.substring(0,120)+(S.popTxt.length>120?'…':'')});LS.set('kjv_bm',S.bookmarks);updateBMBtn();refreshVBlock(S.popRef);}
+function toggleBM(){const i=S.bookmarks.findIndex(b=>b.ref===S.popRef);if(i>=0)S.bookmarks.splice(i,1);else S.bookmarks.unshift({ref:S.popRef,text:S.popTxt.substring(0,120)+(S.popTxt.length>120?'…':'')});LS.set('kjv_bm',S.bookmarks);fbSyncSoon();updateBMBtn();refreshVBlock(S.popRef);}
 function updateBMBtn(){const isBM=S.bookmarks.some(b=>b.ref===S.popRef);const btn=document.getElementById('pa-bm');btn.innerHTML=isBM?`<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Remove`:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Bookmark`;btn.className='pa'+(isBM?' danger':'');}
 function openNote(){document.getElementById('note-area').value=S.notes[S.popRef]||'';document.getElementById('note-area-wrap').classList.add('on');document.getElementById('note-area').focus();}
 function cancelNote(){document.getElementById('note-area-wrap').classList.remove('on');}
-function saveNote(){const t=document.getElementById('note-area').value.trim();if(t)S.notes[S.popRef]=t;else delete S.notes[S.popRef];LS.set('kjv_notes',S.notes);cancelNote();refreshVBlock(S.popRef);}
+function saveNote(){const t=document.getElementById('note-area').value.trim();if(t)S.notes[S.popRef]=t;else delete S.notes[S.popRef];LS.set('kjv_notes',S.notes);fbSyncSoon();cancelNote();refreshVBlock(S.popRef);}
 function openNoteChip(e,ref){e.stopPropagation();openVPop(ref,document.querySelector(`[data-ref="${ref}"] .vtxt`).textContent);setTimeout(openNote,50);}
 function copyVerse(){const t=`${S.popRef}  ${S.popTxt}`;navigator.clipboard?.writeText(t);}
 function shareVerse(){const t=`${S.popRef}  ${S.popTxt}`;if(navigator.share)navigator.share({title:'Bible Verse',text:t});else navigator.clipboard?.writeText(t);}
@@ -3682,7 +3689,7 @@ function recordActivity(){
   S.streakLastTs = now;
   if(S.streak > S.streakBest) S.streakBest = S.streak;
 
-  LS.set('kjv_streak', S.streak);
+  LS.set('kjv_streak', S.streak); fbSyncSoon();
   LS.set('kjv_streak_best', S.streakBest);
   LS.set('kjv_streak_last', S.streakLast);
   LS.set('kjv_streak_ts', now);
@@ -4916,7 +4923,7 @@ const M = { ref:null,tokens:[],revealed:new Set(),mode:'guided',active:null,peek
 function memGetMastery(){
   return LS.get('kjv_mem_mastery', { refs:{}, streak:0, streakLast:'', badges:[] });
 }
-function memSaveMastery(ms){ LS.set('kjv_mem_mastery', ms); }
+function memSaveMastery(ms){ LS.set('kjv_mem_mastery', ms); fbSyncSoon(); }
 
 function memGetStats(ms){
   const refs = ms.refs || {};
@@ -5960,6 +5967,112 @@ function importAppData(){
   }catch(e){
     alert('Could not read that backup code. Make sure you copied the full code.');
   }
+}
+
+/* ════ FIREBASE SYNC ════ */
+const FB_CONFIG = {
+  apiKey: "AIzaSyAN4H-5wCxpLat6guLSecBRyeTMjDdVtBQ",
+  authDomain: "fbckjv-bible.firebaseapp.com",
+  projectId: "fbckjv-bible",
+  storageBucket: "fbckjv-bible.firebasestorage.app",
+  messagingSenderId: "761660345796",
+  appId: "1:761660345796:web:de7cb71126ba5836e72891"
+};
+
+// Keys to sync (skip audio positions and UI state)
+const SYNC_KEYS = [
+  'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
+  'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
+  'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
+  'kjv_books_read','kjv_rl'
+];
+
+let _db = null;
+let _syncTimer = null;
+
+function fbInit(){
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+    _db = firebase.firestore();
+    // Generate restore code if first time
+    if(!localStorage.getItem('kjv_rc')){
+      const code = Array.from({length:6},()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
+      localStorage.setItem('kjv_rc', code);
+    }
+    // Sync on visibility change (app backgrounded/resumed)
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden) fbSync();
+    });
+    // Initial sync after 3 seconds (let app settle)
+    setTimeout(fbSync, 3000);
+    console.log('Firebase sync ready. Code:', localStorage.getItem('kjv_rc'));
+  }catch(e){ console.warn('Firebase init failed:', e); }
+}
+
+function fbSync(){
+  if(!_db) return;
+  const code = localStorage.getItem('kjv_rc');
+  if(!code) return;
+  const data = { lastSync: firebase.firestore.FieldValue.serverTimestamp(), v: 2 };
+  SYNC_KEYS.forEach(k=>{
+    const v = localStorage.getItem(k);
+    if(v !== null) data[k.replace(/[^a-zA-Z0-9]/g,'_')] = v;
+  });
+  _db.collection('users').doc(code).set(data, {merge:true})
+    .catch(e => console.warn('Sync error:', e));
+}
+
+// Debounced sync — call this after any data change
+function fbSyncSoon(){
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(fbSync, 2000);
+}
+
+function fbGetCode(){
+  return localStorage.getItem('kjv_rc') || '—';
+}
+
+async function fbRestore(code){
+  if(!_db){ showToast('Sync not available'); return; }
+  code = code.trim().toUpperCase();
+  if(code.length < 6){ showToast('Invalid code'); return; }
+  showToast('Restoring...');
+  try{
+    const doc = await _db.collection('users').doc(code).get();
+    if(!doc.exists){ showToast('No data found for that code'); return; }
+    const data = doc.data();
+    let count = 0;
+    SYNC_KEYS.forEach(k=>{
+      const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
+      if(data[fk] !== undefined){
+        localStorage.setItem(k, data[fk]);
+        count++;
+      }
+    });
+    // Set this device to use the same restore code
+    localStorage.setItem('kjv_rc', code);
+    showToast(`✅ Restored ${count} items — reloading...`);
+    setTimeout(()=> location.reload(), 2000);
+  }catch(e){
+    showToast('Restore failed — check connection');
+    console.error('Restore error:', e);
+  }
+}
+
+function showRestoreCode(){
+  const code = fbGetCode();
+  const msg = `Your restore code is:\n\n${code}\n\nWrite this down or screenshot it. Enter it on any device to restore your streaks, badges, bookmarks and progress.`;
+  if(navigator.share){
+    navigator.share({title:'My FBC KJV Bible Restore Code', text:`FBC KJV Bible restore code: ${code}`});
+  } else {
+    navigator.clipboard?.writeText(code);
+    alert(msg + '\n\n(Code copied to clipboard)');
+  }
+}
+
+function promptRestore(){
+  const code = prompt('Enter your 6-character restore code:');
+  if(code) fbRestore(code);
 }
 
 function openChPicker(){
