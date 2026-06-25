@@ -5737,26 +5737,37 @@ function scourbyLoad(bookName, chIdx){
   document.getElementById('scourby-btn').classList.add('active');
 
   // If same book already loaded, just seek
-  if(audio.src === url || audio.src.endsWith(encodeURIComponent(SCOURBY_FILES[bookName]))){
-    audio.currentTime = seekTo;
-    audio.play();
-    SA.seeking = false;
-    scourbyUpdateLabel();
+  if(audio.src && audio.src.endsWith(encodeURIComponent(SCOURBY_FILES[bookName]))){
+    SA.seeking=true;
+    audio.currentTime=seekTo;
+    const onSeeked=()=>{audio.removeEventListener('seeked',onSeeked);SA.seeking=false;audio.play();scourbyUpdateLabel();};
+    audio.addEventListener('seeked',onSeeked);
     return;
   }
 
-  audio.src = url;
-  audio.load();
-
-  const onCanPlay = () => {
-    audio.removeEventListener('canplay', onCanPlay);
-    audio.currentTime = seekTo;
-    audio.play();
-    SA.seeking = false;
-    scourbyUpdateLabel();
+  audio.src=url;
+  const onMeta=()=>{
+    audio.removeEventListener('loadedmetadata',onMeta);
+    SA.seeking=true;
+    document.getElementById('sb-label').textContent='Seeking to '+Math.floor(seekTo/60)+'m '+Math.round(seekTo%60)+'s...';
+    audio.currentTime=seekTo;
+    // Poll to confirm seek succeeded (streaming audio may need time for range request)
+    let attempts=0;
+    const checkSeek=setInterval(()=>{
+      attempts++;
+      const diff=Math.abs(audio.currentTime-seekTo);
+      if(diff<10||attempts>30){
+        clearInterval(checkSeek);
+        SA.seeking=false;
+        console.log('Seek target:'+seekTo.toFixed(1)+'s  Actual:'+audio.currentTime.toFixed(1)+'s  Diff:'+diff.toFixed(1)+'s');
+        document.getElementById('sb-label').textContent='At '+Math.floor(audio.currentTime/60)+'m (target '+Math.floor(seekTo/60)+'m)';
+        audio.play();
+        setTimeout(scourbyUpdateLabel,500);
+      }
+    },200);
   };
-  audio.addEventListener('canplay', onCanPlay);
-  document.getElementById('sb-playpause').textContent = '⏸';
+  audio.addEventListener('loadedmetadata',onMeta);
+  audio.load();
 }
 
 function scourbyToggle(){
@@ -5894,11 +5905,16 @@ function scourbyHandleNavigation(){
     // Same book, different chapter — seek
     const ts = SCOURBY_TS[SA.book];
     if(ts && ts.c[S.ch] !== undefined){
-      SA.seeking = true;
-      audio.currentTime = ts.c[S.ch];
-      SA.chIdx = S.ch;
-      SA.seeking = false;
-      scourbyUpdateLabel();
+      const navSeekTo = ts.c[S.ch];
+      SA.seeking = true; SA.chIdx = S.ch;
+      audio.currentTime = navSeekTo;
+      let navAttempts=0;
+      const navCheck=setInterval(()=>{
+        navAttempts++;
+        if(Math.abs(audio.currentTime-navSeekTo)<10||navAttempts>20){
+          clearInterval(navCheck); SA.seeking=false; scourbyUpdateLabel();
+        }
+      },200);
     }
   }
 }
