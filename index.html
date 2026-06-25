@@ -741,10 +741,14 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #scourby-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;
   color:var(--text-m);font-size:20px;line-height:1;transition:color .2s;display:none}
 #scourby-btn.active{color:var(--gold)}
-#scourby-bar{display:none;position:sticky;bottom:0;left:0;right:0;z-index:50;flex-shrink:0;
-  background:var(--bg2);border-top:1px solid var(--border);padding:8px 12px;
-  align-items:center;gap:8px}
+#scourby-bar{display:none;position:fixed;bottom:60px;left:0;right:0;z-index:200;
+  background:var(--bg2);border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:8px 12px;align-items:center;gap:8px;
+  box-shadow:0 -4px 20px rgba(0,0,0,.18)}
 #scourby-bar.on{display:flex}
+.scourby-open #reader-body{padding-bottom:120px}
+.scourby-open #screen-books .screen-content{padding-bottom:120px}
 .sb-label{flex:1;font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);
   font-style:italic;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sb-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);
@@ -1078,26 +1082,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div class="screen" id="screen-reader">
     <div id="reader-topbar">
       <div id="reader-loc" onclick="openChPicker()" title="Jump to chapter"></div>
-      <button id="scourby-btn" onclick="scourbyToggle()" title="Read aloud — Alexander Scourby KJV">🔊</button>
     </div>
-    <div id="scourby-bar">
-      <div style="flex:1;min-width:0">
-        <div id="sb-progress" onclick="scourbySeekClick(event)">
-          <div id="sb-progress-fill" style="width:0%"></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
-          <span class="sb-label" id="sb-label">Alexander Scourby KJV</span>
-          <button class="sb-btn" onclick="scourbyPrev()">◀◀ 30s</button>
-          <button class="sb-btn" id="sb-playpause" onclick="scourbyToggle()">⏸</button>
-          <button class="sb-btn" onclick="scourbyNext()">30s ▶▶</button>
-          <button class="sb-btn" onclick="scourbySlower()">－</button>
-          <span id="sb-speed" style="font-size:11px;color:var(--text-m);min-width:24px;text-align:center">1×</span>
-          <button class="sb-btn" onclick="scourbyFaster()">＋</button>
-          <button class="sb-btn" onclick="scourbyStop()">■</button>
-        </div>
-      </div>
-    </div>
-    <audio id="scourby-audio" preload="none" crossorigin="anonymous"></audio>
     <div id="parallel-strip">
       <span class="par-lbl">⇄ Parallels</span>
       <div id="par-chips"></div>
@@ -1393,6 +1378,8 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div id="ch-picker-inner">
     <div id="ch-picker-hdr">
       <div id="ch-picker-book"></div>
+      <button id="cp-scourby-btn" onclick="scourbyToggleFromPicker()" title="Listen to this book — Alexander Scourby KJV"
+        style="background:var(--surface);border:1px solid var(--border);color:var(--text-m);border-radius:8px;padding:5px 10px;font-size:14px;cursor:pointer;display:none">🔊 Listen</button>
       <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;padding:0 4px" onclick="closeChPicker()">✕</button>
     </div>
     <div id="ch-grid"></div>
@@ -2446,6 +2433,11 @@ function showScreen(name, pushHistory=true){
   document.getElementById('screen-'+name)?.classList.add('on');
   document.getElementById('bn-'+name)?.classList.add('on');
   S.screen=name; updateHeaderState();
+  // Pause Scourby when leaving reader context
+  if(name==='books'){
+    const aud=document.getElementById('scourby-audio');
+    if(aud&&!aud.paused){aud.pause();const pp=document.getElementById('sb-playpause');if(pp)pp.textContent='▶';const btn=document.getElementById('scourby-btn');if(btn)btn.classList.remove('active');}
+  }
   if(name==='saved')  renderSaved();
   if(name==='plans')  renderPlansScreen();
   if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();addXRefMarkers();}, 80);
@@ -5706,7 +5698,6 @@ const SA = {book:null, chIdx:0, rate:1.0, seeking:false};
 function scourbyInit(){
   const audio = document.getElementById('scourby-audio');
   if(!audio) return;
-  document.getElementById('scourby-btn').style.display = 'block';
   audio.addEventListener('timeupdate', scourbyTimeUpdate);
   audio.addEventListener('ended', scourbyOnEnded);
   audio.addEventListener('error', ()=>{
@@ -5736,8 +5727,8 @@ function scourbyLoad(bookName){
   SA.book = bookName; SA.seeking = false;
 
   document.getElementById('sb-label').textContent = 'Loading ' + bookName + '...';
-  document.getElementById('scourby-bar').classList.add('on');
-  document.getElementById('scourby-btn').classList.add('active');
+  document.getElementById('scourby-bar').classList.add('on'); document.body.classList.add('scourby-open');
+  const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.add('active');
   document.getElementById('sb-playpause').textContent = '⏸';
 
   // Same book already loaded — just play/resume from saved pos
@@ -5768,11 +5759,11 @@ function scourbyToggle(){
   if(audio.paused){
     audio.play();
     document.getElementById('sb-playpause').textContent = '⏸';
-    document.getElementById('scourby-btn').classList.add('active');
+    const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.add('active');
   } else {
     audio.pause();
     document.getElementById('sb-playpause').textContent = '▶';
-    document.getElementById('scourby-btn').classList.remove('active');
+    const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.remove('active');
   }
 }
 
@@ -5780,8 +5771,8 @@ function scourbyStop(){
   const audio = document.getElementById('scourby-audio');
   audio.pause(); audio.src = '';
   SA.book = null;
-  document.getElementById('scourby-bar').classList.remove('on');
-  document.getElementById('scourby-btn').classList.remove('active');
+  document.getElementById('scourby-bar').classList.remove('on'); document.body.classList.remove('scourby-open');
+  const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.remove('active');
   document.getElementById('sb-progress-fill').style.width = '0%';
 }
 
@@ -5810,7 +5801,7 @@ function scourbyTimeUpdate(){
 
 function scourbyOnEnded(){
   document.getElementById('sb-playpause').textContent = '▶';
-  document.getElementById('scourby-btn').classList.remove('active');
+  const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.remove('active');
   scouryySavePos(SA.book, 0); // reset position on completion
   document.getElementById('sb-label').textContent = SA.book + ' — Finished ✓';
 }
@@ -5851,6 +5842,25 @@ function scourbySeekClick(e){
 }
 
 
+
+function scourbyToggleFromPicker(){
+  const bookEl = document.getElementById('ch-picker-book');
+  const bookName = bookEl ? bookEl.textContent.trim() : S.book;
+  const audio = document.getElementById('scourby-audio');
+  const isLoaded = audio.src && SCOURBY_FILES[bookName] &&
+    audio.src.endsWith(encodeURIComponent(SCOURBY_FILES[bookName]));
+  if(isLoaded){
+    scourbyToggle();
+  } else {
+    scourbyLoad(bookName);
+  }
+  // Update button text
+  setTimeout(()=>{
+    const btn = document.getElementById('cp-scourby-btn');
+    const aud = document.getElementById('scourby-audio');
+    if(btn) btn.textContent = aud.paused ? '🔊 Listen' : '⏸ Pause';
+  }, 200);
+}
 function openChPicker(){
   if(!S.bookData) return;
   document.getElementById('ch-picker-book').textContent = S.book;
@@ -5861,6 +5871,15 @@ function openChPicker(){
     ).join('');
   document.getElementById('ch-picker').classList.add('on');
   history.pushState({modal:'ch-picker'},'','');
+  // Show listen button if audio available for this book
+  const cpBtn = document.getElementById('cp-scourby-btn');
+  if(cpBtn){
+    const hasFn = !!SCOURBY_FILES[S.book];
+    cpBtn.style.display = hasFn ? 'block' : 'none';
+    const aud = document.getElementById('scourby-audio');
+    const isThis = aud.src && SCOURBY_FILES[S.book] && aud.src.endsWith(encodeURIComponent(SCOURBY_FILES[S.book]));
+    cpBtn.textContent = (isThis && !aud.paused) ? '⏸ Pause' : '🔊 Listen';
+  }
 }
 
 function closeChPicker(){
@@ -5886,5 +5905,25 @@ function applyFont(sz){S.fontSize=sz;document.documentElement.style.setProperty(
 function changeFont(d){applyFont(Math.min(24,Math.max(13,S.fontSize+d)));LS.set('kjv_fs',S.fontSize);}
 function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme',S.theme);document.body.classList.toggle('light',S.theme==='light');document.getElementById('theme-color-meta').content=S.theme==='light'?'#f7f2e8':'#0e0800';}
 </script>
+
+<!-- SCOURBY FLOATING PLAYER -->
+<div id="scourby-bar">
+  <div style="flex:1;min-width:0">
+    <div id="sb-progress" onclick="scourbySeekClick(event)">
+      <div id="sb-progress-fill" style="width:0%"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:5px">
+      <span class="sb-label" id="sb-label">Alexander Scourby KJV</span>
+      <button class="sb-btn" onclick="scourbyPrev()">◀30</button>
+      <button class="sb-btn" id="sb-playpause" onclick="scourbyToggle()">⏸</button>
+      <button class="sb-btn" onclick="scourbyNext()">30▶</button>
+      <button class="sb-btn" onclick="scourbySlower()">－</button>
+      <span id="sb-speed" style="font-size:11px;color:var(--text-m);min-width:24px;text-align:center">1×</span>
+      <button class="sb-btn" onclick="scourbyFaster()">＋</button>
+      <button class="sb-btn" onclick="scourbyStop()">■</button>
+    </div>
+  </div>
+</div>
+<audio id="scourby-audio" preload="none" crossorigin="anonymous"></audio>
 </body>
 </html>
