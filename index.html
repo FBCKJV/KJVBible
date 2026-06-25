@@ -5710,8 +5710,9 @@ function scourbyInit(){
   audio.addEventListener('timeupdate', scourbyTimeUpdate);
   audio.addEventListener('ended', scourbyOnEnded);
   audio.addEventListener('error', e => {
-    console.error('Scourby audio error:', e);
-    document.getElementById('sb-label').textContent = 'Error loading audio';
+    const url = audio.src || 'no src';
+    console.error('Scourby audio error:', e, 'URL:', url);
+    document.getElementById('sb-label').textContent = 'Error — check console (F12)';
   });
 }
 
