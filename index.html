@@ -1087,9 +1087,9 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
         </div>
         <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
           <span class="sb-label" id="sb-label">Alexander Scourby KJV</span>
-          <button class="sb-btn" onclick="scourbyPrev()">⏮</button>
+          <button class="sb-btn" onclick="scourbyPrev()">◀◀ 30s</button>
           <button class="sb-btn" id="sb-playpause" onclick="scourbyToggle()">⏸</button>
-          <button class="sb-btn" onclick="scourbyNext()">⏭</button>
+          <button class="sb-btn" onclick="scourbyNext()">30s ▶▶</button>
           <button class="sb-btn" onclick="scourbySlower()">－</button>
           <span id="sb-speed" style="font-size:11px;color:var(--text-m);min-width:24px;text-align:center">1×</span>
           <button class="sb-btn" onclick="scourbyFaster()">＋</button>
@@ -1303,11 +1303,13 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 
       <!-- Warning -->
       <div class="tips-section">
-        <div class="tips-section-lbl">🔊 Read Aloud</div>
-        <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt">Tap the <strong>🔊 button</strong> in the chapter header to read the current chapter aloud. Each verse highlights gold as it is spoken. Tap again to pause, tap once more to resume.</span></div>
-        <div class="tip-row"><span class="tip-ico">⚡</span><span class="tip-txt">Use the <strong>＋ and － buttons</strong> in the bottom bar to adjust reading speed from 0.5× (slow) to 2.0× (fast). Reading stops automatically when you change chapters or leave the reader.</span></div>
-        <div class="tip-row"><span class="tip-ico">🤖</span><span class="tip-txt"><strong>Android (Chrome):</strong> The app automatically selects a male English voice ("Google UK English Male") when available. No setup needed.</span></div>
-        <div class="tip-row"><span class="tip-ico">🍎</span><span class="tip-txt"><strong>iPhone / iPad:</strong> For a better male reading voice, go to <strong>Settings → Accessibility → Spoken Content → Voices → English</strong> and download <strong>Daniel (UK)</strong> or <strong>Aaron (US)</strong>. The app will use it automatically. Note: Chrome on iOS uses the same voices as Safari — this is an Apple system limitation.</span></div>
+        <div class="tips-section-lbl">🔊 Read Aloud — Alexander Scourby KJV</div>
+        <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt">Tap the <strong>🔊 button</strong> in the chapter header to begin listening to the complete book read aloud by Alexander Scourby — widely considered the finest KJV reader ever recorded. Audio streams from our server.</span></div>
+        <div class="tip-row"><span class="tip-ico">▶</span><span class="tip-txt">The <strong>player bar</strong> appears at the bottom showing book name, current time, and total length. Tap the progress bar to scrub anywhere in the book. Use <strong>◀◀ 30s</strong> and <strong>30s ▶▶</strong> to skip back or forward.</span></div>
+        <div class="tip-row"><span class="tip-ico">💾</span><span class="tip-txt"><strong>Your place is saved automatically.</strong> If you close the app and return, tapping 🔊 in the same book resumes exactly where Scourby left off. Each book remembers its own position independently.</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt">You can <strong>read along</strong> while Scourby reads — navigate chapters freely while the audio continues. The player floats with you. Tap ⏸ to pause at any time, then ▶ to resume.</span></div>
+        <div class="tip-row"><span class="tip-ico">🤖</span><span class="tip-txt"><strong>Android (Chrome):</strong> Automatically selects a male English voice for the built-in read-aloud. For Scourby audio, no setup is needed.</span></div>
+        <div class="tip-row"><span class="tip-ico">🍎</span><span class="tip-txt"><strong>iPhone / iPad:</strong> For a better built-in voice, go to <strong>Settings → Accessibility → Spoken Content → Voices → English</strong> and download <strong>Daniel (UK)</strong>. Scourby audio works on all devices with no setup.</span></div>
       </div>
 
       <div class="tips-section">
@@ -1853,7 +1855,6 @@ function renderReader(){
   document.getElementById('ch-title').textContent=S.book;
   document.getElementById('ch-sub').textContent=`Chapter ${S.ch+1}`;
   const _bi = BOOKS.indexOf(S.book);
-  scourbyHandleNavigation();
   document.getElementById('r-prev').disabled = _bi===0 && S.ch===0;
   document.getElementById('r-next').disabled = _bi===BOOKS.length-1 && S.ch===S.bookData.chapters.length-1;
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
@@ -5706,13 +5707,10 @@ function scourbyInit(){
   const audio = document.getElementById('scourby-audio');
   if(!audio) return;
   document.getElementById('scourby-btn').style.display = 'block';
-
   audio.addEventListener('timeupdate', scourbyTimeUpdate);
   audio.addEventListener('ended', scourbyOnEnded);
-  audio.addEventListener('error', e => {
-    const url = audio.src || 'no src';
-    console.error('Scourby audio error:', e, 'URL:', url);
-    document.getElementById('sb-label').textContent = 'Error — check console (F12)';
+  audio.addEventListener('error', ()=>{
+    document.getElementById('sb-label').textContent = 'Audio error — check connection';
   });
 }
 
@@ -5722,60 +5720,50 @@ function scourbyBookUrl(bookName){
   return SCOURBY_R2 + '/' + encodeURIComponent(fname);
 }
 
-function scourbyLoad(bookName, chIdx){
+// ── Position memory ──
+function scourbyGetPos(bookName){ return parseFloat(localStorage.getItem('kjv_spos_'+bookName)||'0'); }
+function scouryySavePos(bookName, t){ try{localStorage.setItem('kjv_spos_'+bookName, t.toFixed(1));}catch(e){} }
+function scourbyFmtTime(t){ const h=Math.floor(t/3600),m=Math.floor((t%3600)/60),s=Math.floor(t%60); return h>0?h+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'):m+':'+String(s).padStart(2,'0'); }
+
+function scourbyLoad(bookName){
   const url = scourbyBookUrl(bookName);
   if(!url) return;
   const audio = document.getElementById('scourby-audio');
   const ts = SCOURBY_TS[bookName];
   if(!ts) return;
 
-  SA.book = bookName; SA.chIdx = chIdx; SA.seeking = true;
-  const seekTo = ts.c[chIdx] || 0;
+  const savedPos = scourbyGetPos(bookName);
+  SA.book = bookName; SA.seeking = false;
 
   document.getElementById('sb-label').textContent = 'Loading ' + bookName + '...';
   document.getElementById('scourby-bar').classList.add('on');
   document.getElementById('scourby-btn').classList.add('active');
+  document.getElementById('sb-playpause').textContent = '⏸';
 
-  // If same book already loaded, just seek
+  // Same book already loaded — just play/resume from saved pos
   if(audio.src && audio.src.endsWith(encodeURIComponent(SCOURBY_FILES[bookName]))){
-    SA.seeking=true;
-    audio.currentTime=seekTo;
-    const onSeeked=()=>{audio.removeEventListener('seeked',onSeeked);SA.seeking=false;audio.play();scourbyUpdateLabel();};
-    audio.addEventListener('seeked',onSeeked);
+    if(savedPos > 0 && Math.abs(audio.currentTime - savedPos) > 5) audio.currentTime = savedPos;
+    audio.playbackRate = SA.rate;
+    audio.play();
+    scourbyUpdateLabel();
     return;
   }
 
-  audio.src=url;
-  const onMeta=()=>{
-    audio.removeEventListener('loadedmetadata',onMeta);
-    SA.seeking=true;
-    document.getElementById('sb-label').textContent='Seeking to '+Math.floor(seekTo/60)+'m '+Math.round(seekTo%60)+'s...';
-    audio.currentTime=seekTo;
-    // Poll to confirm seek succeeded (streaming audio may need time for range request)
-    let attempts=0;
-    const checkSeek=setInterval(()=>{
-      attempts++;
-      const diff=Math.abs(audio.currentTime-seekTo);
-      if(diff<10||attempts>30){
-        clearInterval(checkSeek);
-        SA.seeking=false;
-        console.log('Seek target:'+seekTo.toFixed(1)+'s  Actual:'+audio.currentTime.toFixed(1)+'s  Diff:'+diff.toFixed(1)+'s');
-        document.getElementById('sb-label').textContent='At '+Math.floor(audio.currentTime/60)+'m (target '+Math.floor(seekTo/60)+'m)';
-        audio.play();
-        setTimeout(scourbyUpdateLabel,500);
-      }
-    },200);
-  };
-  audio.addEventListener('loadedmetadata',onMeta);
+  audio.src = url;
+  audio.addEventListener('loadedmetadata', function onMeta(){
+    audio.removeEventListener('loadedmetadata', onMeta);
+    if(savedPos > 5) audio.currentTime = savedPos;
+    audio.playbackRate = SA.rate;
+    audio.play();
+    scourbyUpdateLabel();
+  });
   audio.load();
 }
 
 function scourbyToggle(){
   const audio = document.getElementById('scourby-audio');
   if(!audio.src || audio.src === window.location.href){
-    // First tap — load current chapter
-    scourbyLoad(S.book, S.ch);
-    return;
+    scourbyLoad(S.book); return;
   }
   if(audio.paused){
     audio.play();
@@ -5800,10 +5788,10 @@ function scourbyStop(){
 function scourbyUpdateLabel(){
   const ts = SCOURBY_TS[SA.book];
   if(!ts) return;
-  const chNum = SA.chIdx + 1;
-  const total = ts.c.length;
-  document.getElementById('sb-label').textContent =
-    SA.book + ' ' + chNum + '  (' + chNum + ' of ' + total + ')  — Scourby KJV';
+  const audio = document.getElementById('scourby-audio');
+  const cur = scourbyFmtTime(audio.currentTime);
+  const tot = scourbyFmtTime(ts.t);
+  document.getElementById('sb-label').textContent = SA.book + '  —  ' + cur + ' / ' + tot;
 }
 
 function scourbyTimeUpdate(){
@@ -5812,62 +5800,30 @@ function scourbyTimeUpdate(){
   const ts = SCOURBY_TS[SA.book];
   if(!ts) return;
   const t = audio.currentTime;
-
   // Update progress bar
-  if(ts.t > 0){
-    const pct = Math.min(100, (t / ts.t) * 100);
-    document.getElementById('sb-progress-fill').style.width = pct + '%';
-  }
-
-  // Detect chapter change
-  const chapters = ts.c;
-  let curCh = 0;
-  for(let i = 0; i < chapters.length; i++){
-    if(t >= chapters[i]) curCh = i; else break;
-  }
-  if(curCh !== SA.chIdx){
-    SA.chIdx = curCh;
-    scourbyUpdateLabel();
-  }
+  if(ts.t > 0) document.getElementById('sb-progress-fill').style.width = Math.min(100,(t/ts.t)*100)+'%';
+  // Update label every 5 seconds
+  if(Math.floor(t)%5===0) scourbyUpdateLabel();
+  // Save position every 10 seconds
+  if(Math.floor(t)%10===0) scouryySavePos(SA.book, t);
 }
 
 function scourbyOnEnded(){
-  // Auto-advance to next book if there is one
   document.getElementById('sb-playpause').textContent = '▶';
   document.getElementById('scourby-btn').classList.remove('active');
-  document.getElementById('sb-label').textContent = 'Finished — tap ▶ or choose next book';
+  scouryySavePos(SA.book, 0); // reset position on completion
+  document.getElementById('sb-label').textContent = SA.book + ' — Finished ✓';
 }
 
 function scourbyNext(){
-  const ts = SCOURBY_TS[SA.book];
-  if(!ts) return;
-  if(SA.chIdx < ts.c.length - 1){
-    SA.chIdx++;
-    const audio = document.getElementById('scourby-audio');
-    SA.seeking = true;
-    audio.currentTime = ts.c[SA.chIdx];
-    SA.seeking = false;
-    scourbyUpdateLabel();
-  }
+  const audio = document.getElementById('scourby-audio');
+  if(!audio) return;
+  audio.currentTime = Math.min(audio.duration||Infinity, audio.currentTime + 30);
 }
-
 function scourbyPrev(){
   const audio = document.getElementById('scourby-audio');
-  const ts = SCOURBY_TS[SA.book];
-  if(!ts) return;
-  const chStart = ts.c[SA.chIdx] || 0;
-  // If more than 3s into chapter, restart it; otherwise go to prev chapter
-  if(audio.currentTime - chStart > 3 || SA.chIdx === 0){
-    SA.seeking = true;
-    audio.currentTime = chStart;
-    SA.seeking = false;
-  } else {
-    SA.chIdx--;
-    SA.seeking = true;
-    audio.currentTime = ts.c[SA.chIdx];
-    SA.seeking = false;
-    scourbyUpdateLabel();
-  }
+  if(!audio) return;
+  audio.currentTime = Math.max(0, audio.currentTime - 30);
 }
 
 function scourbyFaster(){
@@ -5894,30 +5850,6 @@ function scourbySeekClick(e){
   SA.seeking = false;
 }
 
-function scourbyHandleNavigation(){
-  // Called when reader chapter changes — sync audio if playing
-  const audio = document.getElementById('scourby-audio');
-  if(!audio.src || audio.paused && !SA.book) return;
-  if(S.book !== SA.book){
-    // Different book — reload
-    if(!audio.paused) scourbyLoad(S.book, S.ch);
-  } else if(S.ch !== SA.chIdx){
-    // Same book, different chapter — seek
-    const ts = SCOURBY_TS[SA.book];
-    if(ts && ts.c[S.ch] !== undefined){
-      const navSeekTo = ts.c[S.ch];
-      SA.seeking = true; SA.chIdx = S.ch;
-      audio.currentTime = navSeekTo;
-      let navAttempts=0;
-      const navCheck=setInterval(()=>{
-        navAttempts++;
-        if(Math.abs(audio.currentTime-navSeekTo)<10||navAttempts>20){
-          clearInterval(navCheck); SA.seeking=false; scourbyUpdateLabel();
-        }
-      },200);
-    }
-  }
-}
 
 function openChPicker(){
   if(!S.bookData) return;
