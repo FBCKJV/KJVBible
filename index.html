@@ -1306,6 +1306,15 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       </div>
 
       <div class="tips-section">
+        <div class="tips-section-lbl">💾 Backup &amp; Restore Your Data</div>
+        <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt">Moving to a new device or URL? Tap <strong>Export Data</strong> to copy all your streaks, badges, bookmarks, highlights and progress as a code. Then tap <strong>Import Data</strong> on your new device to restore everything.</span></div>
+        <div style="display:flex;gap:8px;margin:8px 0 4px">
+          <button onclick="exportAppData()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📤 Export Data</button>
+          <button onclick="importAppData()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📥 Import Data</button>
+        </div>
+      </div>
+
+      <div class="tips-section">
         <div class="tips-section-lbl">⚠️ Important</div>
         <div class="tip-row"><span class="tip-ico">⚠️</span><span class="tip-txt"><strong>Do not clear your browser cache</strong> for this site — doing so permanently deletes your bookmarks, highlights, notes, reading streak, and plan progress. Your data is stored on your device only</span></div>
       </div>
@@ -5922,6 +5931,37 @@ function scourbyToggleFromPicker(){
       : '⏸ Pause — ' + bookName;
   }, 300);
 }
+/* ════ DATA BACKUP / RESTORE ════ */
+function exportAppData(){
+  const data={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    data[k]=localStorage.getItem(k);
+  }
+  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+  if(navigator.share){
+    navigator.share({title:'FBC KJV Bible — My Data Backup',text:b64});
+  } else {
+    navigator.clipboard?.writeText(b64).then(()=>{
+      showToast('✅ Data copied to clipboard — paste on your new device to restore');
+    });
+  }
+}
+
+function importAppData(){
+  const code=prompt('Paste your backup code here:');
+  if(!code||!code.trim())return;
+  try{
+    const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
+    const keys=Object.keys(data);
+    keys.forEach(k=>localStorage.setItem(k,data[k]));
+    showToast(`✅ Restored ${keys.length} items — reloading...`);
+    setTimeout(()=>location.reload(),2000);
+  }catch(e){
+    alert('Could not read that backup code. Make sure you copied the full code.');
+  }
+}
+
 function openChPicker(){
   if(!S.bookData) return;
   document.getElementById('ch-picker-book').textContent = S.book;
