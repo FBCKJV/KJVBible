@@ -737,6 +737,25 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #mem-select{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 /* Inline input */
+/* ── Scourby Audio Player ── */
+#scourby-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;
+  color:var(--text-m);font-size:20px;line-height:1;transition:color .2s;display:none}
+#scourby-btn.active{color:var(--gold)}
+#scourby-bar{display:none;position:sticky;bottom:0;left:0;right:0;z-index:50;flex-shrink:0;
+  background:var(--bg2);border-top:1px solid var(--border);padding:8px 12px;
+  align-items:center;gap:8px}
+#scourby-bar.on{display:flex}
+.sb-label{flex:1;font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);
+  font-style:italic;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);
+  border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;flex-shrink:0;
+  touch-action:manipulation}
+.sb-btn:active{opacity:.7}
+#sb-progress{height:3px;background:var(--border);border-radius:2px;
+  margin:0 0 0 0;position:relative;cursor:pointer}
+#sb-progress-fill{height:100%;background:var(--gold);border-radius:2px;
+  transition:width .5s linear;pointer-events:none}
+
 .mem-inline-input{
   display:inline-block;background:rgba(201,148,58,.12);
   border:none;border-bottom:2px solid var(--gold);
@@ -883,10 +902,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #mem-badge-toast .mbt-name{font-size:14px;color:var(--text);margin-top:1px}
 
 /* Inline input */
-/* ── Text-to-Speech ── */
-.tts-reading { background:rgba(201,148,58,.18)!important; border-radius:3px; transition:background .3s; }
-#tts-btn.active { color:var(--gold)!important; }
-#tts-bar.on { display:flex!important; }
+
 .mem-peek{color:var(--text-m);font-style:italic;border-bottom:1px dotted var(--text-m);cursor:pointer}
 
 /* Reveal button */
@@ -1062,15 +1078,26 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div class="screen" id="screen-reader">
     <div id="reader-topbar">
       <div id="reader-loc" onclick="openChPicker()" title="Jump to chapter"></div>
-      <button id="tts-btn" onclick="toggleTTS()" title="Read aloud" style="display:none;background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;color:var(--text-m);font-size:18px;line-height:1;transition:color .15s">🔊</button>
+      <button id="scourby-btn" onclick="scourbyToggle()" title="Read aloud — Alexander Scourby KJV">🔊</button>
     </div>
-    <div id="tts-bar" style="display:none;position:sticky;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);padding:8px 14px;display:none;align-items:center;gap:10px;z-index:50;flex-shrink:0">
-      <span id="tts-label" style="flex:1;font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);font-style:italic">Ready to read</span>
-      <button onclick="ttsSlower()" style="background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer">－</button>
-      <span id="tts-speed-lbl" style="font-size:12px;color:var(--text-m);min-width:28px;text-align:center">1×</span>
-      <button onclick="ttsFaster()" style="background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:3px 9px;font-size:12px;cursor:pointer">＋</button>
-      <button onclick="stopTTS()" style="background:var(--surface);border:1px solid var(--border);color:var(--text-m);border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer">■ Stop</button>
+    <div id="scourby-bar">
+      <div style="flex:1;min-width:0">
+        <div id="sb-progress" onclick="scourbySeekClick(event)">
+          <div id="sb-progress-fill" style="width:0%"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+          <span class="sb-label" id="sb-label">Alexander Scourby KJV</span>
+          <button class="sb-btn" onclick="scourbyPrev()">⏮</button>
+          <button class="sb-btn" id="sb-playpause" onclick="scourbyToggle()">⏸</button>
+          <button class="sb-btn" onclick="scourbyNext()">⏭</button>
+          <button class="sb-btn" onclick="scourbySlower()">－</button>
+          <span id="sb-speed" style="font-size:11px;color:var(--text-m);min-width:24px;text-align:center">1×</span>
+          <button class="sb-btn" onclick="scourbyFaster()">＋</button>
+          <button class="sb-btn" onclick="scourbyStop()">■</button>
+        </div>
+      </div>
     </div>
+    <audio id="scourby-audio" preload="none" crossorigin="anonymous"></audio>
     <div id="parallel-strip">
       <span class="par-lbl">⇄ Parallels</span>
       <div id="par-chips"></div>
@@ -1656,7 +1683,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   applyFont(S.fontSize);
   buildBooks();
   loadStreak();
-  ttsInit();
+  scourbyInit();
   // Seed history stack
   history.replaceState({screen:'books'}, '', '');
   showScreen('books', false);
@@ -1815,7 +1842,7 @@ async function selectBook(name){
   showScreen('chapters');
 }
 
-function selectCh(i){if(TTS.active)stopTTS();S.ch=i;renderReader();showScreen('reader');recordActivity();planTrackChapter(S.book,i);}
+function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();planTrackChapter(S.book,i);}
 
 /* ════ RENDER READER ════ */
 function renderReader(){
@@ -1826,6 +1853,7 @@ function renderReader(){
   document.getElementById('ch-title').textContent=S.book;
   document.getElementById('ch-sub').textContent=`Chapter ${S.ch+1}`;
   const _bi = BOOKS.indexOf(S.book);
+  scourbyHandleNavigation();
   document.getElementById('r-prev').disabled = _bi===0 && S.ch===0;
   document.getElementById('r-next').disabled = _bi===BOOKS.length-1 && S.ch===S.bookData.chapters.length-1;
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
@@ -2417,7 +2445,6 @@ function showScreen(name, pushHistory=true){
   document.getElementById('screen-'+name)?.classList.add('on');
   document.getElementById('bn-'+name)?.classList.add('on');
   S.screen=name; updateHeaderState();
-  if(name!=='reader' && TTS.active) stopTTS();
   if(name==='saved')  renderSaved();
   if(name==='plans')  renderPlansScreen();
   if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();addXRefMarkers();}, 80);
@@ -5668,108 +5695,211 @@ function drawSwordCertificate(canvas){
   ctx.fillText('"...sharper than any twoedged sword"  —  Hebrews 4:12 (KJV)', W/2, y);
   ctx.globalAlpha = 1;
 }
-/* ════ TEXT-TO-SPEECH ════ */
-const TTS={active:false,paused:false,verseIdx:0,verses:[],rate:1.0,voice:null};
+/* ════ SCOURBY AUDIO PLAYER ════ */
+const SCOURBY_R2 = "https://pub-844c4034761740a7a4c016d8592a6a4a.r2.dev";
+const SCOURBY_TS = {"Genesis":{"t":12175,"c":[0.0,253.6,454.7,675.8,876.9,1037.3,1221.5,1407.3,1593.7,1803.1,1960.9,2153.7,2324.3,2469.7,2662.5,2812.4,2943.4,3159.5,3435.3,3787.9,3946.3,4192.9,4393.1,4564.6,5142.4,5367.0,5649.8,6051.7,6249.3,6513.4,6838.6,7289.4,7542.0,7703.7,7955.0,8166.3,8435.2,8734.9,8995.5,9207.4,9391.9,9838.6,10149.5,10447.9,10726.0,10958.6,11202.3,11509.4,11712.7,11956.4]},"Exodus":{"t":10414,"c":[0.0,145.6,355.0,607.0,890.9,1080.1,1320.1,1540.6,1838.8,2151.7,2438.1,2541.7,3017.4,3232.5,3529.1,3756.3,4094.7,4242.8,4485.0,4708.7,4887.4,5172.0,5423.7,5687.2,5843.9,6139.0,6437.5,6615.3,7008.8,7436.1,7745.2,7884.7,8232.7,8458.9,8778.5,9039.8,9324.0,9559.1,9824.2,10152.4]},"Leviticus":{"t":7458,"c":[0.0,159.6,307.3,462.6,814.2,1034.0,1305.1,1626.0,1926.3,2115.9,2306.8,2645.7,2725.3,3289.7,3810.3,4089.6,4441.3,4609.3,4812.1,5085.0,5339.1,5517.5,5784.6,6156.0,6323.5,6788.8,7167.8]},"Numbers":{"t":9841,"c":[0.0,398.8,646.5,1032.8,1456.4,1725.0,1947.0,2527.1,2732.7,2948.7,3215.2,3531.2,3646.1,3867.7,4220.8,4540.3,4941.5,5041.7,5374.1,5578.4,5815.1,6093.6,6452.9,6675.2,6872.4,7005.5,7438.1,7620.6,7853.7,8139.1,8289.6,8651.0,8952.8,9230.5,9419.0,9707.7]},"Deuteronomy":{"t":8701,"c":[0.0,387.3,700.7,950.8,1412.1,1694.8,1892.1,2150.8,2324.6,2620.1,2805.5,3097.0,3420.8,3613.3,3830.3,4047.2,4265.2,4482.1,4669.7,4856.3,5054.5,5278.9,5553.3,5763.5,5972.5,6145.0,6349.7,6533.5,7170.4,7431.6,7635.7,7955.2,8356.0,8603.0]},"Joshua":{"t":5697,"c":[0.0,173.1,405.2,576.3,789.6,955.8,1229.0,1509.1,1878.0,2119.8,2540.7,2757.4,2904.2,3153.5,3300.1,3611.9,3688.4,3887.8,4120.5,4405.8,4498.8,4808.9,5208.0,5381.5]},"Judges":{"t":5528,"c":[0.0,280.4,482.1,727.5,949.3,1169.4,1546.9,1824.3,2112.0,2597.9,2735.8,3095.8,3212.1,3435.0,3640.8,3829.7,4153.2,4265.4,4567.1,4888.3,5312.4]},"Ruth":{"t":781,"c":[0.0,196.9,428.4,592.6]},"1 Samuel":{"t":7726,"c":[0.0,241.2,581.8,751.1,977.2,1112.6,1344.6,1501.9,1668.8,1974.2,2240.4,2395.5,2633.4,2848.4,3343.7,3646.3,3856.1,4386.4,4647.0,4861.7,5259.3,5413.2,5648.0,5904.3,6108.2,6556.1,6818.0,6936.7,7194.3,7324.2,7619.0]},"2 Samuel":{"t":6322,"c":[0.0,218.5,498.1,848.9,982.1,1173.6,1392.5,1655.8,1793.0,1918.2,2104.8,2354.7,2659.1,3011.5,3354.3,3697.4,3923.9,4210.9,4547.3,4999.3,5259.6,5498.4,5790.3,6059.7]},"1 Kings":{"t":14728,"c":[0.0,900.6,1807.9,2318.6,2742.8,3059.4,3671.1,4561.5,5846.7,6343.0,6847.1,7599.9,8223.6,8907.3,9500.4,10071.8,10693.6,11102.2,11941.5,12381.4,13270.6,13816.1]},"2 Kings":{"t":7138,"c":[0.0,203.0,460.4,717.8,1133.3,1429.2,1738.5,1988.6,2278.1,2643.8,3009.0,3232.9,3441.8,3677.0,3944.4,4275.8,4474.9,4852.7,5223.0,5571.4,5771.8,5998.5,6214.6,6662.9,6840.1]},"1 Chronicles":{"t":6606,"c":[0.0,221.5,496.0,608.5,884.9,1100.3,1535.3,1804.8,1964.1,2275.5,2393.6,2699.8,3019.9,3145.1,3260.9,3492.5,3768.3,4021.0,4150.4,4354.7,4448.5,4745.0,4941.2,5162.1,5337.6,5513.7,5744.0,6005.2,6285.4]},"2 Chronicles":{"t":7889,"c":[0.0,160.4,355.6,501.1,681.2,831.6,1255.9,1482.2,1644.4,1911.3,2080.8,2227.9,2373.4,2567.7,2703.3,2860.0,3005.0,3143.9,3461.6,3568.1,3915.6,4104.1,4238.4,4476.9,4759.2,5052.8,5271.0,5344.8,5616.0,5966.1,6229.1,6458.1,6786.2,7022.2,7392.3,7664.7]},"Ezra":{"t":2274,"c":[0.0,113.4,418.3,585.5,820.5,998.6,1236.3,1500.1,1802.6,1991.1]},"Nehemiah":{"t":3337,"c":[0.0,124.2,352.8,638.1,866.0,1068.5,1260.2,1634.7,1853.1,2275.9,2483.5,2734.4,3030.5]},"Esther":{"t":1688,"c":[0.0,214.5,456.0,621.4,776.2,924.2,1066.9,1170.2,1365.0,1659.8]},"Job":{"t":6040,"c":[0.0,213.9,343.1,487.9,600.0,749.2,910.1,1041.5,1155.0,1336.6,1470.7,1583.2,1716.3,1854.2,1991.0,2174.2,2299.3,2386.8,2500.9,2659.4,2833.3,3007.5,3168.4,3261.8,3422.3,3452.3,3521.1,3645.6,3797.4,3932.2,4103.8,4334.4,4459.5,4634.4,4839.6,4924.4,5089.6,5223.7,5443.7,5602.9,5723.3,5892.5]},"Psalms":{"t":15040,"c":[0.0,45.8,118.4,167.4,225.5,311.8,367.9,483.1,541.6,670.9,794.2,839.3,891.1,928.8,981.3,1016.2,1088.8,1198.3,1521.8,1617.6,1668.4,1755.0,1959.8,2001.3,2064.1,2184.6,2249.0,2368.8,2439.7,2502.7,2584.1,2759.6,2844.5,2967.8,3090.1,3288.8,3367.4,3614.7,3741.9,3837.1,3978.0,4062.6,4161.6,4207.4,4366.3,4481.5,4553.4,4603.8,4684.5,4803.2,4944.2,5057.6,5115.7,5169.3,5208.1,5361.3,5440.6,5521.7,5598.5,5717.9,5792.3,5839.1,5919.5,5987.8,6052.6,6146.7,6261.9,6301.1,6547.0,6783.1,6819.0,6985.0,7115.0,7264.0,7409.5,7476.1,7544.1,7660.4,8092.0,8189.6,8307.3,8408.8,8449.7,8545.9,8625.5,8698.4,8808.7,8848.5,8952.8,9262.5,9375.3,9476.8,9567.7,9600.1,9725.5,9795.6,9875.3,9941.9,10001.8,10057.1,10087.4,10148.3,10308.7,10429.2,10639.9,10862.6,11131.0,11372.4,11445.0,11633.1,11683.2,11745.5,11806.1,11856.2,11893.5,11990.1,12091.2,12102.8,12266.7,13120.4,13151.4,13190.2,13233.9,13267.0,13309.6,13347.7,13380.8,13419.5,13455.1,13497.1,13537.9,13559.1,13656.3,13680.6,13696.1,13812.1,13936.4,13994.6,14055.2,14199.6,14283.9,14355.4,14408.6,14497.4,14603.8,14720.4,14783.1,14888.5,14959.7,15010.1]},"Proverbs":{"t":5622,"c":[0.0,194.0,309.6,511.8,668.1,800.4,1004.6,1158.2,1368.3,1476.0,1673.0,1868.9,2046.9,2196.4,2410.2,2613.6,2816.6,2994.6,3137.0,3326.2,3512.4,3699.7,3884.7,4096.3,4313.2,4508.3,4679.9,4851.9,5049.3,5208.2,5447.5]},"Ecclesiastes":{"t":1987,"c":[0.0,135.3,396.7,580.9,716.2,906.0,1013.2,1233.3,1416.7,1614.4,1757.6,1854.8]},"Song of Solomon":{"t":918,"c":[0.0,112.6,233.9,333.0,458.4,595.6,693.0,793.9]},"Isaiah":{"t":12795,"c":[0.0,261.8,458.1,660.8,733.4,1031.5,1157.9,1397.3,1590.1,1797.0,2117.6,2296.8,2343.1,2542.1,2837.8,2929.7,3073.0,3220.9,3309.0,3561.2,3619.5,3763.6,3997.1,4159.1,4363.6,4495.2,4685.2,4825.1,5106.3,5362.6,5728.5,5839.7,5990.3,6192.4,6372.7,6468.4,6706.7,7097.4,7301.9,7394.5,7669.5,7947.2,8180.7,8426.3,8732.4,8999.8,9117.9,9280.6,9497.2,9796.7,9922.8,10189.1,10329.0,10462.7,10633.0,10770.9,10895.6,11092.1,11272.4,11476.6,11706.3,11837.6,11962.6,12148.5,12254.9,12515.0]},"Jeremiah":{"t":13654,"c":[0.0,169.0,495.2,751.9,1027.5,1307.3,1572.0,1882.5,2108.5,2355.7,2571.4,2811.2,2985.3,3221.9,3442.1,3666.8,3890.6,4155.9,4366.9,4540.1,4730.2,4889.6,5157.6,5537.2,5652.8,6017.0,6273.1,6517.1,6689.9,7011.6,7241.1,7655.4,8113.7,8383.3,8647.0,8857.4,9212.7,9408.3,9723.2,9897.7,10115.7,10328.2,10576.0,10723.3,11116.4,11165.0,11427.8,11496.6,11871.8,12249.5,12716.9,13310.0]},"Lamentations":{"t":1222,"c":[0.0,271.4,587.7,901.4,1115.5]},"Ezekiel":{"t":12138,"c":[0.0,268.0,352.1,601.3,761.2,954.7,1099.4,1336.0,1537.8,1661.0,1864.0,2086.1,2332.3,2559.6,2789.4,2852.6,3413.2,3651.4,3934.5,4044.1,4537.3,4828.5,5087.2,5494.5,5732.9,5889.4,6113.3,6392.8,6642.0,6861.9,7096.0,7305.5,7637.3,7967.2,8262.3,8386.2,8749.7,9017.7,9256.7,9542.6,10013.9,10261.0,10436.0,10715.4,11033.0,11304.7,11575.8,11816.1]},"Daniel":{"t":3723,"c":[0.0,189.0,670.3,988.6,1402.5,1721.8,2012.2,2309.3,2582.7,2892.6,3100.2,3590.9]},"Hosea":{"t":1714,"c":[0.0,117.6,342.2,393.9,547.9,669.8,754.0,885.8,995.1,1150.1,1290.9,1393.0,1496.0,1637.1]},"Joel":{"t":712,"c":[0.0,177.8,513.1]},"Amos":{"t":1360,"c":[0.0,146.7,289.0,417.0,556.3,768.5,897.2,1049.1,1182.6]},"Obadiah":{"t":185,"c":[0.0]},"Jonah":{"t":419,"c":[0.0,163.3,231.3,313.9]},"Micah":{"t":1037,"c":[0.0,148.7,280.2,396.6,553.2,700.2,844.9]},"Nahum":{"t":456,"c":[0.0,139.9,271.6]},"Habakkuk":{"t":526,"c":[0.0,150.8,351.6]},"Zephaniah":{"t":563,"c":[0.0,193.6,354.8]},"Haggai":{"t":352,"c":[0.0,140.6]},"Zechariah":{"t":2009,"c":[0.0,194.0,292.9,385.2,499.0,604.4,736.7,854.5,1073.8,1241.3,1368.5,1525.1,1669.2,1774.3]},"Malachi":{"t":604,"c":[0.0,165.2,350.4,542.1]},"Matthew":{"t":8373,"c":[0.0,167.2,386.1,522.9,719.8,1102.0,1382.7,1604.0,1877.3,2173.2,2498.1,2734.2,3147.2,3630.5,3885.4,4162.9,4406.1,4625.3,4932.5,5186.7,5462.1,5860.2,6152.9,6447.4,6817.6,7169.3,7743.8,8224.3]},"Mark":{"t":5104,"c":[0.0,313.0,556.7,779.8,1090.4,1410.8,1856.1,2127.4,2410.7,2802.5,3212.4,3474.2,3830.3,4109.0,4645.8,4953.1]},"Luke":{"t":8958,"c":[0.0,546.7,924.5,1275.7,1628.3,1956.1,2380.5,2798.0,3292.2,3795.4,4138.0,4597.7,5083.6,5382.0,5662.4,5912.8,6172.5,6451.9,6751.6,7113.2,7442.7,7725.9,8208.0,8593.7]},"John":{"t":6796,"c":[0.0,357.3,538.8,810.4,1199.8,1556.0,2092.0,2448.7,2913.8,3225.6,3517.4,3929.2,4306.5,4600.5,4860.7,5078.8,5359.6,5586.0,5923.0,6282.5,6549.1]},"Acts":{"t":8293,"c":[0.0,226.1,575.3,792.2,1088.1,1439.0,1560.4,2049.6,2351.6,2709.4,3088.4,3316.6,3543.0,3978.1,4192.6,4509.0,4831.5,5124.0,5351.1,5684.6,5986.3,6351.3,6615.7,6930.7,7149.6,7392.8,7660.0,8013.3]},"Romans":{"t":3632,"c":[0.0,275.2,508.0,724.7,935.1,1120.2,1306.7,1539.9,1888.0,2165.2,2342.9,2658.2,2811.2,2950.4,3152.7,3438.8]},"1 Corinthians":{"t":3699,"c":[0.0,253.7,399.5,578.9,777.9,903.4,1085.1,1460.0,1580.8,1843.1,2103.8,2384.4,2616.2,2721.8,3068.5,3524.3]},"2 Corinthians":{"t":2320,"c":[0.0,226.0,379.4,528.2,683.4,869.7,1006.2,1179.1,1396.3,1532.1,1699.2,1973.8,2199.0]},"Galatians":{"t":1156,"c":[0.0,169.9,384.7,627.7,856.4,1024.0]},"Ephesians":{"t":1132,"c":[0.0,190.3,359.9,513.5,744.6,955.9]},"Philippians":{"t":845,"c":[0.0,244.6,477.1,664.1]},"Colossians":{"t":748,"c":[0.0,247.8,437.8,610.4]},"1 Thessalonians":{"t":1041,"c":[0.0,143.4,414.8,582.0,806.5]},"2 Thessalonians":{"t":373,"c":[0.0,106.1,245.1]},"1 Timothy":{"t":916,"c":[0.0,176.3,277.1,409.4,535.9,727.8]},"2 Timothy":{"t":669,"c":[0.0,175.9,379.2,498.5]},"Titus":{"t":368,"c":[0.0,138.5,247.4]},"Philemon":{"t":139,"c":[0.0]},"Hebrews":{"t":2474,"c":[0.0,121.3,290.6,420.5,565.4,680.6,833.1,1050.8,1189.7,1432.9,1714.2,2045.0,2294.7]},"James":{"t":883,"c":[0.0,208.5,410.9,555.7,697.2]},"1 Peter":{"t":1000,"c":[0.0,241.1,462.9,685.5,878.9]},"2 Peter":{"t":615,"c":[0.0,193.2,423.2]},"1 John":{"t":942,"c":[0.0,92.5,367.6,567.5,747.2]},"2 John":{"t":94,"c":[0.0]},"3 John":{"t":96,"c":[0.0]},"Jude":{"t":213,"c":[0.0]},"Revelation":{"t":4216,"c":[0.0,208.1,489.9,721.2,843.5,996.3,1186.1,1358.7,1498.2,1706.2,1830.3,2034.1,2208.8,2397.9,2626.7,2715.2,2914.5,3097.9,3360.5,3583.3,3750.9,4014.1]}};
+const SCOURBY_FILES = {"Genesis":"01 Genesis.mp3","Exodus":"02 Exodus.mp3","Leviticus":"03 Leviticus.mp3","Numbers":"04 Numbers.mp3","Deuteronomy":"05 Deuteronomy.mp3","Joshua":"06 Joshua.mp3","Judges":"07 Judges.mp3","Ruth":"08 Ruth.mp3","1 Samuel":"09 I Samuel.mp3","2 Samuel":"10 II Samuel.mp3","1 Kings":"11 I Kings.mp3","2 Kings":"12 II Kings.mp3","1 Chronicles":"13 I Chronicles.mp3","2 Chronicles":"14 II Chronicles.mp3","Ezra":"15 Ezra.mp3","Nehemiah":"16 Nehemiah.mp3","Esther":"17 Esther.mp3","Job":"18 Job.mp3","Psalms":"19 Psalm.mp3","Proverbs":"20 Proverbs.mp3","Ecclesiastes":"21 Ecclesiastes.mp3","Song of Solomon":"22 Solomon.mp3","Isaiah":"23 Isaiah.mp3","Jeremiah":"24 Jeremiah.mp3","Lamentations":"25 Lamentations.mp3","Ezekiel":"26 Ezekiel.mp3","Daniel":"27 Daniel.mp3","Hosea":"28 Hosea.mp3","Joel":"29 Joel.mp3","Amos":"30 Amos.mp3","Obadiah":"31 Obadiah.mp3","Jonah":"32 Jonah.mp3","Micah":"33 Micah.mp3","Nahum":"34 Nahum.mp3","Habakkuk":"35 Habakkuk.mp3","Zephaniah":"36 Zephaniah.mp3","Haggai":"37 Haggai.mp3","Zechariah":"38 Zechariah.mp3","Malachi":"39 Malachi.mp3","Matthew":"40 Matthew.mp3","Mark":"41 Mark.mp3","Luke":"42 Luke.mp3","John":"43 John.mp3","Acts":"44 Acts.mp3","Romans":"45 Romans.mp3","1 Corinthians":"46 I Corinthians.mp3","2 Corinthians":"47 II Corinthians.mp3","Galatians":"48 Galatians.mp3","Ephesians":"49 Ephesians.mp3","Philippians":"50 Philippians.mp3","Colossians":"51 Colossians.mp3","1 Thessalonians":"52 I Thessalonians.mp3","2 Thessalonians":"53 II Thessalonians.mp3","1 Timothy":"54 I Timothy.mp3","2 Timothy":"55 II Timothy.mp3","Titus":"56 Titus.mp3","Philemon":"57 Philemon.mp3","Hebrews":"58 Hebrews.mp3","James":"59 James.mp3","1 Peter":"60 I Peter.mp3","2 Peter":"61 II Peter.mp3","1 John":"62 I John.mp3","2 John":"63 II John.mp3","3 John":"64 III John.mp3","Jude":"65 Jude.mp3","Revelation":"66 Revelation.mp3"};
 
-function ttsInit(){
-  if(!('speechSynthesis' in window)) return;
-  const btn = document.getElementById('tts-btn');
-  if(btn) btn.style.display = 'block';
+const SA = {book:null, chIdx:0, rate:1.0, seeking:false};
 
-  function pickVoice(){
-    if(TTS.voice) return;  // already locked in — don't re-pick
-    const voices = speechSynthesis.getVoices();
-    if(!voices.length) return;
+function scourbyInit(){
+  const audio = document.getElementById('scourby-audio');
+  if(!audio) return;
+  document.getElementById('scourby-btn').style.display = 'block';
 
-    const FEMALE_WORDS = ['female','samantha','zira','salli','joanna','karen','victoria',
-                          'moira','fiona','tessa','allison','ava','susan','kathy','vicki'];
-    const isFemale = v => FEMALE_WORDS.some(w => v.name.toLowerCase().includes(w));
-    const isMale   = v => v.name.toLowerCase().includes('male');
+  audio.addEventListener('timeupdate', scourbyTimeUpdate);
+  audio.addEventListener('ended', scourbyOnEnded);
+  audio.addEventListener('error', e => {
+    console.error('Scourby audio error:', e);
+    document.getElementById('sb-label').textContent = 'Error loading audio';
+  });
+}
 
-    const male =
-      voices.find(v => v.name === 'Google UK English Male')           ||
-      voices.find(v => v.name === 'Google US English Male')           ||
-      voices.find(v => isMale(v) && v.lang.startsWith('en'))          ||
-      voices.find(v => v.lang.startsWith('en') && !isFemale(v))       ||
-      voices.find(v => v.lang.startsWith('en'))                        ||
-      voices[0];
+function scourbyBookUrl(bookName){
+  const fname = SCOURBY_FILES[bookName];
+  if(!fname) return null;
+  return SCOURBY_R2 + '/' + encodeURIComponent(fname);
+}
 
-    TTS.voice = male || null;
-    const vname = TTS.voice ? TTS.voice.name : 'default';
-    const lbl = document.getElementById('tts-label');
-    if(lbl) lbl.textContent = '🔊 Voice: ' + vname;
-    console.log('TTS voice selected:', vname);
+function scourbyLoad(bookName, chIdx){
+  const url = scourbyBookUrl(bookName);
+  if(!url) return;
+  const audio = document.getElementById('scourby-audio');
+  const ts = SCOURBY_TS[bookName];
+  if(!ts) return;
+
+  SA.book = bookName; SA.chIdx = chIdx; SA.seeking = true;
+  const seekTo = ts.c[chIdx] || 0;
+
+  document.getElementById('sb-label').textContent = 'Loading ' + bookName + '...';
+  document.getElementById('scourby-bar').classList.add('on');
+  document.getElementById('scourby-btn').classList.add('active');
+
+  // If same book already loaded, just seek
+  if(audio.src === url || audio.src.endsWith(encodeURIComponent(SCOURBY_FILES[bookName]))){
+    audio.currentTime = seekTo;
+    audio.play();
+    SA.seeking = false;
+    scourbyUpdateLabel();
+    return;
   }
 
-  // Voices may not be ready yet — wait for voiceschanged
-  pickVoice();
-  speechSynthesis.addEventListener('voiceschanged', pickVoice);
+  audio.src = url;
+  audio.load();
+
+  const onCanPlay = () => {
+    audio.removeEventListener('canplay', onCanPlay);
+    audio.currentTime = seekTo;
+    audio.play();
+    SA.seeking = false;
+    scourbyUpdateLabel();
+  };
+  audio.addEventListener('canplay', onCanPlay);
+  document.getElementById('sb-playpause').textContent = '⏸';
 }
 
-function toggleTTS(){
-  if(!('speechSynthesis' in window)) return;
-  if(TTS.active){
-    if(speechSynthesis.speaking && !speechSynthesis.paused){
-      speechSynthesis.pause(); TTS.paused=true;
-      document.getElementById('tts-btn').textContent='▶️';
-      document.getElementById('tts-label').textContent='Paused — tap to resume';
-    } else if(speechSynthesis.paused){
-      speechSynthesis.resume(); TTS.paused=false;
-      document.getElementById('tts-btn').textContent='🔊';
+function scourbyToggle(){
+  const audio = document.getElementById('scourby-audio');
+  if(!audio.src || audio.src === window.location.href){
+    // First tap — load current chapter
+    scourbyLoad(S.book, S.ch);
+    return;
+  }
+  if(audio.paused){
+    audio.play();
+    document.getElementById('sb-playpause').textContent = '⏸';
+    document.getElementById('scourby-btn').classList.add('active');
+  } else {
+    audio.pause();
+    document.getElementById('sb-playpause').textContent = '▶';
+    document.getElementById('scourby-btn').classList.remove('active');
+  }
+}
+
+function scourbyStop(){
+  const audio = document.getElementById('scourby-audio');
+  audio.pause(); audio.src = '';
+  SA.book = null;
+  document.getElementById('scourby-bar').classList.remove('on');
+  document.getElementById('scourby-btn').classList.remove('active');
+  document.getElementById('sb-progress-fill').style.width = '0%';
+}
+
+function scourbyUpdateLabel(){
+  const ts = SCOURBY_TS[SA.book];
+  if(!ts) return;
+  const chNum = SA.chIdx + 1;
+  const total = ts.c.length;
+  document.getElementById('sb-label').textContent =
+    SA.book + ' ' + chNum + '  (' + chNum + ' of ' + total + ')  — Scourby KJV';
+}
+
+function scourbyTimeUpdate(){
+  const audio = document.getElementById('scourby-audio');
+  if(!SA.book || SA.seeking) return;
+  const ts = SCOURBY_TS[SA.book];
+  if(!ts) return;
+  const t = audio.currentTime;
+
+  // Update progress bar
+  if(ts.t > 0){
+    const pct = Math.min(100, (t / ts.t) * 100);
+    document.getElementById('sb-progress-fill').style.width = pct + '%';
+  }
+
+  // Detect chapter change
+  const chapters = ts.c;
+  let curCh = 0;
+  for(let i = 0; i < chapters.length; i++){
+    if(t >= chapters[i]) curCh = i; else break;
+  }
+  if(curCh !== SA.chIdx){
+    SA.chIdx = curCh;
+    scourbyUpdateLabel();
+  }
+}
+
+function scourbyOnEnded(){
+  // Auto-advance to next book if there is one
+  document.getElementById('sb-playpause').textContent = '▶';
+  document.getElementById('scourby-btn').classList.remove('active');
+  document.getElementById('sb-label').textContent = 'Finished — tap ▶ or choose next book';
+}
+
+function scourbyNext(){
+  const ts = SCOURBY_TS[SA.book];
+  if(!ts) return;
+  if(SA.chIdx < ts.c.length - 1){
+    SA.chIdx++;
+    const audio = document.getElementById('scourby-audio');
+    SA.seeking = true;
+    audio.currentTime = ts.c[SA.chIdx];
+    SA.seeking = false;
+    scourbyUpdateLabel();
+  }
+}
+
+function scourbyPrev(){
+  const audio = document.getElementById('scourby-audio');
+  const ts = SCOURBY_TS[SA.book];
+  if(!ts) return;
+  const chStart = ts.c[SA.chIdx] || 0;
+  // If more than 3s into chapter, restart it; otherwise go to prev chapter
+  if(audio.currentTime - chStart > 3 || SA.chIdx === 0){
+    SA.seeking = true;
+    audio.currentTime = chStart;
+    SA.seeking = false;
+  } else {
+    SA.chIdx--;
+    SA.seeking = true;
+    audio.currentTime = ts.c[SA.chIdx];
+    SA.seeking = false;
+    scourbyUpdateLabel();
+  }
+}
+
+function scourbyFaster(){
+  SA.rate = Math.min(2.0, Math.round((SA.rate + 0.25)*100)/100);
+  document.getElementById('scourby-audio').playbackRate = SA.rate;
+  document.getElementById('sb-speed').textContent = SA.rate + '×';
+}
+
+function scourbySlower(){
+  SA.rate = Math.max(0.5, Math.round((SA.rate - 0.25)*100)/100);
+  document.getElementById('scourby-audio').playbackRate = SA.rate;
+  document.getElementById('sb-speed').textContent = SA.rate + '×';
+}
+
+function scourbySeekClick(e){
+  const bar = document.getElementById('sb-progress');
+  const rect = bar.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  const ts = SCOURBY_TS[SA.book];
+  if(!ts) return;
+  const audio = document.getElementById('scourby-audio');
+  SA.seeking = true;
+  audio.currentTime = ts.t * pct;
+  SA.seeking = false;
+}
+
+function scourbyHandleNavigation(){
+  // Called when reader chapter changes — sync audio if playing
+  const audio = document.getElementById('scourby-audio');
+  if(!audio.src || audio.paused && !SA.book) return;
+  if(S.book !== SA.book){
+    // Different book — reload
+    if(!audio.paused) scourbyLoad(S.book, S.ch);
+  } else if(S.ch !== SA.chIdx){
+    // Same book, different chapter — seek
+    const ts = SCOURBY_TS[SA.book];
+    if(ts && ts.c[S.ch] !== undefined){
+      SA.seeking = true;
+      audio.currentTime = ts.c[S.ch];
+      SA.chIdx = S.ch;
+      SA.seeking = false;
+      scourbyUpdateLabel();
     }
-  } else { startTTS(); }
-}
-
-function startTTS(){
-  if(!S.bookData) return;
-  speechSynthesis.cancel();
-  const ch=S.bookData.chapters[S.ch];
-  if(!ch) return;
-  TTS.verses=ch.verses; TTS.verseIdx=0;
-  TTS.active=true; TTS.paused=false;
-  document.getElementById('tts-btn').classList.add('active');
-  document.getElementById('tts-btn').textContent='🔊';
-  document.getElementById('tts-bar').classList.add('on');
-  speakVerse();
-}
-
-function speakVerse(){
-  if(!TTS.active||TTS.verseIdx>=TTS.verses.length){stopTTS();return;}
-  const v=TTS.verses[TTS.verseIdx];
-  // Highlight
-  document.querySelectorAll('.tts-reading').forEach(el=>el.classList.remove('tts-reading'));
-  const el=document.querySelector(`[data-verse="${v.verse}"]`);
-  if(el){el.classList.add('tts-reading');el.scrollIntoView({behavior:'smooth',block:'center'});}
-  document.getElementById('tts-label').textContent=
-    `${S.book} ${S.ch+1}:${v.verse}  (${TTS.verseIdx+1} of ${TTS.verses.length})`;
-  const utt=new SpeechSynthesisUtterance(v.text);
-  utt.rate=TTS.rate; utt.pitch=1;
-  if(TTS.voice){ utt.voice=TTS.voice; utt.lang=TTS.voice.lang; }
-  else { utt.lang='en-US'; }
-  utt.onend=()=>{if(!TTS.active)return;TTS.verseIdx++;setTimeout(speakVerse,380);};
-  utt.onerror=()=>{TTS.verseIdx++;setTimeout(speakVerse,200);};
-  speechSynthesis.speak(utt);
-}
-
-function stopTTS(){
-  speechSynthesis.cancel();
-  TTS.active=false; TTS.paused=false; TTS.verseIdx=0;
-  document.querySelectorAll('.tts-reading').forEach(el=>el.classList.remove('tts-reading'));
-  const btn=document.getElementById('tts-btn');
-  const bar=document.getElementById('tts-bar');
-  if(btn){btn.classList.remove('active');btn.textContent='🔊';}
-  if(bar) bar.classList.remove('on');
-}
-
-function ttsFaster(){
-  TTS.rate=Math.min(2.0,Math.round((TTS.rate+0.25)*100)/100);
-  document.getElementById('tts-speed-lbl').textContent=TTS.rate+'×';
-  if(TTS.active&&!TTS.paused){speechSynthesis.cancel();speakVerse();}
-}
-function ttsSlower(){
-  TTS.rate=Math.max(0.5,Math.round((TTS.rate-0.25)*100)/100);
-  document.getElementById('tts-speed-lbl').textContent=TTS.rate+'×';
-  if(TTS.active&&!TTS.paused){speechSynthesis.cancel();speakVerse();}
+  }
 }
 
 function openChPicker(){
