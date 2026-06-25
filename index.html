@@ -1378,11 +1378,18 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   <div id="ch-picker-inner">
     <div id="ch-picker-hdr">
       <div id="ch-picker-book"></div>
-      <button id="cp-scourby-btn" onclick="scourbyToggleFromPicker()" title="Listen to this book — Alexander Scourby KJV"
-        style="background:var(--surface);border:1px solid var(--border);color:var(--text-m);border-radius:8px;padding:5px 10px;font-size:14px;cursor:pointer;display:none">🔊 Listen</button>
       <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;padding:0 4px" onclick="closeChPicker()">✕</button>
     </div>
     <div id="ch-grid"></div>
+    <div id="cp-audio-row" style="display:none;padding:10px 14px 4px;border-top:1px solid var(--border);margin-top:6px">
+      <button id="cp-scourby-btn" onclick="scourbyToggleFromPicker()"
+        style="width:100%;background:var(--surface);border:1px solid var(--border);
+               color:var(--gold);border-radius:10px;padding:11px 16px;font-size:15px;
+               font-family:'IM Fell English',serif;cursor:pointer;display:flex;
+               align-items:center;justify-content:center;gap:8px">
+        🔊 <span id="cp-scourby-label">Listen — Alexander Scourby KJV</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -5844,8 +5851,7 @@ function scourbySeekClick(e){
 
 
 function scourbyToggleFromPicker(){
-  const bookEl = document.getElementById('ch-picker-book');
-  const bookName = bookEl ? bookEl.textContent.trim() : S.book;
+  const bookName = document.getElementById('ch-picker-book').textContent.trim() || S.book;
   const audio = document.getElementById('scourby-audio');
   const isLoaded = audio.src && SCOURBY_FILES[bookName] &&
     audio.src.endsWith(encodeURIComponent(SCOURBY_FILES[bookName]));
@@ -5854,12 +5860,14 @@ function scourbyToggleFromPicker(){
   } else {
     scourbyLoad(bookName);
   }
-  // Update button text
+  // Update label
   setTimeout(()=>{
-    const btn = document.getElementById('cp-scourby-btn');
+    const lbl = document.getElementById('cp-scourby-label');
     const aud = document.getElementById('scourby-audio');
-    if(btn) btn.textContent = aud.paused ? '🔊 Listen' : '⏸ Pause';
-  }, 200);
+    if(lbl) lbl.textContent = aud.paused
+      ? '▶ Resume — ' + bookName + ' (Scourby KJV)'
+      : '⏸ Pause — ' + bookName;
+  }, 300);
 }
 function openChPicker(){
   if(!S.bookData) return;
@@ -5871,15 +5879,17 @@ function openChPicker(){
     ).join('');
   document.getElementById('ch-picker').classList.add('on');
   history.pushState({modal:'ch-picker'},'','');
-  // Show listen button if audio available for this book
-  const cpBtn = document.getElementById('cp-scourby-btn');
-  if(cpBtn){
-    const hasFn = !!SCOURBY_FILES[S.book];
-    cpBtn.style.display = hasFn ? 'block' : 'none';
+  // Show Scourby listen row below grid
+  const row = document.getElementById('cp-audio-row');
+  const lbl = document.getElementById('cp-scourby-label');
+  if(row && SCOURBY_FILES[S.book]){
+    row.style.display = 'block';
     const aud = document.getElementById('scourby-audio');
-    const isThis = aud.src && SCOURBY_FILES[S.book] && aud.src.endsWith(encodeURIComponent(SCOURBY_FILES[S.book]));
-    cpBtn.textContent = (isThis && !aud.paused) ? '⏸ Pause' : '🔊 Listen';
-  }
+    const isLoaded = aud.src && aud.src.endsWith(encodeURIComponent(SCOURBY_FILES[S.book]));
+    if(lbl) lbl.textContent = (isLoaded && !aud.paused)
+      ? 'Pause — ' + S.book
+      : (isLoaded ? '▶ Resume — ' : 'Listen — ') + S.book + ' (Scourby KJV)';
+  } else if(row){ row.style.display = 'none'; }
 }
 
 function closeChPicker(){
