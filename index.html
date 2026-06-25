@@ -2069,18 +2069,16 @@ function getMultiText(){
 
 function multiCopy(){
   const sorted = getSelectedSorted();
-  const first  = sorted[0];
-  const last   = sorted[sorted.length-1];
+  if(!sorted.length) return;
+  const first = sorted[0];
+  const last  = sorted[sorted.length-1];
 
-  // Detect if this is a full chapter selection
-  const totalVerses = S.bookData?.chapters[S.ch]?.verses?.length || 0;
-  const isFullChapter = sorted.length === totalVerses && totalVerses > 0;
-
-  if(isFullChapter){
-    showCopyFormatPicker(sorted, first, last);
-  } else {
-    // Partial — always use block text
+  if(sorted.length === 1){
+    // Single verse — just copy block text, no picker needed
     doCopy(buildBlockText(sorted, first, last));
+  } else {
+    // 2+ verses — always offer format choice
+    showCopyFormatPicker(sorted, first, last);
   }
 }
 
@@ -2091,15 +2089,23 @@ function buildBlockText(sorted, first, last){
   return `${ref}\n${sorted.map(v=>v.txt).join(' ')}`;
 }
 
-function buildNumberedText(sorted, first){
-  const header = first.ref.replace(/:.*$/,''); // e.g. "Song of Solomon 1"
-  const lines  = sorted.map(v=>`${v.vnum}  ${v.txt}`).join('\n\n');
-  return `${header}\n\n${lines}`;
+function buildNumberedText(sorted, first, last){
+  const ref = sorted.length === 1
+    ? first.ref
+    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
+  const lines = sorted.map(v=>`${v.vnum}  ${v.txt}`).join('\n');
+  return `${ref}\n${lines}`;
 }
 
 function showCopyFormatPicker(sorted, first, last){
   const existing = document.getElementById('copy-fmt-sheet');
   if(existing) existing.remove();
+
+  const ref = sorted.length === 1
+    ? first.ref
+    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
+  const previewTrad = `${ref}\n${first.vnum}  ${first.txt.substring(0,40)}...\n${sorted.length>1?last.vnum+'  '+last.txt.substring(0,30)+'...':''}`;
+  const previewBlock = `${ref}\n${sorted.map(v=>v.txt).join(' ').substring(0,70)}...`;
 
   const sheet = document.createElement('div');
   sheet.id = 'copy-fmt-sheet';
@@ -2107,22 +2113,21 @@ function showCopyFormatPicker(sorted, first, last){
   sheet.innerHTML = `
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:700px;padding:20px 18px 32px;animation:su .22s ease">
       <div style="font-family:'IM Fell English',serif;font-size:17px;color:var(--gold);margin-bottom:14px;text-align:center">Copy Format</div>
-      <button onclick="document.getElementById('copy-fmt-sheet').remove();doCopy(buildNumberedText(window._cfSorted,window._cfFirst))"
+      <button onclick="document.getElementById('copy-fmt-sheet').remove();doCopy(buildNumberedText(window._cfSorted,window._cfFirst,window._cfLast))"
         style="display:block;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 16px;font-size:14px;cursor:pointer;text-align:left;margin-bottom:8px">
-        <div style="font-weight:600;color:var(--gold);margin-bottom:3px">📋 Traditional (numbered verses)</div>
-        <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif">Song of Solomon 1<br>1  The song of songs...<br>2  Let him kiss me...</div>
+        <div style="font-weight:600;color:var(--gold);margin-bottom:4px">📋 Traditional (numbered verses)</div>
+        <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif;white-space:pre-line">${previewTrad}</div>
       </button>
       <button onclick="document.getElementById('copy-fmt-sheet').remove();doCopy(buildBlockText(window._cfSorted,window._cfFirst,window._cfLast))"
         style="display:block;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 16px;font-size:14px;cursor:pointer;text-align:left;margin-bottom:12px">
-        <div style="font-weight:600;color:var(--gold);margin-bottom:3px">📄 Block text (flowing paragraph)</div>
-        <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif">Song of Solomon 1:1–22<br>The song of songs, which is...</div>
+        <div style="font-weight:600;color:var(--gold);margin-bottom:4px">📄 Block text (flowing paragraph)</div>
+        <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif;white-space:pre-line">${previewBlock}</div>
       </button>
       <button onclick="document.getElementById('copy-fmt-sheet').remove()"
         style="display:block;width:100%;background:none;border:1px solid var(--border);color:var(--text-m);border-radius:10px;padding:10px;font-size:13px;cursor:pointer">
         Cancel
       </button>
     </div>`;
-  // Store data on window for the onclick handlers
   window._cfSorted = sorted; window._cfFirst = first; window._cfLast = last;
   document.body.appendChild(sheet);
   sheet.addEventListener('click', e=>{ if(e.target===sheet) sheet.remove(); });
