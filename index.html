@@ -1711,6 +1711,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   showScreen('books', false);
   loadVOD();
   setTimeout(()=>document.getElementById('loader').classList.add('gone'),700);
+  setTimeout(showWelcomeIfNeeded, 1200);
 });
 
 /* ════ ROMAN'S ROAD DATA ════ */
@@ -5938,6 +5939,27 @@ function scourbyToggleFromPicker(){
       : '⏸ Pause — ' + bookName;
   }, 300);
 }
+
+/* ════ WELCOME / MIGRATION NOTICE ════ */
+function showWelcomeIfNeeded(){
+  if(localStorage.getItem('kjv_welcomed_v2')) return;
+  const el = document.getElementById('welcome-overlay');
+  if(!el) return;
+  el.style.display = 'flex';
+  // Show restore code — wait for fbInit to generate it
+  setTimeout(()=>{
+    const code = localStorage.getItem('kjv_rc') || '------';
+    const codeEl = document.getElementById('welcome-code');
+    if(codeEl) codeEl.textContent = code;
+  }, 500);
+}
+
+function closeWelcome(){
+  localStorage.setItem('kjv_welcomed_v2', '1');
+  const el = document.getElementById('welcome-overlay');
+  if(el) el.style.display = 'none';
+}
+
 /* ════ DATA BACKUP / RESTORE ════ */
 function exportAppData(){
   const data={};
@@ -6142,5 +6164,83 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
   </div>
 </div>
 <audio id="scourby-audio" preload="none" crossorigin="anonymous"></audio>
+
+<!-- WELCOME / MIGRATION NOTICE MODAL -->
+<div id="welcome-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;
+  align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:18px;
+    max-width:480px;width:100%;padding:28px 24px 24px;max-height:90vh;overflow-y:auto">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:36px;margin-bottom:8px">⚔️</div>
+      <div style="font-family:'IM Fell English',serif;font-size:22px;color:var(--gold);margin-bottom:4px">
+        FBC KJV Bible App
+      </div>
+      <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-m);font-family:'Inter',sans-serif">
+        Important Update
+      </div>
+    </div>
+
+    <div style="font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);line-height:1.7">
+
+      <p style="margin-bottom:12px">
+        First, a sincere <strong style="color:var(--gold)">thank you</strong> to everyone who has been using
+        the app during its beta period. Your faithful use, patience, and feedback have shaped
+        this into something we are truly proud of.
+      </p>
+
+      <p style="margin-bottom:12px">
+        We owe you an apology. As we moved to our new permanent home at
+        <strong style="color:var(--gold)">fbckjv.app</strong>, reading streaks, badges,
+        verse mastery, bookmarks, highlights, and audio positions were not carried over.
+        We are sorry. That was our oversight and we did not want it to happen.
+      </p>
+
+      <p style="margin-bottom:16px">
+        <strong style="color:var(--gold)">That will never happen again.</strong>
+      </p>
+
+      <div style="background:rgba(201,148,58,.1);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px">
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:8px">
+          ☁️ Your data is now stored in the cloud
+        </div>
+        <div style="font-size:14px;line-height:1.6;color:var(--text)">
+          Going forward, <strong>all of your progress is automatically backed up</strong> —
+          reading streaks, milestone badges, verse mastery, Sword Drill progress,
+          reading plan completion, bookmarks, highlights, notes, and audio bookmarks.
+          Everything. Silently. Automatically.
+          <br><br>
+          Your data is <strong>completely anonymous</strong> — no name, no email,
+          no account required. It lives securely in the cloud under a personal
+          restore code that belongs only to you.
+        </div>
+      </div>
+
+      <div style="background:rgba(201,148,58,.15);border:1px solid var(--gold);border-radius:10px;padding:14px 16px;margin-bottom:16px;text-align:center">
+        <div style="font-size:12px;color:var(--text-m);margin-bottom:6px;font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase">Your Personal Restore Code</div>
+        <div id="welcome-code" style="font-family:'IM Fell English',serif;font-size:36px;color:var(--gold);letter-spacing:.15em;margin-bottom:8px">——</div>
+        <div style="font-size:13px;color:var(--text-m);line-height:1.5">
+          <strong style="color:var(--text)">Please write this down or take a screenshot.</strong><br>
+          Enter this code on any device — phone, tablet, computer — to restore all
+          your progress instantly. This is your key. Keep it safe.
+        </div>
+      </div>
+
+      <p style="margin-bottom:16px;font-size:14px;color:var(--text-m)">
+        You can always find your code again under <strong style="color:var(--text)">Tips & Help → Backup & Restore</strong>.
+      </p>
+
+      <p style="margin-bottom:20px;font-style:italic;color:var(--text-m);font-size:14px;text-align:center">
+        "Study to shew thyself approved unto God" — 2 Timothy 2:15
+      </p>
+    </div>
+
+    <button onclick="closeWelcome()"
+      style="width:100%;background:linear-gradient(135deg,#6A4510,#A87828);color:#FFE898;
+        border:none;border-radius:10px;padding:14px;font-family:'IM Fell English',serif;
+        font-size:17px;cursor:pointer;letter-spacing:.03em">
+      I understand — let's continue in the Word ⚔️
+    </button>
+  </div>
+</div>
 </body>
 </html>
