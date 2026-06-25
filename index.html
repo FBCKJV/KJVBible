@@ -1311,18 +1311,18 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
       <div class="tips-section">
         <div class="tips-section-lbl">☁️ Backup &amp; Restore Your Data</div>
         <div class="tip-row"><span class="tip-ico">🔑</span><span class="tip-txt">Your data is automatically backed up to the cloud. Tap <strong>My Restore Code</strong> to see your unique 6-character code — write it down or screenshot it. On a new device or browser, tap <strong>Enter Code</strong> and your streaks, badges, bookmarks and progress are fully restored.</span></div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:6px 0 4px;font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);text-align:center;letter-spacing:.05em" id="rc-display">
-          Restore Code: <strong id="rc-code" onclick="showRestoreCode()" style="cursor:pointer;text-decoration:underline">tap to reveal' id='rc-code-val</strong>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin:6px 0 4px;text-align:center">
+          <div style="font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Your Restore Code</div>
+          <div id="rc-display-code" style="font-family:'IM Fell English',serif;font-size:30px;color:var(--gold);letter-spacing:.2em;margin-bottom:6px">——</div>
+          <div style="font-size:11px;color:var(--text-m)">Write this down — enter it on any device to restore your data</div>
+          <button onclick="copyRestoreCode()" style="margin-top:8px;background:var(--bg);border:1px solid var(--border);color:var(--gold);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer" id="rc-copy-btn">📋 Copy Code</button>
         </div>
-        <div style="display:flex;gap:8px;margin:4px 0">
-          <button onclick="showRestoreCode()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📤 My Restore Code</button>
-          <button onclick="promptRestore()" style="flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer">📥 Enter Code</button>
-        </div>
+        <button onclick="promptRestore()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px">📥 Restore from Another Device</button>
       </div>
 
       <div class="tips-section">
         <div class="tips-section-lbl">⚠️ Important</div>
-        <div class="tip-row"><span class="tip-ico">⚠️</span><span class="tip-txt"><strong>Do not clear your browser cache</strong> for this site — doing so permanently deletes your bookmarks, highlights, notes, reading streak, and plan progress. Your data is stored on your device only</span></div>
+        <div class="tip-row"><span class="tip-ico">☁️</span><span class="tip-txt">Your streaks, badges, bookmarks, highlights, notes and progress are <strong>automatically backed up to the cloud</strong> using your restore code. You can safely switch devices or browsers at any time. <strong>Avoid clearing site data</strong> for fbckjv.app in Chrome settings as this removes your local copy — your cloud backup will still be intact via your restore code.</span></div>
       </div>
 
     </div>
@@ -4721,6 +4721,7 @@ function showTips(){
   document.getElementById('tips-sheet').classList.add('on');
   renderInstallGuide();
   setTimeout(checkOfflineStatus, 100);
+  setTimeout(populateRestoreCodeDisplay, 200);
   history.pushState({screen: S.screen, modal:'tips'}, '', '');
 }
 function closeTips(e){
@@ -6083,13 +6084,21 @@ async function fbRestore(code){
 
 function showRestoreCode(){
   const code = fbGetCode();
-  const msg = `Your restore code is:\n\n${code}\n\nWrite this down or screenshot it. Enter it on any device to restore your streaks, badges, bookmarks and progress.`;
-  if(navigator.share){
-    navigator.share({title:'My FBC KJV Bible Restore Code', text:`FBC KJV Bible restore code: ${code}`});
-  } else {
-    navigator.clipboard?.writeText(code);
-    alert(msg + '\n\n(Code copied to clipboard)');
-  }
+  const el = document.getElementById('rc-display-code');
+  if(el) el.textContent = code;
+}
+
+function copyRestoreCode(){
+  const code = fbGetCode();
+  navigator.clipboard?.writeText(code).then(()=>{
+    const btn = document.getElementById('rc-copy-btn');
+    if(btn){ btn.textContent = '✅ Copied!'; setTimeout(()=>btn.textContent='📋 Copy Code', 2000); }
+  });
+}
+
+function populateRestoreCodeDisplay(){
+  const el = document.getElementById('rc-display-code');
+  if(el) el.textContent = fbGetCode();
 }
 
 function promptRestore(){
