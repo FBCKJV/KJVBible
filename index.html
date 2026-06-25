@@ -5882,14 +5882,15 @@ function openChPicker(){
   // Show Scourby listen row below grid
   const row = document.getElementById('cp-audio-row');
   const lbl = document.getElementById('cp-scourby-label');
-  if(row && SCOURBY_FILES[S.book]){
+  console.log('openChPicker: book='+S.book+' row='+row+' hasFile='+!!SCOURBY_FILES[S.book]);
+  if(row){
     row.style.display = 'block';
     const aud = document.getElementById('scourby-audio');
-    const isLoaded = aud.src && aud.src.endsWith(encodeURIComponent(SCOURBY_FILES[S.book]));
+    const isLoaded = aud && aud.src && SCOURBY_FILES[S.book] && aud.src.endsWith(encodeURIComponent(SCOURBY_FILES[S.book]));
     if(lbl) lbl.textContent = (isLoaded && !aud.paused)
       ? 'Pause — ' + S.book
-      : (isLoaded ? '▶ Resume — ' : 'Listen — ') + S.book + ' (Scourby KJV)';
-  } else if(row){ row.style.display = 'none'; }
+      : (isLoaded ? '▶ Resume — ' : '') + S.book + ' — Listen (Scourby KJV)';
+  }
 }
 
 function closeChPicker(){
