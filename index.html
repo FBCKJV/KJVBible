@@ -5983,11 +5983,14 @@ function notifDismiss(){
 }
 async function notifEnable(){
   try{
-    if(window.OneSignal){
-      await OneSignal.Notifications.requestPermission();
-    }
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.OneSignalDeferred.push(async function(OneSignal){
+      try{
+        await OneSignal.Notifications.requestPermission();
+      }catch(e){}
+    });
   }catch(e){}
-  notifDismiss(); // hide banner regardless of outcome
+  notifDismiss();
 }
 
 function scourbyGetPos(bookName){
