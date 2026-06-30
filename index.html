@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- BUILD: 2026-06-30-fix3-streak-guard — header-crash + sync-race fixes applied — view-source to confirm this line is present -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -3754,16 +3755,46 @@ function loadStreak(){
   updateStreakBadge();
 }
 
-function recordActivity(){
+async function recordActivity(){
   const today     = todayStr();
   const yesterday = yesterdayStr();
   const now       = Date.now();
 
   if(S.streakLast === today) return; // already counted today
 
-  // Grace window: 26 hours covers timezone edge cases
+  // Grace window: 48 hours covers timezone edge cases and brief outages
   const hoursElapsed = S.streakLastTs ? (now - S.streakLastTs) / 3600000 : 999;
-  const consecutive  = S.streakLast === yesterday || hoursElapsed <= 26;
+  const consecutive  = S.streakLast === yesterday || hoursElapsed <= 48;
+
+  if(!consecutive && S.streakTokens === 0){
+    // Before declaring the streak broken, check the cloud — if another
+    // device (or a sync that landed after this device went stale) shows
+    // a higher streak more recently, trust that instead of silently
+    // overwriting good data with a reset to 1.
+    try{
+      const code = localStorage.getItem('kjv_rc');
+      if(_db && code){
+        const doc = await _db.collection('users').doc(code).get();
+        if(doc.exists){
+          const data = doc.data();
+          const cloudStreak = parseInt(data.kjv_streak || '0') || 0;
+          const cloudTs     = parseInt(data.kjv_streak_ts || '0') || 0;
+          if(cloudStreak > S.streak && cloudTs > S.streakLastTs){
+            S.streak       = cloudStreak;
+            S.streakBest   = Math.max(S.streakBest, parseInt(data.kjv_streak_best||'0')||0);
+            S.streakLast   = data.kjv_streak_last || today;
+            S.streakLastTs = cloudTs;
+            LS.set('kjv_streak', S.streak);
+            LS.set('kjv_streak_best', S.streakBest);
+            LS.set('kjv_streak_last', S.streakLast);
+            LS.set('kjv_streak_ts', S.streakLastTs);
+            updateStreakBadge();
+            return; // adopted cloud value — do not reset
+          }
+        }
+      }
+    }catch(e){ console.warn('Streak cloud check failed:', e); }
+  }
 
   if(consecutive){
     S.streak++;
