@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD: 2026-06-30-fix3-streak-guard — header-crash + sync-race fixes applied — view-source to confirm this line is present -->
+<!-- BUILD: 2026-06-30-fix4-sync-merge — header-crash + sync-race fixes applied — view-source to confirm this line is present -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -6372,14 +6372,49 @@ function fbSync(){
     .catch(e => console.warn('Sync error:', e));
 }
 
-// Debounced sync — call this after any data change
+// Synced (near-instant) — call this after any data change.
+// Previously waited 2s before pushing, which meant closing the app
+// quickly after an update could silently skip the cloud push entirely.
 function fbSyncSoon(){
   clearTimeout(_syncTimer);
-  _syncTimer = setTimeout(fbSync, 2000);
+  _syncTimer = setTimeout(fbSync, 150);
 }
+
+// Also push immediately on tab hide / app close so nothing is lost
+// even if the 150ms debounce hasn't fired yet.
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState === 'hidden'){
+    clearTimeout(_syncTimer);
+    fbSync();
+  }
+});
 
 function fbGetCode(){
   return localStorage.getItem('kjv_rc') || '—';
+}
+
+// Fields where the LARGER value should always win — these only ever
+// grow during honest use, so a smaller incoming value almost certainly
+// means the source is stale, not that progress was legitimately lost.
+const PROTECTED_MAX_FIELDS = ['kjv_streak','kjv_streak_best','kjv_streak_tokens'];
+
+function applySyncData(data, {protect=true} = {}){
+  let count = 0;
+  SYNC_KEYS.forEach(k=>{
+    const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
+    if(data[fk] === undefined) return;
+    let incoming = data[fk];
+    if(protect && PROTECTED_MAX_FIELDS.includes(k)){
+      const current = parseInt(localStorage.getItem(k) || '0') || 0;
+      const incomingNum = parseInt(incoming || '0') || 0;
+      if(current > incomingNum){
+        return; // keep the larger local value, skip overwrite, don't count it
+      }
+    }
+    localStorage.setItem(k, incoming);
+    count++;
+  });
+  return count;
 }
 
 async function fbRestore(code){
@@ -6391,14 +6426,7 @@ async function fbRestore(code){
     const doc = await _db.collection('users').doc(code).get();
     if(!doc.exists){ showToast('No data found for that code'); return; }
     const data = doc.data();
-    let count = 0;
-    SYNC_KEYS.forEach(k=>{
-      const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
-      if(data[fk] !== undefined){
-        localStorage.setItem(k, data[fk]);
-        count++;
-      }
-    });
+    const count = applySyncData(data);
     // Set this device to use the same restore code
     localStorage.setItem('kjv_rc', code);
     showToast(`✅ Restored ${count} items — reloading...`);
@@ -6441,14 +6469,7 @@ async function fbSyncNow(){
       return;
     }
     const data = doc.data();
-    let count = 0;
-    SYNC_KEYS.forEach(k=>{
-      const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
-      if(data[fk] !== undefined){
-        localStorage.setItem(k, data[fk]);
-        count++;
-      }
-    });
+    const count = applySyncData(data);
     showToast(`✅ Synced ${count} items — reloading...`);
     setTimeout(()=> location.reload(), 1500);
   }catch(e){
