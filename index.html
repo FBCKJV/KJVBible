@@ -6329,15 +6329,15 @@ function fbInit(){
 }
 
 function fbSync(){
-  if(!_db) return;
+  if(!_db) return Promise.resolve();
   const code = localStorage.getItem('kjv_rc');
-  if(!code) return;
+  if(!code) return Promise.resolve();
   const data = { lastSync: firebase.firestore.FieldValue.serverTimestamp(), v: 2 };
   SYNC_KEYS.forEach(k=>{
     const v = localStorage.getItem(k);
     if(v !== null) data[k.replace(/[^a-zA-Z0-9]/g,'_')] = v;
   });
-  _db.collection('users').doc(code).set(data, {merge:true})
+  return _db.collection('users').doc(code).set(data, {merge:true})
     .catch(e => console.warn('Sync error:', e));
 }
 
@@ -6399,8 +6399,9 @@ async function fbSyncNow(){
   const btn = document.getElementById('sync-now-btn');
   if(btn){ btn.textContent = '⏳ Syncing...'; btn.disabled = true; }
   try{
-    // Push current data first
-    fbSync();
+    // Push current data first — MUST complete before pulling, or the pull
+    // can race ahead and overwrite fresh local data with a stale snapshot
+    await fbSync();
     // Then pull latest from Firebase
     const doc = await _db.collection('users').doc(code).get();
     if(!doc.exists){
