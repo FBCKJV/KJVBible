@@ -2659,8 +2659,7 @@ function updateHeaderState(){
   back.style.display   = show?'flex':'none';
   sel.style.display    = S.screen==='reader'?'flex':'none';
   selAll.style.display = S.screen==='reader'?'flex':'none';
-  rl.style.display     = S.screen==='reader'?'flex':'none';
-  if(rl) rl.classList.toggle('on', S.rlOn);
+  if(rl){ rl.style.display = S.screen==='reader'?'flex':'none'; rl.classList.toggle('on', S.rlOn); }
   document.getElementById('logo').textContent =
     S.screen==='reader'?S.book:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
 }
