@@ -5291,8 +5291,10 @@ async function startMem(refStr){
   // ── Parse ref — supports single verse AND ranges (e.g. "Psalm 1:1-2") ──
   const rangeM = refStr.match(/^(.+)\s+(\d+):(\d+)(?:-(\d+))?$/);
   if(!rangeM) return;
-  const bookName=rangeM[1].trim(), ch=parseInt(rangeM[2])-1,
+  let bookName=rangeM[1].trim(), ch=parseInt(rangeM[2])-1,
         v1=parseInt(rangeM[3])-1, v2=rangeM[4]?parseInt(rangeM[4])-1:v1;
+  // Normalize "Psalm" → "Psalms" so memory pack refs match the Bible data
+  if(bookName === 'Psalm') bookName = 'Psalms';
 
   const data=await fetchBook(bookName);
   if(!data) return;
