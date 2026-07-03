@@ -1788,15 +1788,12 @@ document.addEventListener('DOMContentLoaded',()=>{
   scourbyInit();
   // Show version in Tips footer
   const _vEl = document.getElementById('tips-version');
-  if(_vEl) _vEl.textContent = 'v' + APP_VERSION;
   // Register service worker — version is read from caches.keys() by refreshAppVersion()
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').then(reg => {
-      // Call 1: on initial registration
-      refreshAppVersion();
-      // Call 3: whenever a new SW takes control mid-session (background update)
-      navigator.serviceWorker.addEventListener('controllerchange', refreshAppVersion);
-    }).catch(e => console.warn('SW registration failed:', e));
+    navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW:', e));
+    // ready resolves only once SW is active+controlling — cache guaranteed to exist
+    navigator.serviceWorker.ready.then(() => refreshAppVersion());
+    navigator.serviceWorker.addEventListener('controllerchange', refreshAppVersion);
   }
   // Seed history stack
   history.replaceState({screen:'books'}, '', '');
@@ -2413,21 +2410,7 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText){
   // ── Logo (landscape header — church silhouette, tinted to card color, no box)
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = 88;
-    ctx.save();
-    if(t.dark){
-      // grayscale strips teal/orange, invert makes outline light, screen blends it into dark bg
-      ctx.filter = 'grayscale(1) invert(1)';
-      ctx.globalCompositeOperation = 'screen';
-      ctx.globalAlpha = 0.35;
-    } else {
-      // grayscale strips teal/orange, multiply makes white bg invisible and
-      // gray outline picks up the card's warm tone naturally
-      ctx.filter = 'grayscale(1)';
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.18;
-    }
-    ctx.drawImage(_logoImg, W/2 - ls/2, 10, ls, ls);
-    ctx.restore();
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, 10, ls, t.dark, t.dark ? 0.35 : 0.18);
   }
   drawRef(ctx, W, REF_Y, 21, t);
   drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
@@ -2460,18 +2443,7 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
   // ── Logo — large watermark centred on card, tinted to card color, no box
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = 300;
-    ctx.save();
-    if(t.dark){
-      ctx.filter = 'grayscale(1) invert(1)';
-      ctx.globalCompositeOperation = 'screen';
-      ctx.globalAlpha = 0.11;
-    } else {
-      ctx.filter = 'grayscale(1)';
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.13;
-    }
-    ctx.drawImage(_logoImg, W/2 - ls/2, H/2 - ls/2, ls, ls);
-    ctx.restore();
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.11 : 0.13);
   }
 
   // ── TOP SECTION ──
@@ -2520,6 +2492,37 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
 }
 
 // ── Shared drawing helpers ──
+/* Logo watermark — pixel manipulation, no CSS filter, works on all browsers incl. Safari */
+function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha){
+  if(!img.complete || !img.naturalWidth) return;
+  const off = document.createElement('canvas');
+  off.width = size; off.height = size;
+  const oc = off.getContext('2d');
+  oc.drawImage(img, 0, 0, size, size);
+  try{
+    const id = oc.getImageData(0, 0, size, size);
+    const px = id.data;
+    if(isDark){
+      // Invert: white bg → black (vanishes via screen), dark outline → bright (visible)
+      for(let i=0;i<px.length;i+=4){
+        px[i]=255-px[i]; px[i+1]=255-px[i+1]; px[i+2]=255-px[i+2];
+      }
+    } else {
+      // Grayscale: strips teal/orange, white bg stays white (vanishes via multiply)
+      for(let i=0;i<px.length;i+=4){
+        const g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
+        px[i]=px[i+1]=px[i+2]=g;
+      }
+    }
+    oc.putImageData(id,0,0);
+  }catch(e){}
+  ctx.save();
+  ctx.globalCompositeOperation = isDark ? 'screen' : 'multiply';
+  ctx.globalAlpha = alpha;
+  ctx.drawImage(off, x, y);
+  ctx.restore();
+}
+
 function drawCardBase(ctx, W, H, PAD, t, radius){
   const grd = ctx.createLinearGradient(0, 0, W, H);
   grd.addColorStop(0, t.bg1); grd.addColorStop(1, t.bg2);
@@ -4738,18 +4741,7 @@ function drawChecklistCanvas(canvas){
   // ── Logo watermark
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W, H) * 0.45;
-    ctx.save();
-    if(t.dark){
-      ctx.filter = 'grayscale(1) invert(1)';
-      ctx.globalCompositeOperation = 'screen';
-      ctx.globalAlpha = 0.10;
-    } else {
-      ctx.filter = 'grayscale(1)';
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.10;
-    }
-    ctx.drawImage(_logoImg, W/2 - ls/2, H/2 - ls/2, ls, ls);
-    ctx.restore();
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.10 : 0.10);
   }
 
   // ── Top: church name
@@ -5696,18 +5688,7 @@ function drawCombinedCard(canvas){
   // Logo watermark
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W,H)*0.35;
-    ctx.save();
-    if(t.dark){
-      ctx.filter = 'grayscale(1) invert(1)';
-      ctx.globalCompositeOperation = 'screen';
-      ctx.globalAlpha = 0.10;
-    } else {
-      ctx.filter = 'grayscale(1)';
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.10;
-    }
-    ctx.drawImage(_logoImg,W/2-ls/2,H/2-ls/2,ls,ls);
-    ctx.restore();
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.10 : 0.10);
   }
 
   // Church name
@@ -5843,17 +5824,7 @@ function drawSwordCertificate(canvas){
   // ── Logo watermark ──
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W, H) * 0.62;
-    ctx.save();
-    if(t.dark){
-      ctx.filter = 'invert(1)';
-      ctx.globalCompositeOperation = 'screen';
-      ctx.globalAlpha = 0.12;
-    } else {
-      ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.10;
-    }
-    ctx.drawImage(_logoImg, W/2-ls/2, H/2-ls/2, ls, ls);
-    ctx.restore();
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.12 : 0.10);
   }
 
   // ── Corners ──
@@ -6400,12 +6371,13 @@ const APP_VERSION = '';  // set dynamically by refreshAppVersion() from SW cache
 function refreshAppVersion(){
   if(!('caches' in window)) return;
   caches.keys().then(keys => {
-    const versions = keys
+    const nums = keys
       .filter(k => /^fbckjv-bible-v\d+$/.test(k))
-      .map(k => parseInt(k.replace('fbckjv-bible-v',''), 10))
-      .sort((a,b) => b - a);
+      .map(k => parseInt(k.replace('fbckjv-bible-v',''), 10));
     const el = document.getElementById('tips-version');
-    if(el) el.textContent = versions.length ? 'v' + versions[0] : '';
+    if(!el) return;
+    if(!nums.length){ setTimeout(refreshAppVersion, 2000); return; }
+    el.textContent = 'v' + Math.max(...nums);
   });
 }
 
