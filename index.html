@@ -1790,7 +1790,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   const _vEl = document.getElementById('tips-version');
   // Register service worker — version is read from caches.keys() by refreshAppVersion()
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(e => console.warn('SW:', e));
+    navigator.serviceWorker.register('./sw.js').catch(e => console.warn('SW:', e));
     // ready resolves only once SW is active+controlling — cache guaranteed to exist
     navigator.serviceWorker.ready.then(() => refreshAppVersion());
     navigator.serviceWorker.addEventListener('controllerchange', refreshAppVersion);
