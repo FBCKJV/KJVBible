@@ -2410,7 +2410,7 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText){
   // ── Logo (landscape header — church silhouette, tinted to card color, no box)
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = 88;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, 10, ls, t.dark, t.dark ? 0.35 : 0.18);
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, 10, ls, t.dark, t.dark ? 0.30 : 0.22, t.ref);
   }
   drawRef(ctx, W, REF_Y, 21, t);
   drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
@@ -2443,7 +2443,7 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
   // ── Logo — large watermark centred on card, tinted to card color, no box
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = 300;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.11 : 0.13);
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.22 : 0.18, t.ref);
   }
 
   // ── TOP SECTION ──
@@ -2492,8 +2492,9 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
 }
 
 // ── Shared drawing helpers ──
-/* Logo watermark — pixel manipulation, no CSS filter, works on all browsers incl. Safari */
-function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha){
+/* Logo watermark — transparent PNG; tint all opaque pixels to theme accent color.
+   Works on all browsers. No CSS filter needed. */
+function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha, refHex){
   if(!img.complete || !img.naturalWidth) return;
   const off = document.createElement('canvas');
   off.width = size; off.height = size;
@@ -2502,22 +2503,18 @@ function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha){
   try{
     const id = oc.getImageData(0, 0, size, size);
     const px = id.data;
-    if(isDark){
-      // Invert: white bg → black (vanishes via screen), dark outline → bright (visible)
-      for(let i=0;i<px.length;i+=4){
-        px[i]=255-px[i]; px[i+1]=255-px[i+1]; px[i+2]=255-px[i+2];
-      }
-    } else {
-      // Grayscale: strips teal/orange, white bg stays white (vanishes via multiply)
-      for(let i=0;i<px.length;i+=4){
-        const g=0.299*px[i]+0.587*px[i+1]+0.114*px[i+2];
-        px[i]=px[i+1]=px[i+2]=g;
-      }
+    // Parse tint color — white for dark cards, theme accent for light cards
+    let tr=255, tg=255, tb=255;
+    if(!isDark && refHex){
+      const h = refHex.replace('#','');
+      tr=parseInt(h.slice(0,2),16); tg=parseInt(h.slice(2,4),16); tb=parseInt(h.slice(4,6),16);
+    }
+    for(let i=0;i<px.length;i+=4){
+      if(px[i+3]>10){ px[i]=tr; px[i+1]=tg; px[i+2]=tb; }
     }
     oc.putImageData(id,0,0);
   }catch(e){}
   ctx.save();
-  ctx.globalCompositeOperation = isDark ? 'screen' : 'multiply';
   ctx.globalAlpha = alpha;
   ctx.drawImage(off, x, y);
   ctx.restore();
@@ -4741,7 +4738,7 @@ function drawChecklistCanvas(canvas){
   // ── Logo watermark
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W, H) * 0.45;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.10 : 0.10);
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.18 : 0.15, t.ref);
   }
 
   // ── Top: church name
@@ -5688,7 +5685,7 @@ function drawCombinedCard(canvas){
   // Logo watermark
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W,H)*0.35;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.10 : 0.10);
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.18 : 0.15, t.ref);
   }
 
   // Church name
@@ -5824,7 +5821,7 @@ function drawSwordCertificate(canvas){
   // ── Logo watermark ──
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W, H) * 0.62;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.12 : 0.10);
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.18 : 0.15, t.ref);
   }
 
   // ── Corners ──
