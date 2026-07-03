@@ -1399,6 +1399,10 @@ body.scourby-open #reader-float-nav {
       <div class="tips-section">
         <div class="tips-section-lbl">⚠️ Important</div>
         <div class="tip-row"><span class="tip-ico">☁️</span><span class="tip-txt">Your streaks, badges, bookmarks, highlights, notes and progress are <strong>automatically backed up to the cloud</strong> using your restore code. You can safely switch devices or browsers at any time. <strong>Avoid clearing site data</strong> for fbckjv.app in Chrome settings as this removes your local copy — your cloud backup will still be intact via your restore code.</span></div>
+
+        <div style="text-align:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);color:var(--text-m);font-size:11px;opacity:.6">
+          ✝ FBC KJV Bible &nbsp;·&nbsp; <span id="tips-version"></span>
+        </div>
       </div>
 
     </div>
@@ -1782,6 +1786,18 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadStreak();
   fbInit();
   scourbyInit();
+  // Show version in Tips footer
+  const _vEl = document.getElementById('tips-version');
+  if(_vEl) _vEl.textContent = 'v' + APP_VERSION;
+  // Register service worker — version is read from caches.keys() by refreshAppVersion()
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      // Call 1: on initial registration
+      refreshAppVersion();
+      // Call 3: whenever a new SW takes control mid-session (background update)
+      navigator.serviceWorker.addEventListener('controllerchange', refreshAppVersion);
+    }).catch(e => console.warn('SW registration failed:', e));
+  }
   // Seed history stack
   history.replaceState({screen:'books'}, '', '');
   showScreen('books', false);
@@ -4871,6 +4887,7 @@ _logoImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3G
 /* ════ TIPS & ADD TO HOME SCREEN ════ */
 function showTips(){
   document.getElementById('tips-sheet').classList.add('on');
+  refreshAppVersion();  // Call 2: always shows live version when panel opens
   renderInstallGuide();
   setTimeout(checkOfflineStatus, 100);
   setTimeout(populateRestoreCodeDisplay, 200);
@@ -6377,6 +6394,20 @@ const FB_CONFIG = {
   messagingSenderId: "761660345796",
   appId: "1:761660345796:web:de7cb71126ba5836e72891"
 };
+
+const APP_VERSION = '';  // set dynamically by refreshAppVersion() from SW cache
+
+function refreshAppVersion(){
+  if(!('caches' in window)) return;
+  caches.keys().then(keys => {
+    const versions = keys
+      .filter(k => /^fbckjv-bible-v\d+$/.test(k))
+      .map(k => parseInt(k.replace('fbckjv-bible-v',''), 10))
+      .sort((a,b) => b - a);
+    const el = document.getElementById('tips-version');
+    if(el) el.textContent = versions.length ? 'v' + versions[0] : '';
+  });
+}
 
 // Keys to sync (skip audio positions and UI state)
 const SYNC_KEYS = [
