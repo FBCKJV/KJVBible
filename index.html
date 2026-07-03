@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- BUILD: 2026-06-30-fix4-sync-merge — header-crash + sync-race fixes applied — view-source to confirm this line is present -->
+<!-- BUILD: 2026-07-03-watermark-fix -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -2215,10 +2215,8 @@ function buildBlockText(sorted, first, last){
 }
 
 function buildNumberedText(sorted, first, last){
-  const ref = sorted.length === 1
-    ? first.ref
-    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
-  const lines = sorted.map(v=>`${v.vnum}  ${v.txt}`).join('\n');
+  const ref = first.ref.replace(/:.*$/, '');  // just "Psalms 2" not "Psalms 2:1–12"
+  const lines = sorted.map(v=>`${v.vnum} ${v.txt}`).join('\n\n');
   return `${ref}\n${lines}`;
 }
 
