@@ -2394,20 +2394,21 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText){
   canvas.style.height = Math.min(H * 0.9, 400 * H / W) + 'px';
   ctx.resetTransform(); ctx.scale(dpr, dpr);
   drawCardBase(ctx, W, H, PAD, t, 20);
-  // ── Logo (landscape — top center, white church outline, no box)
+  // ── Logo (landscape header — church silhouette, tinted to card color, no box)
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = 88;
     ctx.save();
     if(t.dark){
-      // Dark themes: invert logo (white bg→black, outline→white) + screen blend
-      // Screen mode makes black=transparent, white=visible → clean white outline
-      ctx.filter = 'invert(1)';
+      // grayscale strips teal/orange, invert makes outline light, screen blends it into dark bg
+      ctx.filter = 'grayscale(1) invert(1)';
       ctx.globalCompositeOperation = 'screen';
-      ctx.globalAlpha = 0.55;
+      ctx.globalAlpha = 0.35;
     } else {
-      // Light themes: multiply makes white logo bg transparent on light card
+      // grayscale strips teal/orange, multiply makes white bg invisible and
+      // gray outline picks up the card's warm tone naturally
+      ctx.filter = 'grayscale(1)';
       ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.30;
+      ctx.globalAlpha = 0.18;
     }
     ctx.drawImage(_logoImg, W/2 - ls/2, 10, ls, ls);
     ctx.restore();
@@ -2440,17 +2441,18 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
   // ── BG + border
   drawCardBase(ctx, W, H, PAD, t, 24);
 
-  // ── Logo — large watermark centred on card, white outline, no white box
+  // ── Logo — large watermark centred on card, tinted to card color, no box
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = 300;
     ctx.save();
     if(t.dark){
-      ctx.filter = 'invert(1)';
+      ctx.filter = 'grayscale(1) invert(1)';
       ctx.globalCompositeOperation = 'screen';
-      ctx.globalAlpha = 0.12;
+      ctx.globalAlpha = 0.11;
     } else {
+      ctx.filter = 'grayscale(1)';
       ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.10;
+      ctx.globalAlpha = 0.13;
     }
     ctx.drawImage(_logoImg, W/2 - ls/2, H/2 - ls/2, ls, ls);
     ctx.restore();
@@ -4722,12 +4724,13 @@ function drawChecklistCanvas(canvas){
     const ls = Math.min(W, H) * 0.45;
     ctx.save();
     if(t.dark){
-      ctx.filter = 'invert(1)';
+      ctx.filter = 'grayscale(1) invert(1)';
       ctx.globalCompositeOperation = 'screen';
       ctx.globalAlpha = 0.10;
     } else {
+      ctx.filter = 'grayscale(1)';
       ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.08;
+      ctx.globalAlpha = 0.10;
     }
     ctx.drawImage(_logoImg, W/2 - ls/2, H/2 - ls/2, ls, ls);
     ctx.restore();
@@ -5678,12 +5681,13 @@ function drawCombinedCard(canvas){
     const ls = Math.min(W,H)*0.35;
     ctx.save();
     if(t.dark){
-      ctx.filter = 'invert(1)';
+      ctx.filter = 'grayscale(1) invert(1)';
       ctx.globalCompositeOperation = 'screen';
       ctx.globalAlpha = 0.10;
     } else {
+      ctx.filter = 'grayscale(1)';
       ctx.globalCompositeOperation = 'multiply';
-      ctx.globalAlpha = 0.08;
+      ctx.globalAlpha = 0.10;
     }
     ctx.drawImage(_logoImg,W/2-ls/2,H/2-ls/2,ls,ls);
     ctx.restore();
