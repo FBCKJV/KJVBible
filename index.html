@@ -2038,7 +2038,7 @@ function renderReader(){
     d.dataset.verse=v.verse;
 
     let inner=`<span class="vnum">${v.verse}</span><div><span class="vtxt">${v.text}</span>`;
-    if(note) inner+=`<div class="vnote-chip" onclick="openNoteChip(event,'${ref}')">📝 ${note.substring(0,50)}${note.length>50?'…':''}</div>`;
+    if(note) inner+=`<div class="vnote-chip" onclick="openNoteChip(event,'${ref}')">📝 ${escapeHtml(note.substring(0,50))}${note.length>50?'…':''}</div>`;
     inner+='</div>';
 
     d.innerHTML=inner;
@@ -3492,6 +3492,11 @@ function handleSearch(q) {
 
 async function doSearch(raw) {
   const el = document.getElementById('s-results');
+  // Staleness guard: fetchBook awaits below can take seconds on a cold
+  // cache, and the user can retrigger doSearch mid-scan. Each run takes a
+  // generation number; after every await, a run that is no longer current
+  // bails out instead of mixing its results into the newer query's list.
+  const gen = S._searchGen = (S._searchGen || 0) + 1;
   // Strip trailing punctuation for reference check
   const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
   S._topicMatches = findTopicMatches(cleaned);
@@ -3500,6 +3505,7 @@ async function doSearch(raw) {
   const ref = parseReference(cleaned);
   if (ref) {
     const data = await fetchBook(ref.book);
+    if (gen !== S._searchGen) return;
     if (!data) { el.innerHTML = `<div id="s-status">Could not load ${ref.book}</div>`; return; }
     const chIdx = Math.min(ref.chIdx, data.chapters.length - 1);
     const ch    = data.chapters[chIdx];
@@ -3560,6 +3566,7 @@ async function doSearch(raw) {
   for (const bookName of BOOKS) {
     if (!passesFilter(bookName)) continue;
     const data = await fetchBook(bookName);
+    if (gen !== S._searchGen) return; // a newer search started — abandon this one
     if (!data) continue;
 
     let bookCount = 0;
