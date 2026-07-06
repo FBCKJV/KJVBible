@@ -2,7 +2,7 @@
 // Bump CACHE_NAME on every meaningful deploy. The version number
 // is read by the app from caches.keys() and displayed in Tips & Help.
 
-const CACHE_NAME = 'fbckjv-bible-v1';
+const CACHE_NAME = 'fbckjv-bible-v2';
 
 // Pre-cache the app shell on install
 self.addEventListener('install', e => {
@@ -24,7 +24,19 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Network-first strategy — SW just handles versioning, not offline caching
+// Network-first strategy — SW just handles versioning, not offline caching.
+// Successful page navigations refresh the cached app shell, so the offline
+// copy tracks the live site instead of staying frozen at whatever version
+// existed when the worker first installed.
 self.addEventListener('fetch', e => {
-  e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+  if(e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request).then(res => {
+      if(res.ok && e.request.mode === 'navigate'){
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(c => c.put(e.request, copy));
+      }
+      return res;
+    }).catch(() => caches.match(e.request).then(m => m || caches.match('/')))
+  );
 });
