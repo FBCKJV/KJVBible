@@ -1460,6 +1460,7 @@ body.light #home-watermark{
         </div>
         <div class="mc-verse-echo" id="mc-verse-echo"></div>
         <div class="mc-sub" id="mc-sub">Well done — hide it in thine heart</div>
+        <div class="mc-sub" id="mc-next-review" style="color:var(--gold)"></div>
         <div class="mc-btns">
           <button class="mc-btn" onclick="resetMem()">↩ Try Again</button>
           <button class="mc-btn primary" onclick="memBack()">Choose Another</button>
@@ -1692,6 +1693,18 @@ function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 }
 
+// Keyboard support for the app's clickable <div> cards (book grid, search
+// results, verse blocks) — they carry tabindex="0", so Enter should act
+// like a tap. Real <button>/<a> elements already do this natively.
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const t = e.target;
+  if(t && t.matches && t.matches('.rc, .book-card, .vblock') && !t.closest('input,textarea')){
+    e.preventDefault();
+    t.click();
+  }
+});
+
 const S={
   screen:'books', book:null, ch:null, bookData:null,
   bookmarks:LS.get('kjv_bm',[]),
@@ -1873,16 +1886,17 @@ function buildBooks(){
 
   // OT + NT grids
   h+=`<div class="t-label">Old Testament</div><div class="books-grid">`;
-  BOOKS.slice(0,39).forEach((b,i)=>h+=`<div class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[i]} ch.</div></div>`);
+  BOOKS.slice(0,39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[i]} ch.</div></div>`);
   h+=`</div><div class="t-label">New Testament</div><div class="books-grid">`;
-  BOOKS.slice(39).forEach((b,i)=>h+=`<div class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[39+i]} ch.</div></div>`);
+  BOOKS.slice(39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[39+i]} ch.</div></div>`);
   h+='</div></div>';
+  const memDue = memDueReviews().length;
   h += `<div id="mem-home-card" onclick="openMemorize()" style="background:linear-gradient(135deg,var(--bg3),var(--surface));border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0 0;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s">
-    <div style="font-size:28px;flex-shrink:0">✏️</div>
+    <div style="font-size:28px;flex-shrink:0">${memDue?'🔁':'✏️'}</div>
     <div style="flex:1">
       <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px">✦ Scripture Memory</div>
-      <div style="font-family:'IM Fell English',serif;font-size:17px;color:var(--gold)">Memorize a Verse</div>
-      <div style="font-size:11px;color:var(--text-m);margin-top:2px">30 key verses · fill-in-the-blank</div>
+      <div style="font-family:'IM Fell English',serif;font-size:17px;color:var(--gold)">${memDue ? memDue+' verse'+(memDue!==1?'s':'')+' due for review' : 'Memorize a Verse'}</div>
+      <div style="font-size:11px;color:var(--text-m);margin-top:2px">${memDue ? 'keep them hidden in thine heart' : 'key verses · fill-in-the-blank'}</div>
     </div>
     <div style="color:var(--text-m);font-size:18px">›</div>
   </div>`;
@@ -2034,11 +2048,12 @@ function renderReader(){
     const note=S.notes[ref];
     const d=document.createElement('div');
     d.className=`vblock ${hl?'hl-'+hl:''} ${isBM?'bookmarked':''}`.trim();
+    d.tabIndex=0; // keyboard-focusable so desktop users can Tab + Enter verses
     d.dataset.ref=ref; d.dataset.vnum=v.verse; d.dataset.txt=v.text;
     d.dataset.verse=v.verse;
 
     let inner=`<span class="vnum">${v.verse}</span><div><span class="vtxt">${v.text}</span>`;
-    if(note) inner+=`<div class="vnote-chip" onclick="openNoteChip(event,'${ref}')">📝 ${note.substring(0,50)}${note.length>50?'…':''}</div>`;
+    if(note) inner+=`<div class="vnote-chip" onclick="openNoteChip(event,'${ref}')">📝 ${escapeHtml(note.substring(0,50))}${note.length>50?'…':''}</div>`;
     inner+='</div>';
 
     d.innerHTML=inner;
@@ -3184,7 +3199,7 @@ async function showDoctrineVerses(ci, ti){
 
     if(group.length === 1){
       // Single verse — standard card
-      return `<div class="rc" onclick="jumpToRef('${safeRef}')">
+      return `<div tabindex="0" class="rc" onclick="jumpToRef('${safeRef}')">
         <div class="rc-ref">${first.ref}</div>
         <div class="rc-txt">${first.text}</div>
       </div>`;
@@ -3194,7 +3209,7 @@ async function showDoctrineVerses(ci, ti){
       const flowText = group.map(v =>
         `<sup class="vsuper">${v.vNum}</sup>${v.text}`
       ).join(' ');
-      return `<div class="rc passage-block" onclick="jumpToRef('${safeRef}')">
+      return `<div tabindex="0" class="rc passage-block" onclick="jumpToRef('${safeRef}')">
         <div class="rc-ref">${rangeRef}</div>
         <div class="rc-txt">${flowText}</div>
       </div>`;
@@ -3469,9 +3484,33 @@ function findTopicMatches(query){
 function renderTopicCards(matches){
   if(!matches || !matches.length) return '';
   return matches.map(t =>
-    `<div class="rc ref-jump" onclick="jumpToRef('${t.ref.replace(/'/g,"\\'")}')">
+    `<div tabindex="0" class="rc ref-jump" onclick="jumpToRef('${t.ref.replace(/'/g,"\\'")}')">
       <div class="rc-ref">📖 ${t.title}</div>
       <div class="rc-txt" style="opacity:.75">${t.rangeLabel} — tap to open</div>
+    </div>`
+  ).join('');
+}
+
+// Search the user's own notes and bookmarks with the same keywords as the
+// Scripture scan — years of accumulated notes deserve to be findable too.
+function searchPersonal(searchOn){
+  const matchAll = t => { const lt=(t||'').toLowerCase(); return searchOn.every(w=>lt.includes(w)); };
+  const hits = [];
+  Object.entries(S.notes).forEach(([ref,note])=>{
+    if(matchAll(ref+' '+note)) hits.push({kind:'📝 Your note', ref, prev:note});
+  });
+  S.bookmarks.forEach(b=>{
+    if(matchAll(b.ref+' '+b.text)) hits.push({kind:'🔖 Your bookmark', ref:b.ref, prev:b.text});
+  });
+  return hits.slice(0,5);
+}
+
+function renderPersonalCards(hits){
+  if(!hits || !hits.length) return '';
+  return hits.map(h =>
+    `<div tabindex="0" class="rc" style="border-color:var(--gold-d)" onclick="jumpToRef('${h.ref.replace(/'/g,"\\'")}')">
+      <div class="rc-ref">${h.kind} — ${h.ref}</div>
+      <div class="rc-txt">${escapeHtml(h.prev.substring(0,140))}${h.prev.length>140?'…':''}</div>
     </div>`
   ).join('');
 }
@@ -3492,6 +3531,11 @@ function handleSearch(q) {
 
 async function doSearch(raw) {
   const el = document.getElementById('s-results');
+  // Staleness guard: fetchBook awaits below can take seconds on a cold
+  // cache, and the user can retrigger doSearch mid-scan. Each run takes a
+  // generation number; after every await, a run that is no longer current
+  // bails out instead of mixing its results into the newer query's list.
+  const gen = S._searchGen = (S._searchGen || 0) + 1;
   // Strip trailing punctuation for reference check
   const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
   S._topicMatches = findTopicMatches(cleaned);
@@ -3500,6 +3544,7 @@ async function doSearch(raw) {
   const ref = parseReference(cleaned);
   if (ref) {
     const data = await fetchBook(ref.book);
+    if (gen !== S._searchGen) return;
     if (!data) { el.innerHTML = `<div id="s-status">Could not load ${ref.book}</div>`; return; }
     const chIdx = Math.min(ref.chIdx, data.chapters.length - 1);
     const ch    = data.chapters[chIdx];
@@ -3515,7 +3560,7 @@ async function doSearch(raw) {
         ? `${ref.book} ${chIdx+1}:${ref.verse}–${endV}`
         : `${ref.book} ${chIdx+1}:${ref.verse}`;
       el.innerHTML = `
-        <div class="rc ref-jump" onclick="jumpToRef('${(ref.book+' '+(chIdx+1)+':'+ref.verse).replace(/'/g,"\\'")}')">
+        <div tabindex="0" class="rc ref-jump" onclick="jumpToRef('${(ref.book+' '+(chIdx+1)+':'+ref.verse).replace(/'/g,"\\'")}')">
           <div class="rc-ref">↗ Jump to ${refLabel}</div>
           ${verses.map(v=>`<div class="rc-txt"><strong style="color:var(--gold);font-size:11px">${v.verse}</strong> ${v.text}</div>`).join('')}
         </div>`;
@@ -3523,7 +3568,7 @@ async function doSearch(raw) {
       el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${ch.verses.length} verses — ${ref.book} ${chIdx+1}</div>`
         + ch.verses.map(v => {
             const r = `${ref.book} ${chIdx+1}:${v.verse}`;
-            return `<div class="rc" onclick="jumpToRef('${r.replace(/'/g,"\\'")}')"><div class="rc-ref">${r}</div><div class="rc-txt">${v.text}</div></div>`;
+            return `<div tabindex="0" class="rc" onclick="jumpToRef('${r.replace(/'/g,"\\'")}')"><div class="rc-ref">${r}</div><div class="rc-txt">${v.text}</div></div>`;
           }).join('');
     }
     return;
@@ -3540,6 +3585,7 @@ async function doSearch(raw) {
     el.innerHTML = renderTopicCards(S._topicMatches) + '<div id="s-status">Please enter a search term</div>';
     return;
   }
+  S._personalMatches = searchPersonal(searchOn);
 
   // ── Progressive search: scan all books, count accurately, show results up to MAX ──
   const MAX = Infinity; // store all results, paginate in display
@@ -3560,6 +3606,7 @@ async function doSearch(raw) {
   for (const bookName of BOOKS) {
     if (!passesFilter(bookName)) continue;
     const data = await fetchBook(bookName);
+    if (gen !== S._searchGen) return; // a newer search started — abandon this one
     if (!data) continue;
 
     let bookCount = 0;
@@ -3627,6 +3674,7 @@ async function doSearch(raw) {
       return;
     }
     el.innerHTML = renderTopicCards(S._topicMatches)
+      + renderPersonalCards(S._personalMatches)
       + `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
     if(strip) strip.style.display = 'none';
     return;
@@ -3715,14 +3763,13 @@ function renderSearchPage(startIdx){
 
   const filterLabel = (S.searchFilter==='ot')?' · Old Testament':(S.searchFilter==='nt')?' · New Testament':'';
   const bookLabel   = S._bookFilter ? ` · ${S._bookFilter}` : '';
-  const capNote = (S._searchResults||[]).length>=500 ? ' · up to 8 per book' : '';
   const pageNote = totalPages > 1 ? ` · page ${curPage} of ${totalPages}` : '';
 
   if (startIdx===0) {
     const statusText = S._isPartialFallback
       ? `No exact matches — showing the ${total.toLocaleString()} closest verse${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}`
-      : `${total.toLocaleString()}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}`;
-    el.innerHTML = renderTopicCards(S._topicMatches) + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`;
+      : `${total.toLocaleString()} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}`;
+    el.innerHTML = renderTopicCards(S._topicMatches) + renderPersonalCards(S._personalMatches) + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`;
   } else {
     const old = el.querySelector('button');
     if(old) old.remove();
@@ -3732,7 +3779,7 @@ function renderSearchPage(startIdx){
 
   page.forEach(r => {
     const hi = re ? r.txt.replace(re,'<mark>$1</mark>') : r.txt;
-    el.insertAdjacentHTML('beforeend', `<div class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')"><div class="rc-ref">${r.ref}</div><div class="rc-txt">${hi}</div></div>`);
+    el.insertAdjacentHTML('beforeend', `<div tabindex="0" class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')"><div class="rc-ref">${r.ref}</div><div class="rc-txt">${hi}</div></div>`);
   });
 
   // Page navigation chips
@@ -3870,7 +3917,29 @@ const HL_COL={y:'rgba(255,220,60,.6)',g:'rgba(80,200,120,.6)',b:'rgba(80,160,255
 const HL_NM={y:'Yellow',g:'Green',b:'Blue',p:'Purple'};
 function renderBMPanel(){const el=document.getElementById('panel-bm');if(!S.bookmarks.length){el.innerHTML='<div class="empty-msg">No bookmarks yet.<br>Tap a verse while reading to bookmark it.</div>';return;}el.innerHTML=S.bookmarks.map((b,i)=>`<div class="sv-card"><div class="sv-dot" style="background:var(--gold)"></div><div class="sv-info" onclick="jumpToRef('${b.ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${b.ref}</div><div class="sv-prev">${b.text}</div></div><button class="sv-del" onclick="delBM(${i})">✕</button></div>`).join('');}
 function renderHLPanel(){const el=document.getElementById('panel-hl');const entries=Object.entries(S.highlights);if(!entries.length){el.innerHTML='<div class="empty-msg">No highlighted verses yet.<br>Tap a verse → choose a highlight color.</div>';return;}el.innerHTML=entries.map(([ref,c])=>`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref} <span style="opacity:.6;font-size:9px">${HL_NM[c]}</span></div><div class="sv-prev">${S.bookmarks.find(b=>b.ref===ref)?.text||'…'}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
-function renderNTPanel(){const el=document.getElementById('panel-nt');const entries=Object.entries(S.notes);if(!entries.length){el.innerHTML='<div class="empty-msg">No notes yet.<br>Tap a verse → Note to write one.</div>';return;}el.innerHTML=entries.map(([ref,note])=>`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref}</div><div class="sv-prev">${escapeHtml(note)}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
+function renderNTPanel(){const el=document.getElementById('panel-nt');const entries=Object.entries(S.notes);if(!entries.length){el.innerHTML='<div class="empty-msg">No notes yet.<br>Tap a verse → Note to write one.</div>';return;}el.innerHTML='<button onclick="exportNotesText()" style="width:100%;margin-bottom:10px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:\'Inter\',sans-serif">📤 Share My Notes as Text</button>'+entries.map(([ref,note])=>`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref}</div><div class="sv-prev">${escapeHtml(note)}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
+
+// Human-readable notes export (the backup code is for machines) — canonical
+// book order, "reference / note text" pairs, via share sheet or clipboard.
+function exportNotesText(){
+  const entries = Object.entries(S.notes);
+  if(!entries.length){ showToast('No notes yet'); return; }
+  const parseRef = ref => {
+    const m = ref.match(/^(.+) (\d+):(\d+)$/);
+    return m ? [BOOKS.indexOf(m[1]), +m[2], +m[3]] : [999,0,0];
+  };
+  entries.sort((a,b)=>{
+    const x=parseRef(a[0]), y=parseRef(b[0]);
+    return x[0]-y[0] || x[1]-y[1] || x[2]-y[2];
+  });
+  const text = 'My Bible Notes — '+new Date().toLocaleDateString()+'\n\n'
+    + entries.map(([ref,note])=>ref+'\n'+note).join('\n\n');
+  if(navigator.share){
+    navigator.share({title:'My Bible Notes', text}).catch(()=>{});
+  } else {
+    navigator.clipboard?.writeText(text).then(()=>showToast('✅ Notes copied to clipboard'));
+  }
+}
 function delBM(i){S.bookmarks.splice(i,1);LS.set('kjv_bm',S.bookmarks);renderSaved();}
 function delHL(ref){delete S.highlights[ref];LS.set('kjv_hl',S.highlights);renderSaved();}
 function delNote(ref){delete S.notes[ref];LS.set('kjv_notes',S.notes);renderSaved();}
@@ -5221,12 +5290,40 @@ function memGetStats(ms){
   };
 }
 
+// ── Spaced repetition ──
+// Memorization isn't one-and-done: a mastered verse fades unless it comes
+// back at widening intervals. Each mastered verse carries an srsStage; the
+// verse is "due" once its stage's interval has elapsed since lastReview.
+// Completing a due verse in Challenge mode advances the stage (longer wait);
+// a Guided run refreshes the clock without advancing.
+const MEM_REVIEW_INTERVALS = [1, 3, 7, 30]; // days between reviews per stage
+
+function memReviewIntervalDays(rec){
+  return MEM_REVIEW_INTERVALS[Math.min(rec.srsStage||0, MEM_REVIEW_INTERVALS.length-1)];
+}
+function memIsDue(rec, now){
+  return !!(rec && rec.mastered && rec.lastReview &&
+    (now - rec.lastReview) >= memReviewIntervalDays(rec)*86400000);
+}
+function memDueReviews(){
+  const refs = memGetMastery().refs || {};
+  const now = Date.now();
+  return Object.keys(refs).filter(r => memIsDue(refs[r], now));
+}
+
 function memRecordComplete(ref, mode, elapsed){
   const ms = memGetMastery();
   if(!ms.refs) ms.refs = {};
   const existing = ms.refs[ref] || {mastered:false,timesCompleted:0,bestMode:null,bestTimeChallenge:null,bestTimeGuided:null};
   existing.timesCompleted++;
-  if(mode==='challenge') existing.mastered=true;
+  if(mode==='challenge'){
+    // First mastery starts the review ladder; clearing a due review climbs
+    // it. An early (not-yet-due) re-run just resets the clock at its stage.
+    if(!existing.mastered) existing.srsStage = 0;
+    else if(memIsDue(existing, Date.now())) existing.srsStage = (existing.srsStage||0) + 1;
+    existing.mastered = true;
+  }
+  existing.lastReview = Date.now();
   if(!existing.bestMode||(mode==='challenge'&&existing.bestMode!=='challenge')) existing.bestMode=mode;
   const btKey = mode==='challenge'?'bestTimeChallenge':'bestTimeGuided';
   if(existing[btKey]===null||existing[btKey]===undefined||elapsed<existing[btKey]) existing[btKey]=elapsed;
@@ -5382,6 +5479,25 @@ function renderMemSelect(){
   const pack1Cats = MEM_VERSES.filter(c=>c.pack===1).map(renderCat).join('');
   const pack2Cats = MEM_VERSES.filter(c=>c.pack===2).map(renderCat).join('');
 
+  // Due-for-review queue: mastered verses whose review interval has elapsed
+  const due = memDueReviews();
+  const dueBlock = due.length ? `
+    <div class="mem-pack-hdr">
+      <span>🔁 Due for Review</span>
+      <span style="font-size:11px;color:var(--text-m)">${due.length} verse${due.length!==1?'s':''}</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-m);padding:0 2px 8px">Complete in Challenge mode to keep these hidden in thine heart.</div>
+    ${due.map(ref=>{
+      const rec = refs[ref];
+      const days = Math.floor((Date.now()-rec.lastReview)/86400000);
+      return '<button class="mem-verse-btn practiced" onclick="startMem(\''+ref.replace(/'/g,"\\'")+'\')">'
+        +'<span class="mem-verse-ref">'+ref+'</span>'
+        +'<span class="mem-verse-preview">last reviewed '+(days<=0?'today':days+' day'+(days!==1?'s':'')+' ago')+'</span>'
+        +'<span class="mem-status-dot">🔁</span>'
+        +'</button>';
+    }).join('')}
+    <div style="height:8px"></div>` : '';
+
   const pack2Block = pack1Complete
     ? `<div class="mem-pack-hdr">
         <span>👑 Wisdom Pack</span>
@@ -5404,6 +5520,7 @@ function renderMemSelect(){
       <div id="mem-streak-chip">✏️ <span class="msc-num">${ms.streak||0}</span> day streak</div>
     </div>
     <div style="padding:0 14px">
+    ${dueBlock}
     <div class="mem-pack-hdr">
       <span>📖 Foundation Pack</span>
       <span style="font-size:11px;color:var(--text-m)">${pack1Count}/${PACK1_REFS.length} mastered</span>
@@ -5608,6 +5725,11 @@ function showMemCongrats(){
     : 'Try Challenge mode to mark it mastered';
   const mastBadge = document.getElementById('mc-mastered-badge');
   if(mastBadge) mastBadge.classList.toggle('show', isMastered);
+  const nextEl = document.getElementById('mc-next-review');
+  if(nextEl){
+    const days = rec.mastered ? memReviewIntervalDays(rec) : 0;
+    nextEl.textContent = rec.mastered ? `🔁 Comes back for review in ${days} day${days!==1?'s':''}` : '';
+  }
 
   document.getElementById('mem-verse-text').style.display='none';
   document.getElementById('mem-congrats').style.display='flex';
@@ -6450,6 +6572,10 @@ function exportAppData(){
   const data={};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
+    // The restore code is the credential to this user's cloud sync — a
+    // backup string pasted into a group chat shouldn't carry it. The
+    // receiving device generates its own code (or uses Restore by Code).
+    if(k==='kjv_rc') continue;
     data[k]=localStorage.getItem(k);
   }
   const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
