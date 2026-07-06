@@ -1685,6 +1685,13 @@ const CH_COUNTS=[50,40,27,36,34,24,21,4,31,24,22,25,29,36,10,13,10,42,150,31,12,
 const bookFile=n=>n.replace(/ /g,'')+'.json';
 const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 
+// Escapes user-supplied text (search queries, notes) before it is placed into
+// innerHTML — anything rendered via innerHTML that didn't originate from our
+// own fixed KJV/UI strings must be passed through this first.
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
 const S={
   screen:'books', book:null, ch:null, bookData:null,
   bookmarks:LS.get('kjv_bm',[]),
@@ -3596,7 +3603,7 @@ function renderSearchPage(startIdx){
   const pageNote = totalPages > 1 ? ` · page ${curPage} of ${totalPages}` : '';
 
   if (startIdx===0) {
-    el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${total.toLocaleString()}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${cleaned}</strong>"${pageNote}</div>`;
+    el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${total.toLocaleString()}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}</div>`;
   } else {
     const old = el.querySelector('button');
     if(old) old.remove();
@@ -3744,7 +3751,7 @@ const HL_COL={y:'rgba(255,220,60,.6)',g:'rgba(80,200,120,.6)',b:'rgba(80,160,255
 const HL_NM={y:'Yellow',g:'Green',b:'Blue',p:'Purple'};
 function renderBMPanel(){const el=document.getElementById('panel-bm');if(!S.bookmarks.length){el.innerHTML='<div class="empty-msg">No bookmarks yet.<br>Tap a verse while reading to bookmark it.</div>';return;}el.innerHTML=S.bookmarks.map((b,i)=>`<div class="sv-card"><div class="sv-dot" style="background:var(--gold)"></div><div class="sv-info" onclick="jumpToRef('${b.ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${b.ref}</div><div class="sv-prev">${b.text}</div></div><button class="sv-del" onclick="delBM(${i})">✕</button></div>`).join('');}
 function renderHLPanel(){const el=document.getElementById('panel-hl');const entries=Object.entries(S.highlights);if(!entries.length){el.innerHTML='<div class="empty-msg">No highlighted verses yet.<br>Tap a verse → choose a highlight color.</div>';return;}el.innerHTML=entries.map(([ref,c])=>`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref} <span style="opacity:.6;font-size:9px">${HL_NM[c]}</span></div><div class="sv-prev">${S.bookmarks.find(b=>b.ref===ref)?.text||'…'}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
-function renderNTPanel(){const el=document.getElementById('panel-nt');const entries=Object.entries(S.notes);if(!entries.length){el.innerHTML='<div class="empty-msg">No notes yet.<br>Tap a verse → Note to write one.</div>';return;}el.innerHTML=entries.map(([ref,note])=>`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref}</div><div class="sv-prev">${note}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
+function renderNTPanel(){const el=document.getElementById('panel-nt');const entries=Object.entries(S.notes);if(!entries.length){el.innerHTML='<div class="empty-msg">No notes yet.<br>Tap a verse → Note to write one.</div>';return;}el.innerHTML=entries.map(([ref,note])=>`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref}</div><div class="sv-prev">${escapeHtml(note)}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
 function delBM(i){S.bookmarks.splice(i,1);LS.set('kjv_bm',S.bookmarks);renderSaved();}
 function delHL(ref){delete S.highlights[ref];LS.set('kjv_hl',S.highlights);renderSaved();}
 function delNote(ref){delete S.notes[ref];LS.set('kjv_notes',S.notes);renderSaved();}
