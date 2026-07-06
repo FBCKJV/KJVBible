@@ -3389,10 +3389,98 @@ function passesFilter(bookName){
 }
 
 let sTimer = null;
+// Curated well-known Bible stories/topics. A paraphrase like "the prodigal
+// son" or "feeding the 5000" almost never appears as literal vocabulary in
+// any single verse — it's the traditional label for a passage — so keyword
+// matching alone misses it entirely. This catches the story/topic by name
+// and offers the actual passage directly, the same curated-data approach
+// already used for Doctrines and Cross-References elsewhere in the app.
+const TOPIC_INDEX = [
+  { title:'The Fall of Man', ref:'Genesis 3:1', rangeLabel:'Genesis 3', aliases:['the fall of man','the fall','adam and eve sin','the forbidden fruit'] },
+  { title:"Noah's Ark", ref:'Genesis 6:5', rangeLabel:'Genesis 6-9', aliases:["noah's ark",'noahs ark','the flood','the great flood','noah and the flood'] },
+  { title:'The Tower of Babel', ref:'Genesis 11:1', rangeLabel:'Genesis 11:1-9', aliases:['tower of babel'] },
+  { title:'Joseph Sold by His Brothers', ref:'Genesis 37:1', rangeLabel:'Genesis 37', aliases:['coat of many colours','coat of many colors','joseph and his brothers','joseph sold into slavery'] },
+  { title:'The Ten Plagues', ref:'Exodus 7:14', rangeLabel:'Exodus 7-12', aliases:['ten plagues','the plagues of egypt'] },
+  { title:'Crossing the Red Sea', ref:'Exodus 14:21', rangeLabel:'Exodus 14', aliases:['crossing the red sea','parting of the red sea','red sea crossing'] },
+  { title:'The Ten Commandments', ref:'Exodus 20:1', rangeLabel:'Exodus 20:1-17', aliases:['ten commandments','the ten commandments'] },
+  { title:'The Ark of the Covenant', ref:'Exodus 25:10', rangeLabel:'Exodus 25:10-22', aliases:['ark of the covenant'] },
+  { title:'Ruth and Naomi', ref:'Ruth 1:16', rangeLabel:'Ruth 1-4', aliases:['ruth and naomi','ruth and boaz','whither thou goest'] },
+  { title:'David and Goliath', ref:'1 Samuel 17:1', rangeLabel:'1 Samuel 17', aliases:['david and goliath','david slays goliath'] },
+  { title:'Samson and Delilah', ref:'Judges 16:4', rangeLabel:'Judges 16', aliases:['samson and delilah'] },
+  { title:'Elijah and the Prophets of Baal', ref:'1 Kings 18:20', rangeLabel:'1 Kings 18', aliases:['elijah and the prophets of baal','prophets of baal','fire from heaven elijah'] },
+  { title:'Elijah Taken Up to Heaven', ref:'2 Kings 2:1', rangeLabel:'2 Kings 2:1-11', aliases:['elijah taken up to heaven','elijah and the chariot of fire','elijah taken to heaven'] },
+  { title:'Esther Saves Her People', ref:'Esther 4:14', rangeLabel:'Esther 4', aliases:['for such a time as this','esther saves her people','queen esther'] },
+  { title:'Shadrach, Meshach, and Abednego', ref:'Daniel 3:8', rangeLabel:'Daniel 3', aliases:['fiery furnace','shadrach meshach and abednego','the fiery furnace'] },
+  { title:"Daniel in the Lion's Den", ref:'Daniel 6:10', rangeLabel:'Daniel 6', aliases:["daniel in the lion's den",'daniel in the lions den','daniel and the lions'] },
+  { title:'Jonah and the Great Fish', ref:'Jonah 1:17', rangeLabel:'Jonah 1-2', aliases:['jonah and the whale','jonah and the great fish','jonah and the fish'] },
+  { title:"The Wise Men Visit Jesus", ref:'Matthew 2:1', rangeLabel:'Matthew 2:1-12', aliases:['the wise men','the magi','visit of the magi'] },
+  { title:'The Sermon on the Mount', ref:'Matthew 5:1', rangeLabel:'Matthew 5-7', aliases:['sermon on the mount'] },
+  { title:'The Beatitudes', ref:'Matthew 5:3', rangeLabel:'Matthew 5:1-12', aliases:['the beatitudes','blessed are the poor in spirit'] },
+  { title:"The Lord's Prayer", ref:'Matthew 6:9', rangeLabel:'Matthew 6:9-13', aliases:["the lord's prayer",'the lords prayer','our father which art in heaven'] },
+  { title:'Feeding the 5,000', ref:'Matthew 14:13', rangeLabel:'Matthew 14:13-21', aliases:['feeding the 5000','feeding the five thousand','loaves and fishes','the feeding of the multitude'] },
+  { title:'Jesus Walks on Water', ref:'Matthew 14:22', rangeLabel:'Matthew 14:22-33', aliases:['walking on water','jesus walks on water'] },
+  { title:'The Transfiguration', ref:'Matthew 17:1', rangeLabel:'Matthew 17:1-8', aliases:['the transfiguration'] },
+  { title:'The Rich Young Ruler', ref:'Matthew 19:16', rangeLabel:'Matthew 19:16-22', aliases:['the rich young ruler'] },
+  { title:'The Last Supper', ref:'Matthew 26:26', rangeLabel:'Matthew 26:26-30', aliases:['the last supper'] },
+  { title:'Gethsemane', ref:'Matthew 26:36', rangeLabel:'Matthew 26:36-46', aliases:['gethsemane','the garden of gethsemane'] },
+  { title:'The Crucifixion', ref:'Luke 23:33', rangeLabel:'Luke 23', aliases:['the crucifixion','jesus is crucified','calvary'] },
+  { title:'The Resurrection', ref:'Luke 24:1', rangeLabel:'Luke 24:1-12', aliases:['the resurrection','he is risen','the empty tomb'] },
+  { title:'Jesus Calms the Storm', ref:'Mark 4:35', rangeLabel:'Mark 4:35-41', aliases:['jesus calms the storm','calming of the storm','peace be still'] },
+  { title:"The Widow's Mite", ref:'Mark 12:41', rangeLabel:'Mark 12:41-44', aliases:["the widow's mite","the widow's mites",'the widows mite'] },
+  { title:'The Prodigal Son', ref:'Luke 15:11', rangeLabel:'Luke 15:11-32', aliases:['the prodigal son','prodigal son'] },
+  { title:'The Lost Sheep', ref:'Luke 15:3', rangeLabel:'Luke 15:3-7', aliases:['the lost sheep','parable of the lost sheep'] },
+  { title:'The Good Samaritan', ref:'Luke 10:25', rangeLabel:'Luke 10:25-37', aliases:['the good samaritan','good samaritan'] },
+  { title:'Zacchaeus', ref:'Luke 19:1', rangeLabel:'Luke 19:1-10', aliases:['zacchaeus','zacchaeus the tax collector'] },
+  { title:'The Rich Man and Lazarus', ref:'Luke 16:19', rangeLabel:'Luke 16:19-31', aliases:['the rich man and lazarus'] },
+  { title:'The Road to Emmaus', ref:'Luke 24:13', rangeLabel:'Luke 24:13-35', aliases:['the road to emmaus','road to emmaus'] },
+  { title:'The Wedding at Cana', ref:'John 2:1', rangeLabel:'John 2:1-11', aliases:['the wedding at cana','water into wine','wedding at cana'] },
+  { title:'The Woman at the Well', ref:'John 4:4', rangeLabel:'John 4:4-26', aliases:['the woman at the well','woman at the well'] },
+  { title:'The Woman Caught in Adultery', ref:'John 8:1', rangeLabel:'John 8:1-11', aliases:['the woman caught in adultery','let him who is without sin'] },
+  { title:'Raising of Lazarus', ref:'John 11:1', rangeLabel:'John 11:1-44', aliases:['raising of lazarus','lazarus raised from the dead','jesus raises lazarus'] },
+  { title:'Doubting Thomas', ref:'John 20:24', rangeLabel:'John 20:24-29', aliases:['doubting thomas'] },
+  { title:'The Great Commission', ref:'Matthew 28:18', rangeLabel:'Matthew 28:18-20', aliases:['the great commission','go ye therefore'] },
+  { title:'The Ascension', ref:'Acts 1:6', rangeLabel:'Acts 1:6-11', aliases:['the ascension','jesus ascends to heaven'] },
+  { title:'The Day of Pentecost', ref:'Acts 2:1', rangeLabel:'Acts 2:1-4', aliases:['pentecost','the day of pentecost'] },
+  { title:"Paul's Conversion", ref:'Acts 9:1', rangeLabel:'Acts 9:1-19', aliases:["paul's conversion",'damascus road','the road to damascus','saul becomes paul'] },
+  { title:'Ananias and Sapphira', ref:'Acts 5:1', rangeLabel:'Acts 5:1-11', aliases:['ananias and sapphira'] },
+  { title:'The Ethiopian Eunuch', ref:'Acts 8:26', rangeLabel:'Acts 8:26-40', aliases:['the ethiopian eunuch'] },
+  { title:'Cornelius', ref:'Acts 10:1', rangeLabel:'Acts 10', aliases:['cornelius the centurion'] },
+  { title:'The Philippian Jailer', ref:'Acts 16:25', rangeLabel:'Acts 16:25-34', aliases:['the philippian jailer','philippian jailer'] },
+  { title:'The Armor of God', ref:'Ephesians 6:10', rangeLabel:'Ephesians 6:10-18', aliases:['armor of god','armour of god','whole armour of god'] },
+  { title:'Fruit of the Spirit', ref:'Galatians 5:22', rangeLabel:'Galatians 5:22-23', aliases:['fruit of the spirit'] }
+];
+
+function findTopicMatches(query){
+  const q = query.toLowerCase().replace(/[?!.,;:'"]+/g,'').trim();
+  if(q.length < 3) return [];
+  const qWords = new Set(q.split(/\s+/).filter(Boolean));
+  const hits = [];
+  for(const t of TOPIC_INDEX){
+    const isMatch = t.aliases.some(a=>{
+      if(q === a || q.includes(a)) return true;
+      const aWords = a.split(' ');
+      return aWords.length > 1 && aWords.every(w=>qWords.has(w));
+    });
+    if(isMatch) hits.push(t);
+  }
+  return hits.slice(0,3); // a handful is a helpful pointer; a wall of cards is not
+}
+
+function renderTopicCards(matches){
+  if(!matches || !matches.length) return '';
+  return matches.map(t =>
+    `<div class="rc ref-jump" onclick="jumpToRef('${t.ref.replace(/'/g,"\\'")}')">
+      <div class="rc-ref">📖 ${t.title}</div>
+      <div class="rc-txt" style="opacity:.75">${t.rangeLabel} — tap to open</div>
+    </div>`
+  ).join('');
+}
+
 function handleSearch(q) {
   clearTimeout(sTimer);
   const raw = q.trim();
   if (raw.length < 2) {
+    S._topicMatches = [];
     document.getElementById('s-results').innerHTML = '<div id="s-status">Enter a word, phrase, or reference (e.g. Matthew 24:24)</div>';
     return;
   }
@@ -3406,6 +3494,7 @@ async function doSearch(raw) {
   const el = document.getElementById('s-results');
   // Strip trailing punctuation for reference check
   const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
+  S._topicMatches = findTopicMatches(cleaned);
 
   // ── 1. Reference search ──
   const ref = parseReference(cleaned);
@@ -3447,11 +3536,16 @@ async function doSearch(raw) {
   const keywords = allWords.filter(w => !STOP.has(w) && w.length >= 3);
   const searchOn = keywords.length > 0 ? keywords : allWords.filter(w => w.length >= 2);
 
-  if (searchOn.length === 0) { el.innerHTML = '<div id="s-status">Please enter a search term</div>'; return; }
+  if (searchOn.length === 0) {
+    el.innerHTML = renderTopicCards(S._topicMatches) + '<div id="s-status">Please enter a search term</div>';
+    return;
+  }
 
   // ── Progressive search: scan all books, count accurately, show results up to MAX ──
   const MAX = Infinity; // store all results, paginate in display
-  S._searchResults = [];
+  S._searchResults    = [];
+  S._partialResults   = []; // verses matching *some* but not all keywords — used as a fallback below
+  S._isPartialFallback = false;
   S._searchQuery   = cleaned;
   S._searchOn      = searchOn;
   S._searchLower   = lower;
@@ -3472,28 +3566,34 @@ async function doSearch(raw) {
     for (const ch of data.chapters) {
       for (const v of ch.verses) {
         const txt = v.text.toLowerCase();
-        if (searchOn.every(w => wordMatches(txt, w))) {
+        const matched = searchOn.filter(w => wordMatches(txt, w));
+        if (!matched.length) continue;
+
+        // Proximity boost: keywords appearing close together score higher
+        let proxBoost = 0;
+        if (searchOn.length > 1) {
+          const pos = searchOn.map(w => {
+            const vars = KJV_VARIANTS[w] || [w];
+            for(const vv of vars){ const i = txt.indexOf(vv); if(i>=0) return i; }
+            return txt.length;
+          });
+          const span = Math.max(...pos) - Math.min(...pos);
+          proxBoost = span < 30 ? 8 : span < 60 ? 4 : span < 100 ? 2 : 0;
+        }
+        const entry = {
+          ref: `${bookName} ${ch.chapter}:${v.verse}`,
+          txt: v.text,
+          book: bookName,
+          score: matched.length + (txt.includes(lower.slice(0,20)) ? 5 : 0) + proxBoost
+        };
+
+        if (matched.length === searchOn.length) {
           bookCount++;
-          // Proximity boost: keywords appearing close together score higher
-          let proxBoost = 0;
-          if (searchOn.length > 1) {
-            const pos = searchOn.map(w => {
-              const vars = KJV_VARIANTS[w] || [w];
-              for(const vv of vars){ const i = txt.indexOf(vv); if(i>=0) return i; }
-              return txt.length;
-            });
-            const span = Math.max(...pos) - Math.min(...pos);
-            proxBoost = span < 30 ? 8 : span < 60 ? 4 : span < 100 ? 2 : 0;
-          }
-          // Store all results
-          S._searchResults.push({
-              ref: `${bookName} ${ch.chapter}:${v.verse}`,
-              txt: v.text,
-              book: bookName,
-              score: searchOn.filter(w => wordMatches(txt, w)).length
-                + (txt.includes(lower.slice(0,20)) ? 5 : 0)
-                + proxBoost
-            });
+          S._searchResults.push(entry);
+        } else {
+          // Keeps every verse hit on at least one keyword, in case the strict
+          // AND search above comes up empty and we fall back to this below.
+          S._partialResults.push(entry);
         }
       }
     }
@@ -3511,7 +3611,23 @@ async function doSearch(raw) {
 
   // Final render
   if (!S._searchResults.length) {
-    el.innerHTML = `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
+    // #2: OR-fallback — nothing matched every keyword. Rather than a dead
+    // end, promote the closest partial matches (verses hitting *some* of the
+    // keywords), ranked the same way full matches are. Only worth doing with
+    // 2+ keywords — with a single keyword, "partial" and "no match" are the
+    // same thing.
+    if (searchOn.length > 1 && S._partialResults.length) {
+      S._isPartialFallback = true;
+      S._searchResults = S._partialResults.sort((a,b) => b.score - a.score).slice(0, 200);
+      S._bookCounts = {};
+      S._searchResults.forEach(r => { S._bookCounts[r.book] = (S._bookCounts[r.book]||0) + 1; });
+      S._totalCount = S._searchResults.length;
+      renderBookStrip();
+      renderSearchPage(0);
+      return;
+    }
+    el.innerHTML = renderTopicCards(S._topicMatches)
+      + `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
     if(strip) strip.style.display = 'none';
     return;
   }
@@ -3603,7 +3719,10 @@ function renderSearchPage(startIdx){
   const pageNote = totalPages > 1 ? ` · page ${curPage} of ${totalPages}` : '';
 
   if (startIdx===0) {
-    el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${total.toLocaleString()}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}</div>`;
+    const statusText = S._isPartialFallback
+      ? `No exact matches — showing the ${total.toLocaleString()} closest verse${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}`
+      : `${total.toLocaleString()}${capNote} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}`;
+    el.innerHTML = renderTopicCards(S._topicMatches) + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`;
   } else {
     const old = el.querySelector('button');
     if(old) old.remove();
