@@ -6202,6 +6202,7 @@ function scourbyToggleChapter(){
       document.getElementById('ch-play-btn').textContent='⏸';
     } else {
       audio.pause();
+      scourbySaveChapterPos(SA.book, SA.chIdx, audio.currentTime); // exact spot on pause
       document.getElementById('sb-playpause').textContent='▶';
       document.getElementById('ch-play-btn').textContent='🔊';
     }
@@ -6215,6 +6216,11 @@ function scourbyPlayChapter(bookName, chIdx){
   if(!ts) return;
   const chStart = ts.c[chIdx] || 0;
   const chEnd   = (ts.e && ts.e[chIdx]) ? ts.e[chIdx] : (ts.c[chIdx+1] || ts.t);
+
+  // Resume mid-chapter if we saved a spot last time — but ignore a saved
+  // position sitting at the very start or all but finished (start fresh there).
+  const savedPos = scourbyGetChapterPos(bookName, chIdx);
+  const seekTo = (savedPos > chStart + 2 && savedPos < chEnd - 3) ? savedPos : chStart;
 
   // Stop book mode if running
   if(!SA.chMode && SA.book){
@@ -6239,10 +6245,10 @@ function scourbyPlayChapter(bookName, chIdx){
   const btn = document.getElementById('ch-play-btn');
   if(btn) btn.textContent='⏸';
 
-  // If same book already loaded — just seek to chapter start
+  // If same book already loaded — just seek to the resume point
   if(audio.src && SCOURBY_FILES[bookName] &&
      audio.src.includes(encodeURIComponent(SCOURBY_FILES[bookName]))){
-    audio.currentTime = chStart;
+    audio.currentTime = seekTo;
     audio.playbackRate = SA.rate;
     audio.play();
     return;
@@ -6252,7 +6258,7 @@ function scourbyPlayChapter(bookName, chIdx){
   audio.src = url;
   audio.addEventListener('loadedmetadata', function onMeta(){
     audio.removeEventListener('loadedmetadata', onMeta);
-    audio.currentTime = chStart;
+    audio.currentTime = seekTo;
     audio.playbackRate = SA.rate;
     audio.play();
   });
@@ -6260,9 +6266,14 @@ function scourbyPlayChapter(bookName, chIdx){
 }
 
 function scourbyStopChapter(){
+  const audio = document.getElementById('scourby-audio');
+  // Keep the spot if we're leaving a chapter partway through, so it resumes
+  // next time (e.g. navigating away from the reader mid-chapter).
+  if(SA.chMode && SA.book && audio && audio.currentTime > 0){
+    scourbySaveChapterPos(SA.book, SA.chIdx, audio.currentTime);
+  }
   SA.chMode = false;
   SA.chEnd  = null;
-  const audio = document.getElementById('scourby-audio');
   if(audio && !audio.paused) audio.pause();
   document.getElementById('sb-playpause').textContent='▶';
   const btn = document.getElementById('ch-play-btn');
@@ -6333,6 +6344,35 @@ function scouryySavePos(bookName, t){
     const all = JSON.parse(localStorage.getItem('kjv_spos')||'{}');
     all[bookName] = parseFloat(t.toFixed(1));
     localStorage.setItem('kjv_spos', JSON.stringify(all));
+    fbSyncSoon();
+  }catch(e){}
+}
+
+// ── Chapter-level resume ──
+// Chapter play uses the same book MP3, just bounded to one chapter's
+// timestamps, so "your place" is the raw audio position — same idea as
+// book resume. Stored under kjv_cpos keyed by "book|chapterIndex" so it
+// stays independent of the book-mode resume point (kjv_spos).
+function scourbyChapKey(bookName, chIdx){ return bookName + '|' + chIdx; }
+function scourbyGetChapterPos(bookName, chIdx){
+  try{
+    const all = JSON.parse(localStorage.getItem('kjv_cpos')||'{}');
+    return parseFloat(all[scourbyChapKey(bookName, chIdx)]||'0');
+  }catch(e){ return 0; }
+}
+function scourbySaveChapterPos(bookName, chIdx, t){
+  try{
+    const all = JSON.parse(localStorage.getItem('kjv_cpos')||'{}');
+    all[scourbyChapKey(bookName, chIdx)] = parseFloat(t.toFixed(1));
+    localStorage.setItem('kjv_cpos', JSON.stringify(all));
+    fbSyncSoon();
+  }catch(e){}
+}
+function scourbyClearChapterPos(bookName, chIdx){
+  try{
+    const all = JSON.parse(localStorage.getItem('kjv_cpos')||'{}');
+    delete all[scourbyChapKey(bookName, chIdx)];
+    localStorage.setItem('kjv_cpos', JSON.stringify(all));
     fbSyncSoon();
   }catch(e){}
 }
@@ -6421,6 +6461,7 @@ function scourbyTimeUpdate(){
     const btn = document.getElementById('ch-play-btn');
     if(btn) btn.textContent='🔊';
     document.getElementById('sb-label').textContent=`${SA.book} — Chapter ${SA.chIdx+1} ✓`;
+    scourbyClearChapterPos(SA.book, SA.chIdx); // finished — replay starts fresh
     SA.chMode = false;
     return;
   }
@@ -6447,14 +6488,19 @@ function scourbyTimeUpdate(){
     }
   }
 
-  // Save book position every 10 seconds (book mode only)
-  if(!SA.chMode && Math.floor(t)%10===0) scouryySavePos(SA.book, t);
+  // Save position every ~5s — book position in book mode, chapter position
+  // (keyed by book+chapter) in chapter mode, so both resume where you left off.
+  if(Math.floor(t)%5===0){
+    if(SA.chMode) scourbySaveChapterPos(SA.book, SA.chIdx, t);
+    else if(Math.floor(t)%10===0) scouryySavePos(SA.book, t);
+  }
 }
 
 function scourbyOnEnded(){
   document.getElementById('sb-playpause').textContent = '▶';
   const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.remove('active');
-  scouryySavePos(SA.book, 0); // reset position on completion
+  if(SA.chMode) scourbyClearChapterPos(SA.book, SA.chIdx); // last chapter ran to file end
+  scouryySavePos(SA.book, 0); // reset book position on completion
   document.getElementById('sb-label').textContent = SA.book + ' — Finished ✓';
 }
 
@@ -6632,7 +6678,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_rl','kjv_spos'
+  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos'
 ];
 
 let _db = null;
