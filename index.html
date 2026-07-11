@@ -50,6 +50,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .t-label{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:16px 4px 8px;border-bottom:1px solid var(--border);margin-bottom:8px}
 .t-label:first-of-type{padding-top:0}
 .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:6px}
+/* Collapsible testament sections on the home screen */
+.t-section:first-of-type .t-label{padding-top:0}
+.t-label.t-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:rgba(201,148,58,.15)}
+.t-label.t-toggle:active{opacity:.65}
+.t-count{color:var(--text-m);font-weight:600}
+.t-chevron{font-size:11px;color:var(--text-m);transition:transform .2s;flex-shrink:0}
+.t-section.open .t-chevron{transform:rotate(90deg)}
+.t-section:not(.open) .books-grid{display:none}
 .book-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:2px}
 .book-card:active{background:var(--bg3);border-color:var(--gold-d)}
 .book-name{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.2}
@@ -1699,7 +1707,7 @@ function escapeHtml(str){
 document.addEventListener('keydown', e => {
   if(e.key !== 'Enter') return;
   const t = e.target;
-  if(t && t.matches && t.matches('.rc, .book-card, .vblock') && !t.closest('input,textarea')){
+  if(t && t.matches && t.matches('.rc, .book-card, .vblock, .t-toggle') && !t.closest('input,textarea')){
     e.preventDefault();
     t.click();
   }
@@ -1884,12 +1892,23 @@ function buildBooks(){
 
   h += `</div></div>`; // close rr-steps, rr-card
 
-  // OT + NT grids
-  h+=`<div class="t-label">Old Testament</div><div class="books-grid">`;
+  // OT + NT grids — each testament is a collapsible section (persisted,
+  // default open) so the long book list can be folded away to cut scrolling.
+  const collapsed = new Set(LS.get('kjv_books_collapsed', []));
+  const otOpen = !collapsed.has('ot'), ntOpen = !collapsed.has('nt');
+
+  h+=`<div class="t-section${otOpen?' open':''}" id="tsec-ot">`;
+  h+=`<div class="t-label t-toggle" onclick="toggleTestament('ot')" role="button" tabindex="0" aria-expanded="${otOpen}"><span>Old Testament <span class="t-count">· 39</span></span><span class="t-chevron">&#9654;</span></div>`;
+  h+=`<div class="books-grid">`;
   BOOKS.slice(0,39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[i]} ch.</div></div>`);
-  h+=`</div><div class="t-label">New Testament</div><div class="books-grid">`;
+  h+=`</div></div>`;
+
+  h+=`<div class="t-section${ntOpen?' open':''}" id="tsec-nt">`;
+  h+=`<div class="t-label t-toggle" onclick="toggleTestament('nt')" role="button" tabindex="0" aria-expanded="${ntOpen}"><span>New Testament <span class="t-count">· 27</span></span><span class="t-chevron">&#9654;</span></div>`;
+  h+=`<div class="books-grid">`;
   BOOKS.slice(39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[39+i]} ch.</div></div>`);
-  h+='</div></div>';
+  h+=`</div></div>`;
+  h+='</div>';
   const memDue = memDueReviews().length;
   h += `<div id="mem-home-card" onclick="openMemorize()" style="background:linear-gradient(135deg,var(--bg3),var(--surface));border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0 0;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s">
     <div style="font-size:28px;flex-shrink:0">${memDue?'🔁':'✏️'}</div>
@@ -1904,6 +1923,17 @@ function buildBooks(){
 
   // Restore RR open state
   if(LS.get('rr_open', false)) openRRPanel();
+}
+
+function toggleTestament(key){
+  const sec = document.getElementById('tsec-'+key);
+  if(!sec) return;
+  const nowOpen = sec.classList.toggle('open');
+  const hdr = sec.querySelector('.t-toggle');
+  if(hdr) hdr.setAttribute('aria-expanded', nowOpen);
+  const c = new Set(LS.get('kjv_books_collapsed', []));
+  nowOpen ? c.delete(key) : c.add(key);
+  LS.set('kjv_books_collapsed', [...c]);
 }
 
 function toggleRR(){
