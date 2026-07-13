@@ -341,12 +341,24 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #vod-lbl{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 #vod-txt{font-family:'Crimson Pro',serif;font-style:italic;font-size:15px;color:var(--text);line-height:1.6;margin-bottom:4px}
 #vod-ref{font-size:11px;color:var(--text-m);text-align:right}
-#cont-banner{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s}
-#cont-banner:active{border-color:var(--gold-d)}
+#cont-banner{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;transition:all .15s;overflow:hidden}
 #cont-banner.hidden{display:none}
+.cont-top{display:flex;align-items:center;gap:6px;padding:12px 14px}
+.cont-main{display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer}
+.cont-main:active{opacity:.7}
 .cont-ico{color:var(--gold);flex-shrink:0}
 .cont-ref{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text)}
 .cont-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px}
+.cont-toggle{background:none;border:none;color:var(--text-m);cursor:pointer;font-size:13px;padding:8px 10px;border-radius:6px;flex-shrink:0;transition:transform .2s;line-height:1;-webkit-tap-highlight-color:rgba(201,148,58,.15)}
+.cont-toggle:active{opacity:.6}
+#cont-banner.open .cont-toggle{transform:rotate(180deg)}
+.cont-history{display:none;border-top:1px solid var(--border)}
+#cont-banner.open .cont-history{display:block}
+.cont-hrow{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:14px;color:var(--text)}
+.cont-hrow:not(:first-child){border-top:1px solid var(--border)}
+.cont-hrow:active{background:var(--surface)}
+.cont-hrow .hbook{flex:1;min-width:0}
+.cont-hrow .hgo{color:var(--text-m);flex-shrink:0}
 
 /* LOADER */
 #loader{position:absolute;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:400;transition:opacity .4s}
@@ -1707,7 +1719,7 @@ function escapeHtml(str){
 document.addEventListener('keydown', e => {
   if(e.key !== 'Enter') return;
   const t = e.target;
-  if(t && t.matches && t.matches('.rc, .book-card, .vblock, .t-toggle') && !t.closest('input,textarea')){
+  if(t && t.matches && t.matches('.rc, .book-card, .vblock, .t-toggle, .cont-main, .cont-hrow') && !t.closest('input,textarea')){
     e.preventDefault();
     t.click();
   }
@@ -1860,7 +1872,9 @@ function buildBooks(){
   let h='<div style="padding:12px">';
 
   // Continue reading
-  if(S.lastPos) h+=`<div id="cont-banner" onclick="continueReading()"><div class="cont-ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><div style="flex:1"><div class="cont-lbl">Continue Reading</div><div class="cont-ref">${S.lastPos.book} — Chapter ${S.lastPos.ch+1}</div></div></div>`;
+  // Placeholder — populated by updateContinueBanner() so it stays current as
+  // reading history grows (buildBooks only runs once, at init).
+  h+=`<div id="cont-banner" class="hidden"></div>`;
 
   // Verse of the Day
   h+=`<div id="vod" onclick="jumpVOD()"><div id="vod-lbl">✦ Verse of the Day</div><div id="vod-txt">Loading…</div><div id="vod-ref"></div></div>`;
@@ -1920,6 +1934,8 @@ function buildBooks(){
     <div style="color:var(--text-m);font-size:18px">›</div>
   </div>`;
   el.innerHTML=h;
+
+  updateContinueBanner(); // fill the Continue Reading placeholder
 
   // Restore RR open state
   if(LS.get('rr_open', false)) openRRPanel();
@@ -1986,11 +2002,56 @@ async function loadVOD(){
   }catch(e){}
 }
 async function jumpVOD(){if(!vodMeta)return;S.book=vodMeta.book;S.ch=vodMeta.ch;S.bookData=vodMeta.data;renderReader();showScreen('reader');}
+async function openHistoryChapter(book, ch){
+  const data=await fetchBook(book);if(!data)return;
+  S.book=book;S.ch=ch;S.bookData=data;
+  renderReader();showScreen('reader');
+}
 async function continueReading(){
   if(!S.lastPos)return;
-  const data=await fetchBook(S.lastPos.book);if(!data)return;
-  S.book=S.lastPos.book;S.ch=S.lastPos.ch;S.bookData=data;
-  renderReader();showScreen('reader');
+  openHistoryChapter(S.lastPos.book, S.lastPos.ch);
+}
+
+// Recent-reading history: most-recent-first, de-duped, capped. The banner
+// shows the top entry; the dropdown reveals the ones before it.
+function recordHistory(book, ch){
+  let hist = LS.get('kjv_history', []);
+  if(!Array.isArray(hist)) hist = [];
+  hist = hist.filter(e => !(e.book===book && e.ch===ch));
+  hist.unshift({book, ch});
+  LS.set('kjv_history', hist.slice(0, 8));
+}
+function recentHistory(){
+  let hist = LS.get('kjv_history', []);
+  if(!Array.isArray(hist)) hist = [];
+  // Existing users have only the legacy single lastPos — seed from it so the
+  // banner still shows something until they read their next chapter.
+  if(!hist.length && S.lastPos) hist = [{book:S.lastPos.book, ch:S.lastPos.ch}];
+  return hist;
+}
+function contBannerInner(){
+  const hist = recentHistory();
+  if(!hist.length) return '';
+  const cur = hist[0];
+  const prior = hist.slice(1, 6); // up to 5 previously-read chapters
+  const svg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+  let html = `<div class="cont-top"><div class="cont-main" onclick="continueReading()" role="button" tabindex="0"><div class="cont-ico">${svg}</div><div style="flex:1;min-width:0"><div class="cont-lbl">Continue Reading</div><div class="cont-ref">${cur.book} — Chapter ${cur.ch+1}</div></div></div>`;
+  if(prior.length) html += `<button class="cont-toggle" onclick="toggleContHistory(event)" aria-label="Recently read" aria-expanded="false">&#9662;</button>`;
+  html += `</div>`;
+  if(prior.length){
+    html += `<div class="cont-history">` + prior.map(e =>
+      `<div class="cont-hrow" onclick="openHistoryChapter('${e.book.replace(/'/g,"\\'")}',${e.ch})" role="button" tabindex="0"><span class="hbook">${e.book} — Chapter ${e.ch+1}</span><span class="hgo">&#8250;</span></div>`
+    ).join('') + `</div>`;
+  }
+  return html;
+}
+function toggleContHistory(e){
+  if(e) e.stopPropagation();
+  const b = document.getElementById('cont-banner');
+  if(!b) return;
+  const open = b.classList.toggle('open');
+  const btn = b.querySelector('.cont-toggle');
+  if(btn) btn.setAttribute('aria-expanded', open);
 }
 
 /* ════ SELECT BOOK ════ */
@@ -2069,6 +2130,7 @@ function renderReader(){
   document.getElementById('r-prev').disabled = _bi===0 && S.ch===0;
   document.getElementById('r-next').disabled = _bi===BOOKS.length-1 && S.ch===S.bookData.chapters.length-1;
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
+  recordHistory(S.book, S.ch);
 
   const c=document.getElementById('verses');c.innerHTML='';
   ch.verses.forEach(v=>{
@@ -2699,9 +2761,12 @@ function showScreen(name, pushHistory=true){
 
 function updateContinueBanner(){
   const el = document.getElementById('cont-banner');
-  if(!el || !S.lastPos) return;
-  const ref = el.querySelector('.cont-ref');
-  if(ref) ref.textContent = `${S.lastPos.book} — Chapter ${S.lastPos.ch+1}`;
+  if(!el) return;
+  const inner = contBannerInner();
+  if(!inner){ el.classList.add('hidden'); el.innerHTML = ''; return; }
+  el.classList.remove('open'); // default collapsed each time Home is shown
+  el.innerHTML = inner;
+  el.classList.remove('hidden');
 }
 
 function goBack(){
@@ -6708,7 +6773,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos'
+  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history'
 ];
 
 let _db = null;
