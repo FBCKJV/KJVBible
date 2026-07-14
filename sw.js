@@ -2,7 +2,7 @@
 // Bump CACHE_NAME on every meaningful deploy. The version number
 // is read by the app from caches.keys() and displayed in Tips & Help.
 
-const CACHE_NAME = 'fbckjv-bible-v4';
+const CACHE_NAME = 'fbckjv-bible-v5';
 
 // Pre-cache the app shell on install
 self.addEventListener('install', e => {
