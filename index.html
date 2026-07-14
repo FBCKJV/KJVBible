@@ -6442,10 +6442,25 @@ async function notifEnable(){
 // On-device readout of the real push state — so you can see whether THIS
 // device is actually subscribed (permission granted alone is not enough;
 // OneSignal also needs an opted-in push subscription with an ID).
-function updateNotifStatus(){
+async function updateNotifStatus(){
   const el = document.getElementById('notif-status');
   if(!el) return;
   const browserPerm = ('Notification' in window) ? Notification.permission : 'unsupported';
+
+  // Which service workers are registered, and is OneSignal's push worker
+  // among them? A missing OneSignal worker is the classic cause of
+  // "permission granted, subscription none" on a subdirectory deploy.
+  let swInfo = 'checking…';
+  try{
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      const scopes = regs.map(r => (r.active||r.installing||r.waiting||{}).scriptURL || r.scope);
+      const hasOS = scopes.some(u => /OneSignal/i.test(u));
+      swInfo = (hasOS ? 'OneSignal worker: yes' : 'OneSignal worker: NO')
+             + ` · ${regs.length} SW${regs.length!==1?'s':''}`;
+    } else swInfo = 'no service worker support';
+  }catch(e){ swInfo = 'sw check failed'; }
+
   const render = (optedIn, hasId, sdkReady) => {
     const subscribed = browserPerm === 'granted' && optedIn && hasId;
     const sub = sdkReady ? (optedIn && hasId ? 'active' : 'none') : 'checking…';
@@ -6453,13 +6468,14 @@ function updateNotifStatus(){
       `<div style="font-weight:700;color:${subscribed?'#7ac47a':'var(--gold)'}">`
       + (subscribed ? '✓ This device is subscribed' : '✗ This device is NOT subscribed')
       + `</div>`
-      + `<div style="color:var(--text-m);font-size:12px;margin-top:3px">`
-      + `Browser permission: <b>${browserPerm}</b> · Push subscription: <b>${sub}</b>`
+      + `<div style="color:var(--text-m);font-size:12px;margin-top:3px;line-height:1.6">`
+      + `Permission: <b>${browserPerm}</b> · Subscription: <b>${sub}</b><br>`
+      + `Origin: <b>${location.origin}</b><br>`
+      + `${swInfo}`
       + `</div>`;
   };
-  // Render browser permission immediately (always available); the OneSignal
-  // subscription state fills in when/if the SDK is ready. If it never loads
-  // (offline, blocked), the browser-permission line still stands on its own.
+  // Render immediately from browser-only facts; the OneSignal subscription
+  // state fills in when/if the SDK is ready.
   render(false, false, false);
   (window.OneSignalDeferred = window.OneSignalDeferred || []).push(async function(OS){
     let optedIn = false, hasId = false;
