@@ -34,10 +34,14 @@ jobs:
 
           echo "Day of year: $DAY_OF_YEAR  Index: $IDX  Verse: $REF"
 
-          BOOK_URL=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$BOOK'))")
-          RESPONSE=$(curl -sf "https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/${BOOK_URL}.json" || true)
+          # Fetch from this repo's own Bible data (same text the app shows).
+          # Filenames drop spaces: "2 Timothy" -> "2Timothy.json", matching the
+          # app's bookFile() convention. The previous version url-encoded the
+          # space ("2%20Timothy.json"), which 404'd on every multi-word book.
+          BOOK_FILE="${BOOK// /}"
+          RESPONSE=$(curl -sf "https://raw.githubusercontent.com/FBCKJV/KJVBible/main/bible/${BOOK_FILE}.json" || true)
 
-          if [ -z "$RESPONSE" ]; then echo "Failed to fetch Bible data"; exit 1; fi
+          if [ -z "$RESPONSE" ]; then echo "Failed to fetch Bible data for ${BOOK} (${BOOK_FILE}.json)"; exit 1; fi
 
           VERSE_TEXT=$(echo "$RESPONSE" | jq -r ".chapters[$((CHAPTER - 1))].verses[$((VERSE - 1))].text")
 
