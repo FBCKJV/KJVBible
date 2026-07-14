@@ -1353,6 +1353,7 @@ body.light #home-watermark{
         <div class="tips-section-lbl">🔔 Daily Verse Notifications</div>
         <div class="tip-row"><span class="tip-ico">📢</span><span class="tip-txt">This app sends a <strong>free daily verse</strong> notification every morning at 8 AM Eastern. If you previously had notifications enabled, our move to <strong>fbckjv.app</strong> reset all subscriptions — tap below to re-enable.</span></div>
         <div class="tip-row"><span class="tip-ico"></span><span class="tip-txt"><button onclick="notifEnable()" style="background:linear-gradient(135deg,#6A4510,#A87828);color:#FFE898;border:none;border-radius:8px;padding:8px 20px;font-family:'IM Fell English',serif;font-size:15px;cursor:pointer">🔔 Enable Daily Verse Notifications</button></span></div>
+        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><div id="notif-status" style="font-size:13px">Checking notification status…</div><div style="color:var(--text-m);font-size:11px;margin-top:4px">On Android, install the app first (see below) for the most reliable notifications. Web push needs Google Play Services.</div></span></div>
 
         <div class="tips-section-lbl">📲 Add to Home Screen</div>
         <div class="install-box" id="install-guide">
@@ -5167,6 +5168,7 @@ function showTips(){
   renderInstallGuide();
   setTimeout(checkOfflineStatus, 100);
   setTimeout(populateRestoreCodeDisplay, 200);
+  setTimeout(updateNotifStatus, 150);
   history.pushState({screen: S.screen, modal:'tips'}, '', '');
 }
 function closeTips(e){
@@ -6395,12 +6397,12 @@ function notifDismiss(){
   if(b) b.style.display = 'none';
 }
 async function notifEnable(){
-  // iOS Safari only supports push when installed as PWA
+  // iOS Safari only supports push when installed to the Home Screen as a PWA
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isPWA = window.matchMedia('(display-mode: standalone)').matches
              || navigator.standalone === true;
   if(isIOS && !isPWA){
-    showToast('Add app to Home Screen first, then re-enable notifications');
+    showToast('On iPhone: add to Home Screen first, then open it from that icon to enable notifications');
     notifDismiss();
     return;
   }
@@ -6409,19 +6411,65 @@ async function notifEnable(){
     notifDismiss();
     return;
   }
-  try{
-    const perm = await Notification.requestPermission();
-    if(perm === 'granted'){
-      // Register with OneSignal
-      (window.OneSignalDeferred = window.OneSignalDeferred || []).push(async function(OS){
-        try{ await OS.User.PushSubscription.optIn(); }catch(e){}
-      });
-      showToast('✓ Daily verse notifications enabled!');
-    } else if(perm === 'denied'){
-      showToast('Blocked — enable notifications in browser settings');
+  showToast('Enabling…');
+  // Route the WHOLE flow through OneSignal so the push token actually
+  // registers. The previous version called Notification.requestPermission()
+  // directly and fired optIn() inside a swallowed catch, then always claimed
+  // success — so the browser could show "allowed" while OneSignal stayed
+  // "Not Subscribed" (no push token) and nothing ever arrived.
+  (window.OneSignalDeferred = window.OneSignalDeferred || []).push(async function(OS){
+    try{
+      await OS.Notifications.requestPermission();
+      if(OS.Notifications.permission){            // true === granted
+        await OS.User.PushSubscription.optIn();
+      }
+      const sub = OS.User.PushSubscription;
+      if(OS.Notifications.permission && sub && sub.optedIn){
+        showToast('✓ Notifications enabled on this device');
+        notifDismiss();
+      } else if(OS.Notifications.permission === false){
+        showToast('Blocked — allow notifications for this site in your browser settings');
+      } else {
+        showToast("Couldn't finish sign-up — reopen the app and tap Enable again");
+      }
+    }catch(e){
+      showToast('Could not enable notifications');
     }
-  }catch(e){ showToast('Could not enable notifications'); }
-  notifDismiss();
+    updateNotifStatus();
+  });
+}
+
+// On-device readout of the real push state — so you can see whether THIS
+// device is actually subscribed (permission granted alone is not enough;
+// OneSignal also needs an opted-in push subscription with an ID).
+function updateNotifStatus(){
+  const el = document.getElementById('notif-status');
+  if(!el) return;
+  const browserPerm = ('Notification' in window) ? Notification.permission : 'unsupported';
+  const render = (optedIn, hasId, sdkReady) => {
+    const subscribed = browserPerm === 'granted' && optedIn && hasId;
+    const sub = sdkReady ? (optedIn && hasId ? 'active' : 'none') : 'checking…';
+    el.innerHTML =
+      `<div style="font-weight:700;color:${subscribed?'#7ac47a':'var(--gold)'}">`
+      + (subscribed ? '✓ This device is subscribed' : '✗ This device is NOT subscribed')
+      + `</div>`
+      + `<div style="color:var(--text-m);font-size:12px;margin-top:3px">`
+      + `Browser permission: <b>${browserPerm}</b> · Push subscription: <b>${sub}</b>`
+      + `</div>`;
+  };
+  // Render browser permission immediately (always available); the OneSignal
+  // subscription state fills in when/if the SDK is ready. If it never loads
+  // (offline, blocked), the browser-permission line still stands on its own.
+  render(false, false, false);
+  (window.OneSignalDeferred = window.OneSignalDeferred || []).push(async function(OS){
+    let optedIn = false, hasId = false;
+    try{
+      const sub = OS.User && OS.User.PushSubscription;
+      optedIn = !!(sub && sub.optedIn);
+      hasId   = !!(sub && sub.id);
+    }catch(e){}
+    render(optedIn, hasId, true);
+  });
 }
 
 function scourbyGetPos(bookName){
