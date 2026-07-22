@@ -5348,12 +5348,55 @@ const MEM_VERSES = [
   { pack:2, cat:'Song of Solomon', icon:'❤️', verses:[
     'Song of Solomon 2:4','Song of Solomon 8:7'
   ]},
+
+  // ── Pack 3: Prophets (unlocks after Pack 2 Wisdom Crown) ──
+  { pack:3, cat:'Isaiah', icon:'📜', verses:[
+    'Isaiah 41:10','Isaiah 53:5','Isaiah 53:6',
+    'Isaiah 26:3','Isaiah 55:11','Isaiah 9:6'
+  ]},
+  { pack:3, cat:'Jeremiah & Lamentations', icon:'🕯️', verses:[
+    'Jeremiah 29:11','Jeremiah 33:3','Jeremiah 1:5','Lamentations 3:22-23'
+  ]},
+  { pack:3, cat:'Daniel & Courage', icon:'🦁', verses:[
+    'Daniel 3:17-18','Micah 6:8','Habakkuk 2:4'
+  ]},
+  { pack:3, cat:'The Minor Prophets', icon:'🌾', verses:[
+    'Joel 2:28','Zephaniah 3:17','Nahum 1:7','Zechariah 4:6','Malachi 3:10'
+  ]},
+
+  // ── Pack 4: Psalms (unlocks after Pack 3 Prophets) ──
+  { pack:4, cat:'Praise & Thanksgiving', icon:'🎵', verses:[
+    'Psalm 100:1-2','Psalm 103:1-2','Psalm 95:1','Psalm 34:1','Psalm 150:6'
+  ]},
+  { pack:4, cat:'Trust & Refuge', icon:'🛡️', verses:[
+    'Psalm 46:1','Psalm 62:1-2','Psalm 27:1','Psalm 91:2','Psalm 118:24'
+  ]},
+  { pack:4, cat:'Comfort & Healing', icon:'🌅', verses:[
+    'Psalm 30:5','Psalm 34:18','Psalm 42:11','Psalm 147:3','Psalm 73:26'
+  ]},
+  { pack:4, cat:'The Word & the Heart', icon:'📖', verses:[
+    'Psalm 19:1','Psalm 19:14','Psalm 37:4','Psalm 139:14','Psalm 145:18','Psalm 133:1'
+  ]},
 ];
 
 // ── Memory mastery (persisted) ──
 /* ── BADGE DEFINITIONS ── */
-const PACK1_REFS = MEM_VERSES.filter(c=>c.pack===1).flatMap(c=>c.verses);
-const PACK2_REFS = MEM_VERSES.filter(c=>c.pack===2).flatMap(c=>c.verses);
+const packRefs = n => MEM_VERSES.filter(c=>c.pack===n).flatMap(c=>c.verses);
+const PACK1_REFS = packRefs(1);
+const PACK2_REFS = packRefs(2);
+const PACK3_REFS = packRefs(3);
+const PACK4_REFS = packRefs(4);
+
+// Pack metadata, in unlock order. Each pack unlocks once the previous pack's
+// verses are all mastered (pack 1 is always available). Adding a pack here +
+// its verses above is all that's needed — rendering, unlocking, and the
+// certificate are data-driven off this list.
+const PACKS = [
+  { num:1, header:'📖 Foundation',    name:'Foundation Pack' },
+  { num:2, header:'👑 Wisdom Pack',   name:'Wisdom Pack' },
+  { num:3, header:'🔥 Prophets Pack', name:'Prophets Pack' },
+  { num:4, header:'🎵 Psalms Pack',   name:'Psalms Pack' },
+];
 
 const MEM_BADGES = [
   { id:'first_steps',   ico:'📖', name:'First Steps',        desc:'Complete any verse in Guided mode',          check: ms => ms.practiced >= 1 },
@@ -5364,6 +5407,8 @@ const MEM_BADGES = [
   { id:'ten_mastered',  ico:'💯',  name:'Scripture Hidden',   desc:'Master 10 verses',                          check: ms => ms.mastered >= 10 },
   { id:'all_mastered',  ico:'🏆',  name:'Heart Full',         desc:'Master all Foundation verses',              check: ms => PACK1_REFS.every(r=>ms.masteredRefs.includes(r)) },
   { id:'wisdom_crown',  ico:'👑',  name:'Wisdom Crown',       desc:'Master all Wisdom Pack verses',             check: ms => PACK2_REFS.every(r=>ms.masteredRefs.includes(r)), prestige:2 },
+  { id:'prophets_fire', ico:'🔥',  name:'Voice of the Prophets', desc:'Master all Prophets Pack verses',        check: ms => PACK3_REFS.length && PACK3_REFS.every(r=>ms.masteredRefs.includes(r)), prestige:3 },
+  { id:'psalmist',      ico:'🎵',  name:'Heart of the Psalmist', desc:'Master all Psalms Pack verses',          check: ms => PACK4_REFS.length && PACK4_REFS.every(r=>ms.masteredRefs.includes(r)), prestige:4 },
 ];
 
 const M = { ref:null,tokens:[],revealed:new Set(),mode:'guided',active:null,peeking:false,startTime:0,verseText:'' };
@@ -5543,11 +5588,6 @@ function renderMemSelect(){
   const refs = ms.refs || {};
   const collapsed = memGetCollapsed();
 
-  // Pack unlock check
-  const pack1Complete = PACK1_REFS.every(r=>refs[r]&&refs[r].mastered);
-  const pack1Count = PACK1_REFS.filter(r=>refs[r]&&refs[r].mastered).length;
-  const pack2Count = PACK2_REFS.filter(r=>refs[r]&&refs[r].mastered).length;
-
   function renderCat(cat){
     const catKey = cat.cat.replace(/\s+/g,'_').replace(/'/g,'');
     const isCollapsed = collapsed.has(catKey);
@@ -5573,8 +5613,33 @@ function renderMemSelect(){
       +'</div>';
   }
 
-  const pack1Cats = MEM_VERSES.filter(c=>c.pack===1).map(renderCat).join('');
-  const pack2Cats = MEM_VERSES.filter(c=>c.pack===2).map(renderCat).join('');
+  // Build every pack's block in order. A pack unlocks once the previous pack's
+  // verses are all mastered (pack 1 is always available).
+  const packMastered = n => { const p = packRefs(n); return { count: p.filter(r=>refs[r]&&refs[r].mastered).length, total: p.length }; };
+  let prevComplete = true;
+  const packsHtml = PACKS.map((pk, i) => {
+    const { count, total } = packMastered(pk.num);
+    const unlocked = pk.num === 1 || prevComplete;
+    let block;
+    if(!unlocked){
+      const prev = PACKS[i-1];
+      const pm = packMastered(prev.num);
+      block = `<div class="mem-pack-locked">
+        <div style="font-size:22px;margin-bottom:6px">🔒</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px">${pk.name}</div>
+        <div style="font-size:13px;color:var(--text-m)">Master all ${pm.total} ${prev.name} verses to unlock</div>
+        <div style="font-size:12px;color:var(--text-m);margin-top:4px">${pm.count}/${pm.total} mastered</div>
+       </div>`;
+    } else {
+      const cats = MEM_VERSES.filter(c=>c.pack===pk.num).map(renderCat).join('');
+      block = `<div class="mem-pack-hdr">
+        <span>${pk.header}</span>
+        <span style="font-size:11px;color:var(--text-m)">${count}/${total} mastered</span>
+       </div>${cats}`;
+    }
+    prevComplete = total > 0 && count === total;
+    return block;
+  }).join('<div style="height:8px"></div>');
 
   // Due-for-review queue: mastered verses whose review interval has elapsed
   const due = memDueReviews();
@@ -5595,18 +5660,6 @@ function renderMemSelect(){
     }).join('')}
     <div style="height:8px"></div>` : '';
 
-  const pack2Block = pack1Complete
-    ? `<div class="mem-pack-hdr">
-        <span>👑 Wisdom Pack</span>
-        <span style="font-size:11px;color:var(--text-m)">${pack2Count}/${PACK2_REFS.length} mastered</span>
-       </div>${pack2Cats}`
-    : `<div class="mem-pack-locked">
-        <div style="font-size:22px;margin-bottom:6px">🔒</div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px">Wisdom Pack</div>
-        <div style="font-size:13px;color:var(--text-m)">Master all ${PACK1_REFS.length} Foundation verses to unlock</div>
-        <div style="font-size:12px;color:var(--text-m);margin-top:4px">${pack1Count}/${PACK1_REFS.length} mastered</div>
-       </div>`;
-
   const el=document.getElementById('mem-select');
   el.innerHTML=`
     <div id="mem-stats-bar">
@@ -5618,13 +5671,7 @@ function renderMemSelect(){
     </div>
     <div style="padding:0 14px">
     ${dueBlock}
-    <div class="mem-pack-hdr">
-      <span>📖 Foundation Pack</span>
-      <span style="font-size:11px;color:var(--text-m)">${pack1Count}/${PACK1_REFS.length} mastered</span>
-    </div>
-    ${pack1Cats}
-    <div style="height:8px"></div>
-    ${pack2Block}
+    ${packsHtml}
     </div>
     <div class="mem-badge-hdr" style="display:flex;align-items:center;justify-content:space-between">
       <span>Badges</span>
@@ -6125,8 +6172,7 @@ function drawSwordCertificate(canvas){
   const ms           = memGetMastery();
   const stats        = memGetStats(ms);
   const earnedBadges = MEM_BADGES.filter(b=>(ms.badges||[]).includes(b.id));
-  const pack1Done    = PACK1_REFS.every(r=>(ms.refs||{})[r]?.mastered);
-  const pack2Done    = PACK2_REFS.every(r=>(ms.refs||{})[r]?.mastered);
+  const donePacks    = PACKS.filter(pk => { const p = packRefs(pk.num); return p.length && p.every(r=>(ms.refs||{})[r]?.mastered); });
 
   const W   = 540;
   const PAD = 44;
@@ -6137,7 +6183,7 @@ function drawSwordCertificate(canvas){
   // ── Pre-calculate height ──
   const BADGE_COLS = Math.min(4, Math.max(1, earnedBadges.length));
   const badgeRows  = earnedBadges.length > 0 ? Math.ceil(earnedBadges.length/BADGE_COLS) : 0;
-  const packLines  = (pack1Done?1:0) + (pack2Done?1:0);
+  const packLines  = donePacks.length;
   const H = 110                  // top padding + header
     + 44                         // rule + stats line
     + packLines * 24             // pack completion lines
@@ -6198,11 +6244,10 @@ function drawSwordCertificate(canvas){
   y += 26;
 
   // ── Pack completions ──
-  if(pack1Done || pack2Done){
+  if(donePacks.length){
     ctx.font = 'italic 14px Georgia,serif';
     ctx.fillStyle = t.ref; ctx.globalAlpha = 0.65;
-    if(pack1Done){ ctx.fillText('Foundation Pack Complete', W/2, y); y += 22; }
-    if(pack2Done){ ctx.fillText('Wisdom Pack Complete', W/2, y); y += 22; }
+    donePacks.forEach(pk => { ctx.fillText(`${pk.name} Complete`, W/2, y); y += 22; });
     ctx.globalAlpha = 1;
   }
 
