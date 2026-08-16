@@ -1335,7 +1335,7 @@ body.light #home-watermark{
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       Share
     </div>
-    <div class="scr-btn dl" onclick="saveCLImage()">⬇ Save</div>
+    <div class="scr-btn dl" onclick="saveCLImage(this)">⬇ Save</div>
   </div>
 </div>
 
@@ -1693,7 +1693,7 @@ body.light #home-watermark{
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
       Share
     </div>
-    <div class="scr-btn dl" onclick="downloadScreenshot()">⬇ Save</div>
+    <div class="scr-btn dl" onclick="downloadScreenshot(this)">⬇ Save</div>
   </div>
 </div>
 
@@ -2695,11 +2695,23 @@ function switchCardTheme(t){
   renderCanvas(t);
 }
 
-function downloadScreenshot(){
+function flashSaved(btn){
+  showToast('✓ Image saved to your device');
+  if(btn){
+    const orig=btn.innerHTML;
+    btn.innerHTML='✓ Saved';
+    btn.style.pointerEvents='none';
+    setTimeout(()=>{ btn.innerHTML=orig; btn.style.pointerEvents=''; }, 1600);
+  }
+}
+function downloadScreenshot(btn){
   const a=document.createElement('a');
   a.download=`${(S.scrRef||'verse').replace(/[: ]/g,'_')}_KJV.png`;
   a.href=document.getElementById('scr-canvas').toDataURL('image/png');
+  document.body.appendChild(a);
   a.click();
+  a.remove();
+  flashSaved(btn);
 }
 function closeScrOverlay(e){
   const ov = document.getElementById('scr-overlay');
@@ -5125,12 +5137,15 @@ function drawChecklistCanvas(canvas){
   ctx.globalAlpha=1;
 }
 
-function saveCLImage(){
+function saveCLImage(btn){
   const canvas = document.getElementById('cl-canvas');
   const a = document.createElement('a');
   a.download = `FBC_Reading_Progress_${S.booksRead.size}of66.png`;
   a.href = canvas.toDataURL('image/png');
+  document.body.appendChild(a);
   a.click();
+  a.remove();
+  flashSaved(btn);
 }
 
 function shareCLImage(){
