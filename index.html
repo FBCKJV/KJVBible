@@ -2811,6 +2811,17 @@ window.addEventListener('popstate', e => {
     } else if(state.searchMode){
       switchSearchMode(state.searchMode, false);
     }
+  } else if(state.screen === 'reader' && state.book && (state.book !== S.book || state.ch !== S.ch)){
+    // Restore the reader to the book/chapter this history entry describes —
+    // needed when returning from a cross-reference jump into another book.
+    if(state.book === S.book){
+      S.ch = state.ch; renderReader(); showScreen('reader', false);
+    } else {
+      fetchBook(state.book).then(d => {
+        if(d){ S.book = state.book; S.ch = state.ch; S.bookData = d; renderReader(); }
+        showScreen('reader', false);
+      });
+    }
   } else {
     showScreen(state.screen, false);
   }
@@ -4919,8 +4930,16 @@ function openXRefFull(){
   closeXRef();
   fetchBook(_xrefBook).then(data => {
     if(!data) return;
+    // Stamp where we are now onto the current history entry, then push the
+    // cross-referenced chapter as its own entry — so pressing Back returns to
+    // this exact spot instead of stranding the reader in the other book.
+    if(S.screen === 'reader'){
+      history.replaceState({screen:'reader', book:S.book, ch:S.ch}, '', '');
+    }
     S.book=_xrefBook; S.ch=_xrefCh; S.bookData=data;
-    renderReader(); showScreen('reader');
+    renderReader();
+    history.pushState({screen:'reader', book:_xrefBook, ch:_xrefCh}, '', '');
+    showScreen('reader', false);
   });
 }
 
