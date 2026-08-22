@@ -287,6 +287,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #sp-count{font-family:'Inter',system-ui,sans-serif;font-size:56px;font-weight:700;color:var(--gold);line-height:1}
 #sp-label{font-size:14px;color:var(--text-d);margin-bottom:8px}
 #sp-best{font-size:12px;color:var(--text-m);margin-bottom:12px}
+#sp-stats{display:flex;gap:8px;justify-content:center;margin:2px 0 14px}
+.sp-stat{flex:1;max-width:104px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 6px}
+.sp-stat-n{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold);line-height:1}
+.sp-stat-sub{font-size:12px;color:var(--text-m)}
+.sp-stat-l{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-m);margin-top:5px}
 #sp-milestones{display:flex;gap:12px;margin-bottom:8px}
 .sp-badge{display:flex;flex-direction:column;align-items:center;gap:3px;opacity:.3;transition:opacity .3s}
 .sp-badge.earned{opacity:1}
@@ -1598,6 +1603,7 @@ body.light #home-watermark{
       <button onclick="repairStreak()" style="background:none;border:1px solid var(--border);color:var(--text-m);border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer">Streak not updating? Tap to repair</button>
     </div>
     <div id="sp-best"></div>
+    <div id="sp-stats"></div>
     <div id="sp-milestones"></div>
     <div id="sp-tip">Read a chapter, doctrine, or Romans Road each day to keep your streak</div>
     <button onclick="closeStreakPanel()" style="margin-top:12px;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px 20px;cursor:pointer;font-size:13px">Close</button>
@@ -4398,6 +4404,16 @@ function showStreakInfo(){
     const today = todayStr();
     const stuck = S.streakLast && S.streakLast !== today && S.streakLast !== yesterdayStr();
     repairEl.style.display = stuck ? 'block' : 'none';
+  }
+
+  // Reading stats — display only, computed from existing saved values.
+  const statsEl = document.getElementById('sp-stats');
+  if(statsEl){
+    const booksRead = (S.booksRead && S.booksRead.size) || 0;
+    statsEl.innerHTML =
+      `<div class="sp-stat"><div class="sp-stat-n">${S.streak||0}</div><div class="sp-stat-l">Current</div></div>`
+      +`<div class="sp-stat"><div class="sp-stat-n">${S.streakBest||0}</div><div class="sp-stat-l">Longest</div></div>`
+      +`<div class="sp-stat"><div class="sp-stat-n">${booksRead}<span class="sp-stat-sub">/66</span></div><div class="sp-stat-l">Books read</div></div>`;
   }
 
   const ms = MILESTONES.map(m => `
