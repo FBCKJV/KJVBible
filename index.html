@@ -1403,11 +1403,6 @@ body.light #home-watermark{
 
       <!-- Add to Home Screen -->
       <div class="tips-section">
-        <div class="tips-section-lbl">🔔 Daily Verse Notifications</div>
-        <div class="tip-row"><span class="tip-ico">📢</span><span class="tip-txt">This app sends a <strong>free daily verse</strong> notification every morning at 8 AM Eastern. If you previously had notifications enabled, our move to <strong>fbckjv.app</strong> reset all subscriptions — tap below to re-enable.</span></div>
-        <div class="tip-row"><span class="tip-ico"></span><span class="tip-txt"><button onclick="notifEnable()" style="background:linear-gradient(135deg,#6A4510,#A87828);color:#FFE898;border:none;border-radius:8px;padding:8px 20px;font-family:'IM Fell English',serif;font-size:15px;cursor:pointer">🔔 Enable Daily Verse Notifications</button></span></div>
-        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><div id="notif-status" style="font-size:13px">Checking notification status…</div><div style="color:var(--text-m);font-size:11px;margin-top:4px">On Android, install the app first (see below) for the most reliable notifications. Web push needs Google Play Services.</div></span></div>
-
         <div class="tips-section-lbl">📲 Add to Home Screen</div>
         <div class="install-box" id="install-guide">
           <div class="install-platform" id="install-platform">Detecting your device…</div>
@@ -1430,28 +1425,6 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
       </div>
 
-      <!-- Offline -->
-      <div class="tips-section">
-        <div class="tips-section-lbl">📶 Offline Reading</div>
-        <div class="install-box" id="offline-box">
-          <div class="install-platform" id="offline-status">Checking cache…</div>
-          <div id="offline-progress" style="display:none;margin:10px 0">
-            <div style="background:var(--border);border-radius:4px;height:6px;overflow:hidden;margin-bottom:6px">
-              <div id="offline-bar" style="background:var(--gold);height:100%;border-radius:4px;width:0%;transition:width .3s"></div>
-            </div>
-            <div id="offline-progress-lbl" style="font-size:12px;color:var(--text-m)">Downloading…</div>
-          </div>
-          <div id="offline-btns" style="display:flex;gap:8px;margin-top:10px">
-            <button id="offline-download-btn" onclick="startOfflineDownload()" style="flex:1;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer">⬇ Download All 66 Books</button>
-            <button id="offline-clear-btn" onclick="clearOfflineCache()" style="display:none;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:9px;font-size:13px;cursor:pointer">✕ Clear</button>
-          </div>
-          <div style="margin-top:8px;font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);line-height:1.5">
-            Bible chapters require an internet connection to load — the text is fetched on demand. Download all 66 books (~3MB) below so chapters open instantly without internet.
-            <br><strong style="color:var(--gold)">Tip:</strong> Download on Wi-Fi before travelling or areas with poor signal.
-          </div>
-        </div>
-      </div>
-
       <!-- Warning -->
       <div class="tips-section">
         <div class="tips-section-lbl">🔊 Audio Bible — Two Ways to Listen</div>
@@ -1459,19 +1432,6 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Chapter Play</strong> — While reading, tap the <strong>🔊</strong> button next to the chapter title to hear just that chapter. Audio plays to the end of the last verse, then stops automatically. Pause or leave partway and tapping 🔊 again picks up right where you left off; once a chapter finishes it starts fresh next time.</span></div>
         <div class="tip-row"><span class="tip-ico">▶</span><span class="tip-txt">Both modes share the same floating player bar with play/pause, <strong>◀30</strong> / <strong>30▶</strong> skip, speed control (0.5×–2.0×), and a progress bar. Chapter Play shows chapter progress; Book Play shows whole-book progress.</span></div>
         <div class="tip-row"><span class="tip-ico">💾</span><span class="tip-txt">Both Book Play and Chapter Play positions are <strong>saved to the cloud</strong> with your restore code — switch devices and pick up exactly where you left off, whether in a whole book or a single chapter.</span></div>
-      </div>
-
-      <div class="tips-section">
-        <div class="tips-section-lbl">☁️ Backup &amp; Restore Your Data</div>
-        <div class="tip-row"><span class="tip-ico">🔑</span><span class="tip-txt">Your data is automatically backed up to the cloud. Tap <strong>My Restore Code</strong> to see your unique 6-character code — write it down or screenshot it. On a new device or browser, tap <strong>Enter Code</strong> and your streaks, badges, bookmarks and progress are fully restored.</span></div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin:6px 0 4px;text-align:center">
-          <div style="font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Your Restore Code</div>
-          <div id="rc-display-code" style="font-family:'IM Fell English',serif;font-size:30px;color:var(--gold);letter-spacing:.2em;margin-bottom:6px">——</div>
-          <div style="font-size:11px;color:var(--text-m)">Write this down — enter it on any device to restore your data</div>
-          <button onclick="copyRestoreCode()" style="margin-top:8px;background:var(--bg);border:1px solid var(--border);color:var(--gold);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer" id="rc-copy-btn">📋 Copy Code</button>
-        </div>
-        <button onclick="promptRestore()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px">📥 Restore from Another Device</button>
-        <button onclick="fbSyncNow()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px" id="sync-now-btn">🔄 Sync Now</button>
       </div>
 
       <div class="tips-section">
@@ -1521,10 +1481,51 @@ body.light #home-watermark{
           </div>
         </div>
       </div>
+
+      <div class="tips-section">
+        <div class="tips-section-lbl">🔔 Daily Verse Notifications</div>
+        <div class="tip-row"><span class="tip-ico">📢</span><span class="tip-txt">A <strong>free daily verse</strong> arrives each morning at <strong>8 AM your local time</strong>. Tap below to turn it on for this device.</span></div>
+        <div class="tip-row"><span class="tip-ico"></span><span class="tip-txt"><button onclick="notifEnable()" style="background:linear-gradient(135deg,#6A4510,#A87828);color:#FFE898;border:none;border-radius:8px;padding:8px 20px;font-family:'IM Fell English',serif;font-size:15px;cursor:pointer">🔔 Enable Daily Verse Notifications</button></span></div>
+        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><div id="notif-status" style="font-size:13px">Checking notification status…</div><div style="color:var(--text-m);font-size:11px;margin-top:4px">On Android, install the app first (Help → Add to Home Screen) for the most reliable notifications. Web push needs Google Play Services.</div></span></div>
+      </div>
+
+      <div class="tips-section">
+        <div class="tips-section-lbl">📶 Offline Reading</div>
+        <div class="install-box" id="offline-box">
+          <div class="install-platform" id="offline-status">Checking cache…</div>
+          <div id="offline-progress" style="display:none;margin:10px 0">
+            <div style="background:var(--border);border-radius:4px;height:6px;overflow:hidden;margin-bottom:6px">
+              <div id="offline-bar" style="background:var(--gold);height:100%;border-radius:4px;width:0%;transition:width .3s"></div>
+            </div>
+            <div id="offline-progress-lbl" style="font-size:12px;color:var(--text-m)">Downloading…</div>
+          </div>
+          <div id="offline-btns" style="display:flex;gap:8px;margin-top:10px">
+            <button id="offline-download-btn" onclick="startOfflineDownload()" style="flex:1;background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer">⬇ Download All 66 Books</button>
+            <button id="offline-clear-btn" onclick="clearOfflineCache()" style="display:none;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:9px;font-size:13px;cursor:pointer">✕ Clear</button>
+          </div>
+          <div style="margin-top:8px;font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);line-height:1.5">
+            Bible chapters are fetched on demand. Download all 66 books (~3MB) so chapters open instantly without internet.
+            <br><strong style="color:var(--gold)">Tip:</strong> Download on Wi-Fi before travelling or areas with poor signal.
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-section">
+        <div class="tips-section-lbl">☁️ Backup &amp; Restore Your Data</div>
+        <div class="tip-row"><span class="tip-ico">🔑</span><span class="tip-txt">Your data is automatically backed up to the cloud. Your <strong>restore code</strong> is shown below — write it down or screenshot it. On a new device, tap <strong>Restore from Another Device</strong> and your streaks, badges, bookmarks and progress come back.</span></div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin:6px 0 4px;text-align:center">
+          <div style="font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Your Restore Code</div>
+          <div id="rc-display-code" style="font-family:'IM Fell English',serif;font-size:30px;color:var(--gold);letter-spacing:.2em;margin-bottom:6px">——</div>
+          <div style="font-size:11px;color:var(--text-m)">Write this down — enter it on any device to restore your data</div>
+          <button onclick="copyRestoreCode()" style="margin-top:8px;background:var(--bg);border:1px solid var(--border);color:var(--gold);border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer" id="rc-copy-btn">📋 Copy Code</button>
+        </div>
+        <button onclick="promptRestore()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px">📥 Restore from Another Device</button>
+        <button onclick="fbSyncNow()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px" id="sync-now-btn">🔄 Sync Now</button>
+      </div>
+
       <div class="tips-section">
         <div class="tips-section-lbl">ℹ️ About</div>
         <div class="set-row"><div class="set-lbl">Version</div><div class="set-ctrl" id="settings-version" style="color:var(--text-m)">—</div></div>
-        <div style="font-size:12px;color:var(--text-m);line-height:1.5;margin-top:6px">Notifications, offline download, and your restore code are in the <strong>?</strong> Help menu for now — they'll move here soon.</div>
       </div>
     </div>
   </div>
@@ -5441,11 +5442,8 @@ _logoImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccq
 /* ════ TIPS & ADD TO HOME SCREEN ════ */
 function showTips(){
   document.getElementById('tips-sheet').classList.add('on');
-  refreshAppVersion();  // Call 2: always shows live version when panel opens
+  refreshAppVersion();  // always shows live version when panel opens
   renderInstallGuide();
-  setTimeout(checkOfflineStatus, 100);
-  setTimeout(populateRestoreCodeDisplay, 200);
-  setTimeout(updateNotifStatus, 150);
   history.pushState({screen: S.screen, modal:'tips'}, '', '');
 }
 function closeTips(e){
@@ -7381,6 +7379,9 @@ function openSettings(){
   applyLineSpacing(S.lineSpacing);
   document.querySelectorAll('#set-theme .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===S.theme));
   refreshAppVersion();
+  setTimeout(checkOfflineStatus, 100);
+  setTimeout(populateRestoreCodeDisplay, 200);
+  setTimeout(updateNotifStatus, 150);
   document.getElementById('settings-sheet').classList.add('on');
   history.pushState({screen:S.screen, modal:'settings'}, '', '');
 }
