@@ -3986,14 +3986,16 @@ function switchSearchMode(mode, pushHistory=true){
 
 // ── Bible maps (public-domain 19th-century atlas plates) ──
 const MAPS=[
+  {f:'table-of-nations',t:'The World as Known to the Hebrews',     d:'The nations descended from Noah (Genesis 10)'},
+  {f:'exodus-sinai',   t:'The Exodus & Wilderness Wanderings',     d:'From Egypt to the Promised Land'},
   {f:'twelve-tribes',  t:'Canaan Divided Among the Twelve Tribes', d:'The Promised Land after the Conquest'},
   {f:'david-solomon',  t:'The Dominion of David & Solomon',        d:'Israel at its greatest extent'},
-  {f:'exodus-sinai',   t:'The Exodus & Wilderness Wanderings',     d:'From Egypt to the Promised Land'},
   {f:'divided-kingdom',t:'The Kingdoms of Judah & Israel',         d:'The divided monarchy'},
   {f:'assyria',        t:'Assyria & the Adjacent Lands',           d:'The patriarchal age and the captivities'},
   {f:'palestine-nt',   t:'Palestine in the Time of Christ',        d:'The Holy Land in the Gospels'},
+  {f:'journeys-of-christ',t:'The Journeys of Christ',              d:"The Lord's travels during His public ministry"},
   {f:'jerusalem',      t:'Plan of Ancient Jerusalem',              d:'The city in Bible times'},
-  {f:'pauls-journeys', t:"Paul's Missionary Journeys",             d:"Across the Roman world"},
+  {f:'pauls-journeys', t:"Paul's Missionary Journeys",             d:'Across the Roman world'},
 ];
 function renderMaps(){
   const el=document.getElementById('maps-grid');
