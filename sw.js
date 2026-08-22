@@ -2,13 +2,14 @@
 // Bump CACHE_NAME on every meaningful deploy. The version number
 // is read by the app from caches.keys() and displayed in Tips & Help.
 
-const CACHE_NAME = 'fbckjv-bible-v13';
+const CACHE_NAME = 'fbckjv-bible-v14';
 
 // Bible maps — bundled static images, precached so they work offline.
 const MAP_ASSETS = [
-  'maps/twelve-tribes.jpg','maps/david-solomon.jpg','maps/exodus-sinai.jpg',
-  'maps/divided-kingdom.jpg','maps/assyria.jpg','maps/palestine-nt.jpg',
-  'maps/jerusalem.jpg','maps/pauls-journeys.jpg',
+  'maps/table-of-nations.jpg','maps/exodus-sinai.jpg','maps/twelve-tribes.jpg',
+  'maps/david-solomon.jpg','maps/divided-kingdom.jpg','maps/assyria.jpg',
+  'maps/palestine-nt.jpg','maps/journeys-of-christ.jpg','maps/jerusalem.jpg',
+  'maps/pauls-journeys.jpg',
 ];
 
 // Pre-cache the app shell on install (maps are best-effort so a missing
