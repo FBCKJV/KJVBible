@@ -7387,9 +7387,11 @@ function showWelcomeIfNeeded(){
   modal.style.display = 'flex';
 }
 
-// One-time "What's New" announcement. Bump WHATS_NEW_VERSION whenever there's
-// a fresh batch of features to announce; each version shows at most once.
-const WHATS_NEW_VERSION = 'v22';
+// One-time "What's New" announcement. Keep WHATS_NEW_VERSION in step with the
+// service-worker release (sw.js CACHE_NAME) so one number tracks the whole app;
+// bump it whenever there's a fresh batch of features to announce (and redo the
+// one-page feature guide). Each version shows at most once.
+const WHATS_NEW_VERSION = 'v23';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
