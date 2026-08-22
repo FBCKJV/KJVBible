@@ -7238,7 +7238,17 @@ function scourbyTimeUpdate(){
     scourbyClearChapterPos(SA.book, SA.chIdx); // finished — replay starts fresh
     // Auto-play the next chapter in the same book, if enabled and one exists
     if(SA.autoAdvance && ts.c[SA.chIdx+1] !== undefined){
-      scourbyPlayChapter(SA.book, SA.chIdx+1);
+      // Read-along: if the reader is showing the very chapter that just
+      // finished, let the on-screen text follow the audio into the next
+      // chapter. Otherwise stay decoupled — a reader who paged elsewhere
+      // (or left the reader) keeps their place; only the audio advances.
+      const following = (S.screen === 'reader' && S.book === SA.book && S.ch === SA.chIdx);
+      const nextCh = SA.chIdx + 1;
+      scourbyPlayChapter(SA.book, nextCh);
+      if(following && S.book === SA.book && S.bookData && S.bookData.chapters[nextCh]){
+        S.ch = nextCh;
+        renderReader();
+      }
       return;
     }
     audio.pause();
