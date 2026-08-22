@@ -1706,6 +1706,10 @@ body.light #home-watermark{
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         Share
       </button>
+      <button class="pa" onclick="copyVerseLink()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Link
+      </button>
       <button class="pa" onclick="closePop()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         Close
@@ -1886,6 +1890,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   // Seed history stack
   history.replaceState({screen:'books'}, '', '');
   showScreen('books', false);
+  // Deep link: if the URL points at a verse, open straight to it (Back still
+  // returns to the books screen seeded above).
+  setTimeout(openDeepLink, 300);
   loadVOD();
   setTimeout(()=>document.getElementById('loader').classList.add('gone'),700);
   setTimeout(showWelcomeIfNeeded, 1200);
@@ -2498,6 +2505,23 @@ function saveNote(){const t=document.getElementById('note-area').value.trim();if
 function openNoteChip(e,ref){e.stopPropagation();openVPop(ref,document.querySelector(`[data-ref="${ref}"] .vtxt`).textContent);setTimeout(openNote,50);}
 function copyVerse(){const t=`${S.popRef}  ${S.popTxt}`;navigator.clipboard?.writeText(t);}
 function shareVerse(){const t=`${S.popRef}  ${S.popTxt}`;if(navigator.share)navigator.share({title:'Bible Verse',text:t});else navigator.clipboard?.writeText(t);}
+// Deep link to a verse — a URL that opens the app straight to this verse.
+function verseLink(ref){ return 'https://fbckjv.app/#' + ref.replace(/ /g,'+'); }
+function copyVerseLink(){
+  const link = verseLink(S.popRef);
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(link).then(()=>showToast('🔗 Verse link copied')).catch(()=>showToast(link));
+  } else { showToast(link); }
+}
+// If the app is opened with a verse in the URL hash (e.g. #John+3:16), jump there.
+function openDeepLink(){
+  const h = location.hash.slice(1);
+  if(!h) return false;
+  let raw; try{ raw = decodeURIComponent(h); }catch(e){ raw = h; }
+  const ref = raw.replace(/\+/g,' ').trim();
+  if(/^.+ \d+:\d+$/.test(ref)){ jumpToRef(ref); return true; }
+  return false;
+}
 function singleScreenshot(){S.scrVerses=[{ref:S.popRef,vnum:S.popRef.split(':')[1],txt:S.popTxt}];closePop();openScrOverlay(S.scrVerses,S.popRef);}
 
 function refreshVBlock(ref){
