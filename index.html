@@ -22,6 +22,7 @@
   --border:#3d2a10;--gold:#c9943a;--gold-l:#e8b860;--gold-d:#7a5520;
   --text:#f5ede0;--text-d:#b8956a;--text-m:#7a6048;
   --accent:#7ab8a0;--red:#c05040;--nav-h:56px;--font-v:18px;--line-v:1.78;
+  --reader-font:'Crimson Pro',Georgia,serif;
   --hl-y:rgba(255,220,60,.28);--hl-g:rgba(80,200,120,.22);
   --hl-b:rgba(80,160,255,.22);--hl-p:rgba(200,100,200,.22);
 }
@@ -29,6 +30,11 @@
   --bg:#f7f2e8;--bg2:#ede5d5;--bg3:#e5dcc8;--surface:#fffdf8;
   --border:#d4c4a0;--gold:#8a5c20;--gold-l:#a07030;--gold-d:#c4a870;
   --text:#1a0e04;--text-d:#4a3418;--text-m:#7a6040;--accent:#3a7860;--red:#a03020;
+}
+.sepia{
+  --bg:#efe4cf;--bg2:#e7d9be;--bg3:#ddccaa;--surface:#f5ecd8;
+  --border:#cdb890;--gold:#8a5a1c;--gold-l:#a5732a;--gold-d:#b89a68;
+  --text:#3a2a17;--text-d:#5f4526;--text-m:#8a6f4a;--accent:#4a7860;--red:#9a3520;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;height:100dvh;overflow:hidden}
@@ -115,7 +121,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 }
 
 .vnum{font-family:'Crimson Pro',serif;font-size:11px;font-weight:600;color:var(--gold-d);min-width:22px;padding-top:3px;text-align:right;flex-shrink:0;user-select:none}
-.vtxt{font-family:'Crimson Pro',serif;font-size:var(--font-v);line-height:var(--line-v);color:var(--text)}
+.vtxt{font-family:var(--reader-font);font-size:var(--font-v);line-height:var(--line-v);color:var(--text)}
 .vnote-chip{font-size:11px;color:var(--accent);margin-top:4px;padding:2px 6px;background:rgba(122,184,160,.12);border-radius:4px;display:inline-block;cursor:pointer}
 
 /* ─── MULTI-SELECT ACTION BAR ─── */
@@ -1469,7 +1475,16 @@ body.light #home-watermark{
           <div class="set-lbl">Theme</div>
           <div class="set-ctrl" id="set-theme">
             <button class="set-seg" data-v="light" onclick="setTheme('light')">☀ Day</button>
+            <button class="set-seg" data-v="sepia" onclick="setTheme('sepia')">◑ Sepia</button>
             <button class="set-seg" data-v="dark" onclick="setTheme('dark')">☾ Night</button>
+          </div>
+        </div>
+        <div class="set-row col">
+          <div class="set-lbl">Reading font</div>
+          <div class="set-ctrl" id="set-ff">
+            <button class="set-seg" data-v="serif" onclick="setFontFamily('serif')" style="font-family:'Crimson Pro',serif">Serif</button>
+            <button class="set-seg" data-v="sans" onclick="setFontFamily('sans')" style="font-family:'Inter',sans-serif">Sans</button>
+            <button class="set-seg" data-v="classic" onclick="setFontFamily('classic')" style="font-family:Georgia,serif">Classic</button>
           </div>
         </div>
         <div class="set-row col">
@@ -1835,6 +1850,7 @@ const S={
   notes:LS.get('kjv_notes',{}),
   fontSize:LS.get('kjv_fs',18),
   lineSpacing:LS.get('kjv_ls',1.78),
+  fontFamily:LS.get('kjv_ff','serif'),
   theme:LS.get('kjv_theme','dark'),
   lastPos:LS.get('kjv_last',null),
   cache:{},
@@ -1927,8 +1943,9 @@ const VOD=[
 
 /* ════ INIT ════ */
 document.addEventListener('DOMContentLoaded',()=>{
-  if(S.theme==='light') document.body.classList.add('light');
-  S.cardTheme = S.theme==='light'?'light':'dark';
+  applyTheme(S.theme);
+  applyFontFamily(S.fontFamily);
+  S.cardTheme = (S.theme==='light'||S.theme==='sepia')?'light':'dark';
   applyFont(S.fontSize);
   applyLineSpacing(S.lineSpacing);
   buildBooks();
@@ -7160,7 +7177,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history','kjv_ls'
+  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_ff'
 ];
 
 let _db = null;
@@ -7367,16 +7384,32 @@ function applyLineSpacing(v){
   document.querySelectorAll('#set-ls .set-seg').forEach(b=>b.classList.toggle('on', parseFloat(b.dataset.v)===v));
 }
 function setLineSpacing(v){ applyLineSpacing(v); LS.set('kjv_ls', v); fbSyncSoon(); }
-function setTheme(mode){
-  S.theme=mode; LS.set('kjv_theme',mode); fbSyncSoon();
-  document.body.classList.toggle('light', mode==='light');
-  document.getElementById('theme-color-meta').content = mode==='light' ? '#f7f2e8' : '#0e0800';
+const THEME_BG={dark:'#0e0800',light:'#f7f2e8',sepia:'#efe4cf'};
+function applyTheme(mode){
+  document.body.classList.remove('light','sepia');
+  if(mode==='light') document.body.classList.add('light');
+  else if(mode==='sepia') document.body.classList.add('sepia');
+  const m=document.getElementById('theme-color-meta'); if(m) m.content=THEME_BG[mode]||THEME_BG.dark;
   document.querySelectorAll('#set-theme .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===mode));
 }
+function setTheme(mode){ S.theme=mode; LS.set('kjv_theme',mode); fbSyncSoon(); applyTheme(mode); }
+
+const READER_FONTS={
+  serif:"'Crimson Pro',Georgia,serif",
+  sans:"'Inter',system-ui,-apple-system,sans-serif",
+  classic:"Georgia,'Times New Roman',serif"
+};
+function applyFontFamily(k){
+  S.fontFamily=k;
+  document.documentElement.style.setProperty('--reader-font', READER_FONTS[k]||READER_FONTS.serif);
+  document.querySelectorAll('#set-ff .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===k));
+}
+function setFontFamily(k){ applyFontFamily(k); LS.set('kjv_ff',k); fbSyncSoon(); }
 function openSettings(){
   // reflect current values into the controls
   const fl=document.getElementById('set-font-label'); if(fl) fl.textContent=S.fontSize;
   applyLineSpacing(S.lineSpacing);
+  applyFontFamily(S.fontFamily);
   document.querySelectorAll('#set-theme .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===S.theme));
   refreshAppVersion();
   setTimeout(checkOfflineStatus, 100);
