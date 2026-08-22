@@ -169,9 +169,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #s-status{color:var(--text-m);font-size:13px;padding:20px 0;text-align:center}
 
 /* ── SEARCH MODE BAR ── */
-.smode-bar{display:flex;gap:6px;margin-bottom:12px}
-.smode{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.smode-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.smode{flex:1 1 auto;min-width:92px;white-space:nowrap;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
 .smode.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
+/* Concordance (A–Z word index) */
+#concord-az{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 12px}
+.cz-btn{flex:0 0 auto;min-width:30px;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:6px 0;font-size:13px;font-weight:600;cursor:pointer}
+.cz-btn.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+#concord-list{display:flex;flex-direction:column}
+.cw-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;color:var(--text);font-family:'Crimson Pro',serif}
+.cw-row:hover{background:var(--surface)}
+.cw-word{font-size:16px;text-transform:capitalize}
+.cw-count{font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;flex-shrink:0;background:var(--surface);border-radius:10px;padding:2px 9px}
+.cw-count.on{color:var(--gold)}
 
 /* ── DOCTRINE BROWSER ── */
 .doc-cat{margin-bottom:8px}
@@ -1273,6 +1283,10 @@ body.light #home-watermark{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
           Dictionary
         </button>
+        <button class="smode" id="smode-concord" onclick="switchSearchMode('concord')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="17" x2="13" y2="17"/><line x1="3.5" y1="7" x2="3.5" y2="7"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="17" x2="3.5" y2="17"/></svg>
+          Concordance
+        </button>
         <button class="smode" id="smode-maps" onclick="switchSearchMode('maps')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21"/><line x1="8" y1="3" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="21"/></svg>
           Maps
@@ -1309,6 +1323,16 @@ body.light #home-watermark{
           Tip: While reading, tap any word in a verse to look it up instantly.
         </div>
         <div id="dict-results"></div>
+      </div>
+
+      <!-- Concordance panel (A–Z word index) -->
+      <div id="concord-panel" style="display:none">
+        <div class="s-wrap" style="margin-bottom:10px">
+          <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" id="concord-filter" placeholder="Filter words…" oninput="filterConcordance(this.value)" autocomplete="off">
+        </div>
+        <div id="concord-az"></div>
+        <div id="concord-list"><div id="s-status">Loading concordance…</div></div>
       </div>
 
       <!-- Maps panel -->
@@ -4144,9 +4168,11 @@ function switchSearchMode(mode, pushHistory=true){
   document.getElementById('search-panel').style.display   = mode==='search'   ? 'block':'none';
   document.getElementById('doctrine-panel').style.display = mode==='doctrine' ? 'block':'none';
   document.getElementById('dict-panel').style.display     = mode==='dict'     ? 'block':'none';
+  document.getElementById('concord-panel').style.display  = mode==='concord'  ? 'block':'none';
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   if(mode==='doctrine') renderDoctrines();
   if(mode==='dict') handleDictSearch('');
+  if(mode==='concord') renderConcordance();
   if(mode==='maps') renderMaps();
   if(pushHistory) history.pushState({screen:'search', searchMode:mode}, '', '');
 }
@@ -4193,6 +4219,82 @@ function closeMap(e){
 function mapZoom(dir){
   _mapZoom = Math.min(4, Math.max(1, _mapZoom + dir*0.5));
   document.getElementById('map-img').style.width = (_mapZoom*100)+'%';
+}
+
+/* ════ ENGLISH CONCORDANCE (A–Z word index) ════
+   A browsable alphabetical index of every meaningful KJV word with its
+   occurrence count. The index (concordance.json) is a prebuilt vocabulary
+   only — tapping a word hands off to the existing keyword search, which
+   already finds and lists every verse, so we never ship per-word verse
+   lists. */
+S._concordLetter = 'A';
+async function renderConcordance(){
+  const list = document.getElementById('concord-list');
+  if(!S._concord){
+    list.innerHTML = '<div id="s-status">Loading concordance…</div>';
+    try{
+      const r = await fetch('concordance.json');
+      if(!r.ok) throw new Error('http '+r.status);
+      S._concord = await r.json();
+    }catch(e){
+      list.innerHTML = '<div id="s-status">Concordance unavailable — check your connection.</div>';
+      return;
+    }
+    buildConcordAZ();
+  } else if(!document.getElementById('concord-az').children.length){
+    buildConcordAZ();
+  }
+  const filt = document.getElementById('concord-filter');
+  if(filt && filt.value.trim()) filterConcordance(filt.value);
+  else selectConcordLetter(S._concordLetter);
+}
+function buildConcordAZ(){
+  const az = document.getElementById('concord-az');
+  const letters = Object.keys(S._concord.letters).sort();
+  az.innerHTML = letters.map(L =>
+    `<button class="cz-btn${L===S._concordLetter?' on':''}" data-l="${L}" onclick="selectConcordLetter('${L}')">${L}</button>`
+  ).join('');
+}
+function selectConcordLetter(L){
+  if(!S._concord) return;
+  if(!S._concord.letters[L]){ L = Object.keys(S._concord.letters).sort()[0]; }
+  S._concordLetter = L;
+  const filt = document.getElementById('concord-filter');
+  if(filt) filt.value = '';
+  document.querySelectorAll('#concord-az .cz-btn').forEach(b=>b.classList.toggle('on', b.dataset.l===L));
+  renderConcordRows(S._concord.letters[L], `${S._concord.letters[L].length} words`);
+}
+function filterConcordance(q){
+  if(!S._concord) return;
+  q = q.trim().toLowerCase();
+  if(!q){ selectConcordLetter(S._concordLetter); return; }
+  document.querySelectorAll('#concord-az .cz-btn').forEach(b=>b.classList.remove('on'));
+  const CAP = 400;
+  const out = [];
+  const letters = Object.keys(S._concord.letters).sort();
+  // Prefix matches first (most relevant), then other substring matches.
+  for(const L of letters) for(const e of S._concord.letters[L]){ if(e[0].startsWith(q)){ out.push(e); if(out.length>=CAP) break; } }
+  if(out.length < CAP){
+    for(const L of letters) for(const e of S._concord.letters[L]){ if(!e[0].startsWith(q) && e[0].includes(q)){ out.push(e); if(out.length>=CAP) break; } }
+  }
+  const label = out.length>=CAP ? `First ${CAP} matches — keep typing to narrow` : `${out.length} match${out.length!==1?'es':''}`;
+  renderConcordRows(out, out.length ? label : 'No words match “'+q+'”');
+}
+function renderConcordRows(entries, label){
+  const list = document.getElementById('concord-list');
+  if(!entries.length){ list.innerHTML = `<div id="s-status">${label}</div>`; return; }
+  list.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${label}</div>`
+    + entries.map(e=>{
+        const w = e[0].replace(/'/g,"\\'");
+        return `<button class="cw-row" onclick="concordSearch('${w}')"><span class="cw-word">${e[0]}</span><span class="cw-count">${e[1]}</span></button>`;
+      }).join('');
+}
+// Hand a concordance word off to the existing keyword search.
+function concordSearch(word){
+  switchSearchMode('search');
+  const inp = document.getElementById('s-input');
+  if(inp) inp.value = word;
+  doSearch(word);
 }
 
 function normWord(w){ return w.toLowerCase().replace(/[^a-z ]/g,'').trim(); }
