@@ -211,6 +211,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .tab-panel{display:none}
 .tab-panel.on{display:block}
 .sv-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all .15s;margin-bottom:8px}
+.sv-book-hd{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);margin:16px 2px 8px;padding-bottom:5px;border-bottom:1px solid var(--border);letter-spacing:.02em}
+.sv-book-hd:first-child{margin-top:2px}
+#saved-search{width:100%;box-sizing:border-box;margin-bottom:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:14px;font-family:'Inter',sans-serif}
+#saved-search:focus{outline:none;border-color:var(--gold)}
 .sv-card:active{background:var(--bg3)}
 .sv-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .sv-info{flex:1}
@@ -1273,6 +1277,7 @@ body.light #home-watermark{
   <!-- SAVED -->
   <div class="screen" id="screen-saved">
     <div style="padding:12px">
+      <input id="saved-search" type="search" inputmode="search" autocomplete="off" placeholder="Search your saved verses…" oninput="renderSaved()">
       <div class="tab-bar">
         <div class="tab on" id="tab-bm" onclick="switchTab('bm')">🔖 Bookmarks</div>
         <div class="tab" id="tab-hl" onclick="switchTab('hl')">🎨 Highlights</div>
@@ -4034,9 +4039,58 @@ function switchTab(n){S.activeTab=n;document.querySelectorAll('.tab').forEach(t=
 function renderSaved(){renderBMPanel();renderHLPanel();renderNTPanel();}
 const HL_COL={y:'rgba(255,220,60,.6)',g:'rgba(80,200,120,.6)',b:'rgba(80,160,255,.6)',p:'rgba(200,100,200,.6)'};
 const HL_NM={y:'Yellow',g:'Green',b:'Blue',p:'Purple'};
-function renderBMPanel(){const el=document.getElementById('panel-bm');if(!S.bookmarks.length){el.innerHTML='<div class="empty-msg">No bookmarks yet.<br>Tap a verse while reading to bookmark it.</div>';return;}el.innerHTML=S.bookmarks.map((b,i)=>`<div class="sv-card"><div class="sv-dot" style="background:var(--gold)"></div><div class="sv-info" onclick="jumpToRef('${b.ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${b.ref}</div><div class="sv-prev">${b.text}</div></div><button class="sv-del" onclick="delBM(${i})">✕</button></div>`).join('');}
-function renderHLPanel(){const el=document.getElementById('panel-hl');const entries=Object.entries(S.highlights);if(!entries.length){el.innerHTML='<div class="empty-msg">No highlighted verses yet.<br>Tap a verse → choose a highlight color.</div>';return;}el.innerHTML=entries.map(([ref,c])=>`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref} <span style="opacity:.6;font-size:9px">${HL_NM[c]}</span></div><div class="sv-prev">${S.bookmarks.find(b=>b.ref===ref)?.text||'…'}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
-function renderNTPanel(){const el=document.getElementById('panel-nt');const entries=Object.entries(S.notes);if(!entries.length){el.innerHTML='<div class="empty-msg">No notes yet.<br>Tap a verse → Note to write one.</div>';return;}el.innerHTML='<button onclick="exportNotesText()" style="width:100%;margin-bottom:10px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:\'Inter\',sans-serif">📤 Share My Notes as Text</button>'+entries.map(([ref,note])=>`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref}</div><div class="sv-prev">${escapeHtml(note)}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`).join('');}
+// Saved-screen ordering: put entries in Bible order (book → chapter → verse)
+// and break them into per-book sections. An optional search filters by ref/text.
+function canonKey(ref){
+  const m = String(ref).match(/^(.+) (\d+):(\d+)/);
+  if(!m) return [999,0,0];
+  const bi = BOOKS.indexOf(m[1]==='Psalm' ? 'Psalms' : m[1]);
+  return [bi<0?999:bi, +m[2], +m[3]];
+}
+function savedQuery(){ return (document.getElementById('saved-search')?.value||'').trim().toLowerCase(); }
+function groupByBook(entries){
+  const q = savedQuery();
+  let list = entries.map(e => ({ ...e, key: canonKey(e.ref) }));
+  if(q) list = list.filter(e => (e.ref+' '+(e.text||'')).toLowerCase().includes(q));
+  list.sort((a,b)=> a.key[0]-b.key[0] || a.key[1]-b.key[1] || a.key[2]-b.key[2]);
+  let html='', cur=null;
+  for(const e of list){
+    const book = e.key[0] < BOOKS.length ? BOOKS[e.key[0]] : 'Other';
+    if(book!==cur){ cur=book; html += `<div class="sv-book-hd">${book}</div>`; }
+    html += e.card;
+  }
+  return { html, count:list.length };
+}
+function renderBMPanel(){
+  const el=document.getElementById('panel-bm');
+  if(!S.bookmarks.length){el.innerHTML='<div class="empty-msg">No bookmarks yet.<br>Tap a verse while reading to bookmark it.</div>';return;}
+  const entries=S.bookmarks.map((b,i)=>({ref:b.ref,text:b.text,
+    card:`<div class="sv-card"><div class="sv-dot" style="background:var(--gold)"></div><div class="sv-info" onclick="jumpToRef('${b.ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${b.ref}</div><div class="sv-prev">${b.text}</div></div><button class="sv-del" onclick="delBM(${i})">✕</button></div>`}));
+  const {html,count}=groupByBook(entries);
+  el.innerHTML = count ? html : `<div class="empty-msg">No bookmarks match &ldquo;${escapeHtml(savedQuery())}&rdquo;.</div>`;
+}
+function renderHLPanel(){
+  const el=document.getElementById('panel-hl');
+  const entries0=Object.entries(S.highlights);
+  if(!entries0.length){el.innerHTML='<div class="empty-msg">No highlighted verses yet.<br>Tap a verse → choose a highlight color.</div>';return;}
+  const entries=entries0.map(([ref,c])=>{
+    const prev=S.bookmarks.find(b=>b.ref===ref)?.text||'…';
+    return {ref,text:prev+' '+HL_NM[c],
+      card:`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref} <span style="opacity:.6;font-size:9px">${HL_NM[c]}</span></div><div class="sv-prev">${prev}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`};
+  });
+  const {html,count}=groupByBook(entries);
+  el.innerHTML = count ? html : `<div class="empty-msg">No highlights match &ldquo;${escapeHtml(savedQuery())}&rdquo;.</div>`;
+}
+function renderNTPanel(){
+  const el=document.getElementById('panel-nt');
+  const entries0=Object.entries(S.notes);
+  if(!entries0.length){el.innerHTML='<div class="empty-msg">No notes yet.<br>Tap a verse → Note to write one.</div>';return;}
+  const exportBtn='<button onclick="exportNotesText()" style="width:100%;margin-bottom:10px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:\'Inter\',sans-serif">📤 Share My Notes as Text</button>';
+  const entries=entries0.map(([ref,note])=>({ref,text:note,
+    card:`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref}</div><div class="sv-prev">${escapeHtml(note)}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`}));
+  const {html,count}=groupByBook(entries);
+  el.innerHTML = exportBtn + (count ? html : `<div class="empty-msg">No notes match &ldquo;${escapeHtml(savedQuery())}&rdquo;.</div>`);
+}
 
 // Human-readable notes export (the backup code is for machines) — canonical
 // book order, "reference / note text" pairs, via share sheet or clipboard.
