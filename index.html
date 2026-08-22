@@ -2002,11 +2002,11 @@ async function loadVOD(){
     vodMeta={book:r.b,ch:r.c-1,data};
   }catch(e){}
 }
-async function jumpVOD(){if(!vodMeta)return;S.book=vodMeta.book;S.ch=vodMeta.ch;S.bookData=vodMeta.data;renderReader();showScreen('reader');}
+async function jumpVOD(){if(!vodMeta)return;S.book=vodMeta.book;S.ch=vodMeta.ch;S.bookData=vodMeta.data;renderReader();showScreen('reader');recordActivity();}
 async function openHistoryChapter(book, ch){
   const data=await fetchBook(book);if(!data)return;
   S.book=book;S.ch=ch;S.bookData=data;
-  renderReader();showScreen('reader');
+  renderReader();showScreen('reader');recordActivity();
 }
 async function continueReading(){
   if(!S.lastPos)return;
@@ -6355,6 +6355,9 @@ function scourbyInit(){
   if(!audio) return;
   audio.addEventListener('timeupdate', scourbyTimeUpdate);
   audio.addEventListener('ended', scourbyOnEnded);
+  // Listening to the audio counts as reading for the day's streak. Fires on
+  // every play/resume; recordActivity() no-ops after the first credit today.
+  audio.addEventListener('play', () => { recordActivity(); });
   audio.addEventListener('error', ()=>{
     document.getElementById('sb-label').textContent = 'Audio error — check connection';
   });
