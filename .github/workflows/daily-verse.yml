@@ -2,9 +2,11 @@ name: Daily Verse of the Day
 
 on:
   schedule:
-    # 8:00 AM Eastern Daylight Time (EDT = UTC-4, Mar-Nov)
-    # Change to '0 13 * * *' for EST (UTC-5, Nov-Mar)
-    - cron: '0 12 * * *'
+    # Fire at 10:00 UTC (early morning across the US), then let OneSignal
+    # deliver at 8:00 AM in each subscriber's OWN timezone via
+    # delayed_option=timezone. Sending before 8 AM Eastern guarantees the
+    # verse still goes out the same calendar day for every US timezone.
+    - cron: '0 10 * * *'
   workflow_dispatch:
 
 jobs:
@@ -62,6 +64,8 @@ jobs:
               \"contents\": {\"en\": \"$VERSE_TEXT\"},
               \"url\": \"https://fbckjv.app\",
               \"chrome_web_icon\": \"https://fbckjv.app/apple-touch-icon.png\",
+              \"delayed_option\": \"timezone\",
+              \"delivery_time_of_day\": \"8:00AM\",
               \"ttl\": 86400
             }")
 
