@@ -2049,6 +2049,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   loadVOD();
   setTimeout(()=>document.getElementById('loader').classList.add('gone'),700);
   setTimeout(showWelcomeIfNeeded, 1200);
+  setTimeout(showWhatsNewIfNeeded, 1400);
   setTimeout(notifBannerCheck, 2000);
 });
 
@@ -7386,6 +7387,30 @@ function showWelcomeIfNeeded(){
   modal.style.display = 'flex';
 }
 
+// One-time "What's New" announcement. Bump WHATS_NEW_VERSION whenever there's
+// a fresh batch of features to announce; each version shows at most once.
+const WHATS_NEW_VERSION = 'v22';
+function showWhatsNewIfNeeded(){
+  if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
+  // Brand-new users are seeing everything for the first time and get the
+  // onboarding flow instead — mark this batch seen so it never pops for them.
+  if(!localStorage.getItem('kjv_rc')){
+    localStorage.setItem('kjv_whatsnew', WHATS_NEW_VERSION);
+    return;
+  }
+  // Don't stack on top of the onboarding modal if it happens to be open.
+  const ob = document.getElementById('onboard-modal');
+  if(ob && ob.style.display === 'flex') return;
+  const modal = document.getElementById('whatsnew-modal');
+  if(!modal) return;
+  modal.style.display = 'flex';
+}
+function dismissWhatsNew(){
+  localStorage.setItem('kjv_whatsnew', WHATS_NEW_VERSION);
+  const modal = document.getElementById('whatsnew-modal');
+  if(modal) modal.style.display = 'none';
+}
+
 function obChooseNew(){
   // Generate code now if not yet (fbInit may still be running)
   if(!localStorage.getItem('kjv_rc')){
@@ -7850,6 +7875,61 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       </button>
     </div>
 
+  </div>
+</div>
+
+<!-- WHAT'S NEW (shown once per version to returning users) -->
+<div id="whatsnew-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);
+  z-index:905;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:18px;
+    max-width:440px;width:100%;padding:24px 22px 20px;max-height:90vh;overflow-y:auto;position:relative">
+    <button onclick="dismissWhatsNew()" aria-label="Close"
+      style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-m);
+      font-size:22px;line-height:1;cursor:pointer;padding:4px">✕</button>
+
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:32px;margin-bottom:6px">✨</div>
+      <div style="font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">What's New</div>
+      <div style="font-size:12px;color:var(--text-m);margin-top:4px">Three new ways to dig into the Word</div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📇</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">English Concordance</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Browse every KJV word from A&ndash;Z with its verse count, then tap any word to see where it appears.
+          Find it under <strong>Search &rarr; Concordance</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📌</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Your Own Memory Verses</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Add any verse you choose to <strong>My Verses</strong> in the Sword Drill &mdash; they earn streaks and badges just like the built-in packs.
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔊</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Audio Sleep Timer &amp; Auto-Play</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Drift off with the 🌙 sleep timer on the player, or turn on <strong>Auto-play next chapter</strong> in Settings to keep listening.
+        </div>
+      </div>
+    </div>
+
+    <button onclick="dismissWhatsNew()"
+      style="width:100%;background:linear-gradient(135deg,#6A4510,#A87828);color:#FFE898;
+      border:none;border-radius:10px;padding:13px;font-family:'IM Fell English',serif;
+      font-size:16px;cursor:pointer;margin-top:18px">
+      Start exploring ⚔️
+    </button>
   </div>
 </div>
 </body>
