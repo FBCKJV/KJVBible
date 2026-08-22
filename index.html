@@ -215,6 +215,21 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .sv-book-hd:first-child{margin-top:2px}
 #saved-search{width:100%;box-sizing:border-box;margin-bottom:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:14px;font-family:'Inter',sans-serif}
 #saved-search:focus{outline:none;border-color:var(--gold)}
+/* Maps */
+#maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.map-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
+.map-card:active{opacity:.7}
+.map-card img{width:100%;height:110px;object-fit:cover;object-position:top;display:block;background:#efe6cf}
+.map-card .mc-t{font-size:12.5px;font-weight:600;color:var(--gold);padding:8px 10px 2px;line-height:1.25}
+.map-card .mc-d{font-size:11px;color:var(--text-m);padding:0 10px 10px;line-height:1.3}
+#map-overlay{position:fixed;inset:0;z-index:400;background:rgba(10,7,2,.94);display:none;flex-direction:column}
+#map-overlay.on{display:flex}
+#map-bar{display:flex;align-items:center;gap:8px;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top,0px));border-bottom:1px solid rgba(255,255,255,.12);flex-shrink:0}
+#map-title{flex:1;color:#f0e6d0;font-family:'IM Fell English',serif;font-size:15px;line-height:1.2;min-width:0}
+.map-zbtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#f0e6d0;width:36px;height:36px;border-radius:8px;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.map-zbtn:active{background:rgba(255,255,255,.2)}
+#map-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;display:flex;align-items:flex-start;justify-content:center}
+#map-img{display:block;width:100%;height:auto;image-rendering:auto}
 .sv-card:active{background:var(--bg3)}
 .sv-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .sv-info{flex:1}
@@ -1234,6 +1249,10 @@ body.light #home-watermark{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
           Dictionary
         </button>
+        <button class="smode" id="smode-maps" onclick="switchSearchMode('maps')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21"/><line x1="8" y1="3" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="21"/></svg>
+          Maps
+        </button>
       </div>
 
       <!-- Text search panel -->
@@ -1267,7 +1286,26 @@ body.light #home-watermark{
         </div>
         <div id="dict-results"></div>
       </div>
+
+      <!-- Maps panel -->
+      <div id="maps-panel" style="display:none">
+        <div style="font-size:12px;color:var(--text-m);margin-bottom:12px;font-style:italic">
+          Public-domain Bible maps from a 19th-century atlas. Tap a map to open it full-screen — pinch or use +/− to zoom.
+        </div>
+        <div id="maps-grid"></div>
+      </div>
     </div>
+  </div>
+
+  <!-- Full-screen map viewer -->
+  <div id="map-overlay" onclick="closeMap(event)">
+    <div id="map-bar">
+      <div id="map-title"></div>
+      <button class="map-zbtn" onclick="event.stopPropagation();mapZoom(-1)" aria-label="Zoom out">−</button>
+      <button class="map-zbtn" onclick="event.stopPropagation();mapZoom(1)" aria-label="Zoom in">＋</button>
+      <button class="map-zbtn" onclick="closeMap()" aria-label="Close">✕</button>
+    </div>
+    <div id="map-scroll"><img id="map-img" alt=""></div>
   </div>
 
   <!-- READING PLANS -->
@@ -2802,6 +2840,14 @@ window.addEventListener('popstate', e => {
     return;
   }
 
+  // Close the full-screen map viewer if open
+  const mapOv=document.getElementById('map-overlay');
+  if(mapOv && mapOv.classList.contains('on')){
+    mapOv.classList.remove('on');
+    document.getElementById('map-img').src='';
+    return;
+  }
+
   if(!state){ 
     if(S.screen !== 'books') showScreen('books', false);
     history.pushState({screen:'books'}, '', '');
@@ -3931,9 +3977,53 @@ function switchSearchMode(mode, pushHistory=true){
   document.getElementById('search-panel').style.display   = mode==='search'   ? 'block':'none';
   document.getElementById('doctrine-panel').style.display = mode==='doctrine' ? 'block':'none';
   document.getElementById('dict-panel').style.display     = mode==='dict'     ? 'block':'none';
+  document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   if(mode==='doctrine') renderDoctrines();
   if(mode==='dict') handleDictSearch('');
+  if(mode==='maps') renderMaps();
   if(pushHistory) history.pushState({screen:'search', searchMode:mode}, '', '');
+}
+
+// ── Bible maps (public-domain 19th-century atlas plates) ──
+const MAPS=[
+  {f:'twelve-tribes',  t:'Canaan Divided Among the Twelve Tribes', d:'The Promised Land after the Conquest'},
+  {f:'david-solomon',  t:'The Dominion of David & Solomon',        d:'Israel at its greatest extent'},
+  {f:'exodus-sinai',   t:'The Exodus & Wilderness Wanderings',     d:'From Egypt to the Promised Land'},
+  {f:'divided-kingdom',t:'The Kingdoms of Judah & Israel',         d:'The divided monarchy'},
+  {f:'assyria',        t:'Assyria & the Adjacent Lands',           d:'The patriarchal age and the captivities'},
+  {f:'palestine-nt',   t:'Palestine in the Time of Christ',        d:'The Holy Land in the Gospels'},
+  {f:'jerusalem',      t:'Plan of Ancient Jerusalem',              d:'The city in Bible times'},
+  {f:'pauls-journeys', t:"Paul's Missionary Journeys",             d:"Across the Roman world"},
+];
+function renderMaps(){
+  const el=document.getElementById('maps-grid');
+  if(el.dataset.done) return; // static — render once
+  el.innerHTML = MAPS.map((m,i)=>
+    `<div class="map-card" onclick="openMap(${i})">`
+    +`<img src="maps/${m.f}.jpg" alt="${m.t}" loading="lazy">`
+    +`<div class="mc-t">${m.t}</div><div class="mc-d">${m.d}</div></div>`
+  ).join('');
+  el.dataset.done='1';
+}
+let _mapZoom=1;
+function openMap(i){
+  const m=MAPS[i]; if(!m) return;
+  _mapZoom=1;
+  document.getElementById('map-title').textContent=m.t;
+  const img=document.getElementById('map-img');
+  img.style.width='100%';
+  img.src=`maps/${m.f}.jpg`;
+  document.getElementById('map-scroll').scrollTop=0;
+  document.getElementById('map-overlay').classList.add('on');
+  history.pushState({screen:S.screen, modal:'map'}, '', '');
+}
+function closeMap(e){
+  if(e && e.target && e.target.id!=='map-overlay') return; // ignore clicks on the image/bar
+  history.back();
+}
+function mapZoom(dir){
+  _mapZoom = Math.min(4, Math.max(1, _mapZoom + dir*0.5));
+  document.getElementById('map-img').style.width = (_mapZoom*100)+'%';
 }
 
 function normWord(w){ return w.toLowerCase().replace(/[^a-z ]/g,'').trim(); }
