@@ -21,7 +21,7 @@
   --bg:#0e0800;--bg2:#1a1005;--bg3:#251808;--surface:#1e1206;
   --border:#3d2a10;--gold:#c9943a;--gold-l:#e8b860;--gold-d:#7a5520;
   --text:#f5ede0;--text-d:#b8956a;--text-m:#7a6048;
-  --accent:#7ab8a0;--red:#c05040;--nav-h:56px;--font-v:18px;
+  --accent:#7ab8a0;--red:#c05040;--nav-h:56px;--font-v:18px;--line-v:1.78;
   --hl-y:rgba(255,220,60,.28);--hl-g:rgba(80,200,120,.22);
   --hl-b:rgba(80,160,255,.22);--hl-p:rgba(200,100,200,.22);
 }
@@ -115,7 +115,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 }
 
 .vnum{font-family:'Crimson Pro',serif;font-size:11px;font-weight:600;color:var(--gold-d);min-width:22px;padding-top:3px;text-align:right;flex-shrink:0;user-select:none}
-.vtxt{font-family:'Crimson Pro',serif;font-size:var(--font-v);line-height:1.78;color:var(--text)}
+.vtxt{font-family:'Crimson Pro',serif;font-size:var(--font-v);line-height:var(--line-v);color:var(--text)}
 .vnote-chip{font-size:11px;color:var(--accent);margin-top:4px;padding:2px 6px;background:rgba(122,184,160,.12);border-radius:4px;display:inline-block;cursor:pointer}
 
 /* ─── MULTI-SELECT ACTION BAR ─── */
@@ -748,13 +748,25 @@ body.light #home-watermark{
 #books-inner{position:relative;z-index:1}
 
 /* ── TIPS SHEET ── */
-#tips-sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:490;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
-#tips-sheet.on{display:flex}
-#tips-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:700px;max-height:85vh;display:flex;flex-direction:column;animation:su .25s ease;padding-bottom:env(safe-area-inset-bottom,0px)}
-#tips-hdr{display:flex;align-items:center;padding:16px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
-#tips-hdr-title{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);flex:1}
-#tips-close{background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;line-height:1;padding:4px}
-#tips-body{overflow-y:auto;padding:14px 18px 20px;display:flex;flex-direction:column;gap:10px}
+#tips-sheet,#settings-sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:490;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+#tips-sheet.on,#settings-sheet.on{display:flex}
+#tips-inner,#settings-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:700px;max-height:85vh;display:flex;flex-direction:column;animation:su .25s ease;padding-bottom:env(safe-area-inset-bottom,0px)}
+#tips-hdr,#settings-hdr{display:flex;align-items:center;padding:16px 18px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
+#tips-hdr-title,#settings-hdr-title{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);flex:1}
+#tips-close,#settings-close{background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;line-height:1;padding:4px}
+#tips-body,#settings-body{overflow-y:auto;padding:14px 18px 20px;display:flex;flex-direction:column;gap:10px}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.set-row:last-child{border-bottom:none}
+.set-row.col{flex-direction:column;align-items:stretch;gap:9px}
+.set-row.col .set-ctrl{width:100%}
+.set-row.col .set-seg{flex:1;text-align:center}
+.set-lbl{font-size:14px;color:var(--text)}
+.set-lbl small{display:block;font-size:11px;color:var(--text-m);margin-top:2px}
+.set-ctrl{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.set-seg{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+.set-seg.on{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:600}
+.set-step{background:var(--surface);border:1px solid var(--border);color:var(--text-d);width:34px;height:34px;border-radius:8px;font-size:16px;cursor:pointer}
+#set-font-label{min-width:26px;text-align:center;font-variant-numeric:tabular-nums;color:var(--gold);font-weight:600}
 .tips-section{margin-bottom:4px}
 .tips-section-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 .tip-row{display:flex;align-items:flex-start;gap:10px;padding:6px 0}
@@ -1141,17 +1153,10 @@ body.light #home-watermark{
   <button id="share-btn" onclick="showSharePop()" title="Share this app">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
   </button>
-  <button class="hbtn" onclick="toggleFP('fp-font')">Aa</button>
   <div id="streak-badge" onclick="showStreakInfo()" title="Reading streak">🔥<span id="streak-num">0</span></div>
-  <button class="hbtn" onclick="toggleTheme()">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+  <button class="hbtn" onclick="openSettings()" title="Settings">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
   </button>
-</div>
-
-<div id="fp-font">
-  <button class="fp-btn" onclick="changeFont(-1)">A−</button>
-  <span id="fp-label">17</span>
-  <button class="fp-btn" onclick="changeFont(1)">A+</button>
 </div>
 
 <!-- HINT -->
@@ -1482,6 +1487,49 @@ body.light #home-watermark{
   </div>
 </div>
 
+<!-- Settings sheet -->
+<div id="settings-sheet" onclick="closeSettings(event)">
+  <div id="settings-inner">
+    <div id="settings-hdr">
+      <div id="settings-hdr-title">⚙ Settings</div>
+      <button id="settings-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div id="settings-body">
+      <div class="tips-section">
+        <div class="tips-section-lbl">🖋️ Display</div>
+        <div class="set-row">
+          <div class="set-lbl">Text size</div>
+          <div class="set-ctrl">
+            <button class="set-step" onclick="changeFont(-1)" aria-label="Smaller text">A−</button>
+            <span id="set-font-label">18</span>
+            <button class="set-step" onclick="changeFont(1)" aria-label="Larger text">A+</button>
+          </div>
+        </div>
+        <div class="set-row col">
+          <div class="set-lbl">Theme</div>
+          <div class="set-ctrl" id="set-theme">
+            <button class="set-seg" data-v="light" onclick="setTheme('light')">☀ Day</button>
+            <button class="set-seg" data-v="dark" onclick="setTheme('dark')">☾ Night</button>
+          </div>
+        </div>
+        <div class="set-row col">
+          <div class="set-lbl">Line spacing</div>
+          <div class="set-ctrl" id="set-ls">
+            <button class="set-seg" data-v="1.55" onclick="setLineSpacing(1.55)">Compact</button>
+            <button class="set-seg" data-v="1.78" onclick="setLineSpacing(1.78)">Normal</button>
+            <button class="set-seg" data-v="2.05" onclick="setLineSpacing(2.05)">Relaxed</button>
+          </div>
+        </div>
+      </div>
+      <div class="tips-section">
+        <div class="tips-section-lbl">ℹ️ About</div>
+        <div class="set-row"><div class="set-lbl">Version</div><div class="set-ctrl" id="settings-version" style="color:var(--text-m)">—</div></div>
+        <div style="font-size:12px;color:var(--text-m);line-height:1.5;margin-top:6px">Notifications, offline download, and your restore code are in the <strong>?</strong> Help menu for now — they'll move here soon.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- VERSE MEMORY OVERLAY -->
 <div id="mem-overlay">
   <div id="mem-hdr">
@@ -1785,6 +1833,7 @@ const S={
   highlights:LS.get('kjv_hl',{}),
   notes:LS.get('kjv_notes',{}),
   fontSize:LS.get('kjv_fs',18),
+  lineSpacing:LS.get('kjv_ls',1.78),
   theme:LS.get('kjv_theme','dark'),
   lastPos:LS.get('kjv_last',null),
   cache:{},
@@ -1880,6 +1929,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(S.theme==='light') document.body.classList.add('light');
   S.cardTheme = S.theme==='light'?'light':'dark';
   applyFont(S.fontSize);
+  applyLineSpacing(S.lineSpacing);
   buildBooks();
   loadStreak();
   fbInit();
@@ -2875,6 +2925,13 @@ window.addEventListener('popstate', e => {
   if(mapOv && mapOv.classList.contains('on')){
     mapOv.classList.remove('on');
     document.getElementById('map-img').src='';
+    return;
+  }
+
+  // Close the Settings sheet if open
+  const setSheet=document.getElementById('settings-sheet');
+  if(setSheet && setSheet.classList.contains('on')){
+    setSheet.classList.remove('on');
     return;
   }
 
@@ -7093,10 +7150,10 @@ function refreshAppVersion(){
     const nums = keys
       .filter(k => /^fbckjv-bible-v\d+$/.test(k))
       .map(k => parseInt(k.replace('fbckjv-bible-v',''), 10));
-    const el = document.getElementById('tips-version');
-    if(!el) return;
     if(!nums.length){ setTimeout(refreshAppVersion, 2000); return; }
-    el.textContent = 'v' + Math.max(...nums);
+    const v = 'v' + Math.max(...nums);
+    const el = document.getElementById('tips-version'); if(el) el.textContent = v;
+    const sv = document.getElementById('settings-version'); if(sv) sv.textContent = v;
   });
 }
 
@@ -7105,7 +7162,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history'
+  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history','kjv_ls'
 ];
 
 let _db = null;
@@ -7302,8 +7359,35 @@ window.addEventListener('popstate', function(e){
 /* ════ SETTINGS ════ */
 function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
 document.addEventListener('click',e=>{if(!e.target.closest('[id^="fp-"]')&&!e.target.closest('.hbtn'))document.querySelectorAll('[id^="fp-"]').forEach(p=>p.classList.remove('on'));});
-function applyFont(sz){S.fontSize=sz;document.documentElement.style.setProperty('--font-v',sz+'px');document.getElementById('fp-label').textContent=sz;}
+function applyFont(sz){S.fontSize=sz;document.documentElement.style.setProperty('--font-v',sz+'px');const fl=document.getElementById('set-font-label');if(fl)fl.textContent=sz;}
 function changeFont(d){applyFont(Math.min(24,Math.max(13,S.fontSize+d)));LS.set('kjv_fs',S.fontSize);}
+
+/* ── Settings ── */
+function applyLineSpacing(v){
+  S.lineSpacing=v;
+  document.documentElement.style.setProperty('--line-v', v);
+  document.querySelectorAll('#set-ls .set-seg').forEach(b=>b.classList.toggle('on', parseFloat(b.dataset.v)===v));
+}
+function setLineSpacing(v){ applyLineSpacing(v); LS.set('kjv_ls', v); fbSyncSoon(); }
+function setTheme(mode){
+  S.theme=mode; LS.set('kjv_theme',mode); fbSyncSoon();
+  document.body.classList.toggle('light', mode==='light');
+  document.getElementById('theme-color-meta').content = mode==='light' ? '#f7f2e8' : '#0e0800';
+  document.querySelectorAll('#set-theme .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===mode));
+}
+function openSettings(){
+  // reflect current values into the controls
+  const fl=document.getElementById('set-font-label'); if(fl) fl.textContent=S.fontSize;
+  applyLineSpacing(S.lineSpacing);
+  document.querySelectorAll('#set-theme .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===S.theme));
+  refreshAppVersion();
+  document.getElementById('settings-sheet').classList.add('on');
+  history.pushState({screen:S.screen, modal:'settings'}, '', '');
+}
+function closeSettings(e){
+  if(e && e.target && e.target.id!=='settings-sheet') return;
+  history.back();
+}
 function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme',S.theme);document.body.classList.toggle('light',S.theme==='light');document.getElementById('theme-color-meta').content=S.theme==='light'?'#f7f2e8':'#0e0800';}
 </script>
 
