@@ -2,7 +2,7 @@
 // Bump CACHE_NAME on every meaningful deploy. The version number
 // is read by the app from caches.keys() and displayed in Tips & Help.
 
-const CACHE_NAME = 'fbckjv-bible-v20';
+const CACHE_NAME = 'fbckjv-bible-v21';
 
 // Bible maps — bundled static images, precached so they work offline.
 const MAP_ASSETS = [
