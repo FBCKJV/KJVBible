@@ -4,9 +4,12 @@
 //   node tools/build-concordance.js
 //
 // The concordance is a vocabulary-only index: every meaningful word (≥3
-// letters, common function words excluded) grouped by first letter with its
-// total occurrence count. The app hands each word off to its existing
-// keyword search to list verses, so no per-word verse lists are stored.
+// letters, common function words excluded) grouped by first letter with a
+// count of the DISTINCT VERSES it appears in. The app hands each word off to
+// its keyword search in exact whole-word mode, which lists exactly those
+// verses — so the stored count always equals the number of results shown.
+// (Counting verses, not raw occurrences, is what keeps the two in step: a
+// verse containing a word twice still shows up once in the results.)
 // The STOP set below is kept in sync with the one in index.html.
 
 const fs = require('fs');
@@ -23,8 +26,11 @@ for (const b of BOOKS) {
   const d = JSON.parse(fs.readFileSync(path.join(bibleDir, b + '.json'), 'utf8'));
   for (const ch of d.chapters) for (const v of ch.verses) {
     const words = v.text.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/);
+    // Count each qualifying word once per verse (distinct-verse count).
+    const seen = new Set();
     for (const w of words) {
-      if (w.length < 3 || STOP.has(w)) continue;
+      if (w.length < 3 || STOP.has(w) || seen.has(w)) continue;
+      seen.add(w);
       counts.set(w, (counts.get(w) || 0) + 1);
     }
   }

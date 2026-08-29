@@ -3749,6 +3749,16 @@ function wordMatches(text, word) {
   return false;
 }
 
+// Exact whole-word match — no stemming, no substrings, no variants. Used by
+// the Concordance so "reign" returns only "reign", never "reigned",
+// "reigneth", or "sovereign". Regexes are cached per word.
+const _exactWordRe = {};
+function wordMatchesExact(text, word) {
+  let re = _exactWordRe[word];
+  if (!re) re = _exactWordRe[word] = new RegExp('\\b' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
+  return re.test(text);
+}
+
 // Testament filter state
 S.searchFilter = 'all';
 function setSearchFilter(f){
@@ -3903,6 +3913,11 @@ async function doSearch(raw) {
   // generation number; after every await, a run that is no longer current
   // bails out instead of mixing its results into the newer query's list.
   const gen = S._searchGen = (S._searchGen || 0) + 1;
+  // Exact-word mode is a one-shot flag set only by the Concordance handoff;
+  // consume it here so any subsequent typed search reverts to normal matching.
+  const exactMode = S._exactNext === true;
+  S._exactNext = false;
+  S._searchExact = exactMode; // persists for this result set (book-filter re-scan)
   // Strip trailing punctuation for reference check
   const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
   S._topicMatches = findTopicMatches(cleaned);
@@ -3976,11 +3991,12 @@ async function doSearch(raw) {
     if (gen !== S._searchGen) return; // a newer search started — abandon this one
     if (!data) continue;
 
+    const matchFn = exactMode ? wordMatchesExact : wordMatches;
     let bookCount = 0;
     for (const ch of data.chapters) {
       for (const v of ch.verses) {
         const txt = v.text.toLowerCase();
-        const matched = searchOn.filter(w => wordMatches(txt, w));
+        const matched = searchOn.filter(w => matchFn(txt, w));
         if (!matched.length) continue;
 
         // Proximity boost: keywords appearing close together score higher
@@ -4089,15 +4105,16 @@ async function showAllInBook(bookName){
   const data = await fetchBook(bookName);
   if(!data){ el.innerHTML = `<div id="s-status">Could not load ${bookName}</div>`; return; }
 
+  const matchFn = S._searchExact ? wordMatchesExact : wordMatches;
   const bookResults = [];
   for(const ch of data.chapters){
     for(const v of ch.verses){
       const txt = v.text.toLowerCase();
-      if(searchOn.every(w => wordMatches(txt, w))){
+      if(searchOn.every(w => matchFn(txt, w))){
         bookResults.push({
           ref: `${bookName} ${ch.chapter}:${v.verse}`,
           txt: v.text, book: bookName,
-          score: searchOn.filter(w=>wordMatches(txt,w)).length + (txt.includes(lower.slice(0,20))?5:0)
+          score: searchOn.filter(w=>matchFn(txt,w)).length + (txt.includes(lower.slice(0,20))?5:0)
         });
       }
     }
@@ -4295,11 +4312,14 @@ function renderConcordRows(entries, label){
         return `<button class="cw-row" onclick="concordSearch('${w}')"><span class="cw-word">${e[0]}</span><span class="cw-count">${e[1]}</span></button>`;
       }).join('');
 }
-// Hand a concordance word off to the existing keyword search.
+// Hand a concordance word off to the keyword search, in exact whole-word mode
+// so the results match the concordance's precise verse count (no stems, no
+// substrings). Editing the search box afterward reverts to normal matching.
 function concordSearch(word){
   switchSearchMode('search');
   const inp = document.getElementById('s-input');
   if(inp) inp.value = word;
+  S._exactNext = true;
   doSearch(word);
 }
 
