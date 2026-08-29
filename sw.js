@@ -1,8 +1,14 @@
 // FBC KJV Bible — Service Worker
-// Bump CACHE_NAME on every meaningful deploy. The version number
-// is read by the app from caches.keys() and displayed in Tips & Help.
+// Version scheme: fbckjv-bible-vMAJOR[.MINOR]
+//   • Feature release  → bump MAJOR (v23 → v24) AND WHATS_NEW_VERSION in
+//     index.html, so the "What's New" pop-up fires and the one-pagers get
+//     redone.
+//   • Bug-fix release   → add/raise MINOR (v24 → v24.01 → v24.02). Settings
+//     shows the full number so fixes are visible, but the pop-up stays quiet.
+// Bump CACHE_NAME on every deploy (either kind) — it invalidates the cache
+// and is read back by the app (refreshAppVersion) for the Settings display.
 
-const CACHE_NAME = 'fbckjv-bible-v24';
+const CACHE_NAME = 'fbckjv-bible-v23.01';
 
 // Bible maps + the concordance index — bundled static assets, precached so
 // they work offline.

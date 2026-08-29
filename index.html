@@ -7422,10 +7422,11 @@ function showWelcomeIfNeeded(){
   modal.style.display = 'flex';
 }
 
-// One-time "What's New" announcement. Keep WHATS_NEW_VERSION in step with the
-// service-worker release (sw.js CACHE_NAME) so one number tracks the whole app;
-// bump it whenever there's a fresh batch of features to announce (and redo the
-// one-page feature guide). Each version shows at most once.
+// One-time "What's New" announcement. This is the MAJOR version only — it
+// bumps solely on a feature release (v23 → v24), in step with the MAJOR half
+// of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
+// Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
+// so the pop-up never fires for a fix. Each major version shows at most once.
 const WHATS_NEW_VERSION = 'v23';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
@@ -7540,11 +7541,15 @@ const APP_VERSION = '';  // set dynamically by refreshAppVersion() from SW cache
 function refreshAppVersion(){
   if(!('caches' in window)) return;
   caches.keys().then(keys => {
-    const nums = keys
-      .filter(k => /^fbckjv-bible-v\d+$/.test(k))
-      .map(k => parseInt(k.replace('fbckjv-bible-v',''), 10));
-    if(!nums.length){ setTimeout(refreshAppVersion, 2000); return; }
-    const v = 'v' + Math.max(...nums);
+    // Cache names are fbckjv-bible-vMAJOR[.MINOR] (e.g. v24 or v24.01).
+    // Pick the highest by (major, minor) and show the full label, so a
+    // bug-fix point release like v24.01 is visible in Settings.
+    const parsed = keys
+      .map(k => /^fbckjv-bible-v(\d+)(?:\.(\d+))?$/.exec(k))
+      .filter(Boolean)
+      .map(m => ({ label: 'v' + m[1] + (m[2] ? '.' + m[2] : ''), rank: parseInt(m[1],10)*1000 + (m[2] ? parseInt(m[2],10) : 0) }));
+    if(!parsed.length){ setTimeout(refreshAppVersion, 2000); return; }
+    const v = parsed.reduce((a,b) => b.rank > a.rank ? b : a).label;
     const el = document.getElementById('tips-version'); if(el) el.textContent = v;
     const sv = document.getElementById('settings-version'); if(sv) sv.textContent = v;
   });
