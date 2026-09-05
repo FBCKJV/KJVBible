@@ -2945,7 +2945,7 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText, photo){
   const TEXT_Y  = RULE1_Y + BFONT + 18;
   const RULE2_Y = TEXT_Y + bodyH + 22;
   const KJV_Y   = RULE2_Y + 34;
-  const H       = KJV_Y + 36;
+  const H       = KJV_Y + 54;
   canvas.width = W * dpr; canvas.height = H * dpr;
   canvas.style.width  = Math.min(W * 0.9, 400) + 'px';
   canvas.style.height = Math.min(H * 0.9, 400 * H / W) + 'px';
@@ -3023,7 +3023,9 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo){
 
   ctx.textAlign = 'center'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
   ctx.font = `400 13px Georgia, serif`;
-  ctx.fillText('King James Version', W / 2, H - 40);
+  ctx.fillText('King James Version', W / 2, H - 42);
+  ctx.font = `400 12px Georgia, serif`;
+  ctx.fillText(CARD_CHURCH, W / 2, H - 24);
   ctx.globalAlpha = 1;
 
   // ── BODY — vertically centred in the space between the two rule pairs
@@ -3092,10 +3094,14 @@ function drawBody(ctx, lines, x, y, lineH, size, t){
   ctx.textAlign = 'left';
   lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineH));
 }
+const CARD_CHURCH = 'Faith Baptist Church of Plymouth County';
 function drawKJV(ctx, W, y, t){
   ctx.textAlign = 'center'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
   ctx.font = `400 13px Georgia, serif`;
-  ctx.fillText('King James Version', W / 2, y); ctx.globalAlpha = 1;
+  ctx.fillText('King James Version', W / 2, y);
+  ctx.font = `400 12px Georgia, serif`;
+  ctx.fillText(CARD_CHURCH, W / 2, y + 18);
+  ctx.globalAlpha = 1;
 }
 function drawCorners(ctx, PAD, W, H, t){
   ctx.font = '13px serif'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.38;
