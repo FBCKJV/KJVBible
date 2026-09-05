@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🖼️ Verse Image Cards on a Photo (v25)
+- Verse cards can now use a **photo background** instead of only a solid color
+- **Bundled scenic backgrounds** drawn in-app — Sunrise, Mountains, Ocean, Meadow, Starry night — no downloads, fully offline
+- **📷 Upload your own photo** — the verse is laid over your image with an automatic darkening scrim so the text stays readable
+- Works in both **Portrait (9:16, Stories/Reels/TikTok)** and **Landscape**
+- Uploaded photos are read on-device only and are never sent anywhere
+- Save or Share to socials with the existing card buttons
+
 ### 📅 Reading Plans (new tab)
 - **Plans** added as a dedicated fourth bottom-navigation tab
 - Three plans available: **Proverbs in a Month** (31 days), **New Testament in 30 Days**, **Bible in a Year** (365 days)

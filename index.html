@@ -366,10 +366,14 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #scr-canvas{border-radius:12px;max-width:100%;display:block;box-shadow:0 20px 60px rgba(0,0,0,.6)}
 
 /* Card theme picker */
-#card-theme-row{display:flex;gap:8px;align-items:center;width:100%;max-width:440px}
+#card-theme-row{display:flex;gap:8px;align-items:center;width:100%;max-width:440px;flex-wrap:wrap}
 .ct-lbl{font-size:10px;color:var(--text-d);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0}
 .ct-swatch{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
 .ct-swatch.active{border-color:white;transform:scale(1.15)}
+.ct-swatch.scene{border-radius:50%}
+.ct-photo{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);font-size:14px}
+.ct-photo.active{border-color:white;transform:scale(1.15)}
+.ct-sep{width:1px;height:22px;background:rgba(255,255,255,.18);flex-shrink:0}
 .scr-btns{display:flex;gap:10px;width:100%;max-width:440px}
 .scr-btn{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:11px;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
 .scr-btn.dl{background:var(--gold);color:var(--bg);border-color:var(--gold)}
@@ -1916,6 +1920,14 @@ body.light #home-watermark{
     <div class="ct-swatch"        data-t="night"  style="background:linear-gradient(135deg,#0a0a1a,#12122a)" onclick="switchCardTheme('night')"></div>
     <div class="ct-swatch"        data-t="parch"  style="background:linear-gradient(135deg,#f5e6c0,#e8d090)" onclick="switchCardTheme('parch')"></div>
     <div class="ct-swatch"        data-t="crimson" style="background:linear-gradient(135deg,#1a0005,#3a0010)" onclick="switchCardTheme('crimson')"></div>
+    <div class="ct-sep"></div>
+    <div class="ct-swatch scene" data-s="sunrise" title="Sunrise"     style="background:linear-gradient(180deg,#f7c873,#e8743b 60%,#5a2a3a)" onclick="switchCardScene('sunrise')"></div>
+    <div class="ct-swatch scene" data-s="dusk"    title="Mountains"    style="background:linear-gradient(180deg,#5b4b8a,#c86b93 65%,#2a2140)" onclick="switchCardScene('dusk')"></div>
+    <div class="ct-swatch scene" data-s="ocean"   title="Ocean"        style="background:linear-gradient(180deg,#9fd6e8,#2f7fa8 60%,#0b2f4a)" onclick="switchCardScene('ocean')"></div>
+    <div class="ct-swatch scene" data-s="meadow"  title="Meadow"       style="background:linear-gradient(180deg,#dff0a8,#7fae3a 60%,#33501a)" onclick="switchCardScene('meadow')"></div>
+    <div class="ct-swatch scene" data-s="starry"  title="Starry night" style="background:linear-gradient(180deg,#1b2a55,#0a1230 70%,#05070f)" onclick="switchCardScene('starry')"></div>
+    <div class="ct-photo" id="ct-upload" title="Upload your own photo" onclick="pickCardPhoto()">📷</div>
+    <input type="file" id="card-photo-input" accept="image/*" style="display:none" onchange="onCardPhotoPicked(event)">
     <div style="flex:1"></div>
     <div id="orient-toggle">
       <button class="orient-btn active" id="ob-landscape" onclick="switchOrientation('landscape')" title="Landscape">▬</button>
@@ -2785,9 +2797,104 @@ const CARD_THEMES={
   crimson:{bg1:'#1a0005',bg2:'#380010',text:'#fff5f6',ref:'#ffaabb',border:'#5a1020',num:'#904060',dark:true},
 };
 
+/* Palette used when a photo or scene is the background: white body text, warm
+   gold reference, translucent-white rules — reads over any image. */
+const PHOTO_T = {bg1:'#000',bg2:'#000',text:'#ffffff',ref:'#ffd88a',border:'rgba(255,255,255,.45)',num:'#ffd88a',dark:true};
+
+/* Deterministic pseudo-random (so scenes render identically every time). */
+function _srand(seed){ let s = seed >>> 0; return () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+
+/* Bundled scenic backgrounds — drawn procedurally on the canvas, so they add
+   no image files, work fully offline, and stay tiny. Each fills the whole card
+   rect (already clipped to rounded corners by drawPhotoBase). */
+const CARD_SCENES = {
+  sunrise(ctx, W, H){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#f3d9a0'); g.addColorStop(.42,'#e88b45'); g.addColorStop(.72,'#a24a52'); g.addColorStop(1,'#3c1f34');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const sy=H*0.62, sun=ctx.createRadialGradient(W*0.5,sy,0,W*0.5,sy,W*0.55);
+    sun.addColorStop(0,'rgba(255,244,214,.95)'); sun.addColorStop(.25,'rgba(255,210,140,.6)'); sun.addColorStop(1,'rgba(255,200,120,0)');
+    ctx.fillStyle=sun; ctx.fillRect(0,0,W,H);
+  },
+  dusk(ctx, W, H){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#4a3f7a'); g.addColorStop(.45,'#8f5a8f'); g.addColorStop(.7,'#c76f8f'); g.addColorStop(1,'#221a38');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // layered mountain silhouettes
+    const ridge=(baseY,col)=>{ ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(0,H);
+      let x=0; const step=W/6; let y=baseY;
+      ctx.lineTo(0,baseY);
+      for(let i=0;i<=6;i++){ y = baseY + (i%2?-1:1)*H*0.06 + (i*3%5)*H*0.01; ctx.lineTo(x,y); x+=step; }
+      ctx.lineTo(W,H); ctx.closePath(); ctx.fill(); };
+    ridge(H*0.72,'rgba(40,30,60,.55)');
+    ridge(H*0.82,'rgba(24,18,40,.85)');
+  },
+  ocean(ctx, W, H){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#bfe6f0'); g.addColorStop(.4,'#5aa6c4'); g.addColorStop(.55,'#2f7fa8'); g.addColorStop(1,'#0a2c46');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const horizon=H*0.55;
+    const glow=ctx.createLinearGradient(0,horizon-30,0,horizon+30);
+    glow.addColorStop(0,'rgba(255,255,255,0)'); glow.addColorStop(.5,'rgba(255,255,255,.5)'); glow.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=glow; ctx.fillRect(0,horizon-30,W,60);
+  },
+  meadow(ctx, W, H){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#e7f2b8'); g.addColorStop(.4,'#a8cf6a'); g.addColorStop(.6,'#6fa03a'); g.addColorStop(1,'#2e4a1c');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const sun=ctx.createRadialGradient(W*0.75,H*0.2,0,W*0.75,H*0.2,W*0.6);
+    sun.addColorStop(0,'rgba(255,250,220,.85)'); sun.addColorStop(1,'rgba(255,250,220,0)');
+    ctx.fillStyle=sun; ctx.fillRect(0,0,W,H);
+  },
+  starry(ctx, W, H){
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#1c2c58'); g.addColorStop(.5,'#0b1430'); g.addColorStop(1,'#04060f');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    const rnd=_srand(1337);
+    for(let i=0;i<90;i++){ const x=rnd()*W, y=rnd()*H*0.8, r=rnd()*1.4+0.3;
+      ctx.globalAlpha=0.3+rnd()*0.7; ctx.fillStyle='#fff';
+      ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+    ctx.globalAlpha=1;
+    const moon=ctx.createRadialGradient(W*0.72,H*0.18,0,W*0.72,H*0.18,60);
+    moon.addColorStop(0,'rgba(255,252,235,.95)'); moon.addColorStop(.6,'rgba(255,252,235,.5)'); moon.addColorStop(1,'rgba(255,252,235,0)');
+    ctx.fillStyle=moon; ctx.beginPath(); ctx.arc(W*0.72,H*0.18,44,0,7); ctx.fill();
+  },
+};
+
+/* Draw an image scaled to COVER the given box (crop-to-fill, centered). */
+function drawCover(ctx, img, x, y, w, h){
+  const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
+  if(!iw||!ih){ return; }
+  const r=Math.max(w/iw, h/ih), nw=iw*r, nh=ih*r;
+  ctx.drawImage(img, x+(w-nw)/2, y+(h-nh)/2, nw, nh);
+}
+
+/* Photo/scene background: clip to rounded rect, paint the image or scene,
+   apply a legibility scrim, then stroke the border. */
+function drawPhotoBase(ctx, W, H, radius){
+  ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
+  ctx.save();
+  rr(ctx, 0, 0, W, H, radius); ctx.clip();
+  if(S.cardBg==='upload' && S.uploadImg && (S.uploadImg.complete||S.uploadImg.width)){
+    drawCover(ctx, S.uploadImg, 0, 0, W, H);
+  } else if(CARD_SCENES[S.cardBg]){
+    CARD_SCENES[S.cardBg](ctx, W, H);
+  } else {
+    ctx.fillStyle='#1a1208'; ctx.fillRect(0,0,W,H);
+  }
+  // Legibility scrim — darker top & bottom, lighter middle
+  const sc=ctx.createLinearGradient(0,0,0,H);
+  sc.addColorStop(0,'rgba(0,0,0,.55)'); sc.addColorStop(.5,'rgba(0,0,0,.34)'); sc.addColorStop(1,'rgba(0,0,0,.64)');
+  ctx.fillStyle=sc; ctx.fillRect(0,0,W,H);
+  ctx.restore();
+  ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5;
+  rr(ctx, 2, 2, W-4, H-4, radius-1); ctx.stroke();
+}
+
 function openScrOverlay(verses, refLabel){
   S.scrVerses=verses;
   S.scrRef=refLabel;
+  _syncCardStyleUI();
   renderCanvas(S.cardTheme);
   document.getElementById('scr-overlay').classList.add('on');
 }
@@ -2795,7 +2902,10 @@ function openScrOverlay(verses, refLabel){
 function renderCanvas(theme){
   const verses = S.scrVerses || [];
   if(!verses.length) return;
-  const t       = CARD_THEMES[theme];
+  // Photo mode: an uploaded photo or a bundled scene is the background.
+  // Text switches to the high-contrast PHOTO_T palette so it reads over any image.
+  const photo   = !!S.cardBg && (S.cardBg === 'upload' ? !!S.uploadImg : !!CARD_SCENES[S.cardBg]);
+  const t       = photo ? PHOTO_T : CARD_THEMES[theme];
   const canvas  = document.getElementById('scr-canvas');
   const ctx     = canvas.getContext('2d');
   const dpr     = Math.min(window.devicePixelRatio || 1, 2);
@@ -2805,13 +2915,13 @@ function renderCanvas(theme){
   const bodyText  = verses.length === 1 ? `\u201c${paragraph}\u201d` : paragraph;
 
   if(portrait){
-    renderPortrait(ctx, canvas, dpr, t, bodyText);
+    renderPortrait(ctx, canvas, dpr, t, bodyText, photo);
   } else {
-    renderLandscape(ctx, canvas, dpr, t, bodyText);
+    renderLandscape(ctx, canvas, dpr, t, bodyText, photo);
   }
 }
 
-function renderLandscape(ctx, canvas, dpr, t, bodyText){
+function renderLandscape(ctx, canvas, dpr, t, bodyText, photo){
   const W = 800, PAD = 60;
   canvas.width = W * dpr; canvas.height = 800 * dpr;
   ctx.scale(dpr, dpr);
@@ -2830,12 +2940,13 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText){
   canvas.style.width  = Math.min(W * 0.9, 400) + 'px';
   canvas.style.height = Math.min(H * 0.9, 400 * H / W) + 'px';
   ctx.resetTransform(); ctx.scale(dpr, dpr);
-  drawCardBase(ctx, W, H, PAD, t, 20);
+  if(photo) drawPhotoBase(ctx, W, H, 20); else drawCardBase(ctx, W, H, PAD, t, 20);
   // Centered watermark — same approach as portrait
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W, H) * 0.60;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.22 : 0.18);
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, photo ? true : t.dark, photo ? 0.14 : (t.dark ? 0.22 : 0.18));
   }
+  if(photo){ ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6; ctx.shadowOffsetY=1; }
   drawRef(ctx, W, REF_Y, 21, t);
   drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
   drawBody(ctx, bodyLines, PAD, TEXT_Y, lineH, BFONT, t);
@@ -2844,7 +2955,7 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText){
   drawCorners(ctx, PAD, W, H, t);
 }
 
-function renderPortrait(ctx, canvas, dpr, t, bodyText){
+function renderPortrait(ctx, canvas, dpr, t, bodyText, photo){
   // 9:16 portrait — TikTok / Instagram Stories / Reels
   const W = 540, H = 960, PAD = 52;
   canvas.width = W * dpr; canvas.height = H * dpr;
@@ -2862,13 +2973,16 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText){
   const bodyH = bodyLines.length * lineH;
 
   // ── BG + border
-  drawCardBase(ctx, W, H, PAD, t, 24);
+  if(photo) drawPhotoBase(ctx, W, H, 24); else drawCardBase(ctx, W, H, PAD, t, 24);
 
   // ── Logo — large watermark centred on card, tinted to card color, no box
   if(_logoImg.complete && _logoImg.naturalWidth){
     const ls = 460;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.22 : 0.28);
+    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, photo ? true : t.dark, photo ? 0.14 : (t.dark ? 0.22 : 0.28));
   }
+
+  // Drop shadow behind all text when over a photo/scene, for legibility.
+  if(photo){ ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6; ctx.shadowOffsetY=1; }
 
   // ── TOP SECTION ──
   const TOP_PAD = 42;
@@ -2940,6 +3054,7 @@ function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha){
 }
 
 function drawCardBase(ctx, W, H, PAD, t, radius){
+  ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
   const grd = ctx.createLinearGradient(0, 0, W, H);
   grd.addColorStop(0, t.bg1); grd.addColorStop(1, t.bg2);
   ctx.fillStyle = grd; rr(ctx, 0, 0, W, H, radius); ctx.fill();
@@ -2998,8 +3113,44 @@ function switchOrientation(o){
 
 function switchCardTheme(t){
   S.cardTheme=t;
-  document.querySelectorAll('.ct-swatch').forEach(s=>s.classList.toggle('active',s.dataset.t===t));
+  S.cardBg=null;                       // leave photo/scene mode
+  _syncCardStyleUI();
   renderCanvas(t);
+}
+
+/* Highlight the active style chip — a solid theme, a scene, or the upload button. */
+function _syncCardStyleUI(){
+  document.querySelectorAll('.ct-swatch[data-t]').forEach(s=>s.classList.toggle('active', !S.cardBg && s.dataset.t===S.cardTheme));
+  document.querySelectorAll('.ct-swatch[data-s]').forEach(s=>s.classList.toggle('active', S.cardBg===s.dataset.s));
+  const up=document.getElementById('ct-upload'); if(up) up.classList.toggle('active', S.cardBg==='upload');
+}
+
+/* Pick a bundled scenic background. */
+function switchCardScene(id){
+  if(!CARD_SCENES[id]) return;
+  S.cardBg=id;
+  _syncCardStyleUI();
+  renderCanvas(S.cardTheme);
+}
+
+/* Open the device photo picker. */
+function pickCardPhoto(){ document.getElementById('card-photo-input').click(); }
+
+/* User chose a photo file — load it, switch to photo mode, re-render. */
+function onCardPhotoPicked(e){
+  const file=e.target.files&&e.target.files[0];
+  e.target.value='';                   // allow re-picking the same file
+  if(!file) return;
+  if(!/^image\//.test(file.type)){ showToast('Please choose an image file'); return; }
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{ S.uploadImg=img; S.cardBg='upload'; _syncCardStyleUI(); renderCanvas(S.cardTheme); };
+    img.onerror=()=>showToast('Could not load that image');
+    img.src=ev.target.result;          // data URL — stays on-device, never uploaded
+  };
+  reader.onerror=()=>showToast('Could not read that file');
+  reader.readAsDataURL(file);
 }
 
 function flashSaved(btn){
@@ -7636,7 +7787,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v24';
+const WHATS_NEW_VERSION = 'v25';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -8144,32 +8295,12 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       <div style="font-size:12px;color:var(--text-m);margin-top:4px">What's new in this update</div>
     </div>
 
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📛</div>
-      <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Name Meanings</div>
-        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Tap a verse to see the people &amp; places in it with their meanings, or browse all ~2,600 names A&ndash;Z under <strong>Search &rarr; Names</strong>.
-        </div>
-      </div>
-    </div>
-
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🗺️</div>
-      <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Sharper Bible Maps</div>
-        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Several maps redrawn in higher resolution &mdash; open one under <strong>Search &rarr; Maps</strong> and zoom in to read the detail.
-        </div>
-      </div>
-    </div>
-
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔊</div>
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🖼️</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Read-Along Audio</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Verse Cards on a Photo</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          With <strong>Auto-play next chapter</strong> on, the on-screen text now follows along as the audio moves into the next chapter.
+          Long-press a verse and open its card, then pick a <strong>scenic background</strong> &mdash; sunrise, mountains, ocean, meadow, or starry night &mdash; or tap <strong>📷</strong> to lay the verse over <strong>your own photo</strong>. Save or share it to socials in one tap. Your photo stays on your device.
         </div>
       </div>
     </div>
