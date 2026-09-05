@@ -172,16 +172,23 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .smode-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .smode{flex:1 1 auto;min-width:92px;white-space:nowrap;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
 .smode.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
-/* Concordance (A–Z word index) */
-#concord-az{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 12px}
+/* Concordance (A–Z word index) + Bible Names (A–Z name index) */
+#concord-az,#names-az{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 12px}
 .cz-btn{flex:0 0 auto;min-width:30px;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:6px 0;font-size:13px;font-weight:600;cursor:pointer}
 .cz-btn.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
-#concord-list{display:flex;flex-direction:column}
+#concord-list,#names-list{display:flex;flex-direction:column}
 .cw-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;color:var(--text);font-family:'Crimson Pro',serif}
 .cw-row:hover{background:var(--surface)}
 .cw-word{font-size:16px;text-transform:capitalize}
 .cw-count{font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;flex-shrink:0;background:var(--surface);border-radius:10px;padding:2px 9px}
 .cw-count.on{color:var(--gold)}
+/* Bible Names A–Z rows */
+.nm-row{display:block;width:100%;text-align:left;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
+.nm-row:hover{background:var(--surface)}
+.nm-name{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold)}
+.nm-mean{font-family:'Crimson Pro',serif;font-size:14.5px;color:var(--text);line-height:1.5;margin-top:2px}
+.nm-find{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-m);margin-top:5px}
+.nm-find b{color:var(--gold);font-weight:600}
 
 /* ── DOCTRINE BROWSER ── */
 .doc-cat{margin-bottom:8px}
@@ -1287,6 +1294,10 @@ body.light #home-watermark{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="17" x2="13" y2="17"/><line x1="3.5" y1="7" x2="3.5" y2="7"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="17" x2="3.5" y2="17"/></svg>
           Concordance
         </button>
+        <button class="smode" id="smode-names" onclick="switchSearchMode('names')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
+          Names
+        </button>
         <button class="smode" id="smode-maps" onclick="switchSearchMode('maps')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21"/><line x1="8" y1="3" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="21"/></svg>
           Maps
@@ -1333,6 +1344,19 @@ body.light #home-watermark{
         </div>
         <div id="concord-az"></div>
         <div id="concord-list"><div id="s-status">Loading concordance…</div></div>
+      </div>
+
+      <!-- Bible Names panel (A–Z name meanings) -->
+      <div id="names-panel" style="display:none">
+        <div class="s-wrap" style="margin-bottom:10px">
+          <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" id="names-filter" placeholder="Filter names…" oninput="filterNames(this.value)" autocomplete="off">
+        </div>
+        <div id="names-az"></div>
+        <div id="names-list"><div id="s-status">Loading Bible names…</div></div>
+        <div style="font-size:11px;color:var(--text-m);font-style:italic;padding:10px 2px 0;border-top:1px solid var(--border);margin-top:10px">
+          Name meanings from Hitchcock's Bible Names Dictionary (Roswell D. Hitchcock, 1869 — public domain).
+        </div>
       </div>
 
       <!-- Maps panel -->
@@ -1452,7 +1476,7 @@ body.light #home-watermark{
       <div class="tips-section">
         <div class="tips-section-lbl">💡 Tips & Shortcuts</div>
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code</span></div>
-        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap any word</strong> while reading to look it up in the built-in KJV Dictionary — great for archaic words like <em>hart</em>, <em>prevent</em>, <em>froward</em></span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers mean that verse quotes the Old Testament — tap to see the source passage</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then copy, share, highlight, bookmark, or create a screenshot card</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
@@ -1461,6 +1485,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
+        <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 Bible people and places A–Z with the meaning of each name — tap one to find it in Scripture</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> has public-domain Bible maps — tap any map to open it full-screen and pinch or use +/− to zoom. They work offline</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — start Bible in a Year, NT in 30 Days, or Proverbs in a Month. Chapters check off automatically as you read</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
@@ -1590,6 +1615,9 @@ body.light #home-watermark{
       <div class="tips-section">
         <div class="tips-section-lbl">ℹ️ About</div>
         <div class="set-row"><div class="set-lbl">Version</div><div class="set-ctrl" id="settings-version" style="color:var(--text-m)">—</div></div>
+        <div class="set-row col"><div class="set-lbl" style="font-size:12px;color:var(--text-m);line-height:1.6">
+          Bible name meanings from <strong>Hitchcock's Bible Names Dictionary</strong> (Roswell D. Hitchcock, 1869 — public domain), compiled via the <strong>BibleData</strong> project (Brady Stephenson).
+        </div></div>
       </div>
     </div>
   </div>
@@ -1819,6 +1847,13 @@ body.light #home-watermark{
       <button onclick="event.stopPropagation();showVpopDictList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">← All words</button>
       <div id="vpop-def-word" style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
       <div id="vpop-def-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
+    </div>
+    <div id="vpop-name-row" style="display:none"><div class="vd-label">📛 Names in this verse</div><div id="vpop-names"></div></div>
+    <div id="vpop-name-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
+      <button onclick="event.stopPropagation();showVpopNameList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">← All names</button>
+      <div id="vpop-nm-word" style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
+      <div id="vpop-nm-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
+      <div id="vpop-nm-mean" style="font-size:11px;color:var(--text-m);margin-top:6px;font-style:italic">Meaning from Hitchcock's Bible Names Dictionary (1869)</div>
     </div>
     <div class="hl-row">
       <span class="hl-label">Highlight</span>
@@ -2052,6 +2087,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   // returns to the books screen seeded above).
   setTimeout(openDeepLink, 300);
   loadVOD();
+  setTimeout(loadBibleNames, 500); // so "Names in this verse" is ready on the first verse tap
   setTimeout(()=>document.getElementById('loader').classList.add('gone'),700);
   setTimeout(showWelcomeIfNeeded, 1200);
   setTimeout(showWhatsNewIfNeeded, 1400);
@@ -2645,12 +2681,40 @@ function openVPop(ref,txt){
     dRow.style.display = 'none';
   }
   document.getElementById('vpop-dict-def').style.display = 'none';
+
+  // Bible names in this verse (people & places, with their meanings)
+  const nRow  = document.getElementById('vpop-name-row');
+  const nWrap = document.getElementById('vpop-names');
+  const nNames = getVerseNames(txt);
+  if(nNames.length && nRow && nWrap){
+    nWrap.innerHTML = nNames.map((n,i)=>`<span class="vd-word" data-idx="${i}">${n.name}</span>`).join('');
+    nWrap._names = nNames;
+    nWrap.onclick = e => {
+      const sp = e.target.closest('.vd-word');
+      if(!sp) return;
+      e.stopPropagation();
+      const n = nWrap._names[parseInt(sp.dataset.idx)];
+      document.getElementById('vpop-nm-word').textContent = n.name;
+      document.getElementById('vpop-nm-text').textContent = n.meaning;
+      nRow.style.display = 'none';
+      document.getElementById('vpop-name-def').style.display = 'block';
+    };
+    nRow.style.display = 'block';
+  } else if(nRow){
+    nRow.style.display = 'none';
+  }
+  document.getElementById('vpop-name-def').style.display = 'none';
+
   document.getElementById('vpop').classList.add('on');
 }
 
 function showVpopDictList(){
   document.getElementById('vpop-dict-row').style.display = 'block';
   document.getElementById('vpop-dict-def').style.display = 'none';
+}
+function showVpopNameList(){
+  document.getElementById('vpop-name-row').style.display = 'block';
+  document.getElementById('vpop-name-def').style.display = 'none';
 }
 
 function closePop(e){if(!e||e.target===document.getElementById('vpop'))document.getElementById('vpop').classList.remove('on');}
@@ -4196,10 +4260,12 @@ function switchSearchMode(mode, pushHistory=true){
   document.getElementById('doctrine-panel').style.display = mode==='doctrine' ? 'block':'none';
   document.getElementById('dict-panel').style.display     = mode==='dict'     ? 'block':'none';
   document.getElementById('concord-panel').style.display  = mode==='concord'  ? 'block':'none';
+  document.getElementById('names-panel').style.display    = mode==='names'    ? 'block':'none';
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   if(mode==='doctrine') renderDoctrines();
   if(mode==='dict') handleDictSearch('');
   if(mode==='concord') renderConcordance();
+  if(mode==='names') renderNames();
   if(mode==='maps') renderMaps();
   if(pushHistory) history.pushState({screen:'search', searchMode:mode}, '', '');
 }
@@ -4327,6 +4393,89 @@ function concordSearch(word){
   doSearch(word);
 }
 
+/* ════ BIBLE NAMES — browsable A–Z index ════
+   Mirrors the concordance: A–Z letter picker + live filter. Tapping a name
+   reveals its meaning and offers a jump into Scripture (exact whole-word
+   search on the name). */
+S._namesLetter = 'A';
+async function renderNames(){
+  const list = document.getElementById('names-list');
+  if(!S._names){
+    list.innerHTML = '<div id="s-status">Loading Bible names…</div>';
+    const data = await loadBibleNames();
+    if(!data){ list.innerHTML = '<div id="s-status">Bible names unavailable — check your connection.</div>'; return; }
+  }
+  if(!S._namesByLetter){
+    S._namesByLetter = {};
+    Object.keys(S._names).sort((a,b)=>a.localeCompare(b)).forEach(nm=>{
+      const L = (nm[0]||'').toUpperCase();
+      if(!/[A-Z]/.test(L)) return;
+      (S._namesByLetter[L] = S._namesByLetter[L] || []).push([nm, S._names[nm]]);
+    });
+  }
+  if(!document.getElementById('names-az').children.length) buildNamesAZ();
+  const filt = document.getElementById('names-filter');
+  if(filt && filt.value.trim()) filterNames(filt.value);
+  else selectNamesLetter(S._namesLetter);
+}
+function buildNamesAZ(){
+  const az = document.getElementById('names-az');
+  const letters = Object.keys(S._namesByLetter).sort();
+  az.innerHTML = letters.map(L =>
+    `<button class="cz-btn${L===S._namesLetter?' on':''}" data-l="${L}" onclick="selectNamesLetter('${L}')">${L}</button>`
+  ).join('');
+}
+function selectNamesLetter(L){
+  if(!S._namesByLetter) return;
+  if(!S._namesByLetter[L]) L = Object.keys(S._namesByLetter).sort()[0];
+  S._namesLetter = L;
+  const filt = document.getElementById('names-filter'); if(filt) filt.value = '';
+  document.querySelectorAll('#names-az .cz-btn').forEach(b=>b.classList.toggle('on', b.dataset.l===L));
+  renderNamesRows(S._namesByLetter[L], `${S._namesByLetter[L].length} names`);
+}
+function filterNames(q){
+  if(!S._namesByLetter) return;
+  q = q.trim().toLowerCase();
+  if(!q){ selectNamesLetter(S._namesLetter); return; }
+  document.querySelectorAll('#names-az .cz-btn').forEach(b=>b.classList.remove('on'));
+  const CAP = 300, out = [];
+  const all = Object.keys(S._names).sort((a,b)=>a.localeCompare(b));
+  for(const nm of all){ if(nm.toLowerCase().startsWith(q)){ out.push([nm, S._names[nm]]); if(out.length>=CAP) break; } }
+  if(out.length < CAP){
+    for(const nm of all){ const l=nm.toLowerCase(); if(!l.startsWith(q) && l.includes(q)){ out.push([nm, S._names[nm]]); if(out.length>=CAP) break; } }
+  }
+  const label = out.length>=CAP ? `First ${CAP} matches — keep typing to narrow` : `${out.length} match${out.length!==1?'es':''}`;
+  renderNamesRows(out, out.length ? label : 'No names match “'+q+'”');
+}
+function renderNamesRows(entries, label){
+  const list = document.getElementById('names-list');
+  if(!entries.length){ list.innerHTML = `<div id="s-status">${label}</div>`; return; }
+  list.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${label}</div>`
+    + entries.map(e=>{
+        const nm = e[0], esc = nm.replace(/'/g,"\\'");
+        return `<button class="nm-row" onclick="toggleNameRow(this,'${esc}')">`
+          +`<span class="nm-name">${nm}</span>`
+          +`<span class="nm-mean">${e[1]}</span>`
+          +`<span class="nm-find" hidden>🔍 <b>Find “${nm}” in Scripture →</b></span>`
+          +`</button>`;
+      }).join('');
+}
+// First tap reveals the "find in Scripture" affordance; tapping that runs an
+// exact whole-word search for the name.
+function toggleNameRow(el, name){
+  const find = el.querySelector('.nm-find');
+  if(find && find.hidden){ find.hidden = false; return; }
+  namesSearch(name);
+}
+function namesSearch(name){
+  switchSearchMode('search');
+  const inp = document.getElementById('s-input');
+  const q = name.replace(/[^A-Za-z]/g,''); // Hitchcock hyphenates; search the plain word
+  if(inp) inp.value = q;
+  S._exactNext = true;
+  doSearch(q);
+}
+
 function normWord(w){ return w.toLowerCase().replace(/[^a-z ]/g,'').trim(); }
 
 function handleDictSearch(q){
@@ -4384,6 +4533,41 @@ function getVerseDictWords(text){
     }
   });
   return results;
+}
+
+/* ════ BIBLE NAMES — Hitchcock's Bible Names Dictionary (1869, public domain) ════
+   Name → meaning for ~2,600 biblical people and places. Surfaced two ways: a
+   "Names in this verse" row on the verse card, and a browsable A–Z index in
+   Search. bible-names.json is precached by the service worker for offline use. */
+function namesNorm(s){ return (s||'').toLowerCase().replace(/[^a-z]/g,''); }
+function loadBibleNames(){
+  if(S._names) return Promise.resolve(S._names);
+  if(S._namesLoading) return S._namesLoading;
+  S._namesLoading = fetch('bible-names.json')
+    .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+    .then(data=>{
+      S._names = data.names || {};
+      S._nameLookup = {};
+      for(const nm in S._names){ const k = namesNorm(nm); if(k && !S._nameLookup[k]) S._nameLookup[k] = {name:nm, meaning:S._names[nm]}; }
+      S._namesLoading = null;
+      return S._names;
+    })
+    .catch(()=>{ S._namesLoading = null; return null; });
+  return S._namesLoading;
+}
+// Names in a verse — capitalised proper nouns matching the index. Hyphens and
+// apostrophes are ignored, so "Bethel" matches Hitchcock's "Beth-el".
+function getVerseNames(text){
+  if(!S._nameLookup) return [];
+  const seen=new Set(), out=[];
+  const toks = text.match(/[A-Z][A-Za-z'’-]*/g) || [];
+  for(const t of toks){
+    const k = namesNorm(t);
+    if(!k) continue;
+    let hit = S._nameLookup[k] || (k.endsWith('s') ? S._nameLookup[k.slice(0,-1)] : null);
+    if(hit && !seen.has(hit.name)){ seen.add(hit.name); out.push(hit); }
+  }
+  return out;
 }
 
 function showVerseDictWords(words){
@@ -7431,7 +7615,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v23';
+const WHATS_NEW_VERSION = 'v24';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -7936,26 +8120,25 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <div style="text-align:center;margin-bottom:20px">
       <div style="font-size:32px;margin-bottom:6px">✨</div>
       <div style="font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">What's New</div>
-      <div style="font-size:12px;color:var(--text-m);margin-top:4px">Three new ways to dig into the Word</div>
+      <div style="font-size:12px;color:var(--text-m);margin-top:4px">What's new in this update</div>
     </div>
 
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📇</div>
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📛</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">English Concordance</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Name Meanings</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Browse every KJV word from A&ndash;Z with its verse count, then tap any word to see where it appears.
-          Find it under <strong>Search &rarr; Concordance</strong>.
+          Tap a verse to see the people &amp; places in it with their meanings, or browse all ~2,600 names A&ndash;Z under <strong>Search &rarr; Names</strong>.
         </div>
       </div>
     </div>
 
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📌</div>
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🗺️</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Your Own Memory Verses</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Sharper Bible Maps</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Add any verse you choose to <strong>My Verses</strong> in the Sword Drill &mdash; they earn streaks and badges just like the built-in packs.
+          Several maps redrawn in higher resolution &mdash; open one under <strong>Search &rarr; Maps</strong> and zoom in to read the detail.
         </div>
       </div>
     </div>
@@ -7963,9 +8146,9 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔊</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Audio Sleep Timer &amp; Auto-Play</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Read-Along Audio</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Drift off with the 🌙 sleep timer on the player, or turn on <strong>Auto-play next chapter</strong> in Settings to keep listening.
+          With <strong>Auto-play next chapter</strong> on, the on-screen text now follows along as the audio moves into the next chapter.
         </div>
       </div>
     </div>

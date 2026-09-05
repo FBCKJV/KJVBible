@@ -8,16 +8,17 @@
 // Bump CACHE_NAME on every deploy (either kind) — it invalidates the cache
 // and is read back by the app (refreshAppVersion) for the Settings display.
 
-const CACHE_NAME = 'fbckjv-bible-v23.06';
+const CACHE_NAME = 'fbckjv-bible-v24';
 
-// Bible maps + the concordance index — bundled static assets, precached so
-// they work offline.
+// Bible maps + the concordance and Bible-names indexes — bundled static
+// assets, precached so they work offline.
 const MAP_ASSETS = [
   'maps/table-of-nations.jpg','maps/exodus-sinai.jpg','maps/twelve-tribes.jpg',
   'maps/david-solomon.jpg','maps/divided-kingdom.jpg','maps/assyria.jpg',
   'maps/palestine-nt.jpg','maps/journeys-of-christ.jpg','maps/jerusalem.jpg',
   'maps/pauls-journeys.jpg',
   'concordance.json',
+  'bible-names.json',
 ];
 
 // Pre-cache the app shell on install (maps are best-effort so a missing
