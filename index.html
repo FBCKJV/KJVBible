@@ -21,7 +21,7 @@
   --bg:#0e0800;--bg2:#1a1005;--bg3:#251808;--surface:#1e1206;
   --border:#3d2a10;--gold:#c9943a;--gold-l:#e8b860;--gold-d:#7a5520;
   --text:#f5ede0;--text-d:#b8956a;--text-m:#7a6048;
-  --accent:#7ab8a0;--red:#c05040;--nav-h:56px;--font-v:18px;--line-v:1.78;
+  --accent:#7ab8a0;--red:#c05040;--nav-h:56px;--font-v:18px;--line-v:1.78;--reader-pad:16px;
   --reader-font:'Crimson Pro',Georgia,serif;
   --hl-y:rgba(255,220,60,.28);--hl-g:rgba(80,200,120,.22);
   --hl-b:rgba(80,160,255,.22);--hl-p:rgba(200,100,200,.22);
@@ -85,7 +85,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .rarrow{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0}
 .rarrow:hover{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 .rarrow:disabled{opacity:.28;pointer-events:none}
-#reader-body{padding:20px 16px 120px;max-width:700px;margin:0 auto}
+#reader-body{padding:20px var(--reader-pad) 120px;max-width:700px;margin:0 auto}
 #ch-title{font-family:'IM Fell English',serif;font-size:26px;color:var(--gold);text-align:center;margin-bottom:4px}
 #ch-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-m);text-align:center;margin-bottom:24px}
 
@@ -1561,6 +1561,14 @@ body.light #home-watermark{
             <button class="set-seg" data-v="2.05" onclick="setLineSpacing(2.05)">Relaxed</button>
           </div>
         </div>
+        <div class="set-row col">
+          <div class="set-lbl">Margins<small>Side spacing around the reading text</small></div>
+          <div class="set-ctrl" id="set-mg">
+            <button class="set-seg" data-v="28" onclick="setMargin(28)">Wide</button>
+            <button class="set-seg" data-v="16" onclick="setMargin(16)">Normal</button>
+            <button class="set-seg" data-v="6" onclick="setMargin(6)">Narrow</button>
+          </div>
+        </div>
       </div>
 
       <div class="tips-section">
@@ -1981,6 +1989,7 @@ const S={
   notes:LS.get('kjv_notes',{}),
   fontSize:LS.get('kjv_fs',18),
   lineSpacing:LS.get('kjv_ls',1.78),
+  margin:LS.get('kjv_margin',16),
   fontFamily:LS.get('kjv_ff','serif'),
   theme:LS.get('kjv_theme','dark'),
   lastPos:LS.get('kjv_last',null),
@@ -2079,6 +2088,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   S.cardTheme = (S.theme==='light'||S.theme==='sepia')?'light':'dark';
   applyFont(S.fontSize);
   applyLineSpacing(S.lineSpacing);
+  applyMargin(S.margin);
   buildBooks();
   loadStreak();
   fbInit();
@@ -7787,7 +7797,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v25';
+const WHATS_NEW_VERSION = 'v26';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -7920,7 +7930,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_ff','kjv_audio_adv','kjv_mem_custom'
+  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom'
 ];
 
 let _db = null;
@@ -8127,6 +8137,12 @@ function applyLineSpacing(v){
   document.querySelectorAll('#set-ls .set-seg').forEach(b=>b.classList.toggle('on', parseFloat(b.dataset.v)===v));
 }
 function setLineSpacing(v){ applyLineSpacing(v); LS.set('kjv_ls', v); fbSyncSoon(); }
+function applyMargin(v){
+  S.margin=v;
+  document.documentElement.style.setProperty('--reader-pad', v+'px');
+  document.querySelectorAll('#set-mg .set-seg').forEach(b=>b.classList.toggle('on', parseFloat(b.dataset.v)===v));
+}
+function setMargin(v){ applyMargin(v); LS.set('kjv_margin', v); fbSyncSoon(); }
 const THEME_BG={dark:'#0e0800',light:'#f7f2e8',sepia:'#efe4cf'};
 function applyTheme(mode){
   document.body.classList.remove('light','sepia');
@@ -8152,6 +8168,7 @@ function openSettings(){
   // reflect current values into the controls
   const fl=document.getElementById('set-font-label'); if(fl) fl.textContent=S.fontSize;
   applyLineSpacing(S.lineSpacing);
+  applyMargin(S.margin);
   applyFontFamily(S.fontFamily);
   document.querySelectorAll('#set-theme .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===S.theme));
   const aa=document.getElementById('set-autoadv'); if(aa){ aa.textContent = SA.autoAdvance?'On':'Off'; aa.classList.toggle('on', SA.autoAdvance); }
@@ -8295,12 +8312,22 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       <div style="font-size:12px;color:var(--text-m);margin-top:4px">What's new in this update</div>
     </div>
 
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🖼️</div>
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Verse Cards on a Photo</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
           Long-press a verse and open its card, then pick a <strong>scenic background</strong> &mdash; sunrise, mountains, ocean, meadow, or starry night &mdash; or tap <strong>📷</strong> to lay the verse over <strong>your own photo</strong>. Save or share it to socials in one tap. Your photo stays on your device.
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">↔️</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Adjustable Margins</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Set how much side spacing the reading text has &mdash; <strong>Wide</strong>, <strong>Normal</strong>, or <strong>Narrow</strong> &mdash; under <strong>⚙ Settings &rarr; Display</strong>. Choose Narrow to bring the text closer to the edges.
         </div>
       </div>
     </div>

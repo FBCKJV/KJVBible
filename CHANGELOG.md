@@ -6,6 +6,12 @@
 
 ## New Features
 
+### ↔️ Adjustable Reading Margins (v26)
+- New **Margins** control under **Settings → Display** — **Wide**, **Normal**, or **Narrow**
+- Adjusts the side spacing around the reading text; **Narrow** brings the text closer to the edges
+- Defaults to **Normal** (the existing layout) — nothing changes unless you choose otherwise
+- Saved and synced across devices like the other display settings
+
 ### 🖼️ Verse Image Cards on a Photo (v25)
 - Verse cards can now use a **photo background** instead of only a solid color
 - **Bundled scenic backgrounds** drawn in-app — Sunrise, Mountains, Ocean, Meadow, Starry night — no downloads, fully offline
