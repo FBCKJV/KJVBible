@@ -2997,20 +2997,10 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo){
   // ── TOP SECTION ──
   const TOP_PAD = 42;
 
-  // Church name
-  ctx.font = `400 13px Georgia, serif`;
-  ctx.fillStyle = t.ref; ctx.globalAlpha = 0.5; ctx.textAlign = 'center';
-  ctx.fillText('Faith Baptist Church', W / 2, TOP_PAD + 16);
-  ctx.globalAlpha = 1;
-
-  // Rule under church name
-  const RULE1_Y = TOP_PAD + 30;
-  drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
-
   // Reference — bold, large, prominent
   ctx.textAlign = 'center'; ctx.fillStyle = t.ref;
   ctx.font = `700 32px Georgia, serif`;
-  const REF_Y = RULE1_Y + 52;
+  const REF_Y = TOP_PAD + 34;
   ctx.fillText(S.scrRef, W / 2, REF_Y);
 
   // Rule under reference
