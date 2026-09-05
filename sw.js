@@ -8,7 +8,7 @@
 // Bump CACHE_NAME on every deploy (either kind) — it invalidates the cache
 // and is read back by the app (refreshAppVersion) for the Settings display.
 
-const CACHE_NAME = 'fbckjv-bible-v25';
+const CACHE_NAME = 'fbckjv-bible-v26';
 
 // Bible maps + the concordance and Bible-names indexes — bundled static
 // assets, precached so they work offline.
