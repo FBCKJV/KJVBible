@@ -2705,7 +2705,12 @@ function openVPop(ref,txt){
   }
   document.getElementById('vpop-name-def').style.display = 'none';
 
-  document.getElementById('vpop').classList.add('on');
+  const vp = document.getElementById('vpop');
+  const wasOpen = vp.classList.contains('on');
+  vp.classList.add('on');
+  // Push a history entry so the device Back button closes the card (see the
+  // popstate handler) instead of navigating the page underneath it.
+  if(!wasOpen) history.pushState({screen:S.screen, modal:'vpop'}, '', '');
 }
 
 function showVpopDictList(){
@@ -2717,7 +2722,15 @@ function showVpopNameList(){
   document.getElementById('vpop-name-def').style.display = 'none';
 }
 
-function closePop(e){if(!e||e.target===document.getElementById('vpop'))document.getElementById('vpop').classList.remove('on');}
+function closePop(e){
+  if(e && e.target && e.target.id!=='vpop') return; // taps inside the card don't close it
+  const vp = document.getElementById('vpop');
+  if(!vp.classList.contains('on')) return;
+  // Drive the close through history so the Close button, a backdrop tap, and
+  // the device Back button all behave the same and the pushed entry is consumed.
+  if(history.state && history.state.modal==='vpop') history.back();
+  else vp.classList.remove('on');
+}
 function setHL(c){if(c)S.highlights[S.popRef]=c;else delete S.highlights[S.popRef];LS.set('kjv_hl',S.highlights);fbSyncSoon();updateHLPicker();refreshVBlock(S.popRef);}
 function updateHLPicker(){const cur=S.highlights[S.popRef];document.querySelectorAll('.hl-dot').forEach(d=>d.classList.toggle('active',d.dataset.c===cur));}
 function toggleBM(){const i=S.bookmarks.findIndex(b=>b.ref===S.popRef);if(i>=0)S.bookmarks.splice(i,1);else S.bookmarks.unshift({ref:S.popRef,text:S.popTxt.substring(0,120)+(S.popTxt.length>120?'…':'')});LS.set('kjv_bm',S.bookmarks);fbSyncSoon();updateBMBtn();refreshVBlock(S.popRef);}
@@ -3084,6 +3097,14 @@ function goBack(){
 // ── Android / browser back button handler ──
 window.addEventListener('popstate', e => {
   const state = e.state;
+
+  // Close the verse card if open — Back dismisses the card instead of
+  // navigating the page beneath it.
+  const _vpop = document.getElementById('vpop');
+  if(_vpop && _vpop.classList.contains('on')){
+    _vpop.classList.remove('on');
+    return;
+  }
 
   // Close the Add-a-Verse sheet if open — don't navigate away
   const memAddSheet=document.getElementById('memadd-sheet');
