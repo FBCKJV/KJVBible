@@ -8,8 +8,9 @@
 
 ### 🏞️ Real Photo Scene Backgrounds (v27)
 - Replaced the two weakest procedural scenes (ocean, mountains-gradient) with **real bundled photographs**: a golden-hour wildflower **Meadow** and soft **Misty Mountains** at dawn
-- Added a **Calvary** scene — three crosses on the hill overlooking Jerusalem
-- Final one-tap scene set: **Sunrise, Meadow, Misty Mountains, Calvary, Starry night** — plus upload-your-own
+- Added a **Calvary** scene (three crosses over Jerusalem) and an **Empty Tomb** scene
+- **Calvary** and **Empty Tomb** are *orientation-aware*: portrait cards use a tall image, landscape cards use a wide one
+- Final one-tap scene set: **Sunrise, Meadow, Misty Mountains, Calvary, Empty Tomb, Starry night** — plus upload-your-own
 - Photos are compressed and precached for offline use, same as the Bible maps
 
 ### 🎨 Personalize Photo Verse Cards (v27)
