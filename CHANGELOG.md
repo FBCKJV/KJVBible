@@ -6,6 +6,15 @@
 
 ## New Features
 
+### 🎨 Personalize Photo Verse Cards (v27)
+- On cards that use **your own uploaded photo**:
+  - **Pinch to zoom / drag to reposition** the image (mouse drag + scroll-wheel on desktop) — the crop always stays filled, no empty edges
+  - **Vertical text position** — Top, Middle, or Bottom (portrait cards)
+  - **Justification** — Left, Center, or Right
+  - **Show/hide the church-logo watermark**
+- These controls appear only when a photo is chosen; the gradient styles and bundled scenes are unchanged
+- Text-placement and watermark choices are remembered; the crop resets for each new photo
+
 ### ↔️ Adjustable Reading Margins (v26)
 - New **Margins** control under **Settings → Display** — **Wide**, **Normal**, or **Narrow**
 - Adjusts the side spacing around the reading text; **Narrow** brings the text closer to the edges
