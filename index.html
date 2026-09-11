@@ -1937,10 +1937,10 @@ body.light #home-watermark{
     <div class="ct-swatch"        data-t="crimson" style="background:linear-gradient(135deg,#1a0005,#3a0010)" onclick="switchCardTheme('crimson')"></div>
     <div class="ct-sep"></div>
     <div class="ct-swatch scene" data-s="sunrise"  title="Sunrise"      style="background:linear-gradient(180deg,#f7c873,#e8743b 60%,#5a2a3a)" onclick="switchCardScene('sunrise')"></div>
-    <div class="ct-swatch scene" data-s="meadow"   title="Meadow"       style="background:#7fae3a center/cover no-repeat url(backgrounds/meadow.jpg)" onclick="switchCardScene('meadow')"></div>
-    <div class="ct-swatch scene" data-s="mountain" title="Misty mountains" style="background:#8f97a3 center/cover no-repeat url(backgrounds/mountain.jpg)" onclick="switchCardScene('mountain')"></div>
-    <div class="ct-swatch scene" data-s="calvary"  title="Calvary" style="background:#9a7d55 center/cover no-repeat url(backgrounds/calvary.jpg)" onclick="switchCardScene('calvary')"></div>
-    <div class="ct-swatch scene" data-s="tomb"     title="Empty tomb" style="background:#b7a583 center/cover no-repeat url(backgrounds/tomb.jpg)" onclick="switchCardScene('tomb')"></div>
+    <div class="ct-swatch scene" data-s="meadow"   title="Meadow"       style="background:#7fae3a center/cover no-repeat url(backgrounds/meadow.jpg?v=2)" onclick="switchCardScene('meadow')"></div>
+    <div class="ct-swatch scene" data-s="mountain" title="Misty mountains" style="background:#8f97a3 center/cover no-repeat url(backgrounds/mountain.jpg?v=2)" onclick="switchCardScene('mountain')"></div>
+    <div class="ct-swatch scene" data-s="calvary"  title="Calvary" style="background:#9a7d55 center/cover no-repeat url(backgrounds/calvary.jpg?v=2)" onclick="switchCardScene('calvary')"></div>
+    <div class="ct-swatch scene" data-s="tomb"     title="Empty tomb" style="background:#b7a583 center/cover no-repeat url(backgrounds/tomb.jpg?v=2)" onclick="switchCardScene('tomb')"></div>
     <div class="ct-swatch scene" data-s="starry"   title="Starry night" style="background:linear-gradient(180deg,#1b2a55,#0a1230 70%,#05070f)" onclick="switchCardScene('starry')"></div>
     <div class="ct-photo" id="ct-upload" title="Upload your own photo" onclick="pickCardPhoto()">📷</div>
     <input type="file" id="card-photo-input" accept="image/*" style="display:none" onchange="onCardPhotoPicked(event)">
@@ -6122,6 +6122,9 @@ function shareScreenshot(){
 // Photographic scene backgrounds — bundled JPEGs, precached by the service
 // worker for offline use. Re-render the card once they load if it's open.
 // Scenes with a *_land variant use it in landscape, and the base image in portrait.
+// BG_V cache-busts the image URLs: when a background file is replaced (same
+// filename), bump this so browsers/CDN fetch the new bytes instead of a stale copy.
+const BG_V = '2';
 const _bgImgs = {
   meadow: new Image(), mountain: new Image(),
   calvary: new Image(), calvary_land: new Image(),
@@ -6129,7 +6132,7 @@ const _bgImgs = {
 };
 Object.entries(_bgImgs).forEach(([k,img])=>{
   img.onload = ()=>{ const ov=document.getElementById('scr-overlay'); if(ov && ov.classList.contains('on')) renderCanvas(S.cardTheme); };
-  img.src = 'backgrounds/'+k+'.jpg';
+  img.src = 'backgrounds/'+k+'.jpg?v='+BG_V;
 });
 
 const _logoImg = new Image();
