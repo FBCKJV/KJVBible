@@ -8,7 +8,8 @@
 
 ### 🏞️ Real Photo Scene Backgrounds (v27)
 - Replaced the two weakest procedural scenes (ocean, mountains-gradient) with **real bundled photographs**: a golden-hour wildflower **Meadow** and soft **Misty Mountains** at dawn
-- Final one-tap scene set: **Sunrise, Meadow, Misty Mountains, Starry night** — plus upload-your-own
+- Added a **Calvary** scene — three crosses on the hill overlooking Jerusalem
+- Final one-tap scene set: **Sunrise, Meadow, Misty Mountains, Calvary, Starry night** — plus upload-your-own
 - Photos are compressed and precached for offline use, same as the Bible maps
 
 ### 🎨 Personalize Photo Verse Cards (v27)
