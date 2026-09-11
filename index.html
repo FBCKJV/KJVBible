@@ -374,6 +374,13 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .ct-photo{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);color:rgba(255,255,255,.8);font-size:14px}
 .ct-photo.active{border-color:white;transform:scale(1.15)}
 .ct-sep{width:1px;height:22px;background:rgba(255,255,255,.18);flex-shrink:0}
+#card-photo-row{display:flex;gap:8px;align-items:center;justify-content:center;width:100%;max-width:440px;flex-wrap:wrap}
+.pc-group{display:flex;gap:2px}
+.pc-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);border-radius:6px;padding:5px 9px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;line-height:1;white-space:nowrap}
+.pc-btn.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.pc-hint{width:100%;text-align:center;font-size:10px;color:rgba(255,255,255,.45);margin-top:-2px}
+#scr-canvas.editable{cursor:grab;touch-action:none}
+#scr-canvas.editable:active{cursor:grabbing}
 .scr-btns{display:flex;gap:10px;width:100%;max-width:440px}
 .scr-btn{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:8px;padding:11px;font-size:13px;font-weight:500;cursor:pointer;text-align:center;transition:all .15s}
 .scr-btn.dl{background:var(--gold);color:var(--bg);border-color:var(--gold)}
@@ -1942,6 +1949,20 @@ body.light #home-watermark{
       <button class="orient-btn" id="ob-portrait" onclick="switchOrientation('portrait')" title="Portrait / TikTok">▮</button>
     </div>
   </div>
+  <div id="card-photo-row" hidden>
+    <div class="pc-group" id="pc-vpos">
+      <button class="pc-btn" data-v="top"    onclick="setCardVPos('top')">Top</button>
+      <button class="pc-btn" data-v="center" onclick="setCardVPos('center')">Middle</button>
+      <button class="pc-btn" data-v="bottom" onclick="setCardVPos('bottom')">Bottom</button>
+    </div>
+    <div class="pc-group" id="pc-align">
+      <button class="pc-btn" data-v="left"   onclick="setCardAlign('left')"   title="Left justify">L</button>
+      <button class="pc-btn" data-v="center" onclick="setCardAlign('center')" title="Center">C</button>
+      <button class="pc-btn" data-v="right"  onclick="setCardAlign('right')"  title="Right justify">R</button>
+    </div>
+    <button class="pc-btn" id="pc-wm" onclick="toggleCardWatermark()">✝ Logo</button>
+    <div class="pc-hint">Pinch or drag the photo to zoom &amp; reposition</div>
+  </div>
   <div id="scr-scroll"><canvas id="scr-canvas"></canvas></div>
   <div class="scr-btns">
     <div class="scr-btn" onclick="closeScrOverlay()">✕ Close</div>
@@ -1990,6 +2011,12 @@ const S={
   fontSize:LS.get('kjv_fs',18),
   lineSpacing:LS.get('kjv_ls',1.78),
   margin:LS.get('kjv_margin',16),
+  // Photo verse-card editing (upload-only): text placement, watermark, and the
+  // live crop transform (zoom/offset are not persisted — reset per photo).
+  textVPos:LS.get('kjv_card_vpos','center'),
+  textAlign:LS.get('kjv_card_align','left'),
+  showWatermark:LS.get('kjv_card_wm',true),
+  imgZoom:1, imgOffX:0, imgOffY:0,
   fontFamily:LS.get('kjv_ff','serif'),
   theme:LS.get('kjv_theme','dark'),
   lastPos:LS.get('kjv_last',null),
@@ -2089,6 +2116,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   applyFont(S.fontSize);
   applyLineSpacing(S.lineSpacing);
   applyMargin(S.margin);
+  initCardGestures();
   buildBooks();
   loadStreak();
   fbInit();
@@ -2879,6 +2907,25 @@ function drawCover(ctx, img, x, y, w, h){
   ctx.drawImage(img, x+(w-nw)/2, y+(h-nh)/2, nw, nh);
 }
 
+/* Uploaded photo drawn with the user's pinch-zoom and drag offset, always
+   clamped so the image still covers the whole card (no empty edges). */
+function drawUploadImage(ctx, img, W, H){
+  const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
+  if(!iw||!ih){ return; }
+  const base=Math.max(W/iw, H/ih);
+  const scale=base*(S.imgZoom||1);
+  const nw=iw*scale, nh=ih*scale;
+  // desired top-left = centered + user offset, then clamp into [W-nw,0]/[H-nh,0]
+  let x=(W-nw)/2 + (S.imgOffX||0);
+  let y=(H-nh)/2 + (S.imgOffY||0);
+  x=Math.min(0, Math.max(W-nw, x));
+  y=Math.min(0, Math.max(H-nh, y));
+  // write the clamped offset back so gestures don't drift past the edge
+  S.imgOffX = x - (W-nw)/2;
+  S.imgOffY = y - (H-nh)/2;
+  ctx.drawImage(img, x, y, nw, nh);
+}
+
 /* Photo/scene background: clip to rounded rect, paint the image or scene,
    apply a legibility scrim, then stroke the border. */
 function drawPhotoBase(ctx, W, H, radius){
@@ -2886,7 +2933,7 @@ function drawPhotoBase(ctx, W, H, radius){
   ctx.save();
   rr(ctx, 0, 0, W, H, radius); ctx.clip();
   if(S.cardBg==='upload' && S.uploadImg && (S.uploadImg.complete||S.uploadImg.width)){
-    drawCover(ctx, S.uploadImg, 0, 0, W, H);
+    drawUploadImage(ctx, S.uploadImg, W, H);
   } else if(CARD_SCENES[S.cardBg]){
     CARD_SCENES[S.cardBg](ctx, W, H);
   } else {
@@ -2915,6 +2962,7 @@ function renderCanvas(theme){
   // Photo mode: an uploaded photo or a bundled scene is the background.
   // Text switches to the high-contrast PHOTO_T palette so it reads over any image.
   const photo   = !!S.cardBg && (S.cardBg === 'upload' ? !!S.uploadImg : !!CARD_SCENES[S.cardBg]);
+  const upload  = S.cardBg === 'upload' && !!S.uploadImg;   // editing controls are upload-only
   const t       = photo ? PHOTO_T : CARD_THEMES[theme];
   const canvas  = document.getElementById('scr-canvas');
   const ctx     = canvas.getContext('2d');
@@ -2924,14 +2972,16 @@ function renderCanvas(theme){
   const paragraph = verses.map(v => v.txt).join(' ');
   const bodyText  = verses.length === 1 ? `\u201c${paragraph}\u201d` : paragraph;
 
+  canvas.classList.toggle('editable', upload);   // enables grab cursor + touch-action:none
   if(portrait){
-    renderPortrait(ctx, canvas, dpr, t, bodyText, photo);
+    renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload);
   } else {
-    renderLandscape(ctx, canvas, dpr, t, bodyText, photo);
+    renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload);
   }
+  _syncPhotoControls();
 }
 
-function renderLandscape(ctx, canvas, dpr, t, bodyText, photo){
+function renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload){
   const W = 800, PAD = 60;
   canvas.width = W * dpr; canvas.height = 800 * dpr;
   ctx.scale(dpr, dpr);
@@ -2951,21 +3001,22 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText, photo){
   canvas.style.height = Math.min(H * 0.9, 400 * H / W) + 'px';
   ctx.resetTransform(); ctx.scale(dpr, dpr);
   if(photo) drawPhotoBase(ctx, W, H, 20); else drawCardBase(ctx, W, H, PAD, t, 20);
-  // Centered watermark — same approach as portrait
-  if(_logoImg.complete && _logoImg.naturalWidth){
+  S._cw = W; S._ch = H;   // recorded for the crop-gesture math
+  // Centered watermark — same approach as portrait (hidden on uploads if toggled off)
+  if((!upload || S.showWatermark) && _logoImg.complete && _logoImg.naturalWidth){
     const ls = Math.min(W, H) * 0.60;
     drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, photo ? true : t.dark, photo ? 0.14 : (t.dark ? 0.22 : 0.18));
   }
   if(photo){ ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6; ctx.shadowOffsetY=1; }
   drawRef(ctx, W, REF_Y, 21, t);
   drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
-  drawBody(ctx, bodyLines, PAD, TEXT_Y, lineH, BFONT, t);
+  drawBody(ctx, bodyLines, PAD, W, TEXT_Y, lineH, BFONT, t, upload ? S.textAlign : 'left');
   drawRule(ctx, PAD, W - PAD, RULE2_Y, t);
   drawKJV(ctx, W, KJV_Y, t);
   drawCorners(ctx, PAD, W, H, t);
 }
 
-function renderPortrait(ctx, canvas, dpr, t, bodyText, photo){
+function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
   // 9:16 portrait — TikTok / Instagram Stories / Reels
   const W = 540, H = 960, PAD = 52;
   canvas.width = W * dpr; canvas.height = H * dpr;
@@ -2984,9 +3035,11 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo){
 
   // ── BG + border
   if(photo) drawPhotoBase(ctx, W, H, 24); else drawCardBase(ctx, W, H, PAD, t, 24);
+  S._cw = W; S._ch = H;   // recorded for the crop-gesture math
 
   // ── Logo — large watermark centred on card, tinted to card color, no box
-  if(_logoImg.complete && _logoImg.naturalWidth){
+  // (hidden on uploads when the user turns it off)
+  if((!upload || S.showWatermark) && _logoImg.complete && _logoImg.naturalWidth){
     const ls = 460;
     drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, photo ? true : t.dark, photo ? 0.14 : (t.dark ? 0.22 : 0.28));
   }
@@ -3018,14 +3071,23 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo){
   ctx.fillText(CARD_CHURCH, W / 2, H - 24);
   ctx.globalAlpha = 1;
 
-  // ── BODY — vertically centred in the space between the two rule pairs
+  // ── BODY — positioned within the space between the two rule pairs.
+  // Uploads may place the verse Top / Middle / Bottom; everything else stays centred.
   const textAreaTop    = RULE2_Y + 24;
   const textAreaBottom = RULE3_Y - 16;
   const textAreaH      = textAreaBottom - textAreaTop;
-  const rawTY  = textAreaTop + (textAreaH - bodyH) / 2 + BFONT * 0.8;
-  const TEXT_Y = Math.max(textAreaTop + BFONT, rawTY); // never overlap reference
+  const vpos = upload ? S.textVPos : 'center';
+  let TEXT_Y;
+  if(vpos === 'top'){
+    TEXT_Y = textAreaTop + BFONT * 0.9;
+  } else if(vpos === 'bottom'){
+    TEXT_Y = Math.max(textAreaTop + BFONT, textAreaBottom - bodyH + BFONT * 0.8);
+  } else {
+    const rawTY = textAreaTop + (textAreaH - bodyH) / 2 + BFONT * 0.8;
+    TEXT_Y = Math.max(textAreaTop + BFONT, rawTY); // never overlap reference
+  }
 
-  drawBody(ctx, bodyLines, PAD, TEXT_Y, lineH, BFONT, t);
+  drawBody(ctx, bodyLines, PAD, W, TEXT_Y, lineH, BFONT, t, upload ? S.textAlign : 'left');
 
   // ── Corner ornaments
   drawCorners(ctx, PAD, W, H, t);
@@ -3078,10 +3140,12 @@ function drawRule(ctx, x1, x2, y, t){
   ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke();
   ctx.globalAlpha = 1;
 }
-function drawBody(ctx, lines, x, y, lineH, size, t){
+function drawBody(ctx, lines, PAD, W, y, lineH, size, t, align){
   ctx.fillStyle = t.text;
   ctx.font = `400 ${size}px Georgia, serif`;
-  ctx.textAlign = 'left';
+  align = align || 'left';
+  ctx.textAlign = align;
+  const x = align === 'center' ? W / 2 : align === 'right' ? W - PAD : PAD;
   lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineH));
 }
 const CARD_CHURCH = 'Faith Baptist Church of Plymouth County';
@@ -3151,12 +3215,60 @@ function onCardPhotoPicked(e){
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=new Image();
-    img.onload=()=>{ S.uploadImg=img; S.cardBg='upload'; _syncCardStyleUI(); renderCanvas(S.cardTheme); };
+    img.onload=()=>{ S.uploadImg=img; S.cardBg='upload'; S.imgZoom=1; S.imgOffX=0; S.imgOffY=0; _syncCardStyleUI(); renderCanvas(S.cardTheme); };
     img.onerror=()=>showToast('Could not load that image');
     img.src=ev.target.result;          // data URL — stays on-device, never uploaded
   };
   reader.onerror=()=>showToast('Could not read that file');
   reader.readAsDataURL(file);
+}
+
+/* ── Photo verse-card editing controls (upload-only) ── */
+// Show/hide the editing row and reflect current choices. The vertical-position
+// group is hidden in landscape (that card hugs its text, so it has no effect).
+function _syncPhotoControls(){
+  const up = S.cardBg==='upload' && !!S.uploadImg;
+  const row=document.getElementById('card-photo-row'); if(row) row.hidden=!up;
+  if(!up) return;
+  const vg=document.getElementById('pc-vpos'); if(vg) vg.style.display = (S.cardOrientation==='portrait') ? 'flex' : 'none';
+  document.querySelectorAll('#pc-vpos .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textVPos));
+  document.querySelectorAll('#pc-align .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textAlign));
+  const wm=document.getElementById('pc-wm'); if(wm) wm.classList.toggle('on', S.showWatermark);
+}
+function setCardVPos(v){ S.textVPos=v; LS.set('kjv_card_vpos',v); renderCanvas(S.cardTheme); }
+function setCardAlign(v){ S.textAlign=v; LS.set('kjv_card_align',v); renderCanvas(S.cardTheme); }
+function toggleCardWatermark(){ S.showWatermark=!S.showWatermark; LS.set('kjv_card_wm',S.showWatermark); renderCanvas(S.cardTheme); }
+
+// Pinch-to-zoom + drag-to-reposition on the uploaded photo. Active only in
+// upload mode; converts screen movement to card-space via the display scale.
+function initCardGestures(){
+  const c=document.getElementById('scr-canvas'); if(!c) return;
+  let dragging=false, lastX=0, lastY=0, pinchDist=0, startZoom=1;
+  const isUpload=()=> S.cardBg==='upload' && !!S.uploadImg;
+  const factor=()=>{ const r=c.getBoundingClientRect(); return (S._cw||540)/(r.width||1); };
+  const dist2=t=>Math.hypot(t[0].clientX-t[1].clientX, t[0].clientY-t[1].clientY);
+  c.addEventListener('touchstart',e=>{
+    if(!isUpload()) return;
+    if(e.touches.length===1){ dragging=true; lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; }
+    else if(e.touches.length===2){ dragging=false; pinchDist=dist2(e.touches); startZoom=S.imgZoom; }
+    e.preventDefault();
+  },{passive:false});
+  c.addEventListener('touchmove',e=>{
+    if(!isUpload()) return;
+    if(e.touches.length===1 && dragging){
+      const f=factor();
+      S.imgOffX += (e.touches[0].clientX-lastX)*f; S.imgOffY += (e.touches[0].clientY-lastY)*f;
+      lastX=e.touches[0].clientX; lastY=e.touches[0].clientY; renderCanvas(S.cardTheme);
+    } else if(e.touches.length===2 && pinchDist){
+      S.imgZoom=Math.min(5, Math.max(1, startZoom*dist2(e.touches)/pinchDist)); renderCanvas(S.cardTheme);
+    }
+    e.preventDefault();
+  },{passive:false});
+  c.addEventListener('touchend',e=>{ if(e.touches.length===0) dragging=false; if(e.touches.length<2) pinchDist=0; });
+  c.addEventListener('mousedown',e=>{ if(!isUpload()) return; dragging=true; lastX=e.clientX; lastY=e.clientY; e.preventDefault(); });
+  window.addEventListener('mousemove',e=>{ if(!dragging||!isUpload()) return; const f=factor(); S.imgOffX+=(e.clientX-lastX)*f; S.imgOffY+=(e.clientY-lastY)*f; lastX=e.clientX; lastY=e.clientY; renderCanvas(S.cardTheme); });
+  window.addEventListener('mouseup',()=>{ dragging=false; });
+  c.addEventListener('wheel',e=>{ if(!isUpload()) return; e.preventDefault(); S.imgZoom=Math.min(5, Math.max(1, S.imgZoom*(e.deltaY<0?1.08:0.92))); renderCanvas(S.cardTheme); },{passive:false});
 }
 
 function flashSaved(btn){
@@ -7793,7 +7905,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v26';
+const WHATS_NEW_VERSION = 'v27';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -8306,6 +8418,16 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       <div style="font-size:32px;margin-bottom:6px">✨</div>
       <div style="font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">What's New</div>
       <div style="font-size:12px;color:var(--text-m);margin-top:4px">What's new in this update</div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎨</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Personalize Your Photo Cards</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          When you use <strong>your own photo</strong> on a verse card, you can now <strong>pinch to zoom and drag to reposition</strong> the picture, place the verse <strong>top, middle, or bottom</strong>, set <strong>left / center / right</strong> justification, and <strong>show or hide the church logo</strong>.
+        </div>
+      </div>
     </div>
 
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
