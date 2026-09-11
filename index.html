@@ -1939,6 +1939,7 @@ body.light #home-watermark{
     <div class="ct-swatch scene" data-s="sunrise"  title="Sunrise"      style="background:linear-gradient(180deg,#f7c873,#e8743b 60%,#5a2a3a)" onclick="switchCardScene('sunrise')"></div>
     <div class="ct-swatch scene" data-s="meadow"   title="Meadow"       style="background:#7fae3a center/cover no-repeat url(backgrounds/meadow.jpg)" onclick="switchCardScene('meadow')"></div>
     <div class="ct-swatch scene" data-s="mountain" title="Misty mountains" style="background:#8f97a3 center/cover no-repeat url(backgrounds/mountain.jpg)" onclick="switchCardScene('mountain')"></div>
+    <div class="ct-swatch scene" data-s="calvary"  title="Calvary" style="background:#9a7d55 center/cover no-repeat url(backgrounds/calvary.jpg)" onclick="switchCardScene('calvary')"></div>
     <div class="ct-swatch scene" data-s="starry"   title="Starry night" style="background:linear-gradient(180deg,#1b2a55,#0a1230 70%,#05070f)" onclick="switchCardScene('starry')"></div>
     <div class="ct-photo" id="ct-upload" title="Upload your own photo" onclick="pickCardPhoto()">📷</div>
     <input type="file" id="card-photo-input" accept="image/*" style="display:none" onchange="onCardPhotoPicked(event)">
@@ -2865,6 +2866,9 @@ const CARD_SCENES = {
   },
   mountain(ctx, W, H){  // bundled photo — soft misty mountains at dawn
     drawSceneImage(ctx, _bgImgs.mountain, W, H, '#c9c2cf', '#3a4450');
+  },
+  calvary(ctx, W, H){  // bundled photo — three crosses overlooking Jerusalem
+    drawSceneImage(ctx, _bgImgs.calvary, W, H, '#d8c39a', '#3a2a1c');
   },
   starry(ctx, W, H){
     const g = ctx.createLinearGradient(0,0,0,H);
@@ -6107,7 +6111,7 @@ function shareScreenshot(){
 /* Preload church logo for canvas screenshots */
 // Photographic scene backgrounds — bundled JPEGs, precached by the service
 // worker for offline use. Re-render the card once they load if it's open.
-const _bgImgs = { meadow: new Image(), mountain: new Image() };
+const _bgImgs = { meadow: new Image(), mountain: new Image(), calvary: new Image() };
 Object.entries(_bgImgs).forEach(([k,img])=>{
   img.onload = ()=>{ const ov=document.getElementById('scr-overlay'); if(ov && ov.classList.contains('on')) renderCanvas(S.cardTheme); };
   img.src = 'backgrounds/'+k+'.jpg';
