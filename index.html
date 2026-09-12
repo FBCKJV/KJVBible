@@ -8081,13 +8081,41 @@ function fbSync(){
   if(!_db) return Promise.resolve();
   const code = localStorage.getItem('kjv_rc');
   if(!code) return Promise.resolve();
-  const data = { lastSync: firebase.firestore.FieldValue.serverTimestamp(), v: 2 };
-  SYNC_KEYS.forEach(k=>{
-    const v = localStorage.getItem(k);
-    if(v !== null) data[k.replace(/[^a-zA-Z0-9]/g,'_')] = v;
-  });
-  return _db.collection('users').doc(code).set(data, {merge:true})
-    .catch(e => console.warn('Sync error:', e));
+  const ref = _db.collection('users').doc(code);
+  // Push inside a transaction so the streak fields are merged as MAX(cloud,
+  // local) instead of blindly overwritten. Without this, a device that
+  // happens to hold a lower/stale streak (e.g. a laptop that hasn't pulled
+  // yet) would clobber the higher value already in the cloud on every push.
+  // This is strictly non-destructive: protected fields can only ever rise,
+  // never decrease — on this device or in the cloud.
+  return _db.runTransaction(async tx => {
+    const snap = await tx.get(ref);
+    const cloud = snap.exists ? (snap.data() || {}) : {};
+    const data = { lastSync: firebase.firestore.FieldValue.serverTimestamp(), v: 2 };
+    const bumps = {}; // higher cloud values to adopt locally after the write
+    SYNC_KEYS.forEach(k=>{
+      const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
+      const lv = localStorage.getItem(k);
+      if(PROTECTED_MAX_FIELDS.includes(k)){
+        const cloudNum = parseInt(cloud[fk] || '0') || 0;
+        const localNum = parseInt(lv || '0') || 0;
+        const best = Math.max(cloudNum, localNum);
+        data[fk] = String(best);
+        // Cloud was ahead of us — adopt it so this device's badge catches up.
+        if(cloudNum > localNum) bumps[k] = String(best);
+      } else if(lv !== null){
+        data[fk] = lv;
+      }
+    });
+    tx.set(ref, data, {merge:true});
+    return bumps;
+  }).then(bumps => {
+    if(bumps && Object.keys(bumps).length){
+      Object.entries(bumps).forEach(([k,v]) => localStorage.setItem(k, v));
+      // Refresh in-memory streak state + header badge from the adopted values.
+      try{ loadStreak(); }catch(e){}
+    }
+  }).catch(e => console.warn('Sync error:', e));
 }
 
 // Synced (near-instant) — call this after any data change.
