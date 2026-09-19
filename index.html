@@ -3359,9 +3359,40 @@ function goBack(){
   history.back();
 }
 
+/* ── Back-button dismissal for pop-over cards ──
+   Anything that pops over the main UI (the cross-reference card, the
+   parallel-passage panel, the share sheet, the streak panel, the progress
+   screenshot) must close when the device/browser Back button is pressed —
+   that is the navigation people expect. Opening one pushes a history entry
+   tagged with its element id; every close routes back through history so the
+   ✕, a backdrop tap and Back all consume that entry identically. The popstate
+   handler below performs the matching dismissal. */
+const POPOVER_IDS = ['xref-pop','par-panel','share-pop','streak-panel','cl-overlay'];
+function openPopover(id){
+  const el = document.getElementById(id);
+  if(!el || el.classList.contains('on')) return;
+  el.classList.add('on');
+  history.pushState({screen:S.screen, modal:id}, '', '');
+}
+function closePopover(id){
+  const el = document.getElementById(id);
+  if(!el || !el.classList.contains('on')) return;
+  // Drive the close through history so Back and the in-card close behave the
+  // same and the pushed entry is always consumed.
+  if(history.state && history.state.modal===id) history.back();
+  else el.classList.remove('on');
+}
+
 // ── Android / browser back button handler ──
 window.addEventListener('popstate', e => {
   const state = e.state;
+
+  // Close any open pop-over card first — Back dismisses the card instead of
+  // navigating the page beneath it (each pushed a history entry when opened).
+  for(const _pid of POPOVER_IDS){
+    const _pel = document.getElementById(_pid);
+    if(_pel && _pel.classList.contains('on')){ _pel.classList.remove('on'); return; }
+  }
 
   // Close the verse card if open — Back dismisses the card instead of
   // navigating the page beneath it.
@@ -5163,12 +5194,12 @@ function showStreakInfo(){
       <div class="sp-badge-lbl">${m.label}</div>
     </div>`).join('');
   document.getElementById('sp-milestones').innerHTML = ms;
-  document.getElementById('streak-panel').classList.add('on');
+  openPopover('streak-panel');
 }
 
 function closeStreakPanel(e){
-  if(!e || e.target===document.getElementById('streak-panel'))
-    document.getElementById('streak-panel').classList.remove('on');
+  if(e && e.target!==document.getElementById('streak-panel')) return;
+  closePopover('streak-panel');
 }
 
 /* ════════════════════════════════
@@ -5537,7 +5568,11 @@ async function openParallel(book, ch, label){
   const body  = document.getElementById('par-panel-body');
   document.getElementById('par-panel-title').textContent = label;
   body.innerHTML = '<div style="color:var(--text-m);font-size:13px;padding:20px 0;text-align:center">Loading…</div>';
-  panel.classList.add('on');
+  // Stamp the current reader position before opening, so "Open ↗" can send Back
+  // to the right chapter (see openParFull).
+  if(!panel.classList.contains('on') && S.screen === 'reader')
+    history.replaceState({screen:'reader', book:S.book, ch:S.ch}, '', '');
+  openPopover('par-panel');
 
   const data = await fetchBook(book);
   if(!data){ body.innerHTML = '<div style="color:var(--text-m);text-align:center;padding:20px">Could not load.</div>'; return; }
@@ -5552,17 +5587,23 @@ async function openParallel(book, ch, label){
 
 function openParFull(){
   if(_parOpenBook === null) return;
-  closeParPanel();
+  document.getElementById('par-panel').classList.remove('on'); // hide the panel; we reuse its history entry
   fetchBook(_parOpenBook).then(data => {
     if(!data) return;
     S.book=_parOpenBook; S.ch=_parOpenCh; S.bookData=data;
-    renderReader(); showScreen('reader');
+    renderReader();
+    // Reuse the panel's own history entry as the destination chapter, so Back
+    // returns to where we started rather than adding an extra step.
+    const st = {screen:'reader', book:_parOpenBook, ch:_parOpenCh};
+    if(history.state && history.state.modal==='par-panel') history.replaceState(st, '', '');
+    else history.pushState(st, '', '');
+    showScreen('reader', false);
   });
 }
 
 function closeParPanel(e){
-  if(!e || e.target===document.getElementById('par-panel'))
-    document.getElementById('par-panel').classList.remove('on');
+  if(e && e.target!==document.getElementById('par-panel')) return; // taps inside the panel don't close it
+  closePopover('par-panel');
 }
 
 /* ════════════════════════════════
@@ -5821,7 +5862,12 @@ function addXRefMarkers(){
 function showXRef(refs){
   _xrefs = refs; _xrefIdx = 0;
   renderXRefTab(0);
-  document.getElementById('xref-pop').classList.add('on');
+  // Stamp the current reader position onto this history entry before opening
+  // the card, so "Open ↗" (which reuses the card's entry) can send Back to the
+  // right chapter.
+  if(!document.getElementById('xref-pop').classList.contains('on') && S.screen === 'reader')
+    history.replaceState({screen:'reader', book:S.book, ch:S.ch}, '', '');
+  openPopover('xref-pop');
 }
 
 function renderXRefTab(idx){
@@ -5854,24 +5900,23 @@ function renderXRefTab(idx){
 
 function openXRefFull(){
   if(!_xrefBook) return;
-  closeXRef();
+  document.getElementById('xref-pop').classList.remove('on'); // hide the card; we reuse its history entry
   fetchBook(_xrefBook).then(data => {
     if(!data) return;
-    // Stamp where we are now onto the current history entry, then push the
-    // cross-referenced chapter as its own entry — so pressing Back returns to
-    // this exact spot instead of stranding the reader in the other book.
-    if(S.screen === 'reader'){
-      history.replaceState({screen:'reader', book:S.book, ch:S.ch}, '', '');
-    }
     S.book=_xrefBook; S.ch=_xrefCh; S.bookData=data;
     renderReader();
-    history.pushState({screen:'reader', book:_xrefBook, ch:_xrefCh}, '', '');
+    // Reuse the card's own history entry as the destination chapter — so the
+    // stack stays [origin chapter, new chapter] and Back returns to the exact
+    // spot we started from instead of stranding the reader in the other book.
+    const st = {screen:'reader', book:_xrefBook, ch:_xrefCh};
+    if(history.state && history.state.modal==='xref-pop') history.replaceState(st, '', '');
+    else history.pushState(st, '', '');
     showScreen('reader', false);
   });
 }
 
 function closeXRef(){
-  document.getElementById('xref-pop').classList.remove('on');
+  closePopover('xref-pop');
 }
 
 // Close on outside tap
@@ -5882,8 +5927,8 @@ document.addEventListener('click', e => {
 });
 
 /* ════ SHARE ════ */
-function showSharePop(){document.getElementById('share-pop').classList.add('on');}
-function closeSharePop(e){if(!e||e.target===document.getElementById('share-pop'))document.getElementById('share-pop').classList.remove('on');}
+function showSharePop(){openPopover('share-pop');}
+function closeSharePop(e){if(e&&e.target!==document.getElementById('share-pop'))return;closePopover('share-pop');}
 function doShare(){
   const url=APP_URL;
   if(navigator.share) navigator.share({title:'KJV Bible — Faith Baptist Church',url});
@@ -5947,7 +5992,7 @@ function renderBookChecklist(){
 function openChecklistScreenshot(){
   const canvas = document.getElementById('cl-canvas');
   drawChecklistCanvas(canvas);
-  document.getElementById('cl-overlay').classList.add('on');
+  openPopover('cl-overlay');
 }
 
 function drawChecklistCanvas(canvas){
@@ -6104,8 +6149,8 @@ function shareCLImage(){
 }
 
 function closeCLOverlay(e){
-  if(!e||e.target===document.getElementById('cl-overlay'))
-    document.getElementById('cl-overlay').classList.remove('on');
+  if(e && e.target!==document.getElementById('cl-overlay')) return;
+  closePopover('cl-overlay');
 }
 
 /* ── Share existing verse screenshots ── */
