@@ -722,6 +722,7 @@ body.scourby-open #reader-float-nav {
 #xref-open:hover{background:var(--bg3);color:var(--gold)}
 #xref-close{background:none;border:none;color:var(--text-m);font-size:18px;cursor:pointer;line-height:1}
 #xref-txt{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.7}
+.xref-vn{font-size:.62em;color:var(--gold);font-weight:700;margin-right:2px;font-family:system-ui,sans-serif}
 
 /* Multi-ref tabs */
 #xref-tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
@@ -6224,7 +6225,7 @@ function addXRefMarkers(){
     const span = document.createElement('span');
     span.className = 'xref-mark';
     span.textContent = '✦';
-    span.title = refs.map(r=>r.ref).join(' · ');
+    span.title = mergeXRefRanges(refs).map(r=>r.ref).join(' · ');
     span.onclick = e => { e.stopPropagation(); showXRef(refs); };
     // Insert after .vnum span
     const vnumEl = el.querySelector('.vnum');
@@ -6232,8 +6233,24 @@ function addXRefMarkers(){
   });
 }
 
+// Collapse runs of consecutive verses from the same chapter into one tab
+// (Psalm 8:5 + Psalm 8:6 -> "Psalm 8:5–6"), keeping the NT's quoting order.
+function mergeXRefRanges(refs){
+  const out = [];
+  refs.forEach(r => {
+    const last = out[out.length - 1];
+    if(last && last.book === r.book && last.ch === r.ch && r.v === last.vEnd + 1){
+      last.vEnd = r.v;
+      last.ref = last.ref.replace(/[–-]\d+$/, '') + '–' + r.v;
+    } else {
+      out.push({...r, vEnd: r.v});
+    }
+  });
+  return out;
+}
+
 function showXRef(refs){
-  _xrefs = refs; _xrefIdx = 0;
+  _xrefs = mergeXRefRanges(refs); _xrefIdx = 0;
   renderXRefTab(0);
   // Stamp the current reader position onto this history entry before opening
   // the card, so "Open ↗" (which reuses the card's entry) can send Back to the
@@ -6264,10 +6281,21 @@ function renderXRefTab(idx){
   document.getElementById('xref-txt').textContent = 'Loading…';
 
   fetchBook(r.book).then(data => {
-    if(!data){ document.getElementById('xref-txt').textContent = 'Could not load.'; return; }
+    if(_xrefs[_xrefIdx] !== r) return; // another tab was picked while loading
+    const txtEl = document.getElementById('xref-txt');
+    if(!data){ txtEl.textContent = 'Could not load.'; return; }
     const ch = data.chapters[r.ch - 1];
-    const v  = ch?.verses.find(x => parseInt(x.verse) === r.v);
-    document.getElementById('xref-txt').textContent = v ? `"${v.text}"` : 'Verse not found.';
+    const vs = (ch?.verses || []).filter(x => { const n = parseInt(x.verse); return n >= r.v && n <= r.vEnd; });
+    if(!vs.length){ txtEl.textContent = 'Verse not found.'; return; }
+    if(vs.length === 1){ txtEl.textContent = `"${vs[0].text}"`; return; }
+    // A range: number each verse so the reader can see where one ends
+    txtEl.textContent = '';
+    vs.forEach((x, i) => {
+      const num = document.createElement('sup');
+      num.className = 'xref-vn';
+      num.textContent = x.verse;
+      txtEl.append(i ? ' ' : '"', num, x.text + (i === vs.length - 1 ? '"' : ''));
+    });
   });
 }
 
@@ -6295,7 +6323,9 @@ function closeXRef(){
 // Close on outside tap
 document.addEventListener('click', e => {
   const pop = document.getElementById('xref-pop');
-  if(pop.classList.contains('on') && !pop.contains(e.target) && !e.target.classList.contains('xref-mark'))
+  // composedPath() rather than pop.contains(): tapping a tab re-renders the
+  // tab row, so by now e.target is detached and would look like an outside tap.
+  if(pop.classList.contains('on') && !e.composedPath().includes(pop) && !e.target.classList.contains('xref-mark'))
     closeXRef();
 });
 
