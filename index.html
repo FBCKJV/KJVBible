@@ -1489,7 +1489,7 @@ body.light #home-watermark{
         <div class="tips-section-lbl">💡 Tips & Shortcuts</div>
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
-        <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers mean that verse quotes the Old Testament — tap to see the source passage</span></div>
+        <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then copy, share, highlight, bookmark, or create a screenshot card</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
         <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The flame badge</strong> in the header tracks your daily reading streak — tap it to see your progress and milestone badges</span></div>
@@ -5608,7 +5608,7 @@ function closeParPanel(e){
 }
 
 /* ════════════════════════════════
-   VERSE CROSS-REFERENCES (OT→NT)
+   VERSE CROSS-REFERENCES (NT⇄OT)
 ════════════════════════════════ */
 // Key: 'Book:ch:v' (1-indexed). Value: array of refs.
 // Each ref: {ref:'Display label', book:'BookName', ch:1, v:1}
@@ -6211,6 +6211,26 @@ const VERSE_XREF = {
   'Revelation:22:13': [{ref:'Isaiah 44:6',       book:'Isaiah',       ch:44, v:6}],
 };
 
+// Reverse index (NT→OT flipped to OT→NT), so an OT verse that the New
+// Testament quotes gets a ✦ marker too — e.g. Psalm 44:22 → Romans 8:36.
+// Built from VERSE_XREF so the two directions can never drift apart.
+const VERSE_XREF_REV = (() => {
+  const rev = {};
+  Object.entries(VERSE_XREF).forEach(([key, refs]) => {
+    const [book, ch, v] = key.split(':');
+    const nt = {ref:`${book} ${ch}:${v}`, book, ch:+ch, v:+v};
+    refs.forEach(r => {
+      const k = `${r.book}:${r.ch}:${r.v}`;
+      const list = rev[k] || (rev[k] = []);
+      if(!list.some(x => x.ref === nt.ref)) list.push(nt);
+    });
+  });
+  // Canonical order, so consecutive NT verses sit together and merge into a range
+  Object.values(rev).forEach(list => list.sort((a, b) =>
+    BOOKS.indexOf(a.book) - BOOKS.indexOf(b.book) || a.ch - b.ch || a.v - b.v));
+  return rev;
+})();
+
 let _xrefs = null, _xrefIdx = 0, _xrefBook = null, _xrefCh = null, _xrefV = null;
 
 // ── Called from renderReader to add markers ──
@@ -6220,7 +6240,7 @@ function addXRefMarkers(){
   document.querySelectorAll('.vblock').forEach(el => {
     const vnum = parseInt(el.dataset.vnum);
     const key  = `${S.book}:${chN}:${vnum}`;
-    const refs = VERSE_XREF[key];
+    const refs = VERSE_XREF[key] || VERSE_XREF_REV[key];
     if(!refs) return;
     const span = document.createElement('span');
     span.className = 'xref-mark';
