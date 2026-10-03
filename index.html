@@ -199,12 +199,39 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .nv-credit{font-size:11px;color:var(--text-m);font-style:italic;padding:10px 2px 0;border-top:1px solid var(--border);margin-top:12px}
 #whatsnew-modal .wn-item[hidden]{display:none!important}
 #whatsnew-modal .wn-item.wn-last{border-bottom:1px solid var(--border)}
+.pp-h{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);padding:14px 2px 6px}
+.pp-desc{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);line-height:1.5}
+.pp-meta{font-size:12px;color:var(--text-m);margin-top:4px}
+.pp-notes{font-family:'Crimson Pro',serif;font-style:italic;font-size:14px;color:var(--text-d);margin-top:8px;line-height:1.5}
+.pp-aka,.pp-aka-line{font-size:12px;color:var(--text-m);font-style:italic;text-transform:none;letter-spacing:0;font-weight:400}
+.pp-aka-line{margin:-2px 0 8px}
+.pp-name{padding:6px 2px;border-bottom:1px solid var(--border);font-family:'Crimson Pro',serif;font-size:15px;line-height:1.6}
+.pp-name-en{color:var(--gold);margin-right:8px}
+.pp-orig{font-size:17px;color:var(--text)}
+.pp-tr{color:var(--text-d);font-style:italic}
+.pp-mean{color:var(--text)}
+.pp-gk{font-size:14px}
+.pp-hitch{font-size:13px;color:var(--text-d);font-style:italic;padding:6px 2px}
+.pp-rel{display:flex;gap:10px;padding:6px 2px;border-bottom:1px solid var(--border);align-items:baseline}
+.pp-rel-l{flex:0 0 92px;font-size:12px;color:var(--text-m)}
+.pp-rel-v{display:flex;flex-wrap:wrap;gap:6px}
+.pp-chip,.vl-chip{background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:14px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:'Crimson Pro',serif;text-align:left}
+.pp-chip-d{color:var(--text-m);font-size:11px}
+.pp-find{display:block;width:100%;margin-top:14px}
+.nm-count{margin-left:8px;vertical-align:middle;font-size:10px}
+.ref-link{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold-d)}
+#vpop-links{padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px}
+.vl-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.ch-map{background:none;border:1px solid var(--border);border-radius:20px;color:var(--gold);font-size:12px;padding:3px 12px;margin-top:6px;cursor:pointer}
+.s-recent{margin-top:4px}
+.s-recent-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-m);padding:4px 2px}
+.s-recent-h button{background:none;border:none;color:var(--text-m);font-size:12px;cursor:pointer;text-decoration:underline}
 .s-dym{font-size:14px;color:var(--text-d);padding:0 0 8px}
 .s-dym a{color:var(--gold);font-weight:600;font-style:italic}
 .nm-row{display:block;width:100%;text-align:left;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
 .nm-row:hover{background:var(--surface)}
 .nm-name{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold)}
-.nm-mean{font-family:'Crimson Pro',serif;font-size:14.5px;color:var(--text);line-height:1.5;margin-top:2px}
+.nm-mean{display:block;font-family:'Crimson Pro',serif;font-size:14.5px;color:var(--text);line-height:1.5;margin-top:2px}
 .nm-find{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-m);margin-top:5px}
 .nm-find b{color:var(--gold);font-weight:600}
 
@@ -1299,6 +1326,7 @@ body.light #home-watermark{
           color:var(--gold);font-size:13px;padding:2px 10px;cursor:pointer;
           display:none;transition:all .2s" title="Listen to this chapter">🔊</button>
       </div>
+      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button></div>
       <div id="verses"></div>
     </div>
   
@@ -1396,15 +1424,19 @@ body.light #home-watermark{
 
       <!-- Bible Names panel (A–Z name meanings) -->
       <div id="names-panel" style="display:none">
-        <div class="s-wrap" style="margin-bottom:10px">
-          <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="search" id="names-filter" placeholder="Filter names…" oninput="filterNames(this.value)" autocomplete="off">
+        <div id="names-browse">
+          <div class="s-wrap" style="margin-bottom:10px">
+            <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="search" id="names-filter" placeholder="Filter names…" oninput="filterNames(this.value)" autocomplete="off">
+          </div>
+          <div id="names-az"></div>
+          <div id="names-list"><div id="s-status">Loading Bible names…</div></div>
+          <div style="font-size:11px;color:var(--text-m);font-style:italic;padding:10px 2px 0;border-top:1px solid var(--border);margin-top:10px">
+            Name meanings from Hitchcock's Bible Names Dictionary (Roswell D. Hitchcock, 1869 — public domain). People from BibleData (Brady Stephenson, CC BY 4.0).
+          </div>
         </div>
-        <div id="names-az"></div>
-        <div id="names-list"><div id="s-status">Loading Bible names…</div></div>
-        <div style="font-size:11px;color:var(--text-m);font-style:italic;padding:10px 2px 0;border-top:1px solid var(--border);margin-top:10px">
-          Name meanings from Hitchcock's Bible Names Dictionary (Roswell D. Hitchcock, 1869 — public domain).
-        </div>
+        <div id="name-view" style="display:none"></div>
+        <div id="person-view" style="display:none"></div>
       </div>
 
       <!-- Maps panel -->
@@ -1535,7 +1567,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
-        <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 Bible people and places A–Z with the meaning of each name — tap one to find it in Scripture</span></div>
+        <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> has public-domain Bible maps — tap any map to open it full-screen and pinch or use +/− to zoom. They work offline</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — start Bible in a Year, NT in 30 Days, or Proverbs in a Month. Chapters check off automatically as you read</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
@@ -1913,6 +1945,7 @@ body.light #home-watermark{
       <div id="vpop-nm-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
       <div id="vpop-nm-mean" style="font-size:11px;color:var(--text-m);margin-top:6px;font-style:italic">Meaning from Hitchcock's Bible Names Dictionary (1869)</div>
     </div>
+    <div id="vpop-links" style="display:none"></div>
     <div class="hl-row">
       <span class="hl-label">Highlight</span>
       <div class="hl-dot" data-c="y" onclick="setHL('y')"></div>
@@ -2476,6 +2509,7 @@ function renderReader(){
   const _bi = BOOKS.indexOf(S.book);
   document.getElementById('r-prev').disabled = _bi===0 && S.ch===0;
   document.getElementById('r-next').disabled = _bi===BOOKS.length-1 && S.ch===S.bookData.chapters.length-1;
+  updateChapterMapButton();
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
   recordHistory(S.book, S.ch);
 
@@ -2805,6 +2839,7 @@ function openVPop(ref,txt){
     nRow.style.display = 'none';
   }
   document.getElementById('vpop-name-def').style.display = 'none';
+  fillVpopLinks(ref);
 
   const vp = document.getElementById('vpop');
   const wasOpen = vp.classList.contains('on');
@@ -3492,26 +3527,27 @@ window.addEventListener('popstate', e => {
     const scroller = document.getElementById('screen-search');
     const y = scroller ? scroller.scrollTop : 0;
     const wasDoctrine = S.screen === 'search' && document.getElementById('doctrine-panel').style.display !== 'none' && !document.getElementById('doctrine-list');
-    const wasTopicView = S.screen === 'search' && document.getElementById('topics-panel').style.display !== 'none' && document.getElementById('topic-view').style.display !== 'none';
     const fromOtherScreen = S.screen !== 'search';
-    // Leaving a topic page: remember its scroll for when Back/Forward returns to it
-    if(wasTopicView && S._naveKey) (S._naveScroll || (S._naveScroll = {}))[S._naveKey] = y;
+    // Leaving a sub-page (topic, person, name): remember its scroll for when
+    // Back/Forward returns to it
+    const leaving = activeSubView();
+    if(leaving) (S._viewScroll || (S._viewScroll = {}))[leaving.sub + ':' + leaving.key] = y;
     showScreen('search', false);
     if(state.sub === 'verses' && DOCTRINES[state.ci] && DOCTRINES[state.ci].topics[state.ti]){
       // Back from a verse opened in a doctrine topic → that same topic
       switchSearchMode('doctrine', false);
       showDoctrineVerses(state.ci, state.ti, false, y);
-    } else if(state.sub === 'topic' && state.key){
-      // Back to a Nave's topic — from a verse (same scroll) or from another topic
-      openNaveTopic(state.key, false, fromOtherScreen ? y : ((S._naveScroll || {})[state.key] || 0));
+    } else if(state.sub && SUBVIEWS[state.sub] && state.key){
+      // Back to a topic/person/name page — from a verse (same scroll) or
+      // from another sub-page (the scroll it was left at)
+      SUBVIEWS[state.sub].open(state.key, false, fromOtherScreen ? y : ((S._viewScroll || {})[state.sub + ':' + state.key] || 0));
     } else if(state.searchMode){
       switchSearchMode(state.searchMode, false);
       // Back from a topic to the doctrine list → where the list was scrolled
       if(state.searchMode === 'doctrine' && wasDoctrine && scroller) scroller.scrollTop = S._docListScroll || 0;
-      // Back from a topic page to the Topics list → where the list was scrolled
-      if(state.searchMode === 'topics' && wasTopicView && scroller) scroller.scrollTop = S._topicListScroll || 0;
-      // Back from a topic page to the tab it was opened from (e.g. search results)
-      else if(wasTopicView && scroller) scroller.scrollTop = S._fromTabScroll || 0;
+      // Back from a sub-page to a tab's list or to the tab it was opened
+      // from (e.g. search results) → where that was scrolled
+      else if(leaving && scroller) scroller.scrollTop = (S._listScroll || {})[state.searchMode] || 0;
     }
   } else if(state.screen === 'reader' && state.book && (state.book !== S.book || state.ch !== S.ch)){
     // Restore the reader to the book/chapter this history entry describes —
@@ -4519,7 +4555,10 @@ function handleSearch(q) {
   const raw = q.trim();
   if (raw.length < 2) {
     S._topicMatches = [];
-    document.getElementById('s-results').innerHTML = '<div id="s-status">Enter a word, phrase, or reference (e.g. Matthew 24:24)</div>';
+    S._searchGen = (S._searchGen || 0) + 1; // cancel a search still loading
+    const strip = document.getElementById('s-book-strip');
+    if(strip) strip.style.display = 'none';
+    renderSearchHome();
     return;
   }
   document.getElementById('s-results').innerHTML = '<div id="s-status">Searching…</div>';
@@ -4545,6 +4584,7 @@ async function doSearch(raw) {
   S._topicMatches = findTopicMatches(cleaned);
   S._personalMatches = [];
   S._naveMatches = [];
+  S._peopleCard = '';
   S._didYouMean = null;
   const strip = document.getElementById('s-book-strip');
 
@@ -4562,6 +4602,7 @@ async function doSearch(raw) {
   // Topic and spelling data load alongside the books but never hold up
   // the results — if they arrive later, the cards are added then.
   const navesP   = loadNaves().catch(() => null);
+  const peopleP  = ensureNameIndex().catch(() => null);
   const concordP = exactMode ? Promise.resolve(null) : loadConcordance().catch(() => null);
   const query = parseSearchQuery(cleaned);
   if (!query.words.length && !query.phrases.length) {
@@ -4614,10 +4655,12 @@ async function doSearch(raw) {
   }
 
   S._naveMatches = findNaveTopics(cleaned);
+  S._peopleCard = findPeopleCard(cleaned);
   if (!exactMode) S._didYouMean = didYouMean(cleaned, query);
   const render = () => {
     if (!S._searchResults.length) {
       el.innerHTML = renderTopicCards(S._topicMatches)
+        + S._peopleCard
         + renderNaveCards(S._naveMatches)
         + renderPersonalCards(S._personalMatches)
         + renderDidYouMean()
@@ -4630,14 +4673,15 @@ async function doSearch(raw) {
   };
   render();
 
-  // Late arrivals (first use only): topic cards and spelling suggestions
-  if (!S._naves || (!exactMode && !S._concord)) {
-    await Promise.all([navesP, concordP]);
+  // Late arrivals (first use only): people/topic cards and spelling suggestions
+  if (!S._naves || !S._nameIndex || (!exactMode && !S._concord)) {
+    await Promise.all([navesP, concordP, peopleP]);
     if (gen !== S._searchGen) return;
     const naves = findNaveTopics(cleaned);
+    const people = findPeopleCard(cleaned);
     const dym = exactMode ? null : didYouMean(cleaned, query);
-    if (naves.join() !== S._naveMatches.join() || dym !== S._didYouMean) {
-      S._naveMatches = naves; S._didYouMean = dym;
+    if (naves.join() !== S._naveMatches.join() || dym !== S._didYouMean || people !== S._peopleCard) {
+      S._naveMatches = naves; S._didYouMean = dym; S._peopleCard = people;
       // Only redraw if the reader is still on the first page of results
       if (!S._searchResults.length || (S._searchPage || 0) === 0) render();
     }
@@ -4778,7 +4822,7 @@ function renderSearchPage(startIdx, scroll){
   S._searchPage = curPage - 1;
   // Each page replaces the last one (pages used to pile up underneath)
   el.innerHTML =
-    (curPage === 1 ? renderTopicCards(S._topicMatches) + renderNaveCards(S._naveMatches) + renderPersonalCards(S._personalMatches) + renderDidYouMean() : '')
+    (curPage === 1 ? renderTopicCards(S._topicMatches) + (S._peopleCard || '') + renderNaveCards(S._naveMatches) + renderPersonalCards(S._personalMatches) + renderDidYouMean() + renderWordFamily() : '')
     + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`
     + sortBar
     + page.map(r => {
@@ -4799,28 +4843,9 @@ function renderSearchPage(startIdx, scroll){
    verse text, plus "See …" links to related subjects. The file is saved on
    the device on first use, like the Bible books. */
 const NAVES_URL = 'naves.json?v=2026-10-03'; // bump v= whenever tools/build-naves.js is re-run
-let _navesLoad = null;
 function loadNaves(){
   if(S._naves) return Promise.resolve(S._naves);
-  return _navesLoad || (_navesLoad = (async () => {
-    let cache = null;
-    if('caches' in window){
-      try{
-        cache = await caches.open(BIBLE_CACHE);
-        const hit = await cache.match(NAVES_URL);
-        if(hit) return S._naves = prepNaves(await hit.json());
-      }catch(e){ cache = null; }
-    }
-    const r = await fetch(NAVES_URL);
-    if(!r.ok) throw new Error('http ' + r.status);
-    if(cache){
-      // Save this version and drop copies of older ones
-      cache.put(NAVES_URL, r.clone()).then(() => cache.keys()).then(keys => keys
-        .filter(k => /naves\.json/.test(k.url) && !k.url.endsWith(NAVES_URL))
-        .forEach(k => cache.delete(k))).catch(()=>{});
-    }
-    return S._naves = prepNaves(await r.json());
-  })().catch(e => { _navesLoad = null; throw e; }));
+  return loadCachedJSON(NAVES_URL).then(d => S._naves = S._naves || prepNaves(d));
 }
 
 const _naveNorm = s => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -4915,8 +4940,7 @@ function renderNaveCards(keys){
 S._topicsLetter = 'A';
 async function renderNaveBrowse(){
   const list = document.getElementById('topics-list');
-  document.getElementById('topics-browse').style.display = '';
-  document.getElementById('topic-view').style.display = 'none';
+  showTabList('topics');
   if(!S._naves){
     list.innerHTML = '<div id="s-status">Loading topics…</div>';
     try{ await loadNaves(); }
@@ -4974,23 +4998,8 @@ async function openNaveTopic(key, pushHistory=true, scrollY=0){
   if(!N || !N.topics[key]) return;
   const scroller = document.getElementById('screen-search');
   const view = document.getElementById('topic-view');
-  if(pushHistory){
-    const mode = currentSearchMode();
-    const viewing = mode === 'topics' && view.style.display !== 'none';
-    // Remember where we were, so Back lands in the same place
-    if(viewing && S._naveKey) (S._naveScroll || (S._naveScroll = {}))[S._naveKey] = scroller.scrollTop;
-    else if(mode === 'topics') S._topicListScroll = scroller.scrollTop;
-    else S._fromTabScroll = scroller.scrollTop;
-    // Opened from another tab (e.g. a search card): make sure Back returns
-    // to that tab — the screen's history entry may not record which one.
-    const cur = history.state || {};
-    if(cur.screen === 'search' && !cur.searchMode && !viewing) history.replaceState({...cur, searchMode: mode}, '', '');
-    history.pushState({screen:'search', searchMode:'topics', sub:'topic', key}, '', '');
-  }
-  switchSearchMode('topics', false);
+  enterSubView('topic', key, pushHistory);
   S._naveKey = key;
-  document.getElementById('topics-browse').style.display = 'none';
-  view.style.display = '';
 
   const lines = N.topics[key];
   const open = (S._naveOpen || (S._naveOpen = {}))[key] || (S._naveOpen[key] = new Set(
@@ -5039,46 +5048,16 @@ async function toggleNaveLine(i){
   await fillNaveLine(i);
 }
 
-// Renders one sub-topic's passages: a card per verse or verse range, with
-// the text. Long ranges show their opening verses; whole chapters a preview.
+// Renders one sub-topic's passages (see refCardsHTML)
 async function fillNaveLine(i, limit=40){
   const key = S._naveKey, body = document.getElementById('nvb-' + i);
   const line = S._naves.topics[key][i];
   if(!body || !line || !line[2]) return;
-  const refs = line[2].split(';');
+  const total = line[2].split(';').length;
   body.innerHTML = '<div id="s-status" style="padding:8px 0">Loading verses…</div>';
-  const shown = refs.slice(0, limit);
-  const books = await Promise.all([...new Set(shown.map(r => +r.split('.')[0]))].map(b => fetchBook(BOOKS[b]).then(d => [b, d])));
+  const html = await refCardsHTML(line[2], limit);
   if(S._naveKey !== key) return; // moved on to another topic meanwhile
-  const data = Object.fromEntries(books);
-  const cards = [];
-  for(const r of shown){
-    const [bc, vs] = r.split(':');
-    const [b, c] = bc.split('.').map(Number);
-    const ch = data[b] && data[b].chapters[c - 1];
-    if(!ch) continue;
-    const name = BOOKS[b];
-    // "4,5" and "39-41,42" read as one passage each (4–5, 39–42)
-    const ranges = vs ? vs.split(',').map(p => p.split('-').map(Number)).reduce((acc, [a, z]) => {
-      const last = acc[acc.length - 1];
-      if(last && a === (last[1] || last[0]) + 1) last[1] = z || a; else acc.push([a, z]);
-      return acc;
-    }, []) : [[1, ch.verses.length, 'whole']];
-    for(const [a, z0, whole] of ranges){
-      const z = z0 || a;
-      const verses = ch.verses.filter(v => +v.verse >= a && +v.verse <= z);
-      if(!verses.length) continue;
-      const MAXV = 6;
-      const label = whole ? `${name} ${c}` : `${name} ${c}:${a}${z > a ? '–' + z : ''}`;
-      const flow = verses.slice(0, whole ? 2 : MAXV).map(v => (verses.length > 1 ? `<sup class="vsuper">${v.verse}</sup>` : '') + v.text).join(' ');
-      const more = whole ? ' <em class="nv-more">… whole chapter — tap to read</em>'
-        : verses.length > MAXV ? ` <em class="nv-more">… ${verses.length - MAXV} more verses — tap to read</em>` : '';
-      const ref = `${name} ${c}:${verses[0].verse}`.replace(/'/g, "\\'");
-      cards.push(`<div tabindex="0" class="rc${verses.length > 1 ? ' passage-block' : ''}" onclick="jumpToRef('${ref}')"><div class="rc-ref">${label}</div><div class="rc-txt">${flow}${more}</div></div>`);
-    }
-  }
-  body.innerHTML = cards.join('')
-    + (refs.length > limit ? `<button class="nv-showmore" onclick="fillNaveLine(${i}, ${refs.length})">Show ${refs.length - limit} more passages</button>` : '');
+  body.innerHTML = html + (total > limit ? `<button class="nv-showmore" onclick="fillNaveLine(${i}, ${total})">Show ${total - limit} more passages</button>` : '');
 }
 
 /* ════ DID YOU MEAN ════
@@ -5168,9 +5147,475 @@ function searchFor(q){
   doSearch(q);
 }
 
+/* ════ SUB-PAGES INSIDE SEARCH TABS ════
+   A Nave's topic, a person, and a name page each open inside their tab
+   (Topics or Names) in place of its list. They share one history and
+   scroll scheme: Back returns to the previous page — another topic or
+   person, the tab's list, or the tab the page was opened from (e.g.
+   search results) — at the scroll position it was left at. */
+const SUBVIEWS = {}; // sub → { mode, browse, view, open(key, push, scrollY) }
+SUBVIEWS.topic = { mode:'topics', browse:'topics-browse', view:'topic-view', open:(k, push, y) => openNaveTopic(k, push, y) };
+function activeSubView(){
+  const sv = S._subView;
+  if(!sv || S.screen !== 'search') return null;
+  const v = SUBVIEWS[sv.sub];
+  return v && currentSearchMode() === v.mode && document.getElementById(v.view).style.display !== 'none' ? sv : null;
+}
+function enterSubView(sub, key, push){
+  const v = SUBVIEWS[sub];
+  const scroller = document.getElementById('screen-search');
+  if(push){
+    const cur = activeSubView();
+    S._viewScroll = S._viewScroll || {}; S._listScroll = S._listScroll || {};
+    if(cur) S._viewScroll[cur.sub + ':' + cur.key] = scroller.scrollTop;
+    else if(S.screen === 'search') S._listScroll[currentSearchMode()] = scroller.scrollTop;
+    // Opened from another tab (e.g. a search card): make sure Back returns
+    // to that tab — the screen's history entry may not record which one.
+    const st = history.state || {};
+    if(st.screen === 'search' && !st.searchMode && !cur) history.replaceState({...st, searchMode: currentSearchMode()}, '', '');
+    history.pushState({screen:'search', searchMode:v.mode, sub, key}, '', '');
+  }
+  if(S.screen !== 'search') showScreen('search', false);
+  switchSearchMode(v.mode, false);
+  document.getElementById(v.browse).style.display = 'none';
+  for(const o of Object.values(SUBVIEWS)) if(o.mode === v.mode) document.getElementById(o.view).style.display = 'none';
+  document.getElementById(v.view).style.display = '';
+  S._subView = {sub, key};
+  scroller.scrollTop = 0;
+}
+// Back from a sub-page to its tab's list (called by the tab's renderer)
+function showTabList(mode){
+  for(const o of Object.values(SUBVIEWS)) if(o.mode === mode){
+    document.getElementById(o.view).style.display = 'none';
+    document.getElementById(o.browse).style.display = '';
+  }
+  if(S._subView && SUBVIEWS[S._subView.sub].mode === mode) S._subView = null;
+}
+// Closes the verse card (consuming its history entry), then runs fn — so a
+// link inside the card can open a page and Back still lands in the reader.
+function leaveVPopThen(fn){
+  const vp = document.getElementById('vpop');
+  if(vp && vp.classList.contains('on') && history.state && history.state.modal === 'vpop'){
+    const after = () => { window.removeEventListener('popstate', after); setTimeout(fn, 0); };
+    window.addEventListener('popstate', after);
+    history.back();
+  } else {
+    if(vp) vp.classList.remove('on');
+    fn();
+  }
+}
+
+// JSON data files saved on the device on first use (like the Bible books).
+// The URL carries a version, so a rebuilt file replaces the old copy.
+const _jsonLoads = {};
+function loadCachedJSON(url){
+  return _jsonLoads[url] || (_jsonLoads[url] = (async () => {
+    let cache = null;
+    if('caches' in window){
+      try{
+        cache = await caches.open(BIBLE_CACHE);
+        const hit = await cache.match(url);
+        if(hit) return await hit.json();
+      }catch(e){ cache = null; }
+    }
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('http ' + r.status);
+    if(cache){
+      const base = url.split('?')[0];
+      cache.put(url, r.clone()).then(() => cache.keys()).then(keys => keys
+        .filter(k => k.url.includes(base) && !k.url.endsWith(url))
+        .forEach(k => cache.delete(k))).catch(()=>{});
+    }
+    return await r.json();
+  })().catch(e => { delete _jsonLoads[url]; throw e; }));
+}
+
+// Cards for a compact reference list "bookIndex.chapter:verses;…" — one per
+// verse or run of verses, with the text. Long runs show their opening
+// verses; whole chapters a preview. Shared by topic and person pages.
+async function refCardsHTML(refStr, limit){
+  const refs = refStr.split(';').slice(0, limit);
+  const books = await Promise.all([...new Set(refs.map(r => +r.split('.')[0]))].map(b => fetchBook(BOOKS[b]).then(d => [b, d])));
+  const data = Object.fromEntries(books);
+  const cards = [];
+  for(const r of refs){
+    const [bc, vs] = r.split(':');
+    const [b, c] = bc.split('.').map(Number);
+    const ch = data[b] && data[b].chapters[c - 1];
+    if(!ch) continue;
+    const name = BOOKS[b];
+    // "4,5" and "39-41,42" read as one passage each (4–5, 39–42)
+    const ranges = vs ? vs.split(',').map(p => p.split('-').map(Number)).reduce((acc, [a, z]) => {
+      const last = acc[acc.length - 1];
+      if(last && a === (last[1] || last[0]) + 1) last[1] = z || a; else acc.push([a, z]);
+      return acc;
+    }, []) : [[1, ch.verses.length, 'whole']];
+    for(const [a, z0, whole] of ranges){
+      const z = z0 || a;
+      const verses = ch.verses.filter(v => +v.verse >= a && +v.verse <= z);
+      if(!verses.length) continue;
+      const MAXV = 6;
+      const label = whole ? `${name} ${c}` : `${name} ${c}:${a}${z > a ? '–' + z : ''}`;
+      const flow = verses.slice(0, whole ? 2 : MAXV).map(v => (verses.length > 1 ? `<sup class="vsuper">${v.verse}</sup>` : '') + v.text).join(' ');
+      const more = whole ? ' <em class="nv-more">… whole chapter — tap to read</em>'
+        : verses.length > MAXV ? ` <em class="nv-more">… ${verses.length - MAXV} more verses — tap to read</em>` : '';
+      const ref = `${name} ${c}:${verses[0].verse}`.replace(/'/g, "\\'");
+      cards.push(`<div tabindex="0" class="rc${verses.length > 1 ? ' passage-block' : ''}" onclick="jumpToRef('${ref}')"><div class="rc-ref">${label}</div><div class="rc-txt">${flow}${more}</div></div>`);
+    }
+  }
+  return cards.join('');
+}
+const refCount = refStr => refStr ? refStr.split(';').reduce((n, r) => n + (r.split(':')[1] || '1').split(',')
+  .reduce((m, p) => { const [a, z] = p.split('-').map(Number); return m + (z ? z - a + 1 : 1); }, 0), 0) : 0;
+
+// "son of Terah (Genesis 11:26)" → the reference becomes a link
+const _bookAlt = BOOKS.slice().sort((a, b) => b.length - a.length).join('|');
+const _refInText = new RegExp(`\\b(${_bookAlt}) (\\d+):(\\d+)(?:-(\\d+))?`, 'g');
+function linkRefs(text){
+  return escapeHtml(text).replace(_refInText, (m, b, c, v) =>
+    `<a href="#" class="ref-link" onclick="jumpToRef('${b} ${c}:${v}');return false">${m}</a>`);
+}
+
+/* ════ PEOPLE ════
+   ~3,000 named people from BibleData, built into people.json by
+   tools/build-people.js (see it for the editorial changes). The Names tab
+   lists every name — Hitchcock's meanings plus the people who bore it;
+   a name page tells same-named people apart, and a person page shows who
+   they were, what their name means, their family and every verse naming
+   them. */
+const PEOPLE_URL = 'people.json?v=2026-10-03'; // bump v= whenever tools/build-people.js is re-run
+function loadPeople(){
+  if(S._people) return Promise.resolve(S._people);
+  return loadCachedJSON(PEOPLE_URL).then(d => {
+    S._people = d.people;
+    // verse → people named in it, for the verse card
+    S._peopleByVerse = new Map();
+    for(const [id, p] of Object.entries(d.people)){
+      if(!p.v) continue;
+      for(const r of p.v.split(';')){
+        const [bc, vs] = r.split(':'); const [b, c] = bc.split('.');
+        for(const part of vs.split(',')){
+          const [a, z] = part.split('-').map(Number);
+          for(let v = a; v <= (z || a); v++){
+            const k = `${BOOKS[b]} ${c}:${v}`;
+            if(!S._peopleByVerse.has(k)) S._peopleByVerse.set(k, []);
+            S._peopleByVerse.get(k).push(id);
+          }
+        }
+      }
+    }
+    return S._people;
+  });
+}
+
+// Every name: Hitchcock's meaning (if any) plus the people who bore it
+// (by their main name or another name, e.g. Abram → "Abraham", Saul → "Paul").
+async function ensureNameIndex(){
+  if(S._nameIndex) return S._nameIndex;
+  const [names, people] = await Promise.all([loadBibleNames(), loadPeople().catch(() => null)]);
+  if(!names && !people) return null;
+  if(S._nameIndex) return S._nameIndex;
+  const idx = new Map();
+  const entry = (name) => {
+    const k = namesNorm(name);
+    if(!k) return null;
+    if(!idx.has(k)) idx.set(k, {key:k, name, meaning:'', people:[]});
+    return idx.get(k);
+  };
+  for(const [nm, mean] of Object.entries(names || {})){ const e = entry(nm); if(e) e.meaning = e.meaning || mean; }
+  for(const [id, p] of Object.entries(people || {})){
+    for(const nm of [p.n, ...(p.a || [])]){
+      if(!/^[A-Z]/.test(nm)) continue; // descriptive labels ("a despicable person") aren't names
+      const e = entry(nm);
+      if(e && !e.people.includes(id)) e.people.push(id);
+    }
+  }
+  for(const e of idx.values()){
+    // No Hitchcock entry: fall back to the name's meaning in the original language
+    if(!e.meaning && e.people.length){
+      const p = S._people[e.people[0]];
+      const lab = (p.l || []).find(l => namesNorm(l[0]) === e.key && (l[3] || l[6]));
+      if(lab) e.meaning = lab[3] || lab[6];
+    }
+    // Most-mentioned first: the well-known Mary before the minor ones
+    e.people.sort((a, b) => refCount(S._people[b].v) - refCount(S._people[a].v));
+  }
+  S._nameEntries = [...idx.values()].sort((a, b) => a.name.localeCompare(b.name));
+  return S._nameIndex = idx;
+}
+
+function personName(id){
+  const p = S._people[id];
+  return p ? p.n : id;
+}
+// Short identifying line, e.g. "King of Israel, son of Jeroboam"
+function personBrief(p){
+  return (p.d || '').replace(/\s*\([^)]*\d+:\d+[^)]*\)/g, '').replace(_refInText, '')
+    .replace(/^[\s,;]+|[\s,;]+$/g, '').replace(/\s*,\s*,/g, ',').replace(/\s{2,}/g, ' ');
+}
+// Trim to about n characters at a word boundary
+const clip = (t, n) => t.length <= n ? t : t.slice(0, t.lastIndexOf(' ', n) > n / 2 ? t.lastIndexOf(' ', n) : n) + '…';
+
+// Search card when the query is a person's name
+function findPeopleCard(q){
+  if(!S._nameIndex) return '';
+  const k = namesNorm(q.trim());
+  const e = k && S._nameIndex.get(k);
+  if(!e || !e.people.length) return '';
+  if(e.people.length === 1){
+    const id = e.people[0], p = S._people[id];
+    return `<div tabindex="0" class="rc ref-jump" onclick="openPerson('${id}')">
+      <div class="rc-ref">👤 ${escapeHtml(p.n)}${p.a ? ' · ' + escapeHtml(p.a.join(', ')) : ''}</div>
+      <div class="rc-txt" style="opacity:.75">${escapeHtml(personBrief(p))} — tap to see who this is</div></div>`;
+  }
+  return `<div tabindex="0" class="rc ref-jump" onclick="openNamePage('${k}')">
+    <div class="rc-ref">👤 ${e.people.length} people named ${escapeHtml(e.name)}</div>
+    <div class="rc-txt" style="opacity:.75">${e.people.slice(0, 3).map(id => escapeHtml(personBrief(S._people[id]))).join(' · ')}${e.people.length > 3 ? ' …' : ''}</div></div>`;
+}
+
+/* ── Name page: everyone who bore a name ── */
+SUBVIEWS.name = { mode:'names', browse:'names-browse', view:'name-view', open:(k, push, y) => openNamePage(k, push, y) };
+async function openNamePage(key, pushHistory=true, scrollY=0){
+  const idx = await ensureNameIndex();
+  const e = idx && idx.get(key);
+  if(!e) return;
+  enterSubView('name', key, pushHistory);
+  const view = document.getElementById('name-view');
+  const jesus = key === 'jesus';
+  view.innerHTML = `
+    <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
+    <div class="dv-title">${escapeHtml(e.name)}</div>
+    ${e.meaning ? `<div class="dv-desc">“${escapeHtml(e.meaning)}”</div>` : ''}
+    ${jesus ? `<div tabindex="0" class="rc ref-jump" onclick="openNaveTopic('JESUS, THE CHRIST')"><div class="rc-ref">✝ Jesus Christ</div><div class="rc-txt" style="opacity:.75">The Lord Jesus Christ — see the topic “Jesus, the Christ” for His life, ministry and titles</div></div>` : ''}
+    ${e.people.length ? `<div class="pp-h">${e.people.length} ${jesus ? 'other ' : ''}${e.people.length === 1 ? 'person' : 'people'} named ${escapeHtml(e.name)}</div>` : ''}
+    ${e.people.map(id => {
+      const p = S._people[id], n = refCount(p.v);
+      return `<div tabindex="0" class="rc" onclick="openPerson('${id}')">
+        <div class="rc-ref">${escapeHtml(p.n)}${p.a ? ` <span class="pp-aka">also ${escapeHtml(p.a.join(', '))}</span>` : ''}</div>
+        <div class="rc-txt">${escapeHtml(personBrief(p) || p.d)}</div>
+        <div class="pp-meta">${[p.t ? 'Tribe of ' + escapeHtml(p.t) : '', n ? `named in ${n} verse${n !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ')}</div>
+      </div>`; }).join('')}
+    <button class="nv-showmore pp-find" onclick="namesSearch('${escapeHtml(e.name).replace(/'/g, "\\'")}')">🔍 Find “${escapeHtml(e.name)}” in Scripture</button>
+    <div class="nv-credit">Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain). People from BibleData (Brady Stephenson, CC BY 4.0).</div>`;
+  if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+}
+
+/* ── Person page ── */
+SUBVIEWS.person = { mode:'names', browse:'names-browse', view:'person-view', open:(k, push, y) => openPerson(k, push, y) };
+// How a relationship reads on this person's page: [label, plural, order]
+const REL_LABELS = {
+  father:['Father','Father',1], mother:['Mother','Mother',2], husband:['Husband','Husbands',3], wife:['Wife','Wives',4],
+  concubine:['Concubine','Concubines',5], concubinator:['Concubine of','Concubine of',5],
+  brother:['Brother','Brothers',6], 'half-brother':['Half-brother','Half-brothers',7], sister:['Sister','Sisters',8], 'half-sister':['Half-sister','Half-sisters',9],
+  son:['Son','Sons',10], daughter:['Daughter','Daughters',11], grandfather:['Grandfather','Grandfathers',12], grandson:['Grandson','Grandsons',13],
+  uncle:['Uncle','Uncles',14], nephew:['Nephew','Nephews',15], cousin:['Cousin','Cousins',16],
+  'father-in-law':['Father-in-law','Fathers-in-law',17], 'mother-in-law':['Mother-in-law','Mothers-in-law',18], 'son-in-law':['Son-in-law','Sons-in-law',19],
+  'daughter-in-law':['Daughter-in-law','Daughters-in-law',20], 'brother-in-law':['Brother-in-law','Brothers-in-law',21],
+  master:['Master','Masters',30], lady:['Mistress','Mistresses',30], servant:['Servant','Servants',31], rabbi:['Teacher','Teachers',32], disciple:['Disciple','Disciples',33],
+  king:['King','Kings',34], ally:['Ally','Allies',35], patron:['Patron','Patrons',36], client:['Client','Clients',36],
+  killer:['Killed by','Killed by',40], 'killed by':['Killed','Killed',41], victim:['Victim','Victims',41], raper:['Assaulted by','Assaulted by',42],
+};
+function relLabel(type, n){
+  const L = REL_LABELS[type];
+  return L ? L[n > 1 ? 1 : 0] : type.charAt(0).toUpperCase() + type.slice(1);
+}
+async function openPerson(id, pushHistory=true, scrollY=0){
+  await ensureNameIndex();
+  const p = S._people && S._people[id];
+  if(!p) return;
+  enterSubView('person', id, pushHistory);
+  const view = document.getElementById('person-view');
+  const n = refCount(p.v);
+  const hitch = S._nameIndex.get(namesNorm(p.n));
+  // Family & other connections, grouped and in a natural order
+  const groups = new Map();
+  for(const [type, other] of p.r || []){
+    if(!S._people[other]) continue;
+    if(!groups.has(type)) groups.set(type, []);
+    groups.get(type).push(other);
+  }
+  const rels = [...groups.entries()].sort((a, b) => (REL_LABELS[a[0]] || [0,0,50])[2] - (REL_LABELS[b[0]] || [0,0,50])[2]);
+  // Same-named relatives get a hint so "Zechariah" and "Zechariah" can be told apart
+  const relChip = other => {
+    const q = S._people[other], same = (S._nameIndex.get(namesNorm(q.n)) || {people:[]}).people.length > 1;
+    return `<button class="pp-chip" onclick="openPerson('${other}')" title="${escapeHtml(personBrief(q))}">${escapeHtml(q.n)}${same ? ` <span class="pp-chip-d">${escapeHtml(clip(personBrief(q), 40))}</span>` : ''}</button>`;
+  };
+  const openVerses = n > 0 && n <= 30;
+  view.innerHTML = `
+    <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
+    <div class="dv-title">${escapeHtml(p.n)}${p.n2 ? ' ' + escapeHtml(p.n2) : ''}</div>
+    ${p.a ? `<div class="pp-aka-line">Also called ${p.a.map(escapeHtml).join(', ')}</div>` : ''}
+    <div class="pp-desc">${linkRefs(p.d)}</div>
+    <div class="pp-meta">${[p.s === 'm' ? 'Man' : p.s === 'f' ? 'Woman' : '', p.t ? 'Tribe of ' + escapeHtml(p.t) : '', n ? `Named in ${n} verse${n !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ')}</div>
+    ${p.x ? `<div class="pp-notes">${linkRefs(p.x)}</div>` : ''}
+    ${(p.l && p.l.length) || (hitch && hitch.meaning) ? `<div class="pp-h">The name</div>
+      ${(p.l || []).map(l => `<div class="pp-name">
+        <span class="pp-name-en">${escapeHtml(l[0])}</span>
+        ${l[1] ? `<span class="pp-orig" lang="he" dir="rtl">${escapeHtml(l[1])}</span> <span class="pp-tr">${escapeHtml(l[2])}</span>` : ''}
+        ${l[3] ? `<span class="pp-mean">“${escapeHtml(l[3])}”</span>` : ''}
+        ${l[4] ? `<div class="pp-gk"><span class="pp-orig" lang="el">${escapeHtml(l[4])}</span> <span class="pp-tr">${escapeHtml(l[5])}</span>${l[6] ? ` <span class="pp-mean">“${escapeHtml(l[6])}”</span>` : ''}</div>` : ''}
+      </div>`).join('')}
+      ${hitch && hitch.meaning ? `<div class="pp-hitch">Hitchcock (1869): “${escapeHtml(hitch.meaning)}”</div>` : ''}` : ''}
+    ${rels.length ? `<div class="pp-h">Family &amp; connections</div>
+      ${rels.map(([type, ids]) => `<div class="pp-rel"><span class="pp-rel-l">${relLabel(type, ids.length)}</span><span class="pp-rel-v">${ids.map(relChip).join('')}</span></div>`).join('')}` : ''}
+    ${n ? `<div class="nv-line">
+      <button class="nv-hdr" onclick="togglePersonVerses()" aria-expanded="${openVerses}">
+        <span class="nv-lbl">Verses naming ${escapeHtml(p.n)}</span><span class="cw-count">${n}</span><span class="doc-cat-arr${openVerses ? ' open' : ''}" id="ppv-arr">⌄</span>
+      </button>
+      <div class="nv-body" id="ppv-body"></div></div>` : ''}
+    <button class="nv-showmore pp-find" onclick="namesSearch('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔍 Find every “${escapeHtml(p.n)}” in Scripture</button>
+    <div class="nv-credit">From BibleData (Brady Stephenson, CC BY 4.0). Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain).</div>`;
+  S._personOpen = S._personOpen || {};
+  if(!(id in S._personOpen)) S._personOpen[id] = openVerses;
+  if(S._personOpen[id]) await fillPersonVerses();
+  if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+}
+async function togglePersonVerses(){
+  const id = S._subView && S._subView.key;
+  const body = document.getElementById('ppv-body'), arr = document.getElementById('ppv-arr');
+  if(!body || !id) return;
+  S._personOpen[id] = !S._personOpen[id];
+  arr.classList.toggle('open', S._personOpen[id]);
+  body.previousElementSibling.setAttribute('aria-expanded', String(S._personOpen[id]));
+  if(S._personOpen[id]) await fillPersonVerses(); else body.innerHTML = '';
+}
+async function fillPersonVerses(limit=12){ // chapters' worth at first
+  const id = S._subView && S._subView.key, p = S._people[id];
+  const body = document.getElementById('ppv-body');
+  if(!body || !p || !p.v) return;
+  document.getElementById('ppv-arr').classList.add('open');
+  body.innerHTML = '<div id="s-status" style="padding:8px 0">Loading verses…</div>';
+  const html = await refCardsHTML(p.v, limit);
+  if(!S._subView || S._subView.key !== id) return;
+  const total = p.v.split(';').length;
+  body.innerHTML = html + (total > limit ? `<button class="nv-showmore" onclick="fillPersonVerses(${total})">Show all ${refCount(p.v)} verses</button>` : '');
+}
+
+// Verse card → person page (Back returns to the reader)
+function openPersonFromVerse(id){ leaveVPopThen(() => openPerson(id)); }
+function peopleInVerse(ref){ return (S._peopleByVerse && S._peopleByVerse.get(ref)) || []; }
+
+/* ════ VERSE CARD LINKS: people named + doctrines citing the verse ════ */
+// "Book ch:v" → [[ci, ti], …] for every doctrine topic citing that verse
+function doctrineIndex(){
+  if(S._docIndex) return S._docIndex;
+  const idx = new Map();
+  DOCTRINES.forEach((cat, ci) => cat.topics.forEach((t, ti) => {
+    for(const refStr of t.refs){
+      const r = parseReference(refStr);
+      if(!r || !r.verse) continue;
+      for(let v = r.verse; v <= (r.verseEnd || r.verse); v++){
+        const k = `${r.book} ${r.chIdx + 1}:${v}`;
+        if(!idx.has(k)) idx.set(k, []);
+        if(!idx.get(k).some(([a, b]) => a === ci && b === ti)) idx.get(k).push([ci, ti]);
+      }
+    }
+  }));
+  return S._docIndex = idx;
+}
+function fillVpopLinks(ref){
+  const el = document.getElementById('vpop-links');
+  if(!el) return;
+  const render = () => {
+    if(S.popRef !== ref) return; // another verse opened meanwhile
+    const people = peopleInVerse(ref);
+    const docs = doctrineIndex().get(ref) || [];
+    if(!people.length && !docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
+    el.innerHTML =
+      (people.length ? `<div class="vd-label">👤 People in this verse</div><div class="vl-chips">${people.map(id =>
+        `<button class="vl-chip" onclick="event.stopPropagation();openPersonFromVerse('${id}')">${escapeHtml(personName(id))}</button>`).join('')}</div>` : '')
+      + (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
+        `<button class="vl-chip" onclick="event.stopPropagation();openDoctrineFromVerse(${ci},${ti})">${escapeHtml(DOCTRINES[ci].topics[ti].name)}</button>`).join('')}</div>` : '');
+    el.style.display = 'block';
+  };
+  render();
+  if(!S._people) loadPeople().then(render).catch(() => {});
+}
+function openDoctrineFromVerse(ci, ti){
+  leaveVPopThen(() => {
+    showScreen('search', false);
+    switchSearchMode('doctrine', false);
+    showDoctrineVerses(ci, ti);
+  });
+}
+
+/* ════ MAPS FROM THE READER ════
+   A chapter covered by one of the Bible maps shows a button for it under
+   the chapter heading. [book, firstChapter, lastChapter, map file] — the
+   first matching row wins. */
+const CHAPTER_MAPS = [
+  ['Genesis',10,10,'table-of-nations'], ['Genesis',11,50,'assyria'],
+  ['Exodus',12,40,'exodus-sinai'], ['Numbers',10,36,'exodus-sinai'], ['Deuteronomy',1,3,'exodus-sinai'],
+  ['Joshua',1,24,'twelve-tribes'], ['Judges',1,21,'twelve-tribes'],
+  ['2 Samuel',5,24,'david-solomon'], ['1 Kings',1,11,'david-solomon'], ['1 Chronicles',11,29,'david-solomon'], ['2 Chronicles',1,9,'david-solomon'],
+  ['1 Kings',12,22,'divided-kingdom'], ['2 Kings',1,17,'divided-kingdom'], ['2 Chronicles',10,36,'divided-kingdom'],
+  ['2 Kings',18,25,'assyria'], ['Jonah',1,4,'assyria'], ['Nahum',1,3,'assyria'], ['Daniel',1,6,'assyria'],
+  ['Nehemiah',2,4,'jerusalem'], ['Nehemiah',12,12,'jerusalem'],
+  ['Matthew',21,28,'jerusalem'], ['Mark',11,16,'jerusalem'], ['Luke',19,24,'jerusalem'], ['John',12,21,'jerusalem'],
+  ['Matthew',1,20,'journeys-of-christ'], ['Mark',1,10,'journeys-of-christ'], ['Luke',1,18,'journeys-of-christ'], ['John',1,11,'journeys-of-christ'],
+  ['Acts',1,12,'palestine-nt'], ['Acts',13,28,'pauls-journeys'],
+  ['Romans',15,16,'pauls-journeys'], ['Galatians',1,2,'pauls-journeys'], ['Revelation',1,3,'pauls-journeys'],
+];
+function chapterMap(book, ch){
+  const row = CHAPTER_MAPS.find(([b, a, z]) => b === book && ch >= a && ch <= z);
+  return row ? MAPS.findIndex(m => m.f === row[3]) : -1;
+}
+function updateChapterMapButton(){
+  const btn = document.getElementById('ch-map-btn');
+  if(!btn) return;
+  const i = chapterMap(S.book, S.ch + 1);
+  btn.style.display = i >= 0 ? 'inline-block' : 'none';
+  if(i >= 0){ btn.textContent = '🗺️ ' + MAPS[i].t; btn.onclick = () => openMap(i); }
+}
+
+/* ════ RECENT SEARCHES ════
+   Remembered when a search is put to use — a result tapped or Enter
+   pressed — so half-typed queries never pile up. Shown under the empty
+   search box; per device. */
+const RECENT_KEY = 'kjv_recent_searches';
+function recentSearches(){ return LS.get(RECENT_KEY, []); }
+function rememberSearch(q){
+  q = (q || '').trim();
+  if(q.length < 2) return;
+  const list = recentSearches().filter(x => x.toLowerCase() !== q.toLowerCase());
+  list.unshift(q);
+  LS.set(RECENT_KEY, list.slice(0, 8));
+}
+function forgetRecentSearches(){ LS.set(RECENT_KEY, []); renderSearchHome(); }
+function renderSearchHome(){
+  const el = document.getElementById('s-results');
+  if(!el) return;
+  const recent = recentSearches();
+  el.innerHTML = '<div id="s-status">Enter a word, phrase, or reference (e.g. Matthew 24:24)</div>'
+    + (recent.length ? `<div class="s-recent"><div class="s-recent-h"><span>Recent searches</span><button onclick="forgetRecentSearches()">Clear</button></div>
+      <div class="vl-chips">${recent.map((q, i) => `<button class="vl-chip" onclick="searchFor(recentSearches()[${i}])">${escapeHtml(q)}</button>`).join('')}</div></div>` : '');
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const res = document.getElementById('s-results'), inp = document.getElementById('s-input');
+  if(res) res.addEventListener('click', e => { if(e.target.closest('.rc') && inp) rememberSearch(inp.value); }, true);
+  if(inp) inp.addEventListener('keydown', e => { if(e.key === 'Enter') rememberSearch(inp.value); });
+  renderSearchHome();
+});
+
+/* ════ CONCORDANCE: WORD FAMILY ════
+   A Concordance search is exact ("reign" only). Offer the word's other
+   forms found in the KJV, e.g. "Also include reigned, reigneth, reigning". */
+function wordFamily(word){
+  if(!S._concord) return [];
+  const re = new RegExp(`^(?:${(KJV_VARIANTS[word] || [word]).map(inflectionPattern).join('|')})$`);
+  return [...concordVocab()].filter(([w]) => w !== word && re.test(w)).sort((a, b) => b[1] - a[1]).map(([w]) => w);
+}
+function renderWordFamily(){
+  if(!S._searchExact || !S._searchQuery || /\s/.test(S._searchQuery.trim())) return '';
+  const fam = wordFamily(S._searchQuery.trim().toLowerCase());
+  if(!fam.length) return '';
+  return `<div class="s-dym">Showing “${escapeHtml(S._searchQuery)}” exactly. <a href="#" onclick="searchFor(S._searchQuery);return false">Also include ${escapeHtml(fam.slice(0, 3).join(', '))}${fam.length > 3 ? '…' : ''}</a></div>`;
+}
+
 /* ════ KJV DICTIONARY ════ */
 
-function switchSearchMode(mode, pushHistory=true){
+// render=false only switches panels (a sub-page is about to fill its tab)
+function switchSearchMode(mode, pushHistory=true, render=true){
   document.querySelectorAll('.smode').forEach(b=>b.classList.remove('on'));
   document.getElementById('smode-'+mode).classList.add('on');
   document.getElementById('search-panel').style.display   = mode==='search'   ? 'block':'none';
@@ -5180,12 +5625,14 @@ function switchSearchMode(mode, pushHistory=true){
   document.getElementById('concord-panel').style.display  = mode==='concord'  ? 'block':'none';
   document.getElementById('names-panel').style.display    = mode==='names'    ? 'block':'none';
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
-  if(mode==='doctrine') renderDoctrines();
-  if(mode==='dict') handleDictSearch('');
-  if(mode==='topics') renderNaveBrowse();
-  if(mode==='concord') renderConcordance();
-  if(mode==='names') renderNames();
-  if(mode==='maps') renderMaps();
+  if(render){
+    if(mode==='doctrine') renderDoctrines();
+    if(mode==='dict') handleDictSearch('');
+    if(mode==='topics') renderNaveBrowse();
+    if(mode==='concord') renderConcordance();
+    if(mode==='names') renderNames();
+    if(mode==='maps') renderMaps();
+  }
   if(pushHistory) history.pushState({screen:'search', searchMode:mode}, '', '');
 }
 
@@ -5315,20 +5762,23 @@ function concordSearch(word){
    reveals its meaning and offers a jump into Scripture (exact whole-word
    search on the name). */
 S._namesLetter = 'A';
+// Names tab list: every name (Hitchcock's meanings + the people who bore
+// it). A name borne by one person opens that person; several, a page to
+// tell them apart; none (mostly places), the old "find in Scripture" row.
 async function renderNames(){
+  showTabList('names');
   const list = document.getElementById('names-list');
-  if(!S._names){
+  if(!S._nameIndex){
     list.innerHTML = '<div id="s-status">Loading Bible names…</div>';
-    const data = await loadBibleNames();
-    if(!data){ list.innerHTML = '<div id="s-status">Bible names unavailable — check your connection.</div>'; return; }
+    const idx = await ensureNameIndex();
+    if(!idx){ list.innerHTML = '<div id="s-status">Bible names unavailable — check your connection.</div>'; return; }
   }
   if(!S._namesByLetter){
     S._namesByLetter = {};
-    Object.keys(S._names).sort((a,b)=>a.localeCompare(b)).forEach(nm=>{
-      const L = (nm[0]||'').toUpperCase();
-      if(!/[A-Z]/.test(L)) return;
-      (S._namesByLetter[L] = S._namesByLetter[L] || []).push([nm, S._names[nm]]);
-    });
+    for(const e of S._nameEntries){
+      const L = (e.name[0] || '').toUpperCase();
+      if(/[A-Z]/.test(L)) (S._namesByLetter[L] = S._namesByLetter[L] || []).push(e);
+    }
   }
   if(!document.getElementById('names-az').children.length) buildNamesAZ();
   const filt = document.getElementById('names-filter');
@@ -5351,38 +5801,39 @@ function selectNamesLetter(L){
   renderNamesRows(S._namesByLetter[L], `${S._namesByLetter[L].length} names`);
 }
 function filterNames(q){
-  if(!S._namesByLetter) return;
+  if(!S._nameEntries) return;
   q = q.trim().toLowerCase();
   if(!q){ selectNamesLetter(S._namesLetter); return; }
   document.querySelectorAll('#names-az .cz-btn').forEach(b=>b.classList.remove('on'));
-  const CAP = 300, out = [];
-  const all = Object.keys(S._names).sort((a,b)=>a.localeCompare(b));
-  for(const nm of all){ if(nm.toLowerCase().startsWith(q)){ out.push([nm, S._names[nm]]); if(out.length>=CAP) break; } }
-  if(out.length < CAP){
-    for(const nm of all){ const l=nm.toLowerCase(); if(!l.startsWith(q) && l.includes(q)){ out.push([nm, S._names[nm]]); if(out.length>=CAP) break; } }
-  }
+  const CAP = 300, all = S._nameEntries;
+  const pre = all.filter(e => e.name.toLowerCase().startsWith(q));
+  const out = pre.concat(all.filter(e => !e.name.toLowerCase().startsWith(q) && e.name.toLowerCase().includes(q))).slice(0, CAP);
   const label = out.length>=CAP ? `First ${CAP} matches — keep typing to narrow` : `${out.length} match${out.length!==1?'es':''}`;
-  renderNamesRows(out, out.length ? label : 'No names match “'+q+'”');
+  renderNamesRows(out, out.length ? label : 'No names match “'+escapeHtml(q)+'”');
 }
 function renderNamesRows(entries, label){
   const list = document.getElementById('names-list');
   if(!entries.length){ list.innerHTML = `<div id="s-status">${label}</div>`; return; }
   list.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${label}</div>`
     + entries.map(e=>{
-        const nm = e[0], esc = nm.replace(/'/g,"\\'");
-        return `<button class="nm-row" onclick="toggleNameRow(this,'${esc}')">`
-          +`<span class="nm-name">${nm}</span>`
-          +`<span class="nm-mean">${e[1]}</span>`
-          +`<span class="nm-find" hidden>🔍 <b>Find “${nm}” in Scripture →</b></span>`
+        const n = e.people.length;
+        return `<button class="nm-row" onclick="nameRowTap(this,'${e.key}')">`
+          +`<span class="nm-name">${escapeHtml(e.name)}${n ? `<span class="cw-count nm-count">${n === 1 ? '1 person' : n + ' people'}</span>` : ''}</span>`
+          +(e.meaning ? `<span class="nm-mean">${escapeHtml(e.meaning)}</span>` : '')
+          +(n ? '' : `<span class="nm-find" hidden>🔍 <b>Find “${escapeHtml(e.name)}” in Scripture →</b></span>`)
           +`</button>`;
       }).join('');
 }
-// First tap reveals the "find in Scripture" affordance; tapping that runs an
-// exact whole-word search for the name.
-function toggleNameRow(el, name){
+function nameRowTap(el, key){
+  const e = S._nameIndex.get(key);
+  if(!e) return;
+  if(e.people.length === 1 && key !== 'jesus') return openPerson(e.people[0]);
+  if(e.people.length) return openNamePage(key);
+  // No people with this name (mostly places): first tap reveals the
+  // "find in Scripture" link; tapping that runs an exact whole-word search.
   const find = el.querySelector('.nm-find');
   if(find && find.hidden){ find.hidden = false; return; }
-  namesSearch(name);
+  namesSearch(e.name);
 }
 function namesSearch(name){
   switchSearchMode('search');
@@ -9017,7 +9468,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v29';
+const WHATS_NEW_VERSION = 'v30';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -9571,6 +10022,26 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v30" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">👤</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible People</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>Search &rarr; Names</strong> now knows the 3,000 people of the Bible: tap a name to see <strong>who they were</strong>, what their name means in Hebrew or Greek, their <strong>family</strong>, and every verse that names them. Same-named people &mdash; like the 24 Zechariahs &mdash; are told apart.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v30" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔗</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Everything Connected</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Tap a verse to see the <strong>people</strong> in it and the <strong>doctrines</strong> that cite it. Chapters with a Bible map show a <strong>🗺️ map button</strong>. Your <strong>recent searches</strong> wait under the search box, and Concordance words can include their other forms (<em>reign, reigned, reigneth</em>).
+        </div>
+      </div>
+    </div>
+
     <div class="wn-item" data-wn="v29" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📚</div>
       <div>
