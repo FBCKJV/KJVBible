@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 📍 Bible Places (v32)
+- **~1,200 places named in the KJV** join **Search → Names**, from the OpenBible.info Bible Geocoding Data (CC BY 4.0) — plain geography drawn from over seventy atlases and reference works, with no commentary. Easton's Bible Dictionary was considered and set aside on doctrinal grounds
+- **Place pages**: the modern site (Bethel → Beitin) with how sure scholars are (Confident · Likely · Possible · Uncertain), any other suggested sites, the distance and direction from Jerusalem ("about 10 miles north"), coordinates with a map link, nearby Bible places (Capernaum → Chorazin, Bethsaida, Sea of Galilee), Hitchcock's name meaning, and every verse that names it
+- Only verses where the KJV itself names the place are used, and each place shows the KJV's own spelling (Ai, also spelled Hai)
+- Names shared by people and places (Abdon: four men and a town) show both on one name page; searching a place's name shows a 📍 card
+- **Verse card**: "Places in this verse" — tap one to open it (Back returns to the reader); chips use the verse's own spelling
+- Names filter ignores hyphens ("bethel" finds Hitchcock's "Beth-el"), and names show the KJV spelling
+
 ### 📖 Webster's 1828 Dictionary (v31)
 - **Search → Dictionary** is now Noah Webster's *American Dictionary of the English Language* (1828, public domain) — **62,412 entries** — with the church's **KJV notes** merged in: one entry per word, the note on top as "In the King James Bible", Webster beneath
 - Source: the akaitsurugi/webster1828 transcription (CC BY-SA 4.0), plus 21 entries it lacks from DataWar/1828-dictionary (MIT). DataWar's copy wasn't used as the base — ~800 of its entries are scraped website error pages and menu text
