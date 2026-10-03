@@ -249,6 +249,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .wd-src:empty{display:none}
 .wd-vp{font-family:'Crimson Pro',serif;font-size:13.5px;color:var(--text-d);line-height:1.5;margin:8px 0 6px}
 #vpop-def-webster .vl-chip{margin-top:2px}
+.pl-site{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.pl-site-name{font-family:'IM Fell English',serif;font-size:18px;color:var(--text)}
+.pl-desc,.pl-why{font-family:'Crimson Pro',serif;font-size:14.5px;color:var(--text-d)}
+.pl-dist{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text)}
+.pl-coords{font-size:12.5px;color:var(--text-m);font-variant-numeric:tabular-nums}
+.pl-coords span{user-select:all}
+.pl-coords a{color:var(--gold)}
+.pl-conf{font-family:Inter,sans-serif;font-size:10px;letter-spacing:.06em;text-transform:uppercase;border-radius:8px;padding:1px 7px;vertical-align:middle;border:1px solid var(--border);color:var(--text-d)}
+.pl-hi{color:var(--gold);border-color:var(--gold-d)}
+.pl-alt{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:7px 2px;border-bottom:1px solid var(--border);font-family:'Crimson Pro',serif;font-size:15px}
+.pl-alt-d{font-size:12px;color:var(--text-m);margin-left:auto}
 .s-dym{font-size:14px;color:var(--text-d);padding:0 0 8px}
 .s-dym a{color:var(--gold);font-weight:600;font-style:italic}
 .nm-row{display:block;width:100%;text-align:left;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
@@ -1458,11 +1469,12 @@ body.light #home-watermark{
           <div id="names-az"></div>
           <div id="names-list"><div id="s-status">Loading Bible names…</div></div>
           <div style="font-size:11px;color:var(--text-m);font-style:italic;padding:10px 2px 0;border-top:1px solid var(--border);margin-top:10px">
-            Name meanings from Hitchcock's Bible Names Dictionary (Roswell D. Hitchcock, 1869 — public domain). People from BibleData (Brady Stephenson, CC BY 4.0).
+            Name meanings from Hitchcock's Bible Names Dictionary (Roswell D. Hitchcock, 1869 — public domain). People from BibleData (Brady Stephenson, CC BY 4.0). Places from the OpenBible.info Bible Geocoding Data (CC BY 4.0).
           </div>
         </div>
         <div id="name-view" style="display:none"></div>
         <div id="person-view" style="display:none"></div>
+        <div id="place-view" style="display:none"></div>
       </div>
 
       <!-- Maps panel -->
@@ -1594,6 +1606,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with our church's KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
+        <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it</span></div>
         <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> has public-domain Bible maps — tap any map to open it full-screen and pinch or use +/− to zoom. They work offline</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — start Bible in a Year, NT in 30 Days, or Proverbs in a Month. Chapters check off automatically as you read</span></div>
@@ -5346,17 +5359,21 @@ function loadPeople(){
 // (by their main name or another name, e.g. Abram → "Abraham", Saul → "Paul").
 async function ensureNameIndex(){
   if(S._nameIndex) return S._nameIndex;
-  const [names, people] = await Promise.all([loadBibleNames(), loadPeople().catch(() => null)]);
-  if(!names && !people) return null;
+  const [names, people, places] = await Promise.all([loadBibleNames(), loadPeople().catch(() => null), loadPlaces().catch(() => null)]);
+  if(!names && !people && !places) return null;
   if(S._nameIndex) return S._nameIndex;
   const idx = new Map();
-  const entry = (name) => {
+  // fromHitchcock: Hitchcock hyphenates ("Beth-el"); the KJV spelling a
+  // person or place actually uses ("Bethel") replaces it for display
+  const entry = (name, fromHitchcock) => {
     const k = namesNorm(name);
     if(!k) return null;
-    if(!idx.has(k)) idx.set(k, {key:k, name, meaning:'', people:[]});
-    return idx.get(k);
+    if(!idx.has(k)) idx.set(k, {key:k, name, meaning:'', people:[], places:[], h: !!fromHitchcock});
+    const e = idx.get(k);
+    if(!fromHitchcock && e.h){ e.name = name; e.h = false; }
+    return e;
   };
-  for(const [nm, mean] of Object.entries(names || {})){ const e = entry(nm); if(e) e.meaning = e.meaning || mean; }
+  for(const [nm, mean] of Object.entries(names || {})){ const e = entry(nm, true); if(e) e.meaning = e.meaning || mean; }
   for(const [id, p] of Object.entries(people || {})){
     for(const nm of [p.n, ...(p.a || [])]){
       if(!/^[A-Z]/.test(nm)) continue; // descriptive labels ("a despicable person") aren't names
@@ -5364,7 +5381,14 @@ async function ensureNameIndex(){
       if(e && !e.people.includes(id)) e.people.push(id);
     }
   }
+  for(const [id, p] of Object.entries(places || {})){
+    for(const nm of [p.n, ...(p.a || [])]){
+      const e = entry(nm);
+      if(e && !e.places.includes(id)) e.places.push(id);
+    }
+  }
   for(const e of idx.values()){
+    e.places.sort((a, b) => refCount(S._places[b].v) - refCount(S._places[a].v));
     // No Hitchcock entry: fall back to the name's meaning in the original language
     if(!e.meaning && e.people.length){
       const p = S._people[e.people[0]];
@@ -5390,21 +5414,29 @@ function personBrief(p){
 // Trim to about n characters at a word boundary
 const clip = (t, n) => t.length <= n ? t : t.slice(0, t.lastIndexOf(' ', n) > n / 2 ? t.lastIndexOf(' ', n) : n) + '…';
 
-// Search card when the query is a person's name
+// Search card when the query is a person's or a place's name
 function findPeopleCard(q){
   if(!S._nameIndex) return '';
   const k = namesNorm(q.trim());
   const e = k && S._nameIndex.get(k);
-  if(!e || !e.people.length) return '';
-  if(e.people.length === 1){
+  if(!e || (!e.people.length && !e.places.length)) return '';
+  if(e.people.length === 1 && !e.places.length){
     const id = e.people[0], p = S._people[id];
     return `<div tabindex="0" class="rc ref-jump" onclick="openPerson('${id}')">
       <div class="rc-ref">👤 ${escapeHtml(p.n)}${p.a ? ' · ' + escapeHtml(p.a.join(', ')) : ''}</div>
       <div class="rc-txt" style="opacity:.75">${escapeHtml(personBrief(p))} — tap to see who this is</div></div>`;
   }
+  if(e.places.length === 1 && !e.people.length){
+    const id = e.places[0], p = S._places[id];
+    return `<div tabindex="0" class="rc ref-jump" onclick="openPlace('${id}')">
+      <div class="rc-ref">📍 ${escapeHtml(p.n)}</div>
+      <div class="rc-txt" style="opacity:.75">${escapeHtml(placeType(p.t))}${p.s ? ' · ' + escapeHtml(p.s) : ''} — tap to see where it was</div></div>`;
+  }
+  const parts = [e.people.length ? `${e.people.length} ${e.people.length === 1 ? 'person' : 'people'}` : '', e.places.length ? `${e.places.length} place${e.places.length !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' and ');
+  const briefs = e.people.slice(0, 2).map(id => personBrief(S._people[id])).concat(e.places.slice(0, 2).map(id => placeType(S._places[id].t) + (S._places[id].s ? ' at ' + S._places[id].s : '')));
   return `<div tabindex="0" class="rc ref-jump" onclick="openNamePage('${k}')">
-    <div class="rc-ref">👤 ${e.people.length} people named ${escapeHtml(e.name)}</div>
-    <div class="rc-txt" style="opacity:.75">${e.people.slice(0, 3).map(id => escapeHtml(personBrief(S._people[id]))).join(' · ')}${e.people.length > 3 ? ' …' : ''}</div></div>`;
+    <div class="rc-ref">${e.people.length ? '👤' : '📍'} ${parts} named ${escapeHtml(e.name)}</div>
+    <div class="rc-txt" style="opacity:.75">${briefs.map(escapeHtml).join(' · ')}${e.people.length + e.places.length > 4 ? ' …' : ''}</div></div>`;
 }
 
 /* ── Name page: everyone who bore a name ── */
@@ -5429,8 +5461,16 @@ async function openNamePage(key, pushHistory=true, scrollY=0){
         <div class="rc-txt">${escapeHtml(personBrief(p) || p.d)}</div>
         <div class="pp-meta">${[p.t ? 'Tribe of ' + escapeHtml(p.t) : '', n ? `named in ${n} verse${n !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ')}</div>
       </div>`; }).join('')}
-    <button class="nv-showmore pp-find" onclick="namesSearch('${escapeHtml(e.name).replace(/'/g, "\\'")}')">🔍 Find “${escapeHtml(e.name)}” in Scripture</button>
-    <div class="nv-credit">Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain). People from BibleData (Brady Stephenson, CC BY 4.0).</div>`;
+    ${e.places.length ? `<div class="pp-h">${e.places.length} place${e.places.length !== 1 ? 's' : ''} named ${escapeHtml(e.name)}</div>` : ''}
+    ${e.places.map(id => {
+      const p = S._places[id], n = refCount(p.v), [conf, , cls] = placeConfidence(p.ll ? p.c : null);
+      return `<div tabindex="0" class="rc" onclick="openPlace('${id}')">
+        <div class="rc-ref">📍 ${escapeHtml(p.n)}</div>
+        <div class="rc-txt">${escapeHtml(placeType(p.t))}${p.s ? ` — ${escapeHtml(p.d && p.d.startsWith('another name') ? p.d : p.s)}` : ''} <span class="pl-conf pl-${cls}">${conf}</span></div>
+        <div class="pp-meta">${n ? `named in ${n} verse${n !== 1 ? 's' : ''}` : ''}</div>
+      </div>`; }).join('')}
+    <button class="nv-showmore pp-find" onclick="placeSearch('${escapeHtml(e.name).replace(/'/g, "\\'")}')">🔍 Find “${escapeHtml(e.name)}” in Scripture</button>
+    <div class="nv-credit">Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain). People from BibleData (Brady Stephenson, CC BY 4.0). Places from the OpenBible.info Bible Geocoding Data (CC BY 4.0).</div>`;
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
 }
 
@@ -5529,6 +5569,149 @@ async function fillPersonVerses(limit=12){ // chapters' worth at first
 function openPersonFromVerse(id){ leaveVPopThen(() => openPerson(id)); }
 function peopleInVerse(ref){ return (S._peopleByVerse && S._peopleByVerse.get(ref)) || []; }
 
+/* ════ PLACES — where the places of the Bible were ════
+   ~1,200 places named in the KJV, from OpenBible.info's geocoding data
+   (CC BY 4.0), built into places.json by tools/build-places.js: the
+   modern site, coordinates and how confident scholarship is — plain
+   geography, no commentary. They join the Names tab beside the people;
+   a place page shows where it was, how far from Jerusalem, nearby Bible
+   places, and every verse that names it. */
+const PLACES_URL = 'places.json?v=2026-10-03'; // bump v= whenever tools/build-places.js is re-run
+function loadPlaces(){
+  if(S._places) return Promise.resolve(S._places);
+  return loadCachedJSON(PLACES_URL).then(d => {
+    S._places = d.places;
+    S._placesByVerse = new Map();
+    for(const [id, p] of Object.entries(d.places)){
+      for(const r of p.v.split(';')){
+        const [bc, vs] = r.split(':'); const [b, c] = bc.split('.');
+        for(const part of vs.split(',')){
+          const [a, z] = part.split('-').map(Number);
+          for(let v = a; v <= (z || a); v++){
+            const k = `${BOOKS[b]} ${c}:${v}`;
+            if(!S._placesByVerse.has(k)) S._placesByVerse.set(k, []);
+            S._placesByVerse.get(k).push(id);
+          }
+        }
+      }
+    }
+    return S._places;
+  });
+}
+function placesInVerse(ref){ return (S._placesByVerse && S._placesByVerse.get(ref)) || []; }
+
+// How sure scholars are of the site (OpenBible's 0–1000 confidence)
+function placeConfidence(c){
+  if(c == null) return ['Unknown', 'the location is not known', 'unk'];
+  if(c >= 700) return ['Confident', 'scholars agree on this site', 'hi'];
+  if(c >= 450) return ['Likely', 'most scholars place it here', 'mid'];
+  if(c >= 200) return ['Possible', 'some scholars suggest this site', 'low'];
+  return ['Uncertain', 'one guess among several', 'low'];
+}
+const PLACE_TYPES = { settlement:'Town or city', region:'Region', river:'River', mountain:'Mountain', hill:'Hill', valley:'Valley',
+  'body of water':'Sea or lake', island:'Island', spring:'Spring', well:'Well', campsite:'Campsite on the wilderness journey', gate:'Gate',
+  altar:'Altar', field:'Field', ford:'Ford', forest:'Forest', fortification:'Fortress', garden:'Garden', road:'Road', tower:'Tower',
+  'district in settlement':'Part of a city', wadi:'Wadi (seasonal stream)', canal:'Canal', cliff:'Cliff', hall:'Hall', pool:'Pool',
+  rock:'Rock', tree:'Tree', people:'People group', mountain_range:'Mountains' };
+const placeType = t => PLACE_TYPES[t] || (t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Place');
+
+// Distance (miles) and compass direction between two [lat, lon] points
+function placeDistance(a, b){
+  const R = 3958.8, rad = x => x * Math.PI / 180;
+  const dLat = rad(b[0] - a[0]), dLon = rad(b[1] - a[1]);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLon / 2) ** 2;
+  const miles = 2 * R * Math.asin(Math.sqrt(h));
+  const y = Math.sin(dLon) * Math.cos(rad(b[0])), x = Math.cos(rad(a[0])) * Math.sin(rad(b[0])) - Math.sin(rad(a[0])) * Math.cos(rad(b[0])) * Math.cos(dLon);
+  const bearing = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+  const dirs = ['north','north-northeast','northeast','east-northeast','east','east-southeast','southeast','south-southeast','south','south-southwest','southwest','west-southwest','west','west-northwest','northwest','north-northwest'];
+  return { miles, dir: dirs[Math.round(bearing / 22.5) % 16] };
+}
+const fmtMiles = m => m < 1 ? 'less than a mile' : `${m < 10 ? m.toFixed(1).replace(/\.0$/, '') : Math.round(m).toLocaleString()} miles (${Math.round(m * 1.609).toLocaleString()} km)`;
+function jerusalemLL(){
+  if(S._jerLL !== undefined) return S._jerLL;
+  const j = Object.values(S._places).filter(p => p.n === 'Jerusalem' && p.ll).sort((a, b) => b.v.length - a.v.length)[0];
+  return S._jerLL = j ? j.ll : null;
+}
+// Search for the place's name in Scripture (a phrase for names like "City of David")
+function placeSearch(name){
+  if(/\s/.test(name)){ switchSearchMode('search'); searchFor(`"${name}"`); }
+  else namesSearch(name);
+}
+
+/* ── Place page ── */
+SUBVIEWS.place = { mode:'names', browse:'names-browse', view:'place-view', open:(k, push, y) => openPlace(k, push, y) };
+async function openPlace(id, pushHistory=true, scrollY=0){
+  await ensureNameIndex();
+  const p = S._places && S._places[id];
+  if(!p) return;
+  enterSubView('place', id, pushHistory);
+  const view = document.getElementById('place-view');
+  const n = refCount(p.v);
+  const hitch = S._nameIndex.get(namesNorm(p.n));
+  const [conf, confWhy, confCls] = placeConfidence(p.ll ? p.c : null);
+  const jer = jerusalemLL();
+  const fromJer = p.ll && jer && p.n !== 'Jerusalem' ? placeDistance(jer, p.ll) : null;
+  // Other Bible places within 15 miles, nearest first
+  const near = p.ll ? Object.entries(S._places).filter(([k, q]) => k !== id && q.ll && q.n !== p.n)
+    .map(([k, q]) => [k, q, placeDistance(p.ll, q.ll).miles]).filter(x => x[2] <= 15)
+    .sort((a, b) => a[2] - b[2]).filter((x, i, arr) => arr.findIndex(y => y[1].n === x[1].n) === i).slice(0, 10) : [];
+  const osm = p.ll ? `https://www.openstreetmap.org/?mlat=${p.ll[0]}&mlon=${p.ll[1]}#map=11/${p.ll[0]}/${p.ll[1]}` : '';
+  const openVerses = n > 0 && n <= 30;
+  view.innerHTML = `
+    <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
+    <div class="dv-title">${escapeHtml(p.n)}</div>
+    ${p.a ? `<div class="pp-aka-line">Also spelled ${p.a.map(escapeHtml).join(', ')}</div>` : ''}
+    <div class="pp-meta">${escapeHtml(placeType(p.t))}${n ? ` · Named in ${n} verse${n !== 1 ? 's' : ''}` : ''}</div>
+    ${hitch && hitch.meaning ? `<div class="pp-hitch">Name meaning (Hitchcock, 1869): “${escapeHtml(hitch.meaning)}”</div>` : ''}
+    <div class="pp-h">Where it was</div>
+    ${p.ll ? `<div class="pl-site">
+        <div class="pl-site-name">${escapeHtml(p.s || '')} <span class="pl-conf pl-${confCls}" title="${escapeHtml(confWhy)}">${conf}</span></div>
+        ${p.d && p.d !== p.s ? `<div class="pl-desc">${escapeHtml(p.d)}</div>` : ''}
+        <div class="pl-why">${escapeHtml(conf)}: ${escapeHtml(confWhy)}.</div>
+        ${fromJer ? `<div class="pl-dist">About ${fmtMiles(fromJer.miles)} ${fromJer.dir} of Jerusalem</div>` : ''}
+        <div class="pl-coords"><span>${p.ll[0].toFixed(4)}°N, ${p.ll[1].toFixed(4)}°E</span> · <a href="${osm}" target="_blank" rel="noopener">Open in a map ↗</a></div>
+      </div>` : `<div class="pl-site"><div class="pl-site-name">Location unknown</div><div class="pl-why">Scholars have not identified where this place was.</div></div>`}
+    ${p.o ? `<div class="pp-h">Other suggested sites</div>${p.o.map(([s, c, la, lo]) => {
+      const [cl] = placeConfidence(c);
+      return `<div class="pl-alt"><span>${escapeHtml(s)}</span><span class="pl-conf pl-${placeConfidence(c)[2]}">${cl}</span>${p.ll ? `<span class="pl-alt-d">${fmtMiles(placeDistance(p.ll, [la, lo]).miles)} away</span>` : ''}</div>`; }).join('')}` : ''}
+    ${near.length ? `<div class="pp-h">Nearby Bible places</div><div class="vl-chips">${near.map(([k, q, mi]) =>
+      `<button class="pp-chip" onclick="openPlace('${k}')">${escapeHtml(q.n)} <span class="pp-chip-d">${mi < 0.3 ? 'same site' : mi < 1 ? '<1 mi' : Math.round(mi) + ' mi'}</span></button>`).join('')}</div>` : ''}
+    ${n ? `<div class="nv-line">
+      <button class="nv-hdr" onclick="togglePlaceVerses()" aria-expanded="${openVerses}">
+        <span class="nv-lbl">Verses naming ${escapeHtml(p.n)}</span><span class="cw-count">${n}</span><span class="doc-cat-arr${openVerses ? ' open' : ''}" id="plv-arr">⌄</span>
+      </button>
+      <div class="nv-body" id="plv-body"></div></div>` : ''}
+    <button class="nv-showmore pp-find" onclick="placeSearch('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔍 Find every “${escapeHtml(p.n)}” in Scripture</button>
+    <div class="nv-credit">Locations from the OpenBible.info Bible Geocoding Data (CC BY 4.0), which draws on over seventy atlases and reference works. Distances are straight-line. Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain).</div>`;
+  S._placeOpen = S._placeOpen || {};
+  if(!(id in S._placeOpen)) S._placeOpen[id] = openVerses;
+  if(S._placeOpen[id]) await fillPlaceVerses();
+  if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+}
+async function togglePlaceVerses(){
+  const id = S._subView && S._subView.key, body = document.getElementById('plv-body');
+  if(!body || !id) return;
+  S._placeOpen[id] = !S._placeOpen[id];
+  document.getElementById('plv-arr').classList.toggle('open', S._placeOpen[id]);
+  body.previousElementSibling.setAttribute('aria-expanded', String(S._placeOpen[id]));
+  if(S._placeOpen[id]) await fillPlaceVerses(); else body.innerHTML = '';
+}
+async function fillPlaceVerses(limit=12){
+  const id = S._subView && S._subView.key, p = S._places[id], body = document.getElementById('plv-body');
+  if(!body || !p) return;
+  document.getElementById('plv-arr').classList.add('open');
+  body.innerHTML = '<div id="s-status" style="padding:8px 0">Loading verses…</div>';
+  const html = await refCardsHTML(p.v, limit);
+  if(!S._subView || S._subView.key !== id) return;
+  const total = p.v.split(';').length;
+  body.innerHTML = html + (total > limit ? `<button class="nv-showmore" onclick="fillPlaceVerses(${total})">Show all ${refCount(p.v)} verses</button>` : '');
+}
+function openPlaceFromVerse(id){ leaveVPopThen(() => openPlace(id)); }
+// The spelling this verse uses ("Hai" in Genesis 12:8 for Ai)
+function placeNameInVerse(p, text){
+  return [p.n, ...(p.a || [])].find(nm => new RegExp(`(^|[^A-Za-z])${nm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z])`).test(text)) || p.n;
+}
+
 /* ════ VERSE CARD LINKS: people named + doctrines citing the verse ════ */
 // "Book ch:v" → [[ci, ti], …] for every doctrine topic citing that verse
 function doctrineIndex(){
@@ -5553,17 +5736,22 @@ function fillVpopLinks(ref){
   const render = () => {
     if(S.popRef !== ref) return; // another verse opened meanwhile
     const people = peopleInVerse(ref);
+    // one chip per place name (a name the dataset splits into several sites shows once)
+    const places = placesInVerse(ref).filter((id, i, arr) => arr.findIndex(x => S._places[x].n === S._places[id].n) === i);
     const docs = doctrineIndex().get(ref) || [];
-    if(!people.length && !docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
+    if(!people.length && !places.length && !docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
     el.innerHTML =
       (people.length ? `<div class="vd-label">👤 People in this verse</div><div class="vl-chips">${people.map(id =>
         `<button class="vl-chip" onclick="event.stopPropagation();openPersonFromVerse('${id}')">${escapeHtml(personName(id))}</button>`).join('')}</div>` : '')
+      + (places.length ? `<div class="vd-label">📍 Places in this verse</div><div class="vl-chips">${places.map(id =>
+        `<button class="vl-chip" onclick="event.stopPropagation();openPlaceFromVerse('${id}')">${escapeHtml(placeNameInVerse(S._places[id], S.popTxt || ''))}</button>`).join('')}</div>` : '')
       + (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
         `<button class="vl-chip" onclick="event.stopPropagation();openDoctrineFromVerse(${ci},${ti})">${escapeHtml(DOCTRINES[ci].topics[ti].name)}</button>`).join('')}</div>` : '');
     el.style.display = 'block';
   };
   render();
   if(!S._people) loadPeople().then(render).catch(() => {});
+  if(!S._places) loadPlaces().then(render).catch(() => {});
 }
 function openDoctrineFromVerse(ci, ti){
   leaveVPopThen(() => {
@@ -6016,9 +6204,10 @@ function filterNames(q){
   q = q.trim().toLowerCase();
   if(!q){ selectNamesLetter(S._namesLetter); return; }
   document.querySelectorAll('#names-az .cz-btn').forEach(b=>b.classList.remove('on'));
-  const CAP = 300, all = S._nameEntries;
-  const pre = all.filter(e => e.name.toLowerCase().startsWith(q));
-  const out = pre.concat(all.filter(e => !e.name.toLowerCase().startsWith(q) && e.name.toLowerCase().includes(q))).slice(0, CAP);
+  // compared without hyphens or spaces, so "bethel" finds "Beth-el"
+  const CAP = 300, all = S._nameEntries, nq = namesNorm(q);
+  const pre = all.filter(e => e.key.startsWith(nq));
+  const out = pre.concat(all.filter(e => !e.key.startsWith(nq) && e.key.includes(nq))).slice(0, CAP);
   const label = out.length>=CAP ? `First ${CAP} matches — keep typing to narrow` : `${out.length} match${out.length!==1?'es':''}`;
   renderNamesRows(out, out.length ? label : 'No names match “'+escapeHtml(q)+'”');
 }
@@ -6027,19 +6216,21 @@ function renderNamesRows(entries, label){
   if(!entries.length){ list.innerHTML = `<div id="s-status">${label}</div>`; return; }
   list.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${label}</div>`
     + entries.map(e=>{
-        const n = e.people.length;
+        const n = e.people.length, np = e.places.length;
+        const badge = [n ? (n === 1 ? '1 person' : n + ' people') : '', np ? (np === 1 ? 'place' : np + ' places') : ''].filter(Boolean).join(' · ');
         return `<button class="nm-row" onclick="nameRowTap(this,'${e.key}')">`
-          +`<span class="nm-name">${escapeHtml(e.name)}${n ? `<span class="cw-count nm-count">${n === 1 ? '1 person' : n + ' people'}</span>` : ''}</span>`
+          +`<span class="nm-name">${escapeHtml(e.name)}${badge ? `<span class="cw-count nm-count">${badge}</span>` : ''}</span>`
           +(e.meaning ? `<span class="nm-mean">${escapeHtml(e.meaning)}</span>` : '')
-          +(n ? '' : `<span class="nm-find" hidden>🔍 <b>Find “${escapeHtml(e.name)}” in Scripture →</b></span>`)
+          +(n || np ? '' : `<span class="nm-find" hidden>🔍 <b>Find “${escapeHtml(e.name)}” in Scripture →</b></span>`)
           +`</button>`;
       }).join('');
 }
 function nameRowTap(el, key){
   const e = S._nameIndex.get(key);
   if(!e) return;
-  if(e.people.length === 1 && key !== 'jesus') return openPerson(e.people[0]);
-  if(e.people.length) return openNamePage(key);
+  if(e.people.length === 1 && !e.places.length && key !== 'jesus') return openPerson(e.people[0]);
+  if(e.places.length === 1 && !e.people.length) return openPlace(e.places[0]);
+  if(e.people.length || e.places.length) return openNamePage(key);
   // No people with this name (mostly places): first tap reveals the
   // "find in Scripture" link; tapping that runs an exact whole-word search.
   const find = el.querySelector('.nm-find');
@@ -9652,7 +9843,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v31';
+const WHATS_NEW_VERSION = 'v32';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -10206,6 +10397,16 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v32" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📍</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Places</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>Search &rarr; Names</strong> now includes 1,200 places. Tap one to see <strong>where it was</strong> &mdash; the modern site, how sure scholars are, its distance from Jerusalem, nearby Bible places, a map link, and every verse that names it. Tap a verse while reading to see the places in it.
+        </div>
+      </div>
+    </div>
+
     <div class="wn-item" data-wn="v31" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📖</div>
       <div>
