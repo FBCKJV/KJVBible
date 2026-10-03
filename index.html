@@ -226,6 +226,29 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .s-recent{margin-top:4px}
 .s-recent-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-m);padding:4px 2px}
 .s-recent-h button{background:none;border:none;color:var(--text-m);font-size:12px;cursor:pointer;text-decoration:underline}
+.wd-list-h{font-size:12px;color:var(--text-m);padding:0 2px 8px}
+.wd-row{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:10px 4px;cursor:pointer;color:var(--text)}
+.wd-row-w{display:block;font-family:'IM Fell English',serif;font-size:17px;color:var(--gold)}
+.wd-row-d{display:block;font-family:'Crimson Pro',serif;font-size:14.5px;color:var(--text);line-height:1.45;margin-top:2px}
+.wd-badge{font-family:Inter,sans-serif;font-size:9px;letter-spacing:.08em;color:var(--gold);border:1px solid var(--gold-d);border-radius:8px;padding:1px 5px;vertical-align:middle}
+.wd-entry{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.wd-head{margin-bottom:8px}
+.wd-word{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)}
+.wd-pos{font-style:italic;color:var(--text-m);font-size:13px;margin-left:4px;font-family:'Crimson Pro',serif}
+.wd-kjv{border-left:3px solid var(--gold);background:var(--bg3);border-radius:0 8px 8px 0;padding:8px 12px;margin:0 0 10px;font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);line-height:1.5}
+.wd-kjv-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:2px;font-family:Inter,sans-serif}
+.wd-kjv .wd-kjv-l{display:block}
+.wd-def{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.55}
+.wd-def p{margin:0 0 6px}
+.wd-def b{color:var(--gold-l)}
+.wd-def .wd-ety{font-size:13px;color:var(--text-m);font-style:italic}
+.wd-ref{color:var(--gold);border-bottom:1px dotted var(--gold-d);cursor:pointer;text-decoration:none}
+.wd-more{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:6px 10px;font-size:12px;margin-top:4px;cursor:pointer}
+.wd-sep{border-top:1px dashed var(--border);margin:12px 0}
+.wd-src{font-size:10.5px;color:var(--text-m);font-style:italic;margin-top:10px;border-top:1px solid var(--border);padding-top:6px}
+.wd-src:empty{display:none}
+.wd-vp{font-family:'Crimson Pro',serif;font-size:13.5px;color:var(--text-d);line-height:1.5;margin:8px 0 6px}
+#vpop-def-webster .vl-chip{margin-top:2px}
 .s-dym{font-size:14px;color:var(--text-d);padding:0 0 8px}
 .s-dym a{color:var(--gold);font-weight:600;font-style:italic}
 .nm-row{display:block;width:100%;text-align:left;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
@@ -1388,14 +1411,17 @@ body.light #home-watermark{
 
       <!-- KJV Dictionary panel -->
       <div id="dict-panel" style="display:none">
-        <div class="s-wrap" style="margin-bottom:10px">
-          <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="search" id="dict-input" placeholder="Look up a KJV word…" oninput="handleDictSearch(this.value)" autocomplete="off">
+        <div id="dict-browse">
+          <div class="s-wrap" style="margin-bottom:10px">
+            <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="search" id="dict-input" placeholder="Look up any word — Webster’s 1828…" oninput="handleDictSearch(this.value)" autocomplete="off">
+          </div>
+          <div id="dict-tip" style="font-size:12px;color:var(--text-m);margin-bottom:10px;font-style:italic">
+            Tip: While reading, tap a verse — its hard words are listed with their meaning.
+          </div>
+          <div id="dict-results"></div>
         </div>
-        <div id="dict-tip" style="font-size:12px;color:var(--text-m);margin-bottom:10px;font-style:italic">
-          Tip: While reading, tap any word in a verse to look it up instantly.
-        </div>
-        <div id="dict-results"></div>
+        <div id="word-view" style="display:none"></div>
       </div>
 
       <!-- Topics panel (Nave's Topical Bible: A–Z browse + topic page) -->
@@ -1566,6 +1592,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with our church's KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
         <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> has public-domain Bible maps — tap any map to open it full-screen and pinch or use +/− to zoom. They work offline</span></div>
@@ -1937,6 +1964,7 @@ body.light #home-watermark{
       <button onclick="event.stopPropagation();showVpopDictList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">← All words</button>
       <div id="vpop-def-word" style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
       <div id="vpop-def-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
+      <div id="vpop-def-webster"></div>
     </div>
     <div id="vpop-name-row" style="display:none"><div class="vd-label">📛 Names in this verse</div><div id="vpop-names"></div></div>
     <div id="vpop-name-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
@@ -2808,6 +2836,7 @@ function openVPop(ref,txt){
       const w = dWrap._words[parseInt(sp.dataset.idx)];
       document.getElementById('vpop-def-word').textContent = w.word.charAt(0).toUpperCase()+w.word.slice(1);
       document.getElementById('vpop-def-text').textContent = w.def;
+      vpopWebster(w.word);
       dRow.style.display = 'none';
       document.getElementById('vpop-dict-def').style.display = 'block';
     };
@@ -4655,7 +4684,7 @@ async function doSearch(raw) {
   }
 
   S._naveMatches = findNaveTopics(cleaned);
-  S._peopleCard = findPeopleCard(cleaned);
+  S._peopleCard = findPeopleCard(cleaned) + findDictCard(cleaned);
   if (!exactMode) S._didYouMean = didYouMean(cleaned, query);
   const render = () => {
     if (!S._searchResults.length) {
@@ -4678,7 +4707,7 @@ async function doSearch(raw) {
     await Promise.all([navesP, concordP, peopleP]);
     if (gen !== S._searchGen) return;
     const naves = findNaveTopics(cleaned);
-    const people = findPeopleCard(cleaned);
+    const people = findPeopleCard(cleaned) + findDictCard(cleaned);
     const dym = exactMode ? null : didYouMean(cleaned, query);
     if (naves.join() !== S._naveMatches.join() || dym !== S._didYouMean || people !== S._peopleCard) {
       S._naveMatches = naves; S._didYouMean = dym; S._peopleCard = people;
@@ -5612,6 +5641,169 @@ function renderWordFamily(){
   return `<div class="s-dym">Showing “${escapeHtml(S._searchQuery)}” exactly. <a href="#" onclick="searchFor(S._searchQuery);return false">Also include ${escapeHtml(fam.slice(0, 3).join(', '))}${fam.length > 3 ? '…' : ''}</a></div>`;
 }
 
+/* ════ DICTIONARY — Webster's 1828 + the church's KJV notes ════
+   One entry per word: the church's KJV note (KJV_DICT) on top as "In the
+   King James Bible", Noah Webster's 1828 definition beneath. Webster's text
+   is built into dictionary/a.json … z.json by tools/build-webster.js, which
+   also checks and repairs its Scripture references; each letter loads on
+   first use and is saved on the device. */
+const DICT_VERSION = '2026-10-03'; // bump whenever tools/build-webster.js is re-run
+function loadDictLetter(L){
+  return loadCachedJSON(`dictionary/${L}.json?v=${DICT_VERSION}`).then(d => ((S._dict = S._dict || {})[L] = d)).catch(() => null);
+}
+const dictKey = w => (w || '').toLowerCase().replace(/[^a-z]/g, '');
+// KJV/British spellings and forms → the headword Webster uses
+// (savour → savor, succour → succor, tares → tare, mandrakes → mandrake)
+function websterForms(w){
+  const k = dictKey(w), out = [k];
+  const add = x => { if(x && x.length > 1 && !out.includes(x)) out.push(x); };
+  add(k.replace(/our(s|ed|eth|est|ing)?$/, 'or$1'));
+  add(k.replace(/([^aeiou])re$/, '$1er'));
+  for(const f of out.slice()){
+    add(f.replace(/ies$/, 'y')); add(f.replace(/es$/, '')); add(f.replace(/s$/, ''));
+    add(f.replace(/eth$/, '')); add(f.replace(/eth$/, 'e')); add(f.replace(/est$/, '')); add(f.replace(/ed$/, '')); add(f.replace(/ed$/, 'e'));
+  }
+  return out;
+}
+// The church's note for a Webster headword (notes may be keyed by a KJV form)
+function kjvNoteFor(key){
+  if(!S._noteIndex){
+    S._noteIndex = new Map();
+    for(const [w, note] of Object.entries(KJV_DICT)){
+      const forms = websterForms(w);
+      if(!S._noteIndex.has(forms[0])) S._noteIndex.set(forms[0], {word: w, note});
+      for(const f of forms.slice(1)) if(!S._noteIndex.has(f)) S._noteIndex.set(f, {word: w, note});
+    }
+  }
+  return S._noteIndex.get(key) || null;
+}
+// The notes cite Scripture in short form ("Rom. 7:8", "1 Cor. 13:1") — link those too
+function noteLinks(text){
+  return escapeHtml(text).replace(/\b((?:[1-3] ?)?[A-Z][a-z]+)\.? (\d+):(\d+)/g, (m, b, c, v) => {
+    const r = parseReference(`${b} ${c}:${v}`);
+    return r && r.verse ? `<a href="#" class="ref-link" onclick="jumpToRef('${r.book} ${r.chIdx + 1}:${r.verse}');return false">${m}</a>` : m;
+  });
+}
+// Look a word up: Webster's entries (under the first form found) + the note
+async function lookupWord(w){
+  const forms = websterForms(w);
+  const L = forms[0][0];
+  if(!L) return null;
+  const shard = (S._dict && S._dict[L]) || await loadDictLetter(L);
+  let key = forms.find(f => shard && shard[f]);
+  const noteHit = (key && kjvNoteFor(key)) || kjvNoteFor(forms[0]);
+  if(!key && !noteHit) return null;
+  return { key: key || forms[0], word: key || dictKey(noteHit.word), entries: key ? shard[key] : [], note: noteHit ? noteHit.note : '', noteWord: noteHit ? noteHit.word : '' };
+}
+const wdTitle = head => { const t = head.replace(/['’`]/g, '').toLowerCase(); return t.charAt(0).toUpperCase() + t.slice(1); };
+const wdPlain = html => html.replace(/<p class="wd-ety">.*?<\/p>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+// First definition, for lists and the verse card
+function firstSense(entries){
+  for(const [, , html] of entries || []){
+    const t = wdPlain(html).replace(/^\d+\.\s*/, '');
+    if(t) return t.length > 160 ? t.slice(0, t.lastIndexOf(' ', 150)) + '…' : t;
+  }
+  return '';
+}
+
+/* ── Dictionary tab: list ── */
+let _dictTimer = null;
+function handleDictSearch(q){
+  showTabList('dict');
+  clearTimeout(_dictTimer);
+  const el = document.getElementById('dict-results');
+  const k = dictKey(q);
+  if(!k){
+    // The church's KJV word list
+    const words = Object.keys(KJV_DICT).sort((a, b) => a.localeCompare(b));
+    el.innerHTML = `<div class="wd-list-h">KJV words — ${words.length} with church notes · type any word for Webster's 1828</div>`
+      + words.map(w => dictRow(w, '', KJV_DICT[w], true)).join('');
+    return;
+  }
+  // Notes match instantly; Webster's list follows once its letter has loaded
+  const notes = Object.keys(KJV_DICT).filter(w => dictKey(w).startsWith(k));
+  el.innerHTML = notes.map(w => dictRow(w, '', KJV_DICT[w], true)).join('') + '<div id="s-status">Looking up…</div>';
+  _dictTimer = setTimeout(async () => {
+    const shard = (S._dict && S._dict[k[0]]) || await loadDictLetter(k[0]);
+    if(dictKey(document.getElementById('dict-input').value) !== k) return; // typed on
+    if(!shard){ el.innerHTML = notes.map(w => dictRow(w, '', KJV_DICT[w], true)).join('') + '<div id="s-status">Webster’s dictionary unavailable — check your connection.</div>'; return; }
+    const keys = Object.keys(shard).filter(w => w.startsWith(k)).sort((a, b) => (a !== k) - (b !== k) || a.length - b.length || a.localeCompare(b)).slice(0, 60);
+    const noteKeys = new Set(notes.map(w => websterForms(w).find(f => shard[f]) || dictKey(w)));
+    const rows = notes.map(w => dictRow(w, '', KJV_DICT[w], true))
+      .concat(keys.filter(w => !noteKeys.has(w)).map(w => dictRow(w, shard[w][0][1], firstSense(shard[w]), false)));
+    el.innerHTML = rows.length ? rows.join('') : `<div id="s-status">No entry for “${escapeHtml(q)}”</div>`;
+  }, 180);
+}
+function dictRow(word, pos, text, isNote){
+  return `<button class="wd-row" onclick="openWord('${dictKey(word)}')">
+    <span class="wd-row-w">${escapeHtml(word.charAt(0).toUpperCase() + word.slice(1))}${pos ? ` <span class="wd-pos">${escapeHtml(pos)}</span>` : ''}${isNote ? ' <span class="wd-badge">KJV</span>' : ''}</span>
+    <span class="wd-row-d">${escapeHtml(text)}</span></button>`;
+}
+
+/* ── Entry page ── */
+SUBVIEWS.word = { mode:'dict', browse:'dict-browse', view:'word-view', open:(k, push, y) => openWord(k, push, y) };
+async function openWord(key, pushHistory=true, scrollY=0){
+  const r = await lookupWord(key);
+  if(!r) return;
+  enterSubView('word', key, pushHistory);
+  const view = document.getElementById('word-view');
+  const LONG = 6; // paragraphs shown before "Show the full entry"
+  const entries = r.entries.length ? r.entries : [[r.noteWord.toUpperCase(), '', '']];
+  view.innerHTML = `
+    <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
+    <div class="wd-entry">
+      ${entries.map(([head, pos, html], i) => {
+        const paras = html.match(/<p\b[\s\S]*?<\/p>/g) || [];
+        const long = paras.length > LONG + 1;
+        return `<div class="wd-head"><span class="wd-word">${escapeHtml(wdTitle(head))}</span>${pos ? ` <span class="wd-pos">${escapeHtml(pos)}</span>` : ''}</div>
+          ${i === 0 && r.note ? `<div class="wd-kjv"><div class="wd-kjv-l">In the King James Bible</div>${noteLinks(r.note)}</div>` : ''}
+          ${html ? `<div class="wd-def${long ? ' wd-short' : ''}" id="wd-def-${i}">${long ? paras.slice(0, LONG).join('') : html}</div>
+            ${long ? `<button class="wd-more" onclick="wdShowAll(${i})">Show the full entry</button>` : ''}` : ''}`;
+      }).join('<div class="wd-sep"></div>')}
+      <div class="wd-src">${r.entries.length ? 'Webster’s American Dictionary of the English Language, 1828' : ''}${r.entries.length && r.note ? ' · ' : ''}${r.note ? 'KJV note: Faith Baptist Church' : ''}</div>
+    </div>
+    <button class="nv-showmore pp-find" onclick="concordSearch('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔍 Find “${escapeHtml(r.noteWord || r.word)}” in Scripture</button>
+    <div class="nv-credit">Noah Webster, An American Dictionary of the English Language (1828 — public domain); transcription by akaitsurugi/webster1828, CC BY-SA 4.0. Scripture references checked against the KJV.</div>`;
+  S._wordShown = r;
+  if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+}
+function wdShowAll(i){
+  const r = S._wordShown, el = document.getElementById('wd-def-' + i);
+  if(!r || !el) return;
+  el.innerHTML = r.entries[i][2]; el.classList.remove('wd-short');
+  el.nextElementSibling && el.nextElementSibling.classList.contains('wd-more') && el.nextElementSibling.remove();
+}
+// Webster's references are links (built in by tools/build-webster.js)
+document.addEventListener('click', e => {
+  const a = e.target.closest('.wd-ref');
+  if(!a || !a.dataset.r) return;
+  e.preventDefault(); e.stopPropagation();
+  if(a.closest('#vpop')) leaveVPopThen(() => jumpToRef(a.dataset.r)); else jumpToRef(a.dataset.r);
+});
+
+// Verse card: under the church's note, Webster's first definition + full entry link
+async function vpopWebster(word){
+  const box = document.getElementById('vpop-def-webster');
+  if(!box) return;
+  box.innerHTML = '';
+  const r = await lookupWord(word);
+  if(!r || document.getElementById('vpop-def-word').textContent.toLowerCase() !== word.toLowerCase()) return;
+  const fs = firstSense(r.entries);
+  box.innerHTML = (fs ? `<div class="wd-vp"><span class="wd-kjv-l">Webster 1828</span> ${escapeHtml(fs)}</div>` : '')
+    + `<button class="vl-chip" onclick="event.stopPropagation();openWordFromVerse('${r.key}')">Full dictionary entry →</button>`;
+}
+function openWordFromVerse(key){ leaveVPopThen(() => openWord(key)); }
+// Search card for a single word that has a church KJV note
+function findDictCard(q){
+  const t = q.trim();
+  if(!/^[A-Za-z’']+$/.test(t)) return '';
+  const hit = kjvNoteFor(websterForms(t)[0]);
+  if(!hit) return '';
+  return `<div tabindex="0" class="rc ref-jump" onclick="openWord('${dictKey(hit.word)}')">
+    <div class="rc-ref">📖 Dictionary — ${escapeHtml(hit.word.charAt(0).toUpperCase() + hit.word.slice(1))}</div>
+    <div class="rc-txt" style="opacity:.75">${escapeHtml(hit.note)}</div></div>`;
+}
+
 /* ════ KJV DICTIONARY ════ */
 
 // render=false only switches panels (a sub-page is about to fill its tab)
@@ -5627,7 +5819,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   if(render){
     if(mode==='doctrine') renderDoctrines();
-    if(mode==='dict') handleDictSearch('');
+    if(mode==='dict') handleDictSearch(document.getElementById('dict-input').value || '');
     if(mode==='topics') renderNaveBrowse();
     if(mode==='concord') renderConcordance();
     if(mode==='names') renderNames();
@@ -5845,33 +6037,6 @@ function namesSearch(name){
 }
 
 function normWord(w){ return w.toLowerCase().replace(/[^a-z ]/g,'').trim(); }
-
-function handleDictSearch(q){
-  const el = document.getElementById('dict-results');
-  const norm = normWord(q);
-  if(!norm){
-    // Show full A-Z list grouped
-    const sorted = Object.entries(KJV_DICT).sort((a,b)=>a[0].localeCompare(b[0]));
-    el.innerHTML = sorted.map(([w,d])=>dictCard(w,d)).join('');
-    return;
-  }
-  const matches = Object.entries(KJV_DICT).filter(([w,d])=>
-    normWord(w).includes(norm) || normWord(d).includes(norm)
-  ).sort((a,b)=>{
-    // Exact word match first
-    const ae = normWord(a[0])===norm, be = normWord(b[0])===norm;
-    if(ae && !be) return -1; if(be && !ae) return 1;
-    return a[0].localeCompare(b[0]);
-  });
-  if(!matches.length){
-    el.innerHTML = '<div class="empty">No entry found for "'+q+'"</div>'; return;
-  }
-  el.innerHTML = matches.map(([w,d])=>dictCard(w,d)).join('');
-}
-
-function dictCard(word, def){
-  return '<div class="dict-entry"><div class="dict-word">'+word.charAt(0).toUpperCase()+word.slice(1)+'</div><div class="dict-def">'+def+'</div></div>';
-}
 
 /* ── Dictionary verse trigger ── */
 // Only these truly archaic/obscure words show the Abc badge
@@ -9468,7 +9633,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v30';
+const WHATS_NEW_VERSION = 'v31';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -10022,6 +10187,16 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v31" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📖</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Webster&rsquo;s 1828 Dictionary</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>Search &rarr; Dictionary</strong> now holds Noah Webster&rsquo;s <strong>1828</strong> dictionary &mdash; 62,000 words defined as they were understood near the King James era, with tappable Scripture references. Our church&rsquo;s <strong>KJV notes</strong> sit right on top of each entry. Tap a verse while reading to see its hard words, then open the full entry.
+        </div>
+      </div>
+    </div>
+
     <div class="wn-item" data-wn="v30" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">👤</div>
       <div>
