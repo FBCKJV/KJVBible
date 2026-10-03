@@ -1982,9 +1982,17 @@ body.light #home-watermark{
 
 <script>
 /* ════ DATA ════ */
-// Bible JSON — self-hosted in our own repo (fallback to aruljohn if needed)
+// Bible JSON — the book files ship with the app (bible/ next to index.html).
+// Loading them from our own site means each book is saved on the device the
+// first time it's read (see fetchBook) instead of being re-downloaded from
+// raw.githubusercontent.com, which lets browsers keep a file for only 5
+// minutes. The two GitHub URLs remain as fallbacks.
+const BASE_LOCAL='bible/';
 const BASE='https://raw.githubusercontent.com/FBCKJV/KJVBible/main/bible/';
 const BASE_FALLBACK='https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/';
+// Cache API store for the book files. Bump the version only if the text in
+// bible/ changes — old stores are deleted at startup (cleanOldBibleCaches).
+const BIBLE_CACHE = 'kjv-bible-v1';
 const BOOKS=["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
 const CH_COUNTS=[50,40,27,36,34,24,21,4,31,24,22,25,29,36,10,13,10,42,150,31,12,8,66,52,5,48,12,14,3,9,1,4,7,3,3,3,2,14,4,28,16,24,21,28,16,16,13,6,6,4,4,5,3,6,4,3,1,13,5,5,3,5,1,1,1,22];
 const bookFile=n=>n.replace(/ /g,'')+'.json';
@@ -2136,6 +2144,9 @@ document.addEventListener('DOMContentLoaded',()=>{
     navigator.serviceWorker.ready.then(() => refreshAppVersion());
     navigator.serviceWorker.addEventListener('controllerchange', refreshAppVersion);
   }
+  // Save all books on the device once the app has settled (see backgroundCacheBooks)
+  cleanOldBibleCaches();
+  setTimeout(backgroundCacheBooks, 8000);
   // Seed history stack
   history.replaceState({screen:'books'}, '', '');
   showScreen('books', false);
@@ -3442,12 +3453,20 @@ window.addEventListener('popstate', e => {
   }
 
   if(state.screen === 'search'){
+    // The search screen keeps its scroll offset while hidden; read it before
+    // anything re-renders, so a topic can be reopened where the reader was.
+    const scroller = document.getElementById('screen-search');
+    const y = scroller ? scroller.scrollTop : 0;
+    const wasDoctrine = S.screen === 'search' && document.getElementById('doctrine-panel').style.display !== 'none' && !document.getElementById('doctrine-list');
     showScreen('search', false);
-    if(state.sub === 'verses'){
+    if(state.sub === 'verses' && DOCTRINES[state.ci] && DOCTRINES[state.ci].topics[state.ti]){
+      // Back from a verse opened in a doctrine topic → that same topic
       switchSearchMode('doctrine', false);
-      renderDoctrines();
+      showDoctrineVerses(state.ci, state.ti, false, y);
     } else if(state.searchMode){
       switchSearchMode(state.searchMode, false);
+      // Back from a topic to the doctrine list → where the list was scrolled
+      if(state.searchMode === 'doctrine' && wasDoctrine && scroller) scroller.scrollTop = S._docListScroll || 0;
     }
   } else if(state.screen === 'reader' && state.book && (state.book !== S.book || state.ch !== S.ch)){
     // Restore the reader to the book/chapter this history entry describes —
@@ -3479,29 +3498,48 @@ function updateHeaderState(){
 }
 
 /* ════ FETCH ════ */
-async function fetchBook(name){
-  if(S.cache[name])return S.cache[name];
-  const url  = BASE + bookFile(name);
-  const urlFb= BASE_FALLBACK + bookFile(name);
-  // Check offline cache first
-  if('caches' in window){
+// Every URL a book has been stored under. The first is where new copies are
+// saved; the others are checked so books saved by older versions of the app
+// (from raw.githubusercontent.com) are still found.
+const bookSources = name => { const f = bookFile(name); return [BASE_LOCAL+f, BASE+f, BASE_FALLBACK+f]; };
+
+async function cachedBookResponse(cache, name){
+  for(const u of bookSources(name)){ const r = await cache.match(u); if(r) return r; }
+  return null;
+}
+
+// Downloads a book and saves it on the device. Resolves to the network
+// Response (unread) or null. Shared by fetchBook and the background download.
+async function downloadBook(name, cache){
+  const srcs = bookSources(name);
+  for(const u of srcs){
     try{
-      const cache = await caches.open(BIBLE_CACHE);
-      const cached= await cache.match(url) || await cache.match(urlFb);
-      if(cached){const d=await cached.json();S.cache[name]=d;return d;}
-    }catch(e){}
-  }
-  // Try self-hosted first, fall back to aruljohn
-  for(const u of [url, urlFb]){
-    try{
-      const r=await fetch(u);
-      if(!r.ok)continue;
-      const d=await r.json();
-      S.cache[name]=d;
-      return d;
+      const r = await fetch(u);
+      // Offline, the service worker answers with the app page — never save that
+      if(!r.ok || (r.headers.get('content-type')||'').includes('text/html')) continue;
+      if(cache) cache.put(srcs[0], r.clone()).catch(()=>{});
+      return r;
     }catch{}
   }
   return null;
+}
+
+const _bookLoads = {}; // in-flight loads, so parallel callers share one download
+function fetchBook(name){
+  if(S.cache[name]) return Promise.resolve(S.cache[name]);
+  return _bookLoads[name] || (_bookLoads[name] = (async () => {
+    let cache = null;
+    if('caches' in window){
+      try{
+        cache = await caches.open(BIBLE_CACHE);
+        const hit = await cachedBookResponse(cache, name);
+        if(hit){ const d = await hit.json(); S.cache[name] = d; return d; }
+      }catch(e){ cache = null; }
+    }
+    const r = await downloadBook(name, cache);
+    if(!r) return null;
+    try{ const d = await r.json(); S.cache[name] = d; return d; }catch{ return null; }
+  })().finally(() => { delete _bookLoads[name]; }));
 }
 
 /* ════════════════════════════════
@@ -3864,15 +3902,17 @@ function renderDoctrines(){
   if(!document.getElementById('doctrine-list')){
     panel.innerHTML = '<div id="doctrine-list"></div>';
   }
+  // Categories the reader had open stay open when they come back to the list
+  const open = S._docOpen || (S._docOpen = new Set());
   document.getElementById('doctrine-list').innerHTML = DOCTRINES.map((cat, ci) => `
     <div class="doc-cat">
       <div class="doc-cat-hdr" onclick="toggleDocCat(${ci})">
         <span class="doc-cat-ico">${cat.ico}</span>
         <span class="doc-cat-name">${cat.cat}</span>
         <span class="doc-cat-count">${cat.topics.length} topics</span>
-        <span class="doc-cat-arr" id="dca-${ci}">⌄</span>
+        <span class="doc-cat-arr${open.has(ci)?' open':''}" id="dca-${ci}">⌄</span>
       </div>
-      <div class="doc-topics" id="dct-${ci}">
+      <div class="doc-topics${open.has(ci)?' open':''}" id="dct-${ci}">
         ${cat.topics.map((t,ti)=>`
           <div class="doc-topic" onclick="showDoctrineVerses(${ci},${ti})">
             <div class="doc-topic-name">${t.name}</div>
@@ -3889,14 +3929,23 @@ function toggleDocCat(ci){
   const isOpen = topics.classList.contains('open');
   topics.classList.toggle('open', !isOpen);
   arr.classList.toggle('open', !isOpen);
+  const open = S._docOpen || (S._docOpen = new Set());
+  if(isOpen) open.delete(ci); else open.add(ci);
 }
 
-async function showDoctrineVerses(ci, ti){
+// pushHistory is false when Back returns to a topic (the history entry
+// already exists); scrollY then restores where the reader was in it.
+async function showDoctrineVerses(ci, ti, pushHistory=true, scrollY=0){
   const topic = DOCTRINES[ci].topics[ti];
   const panel = document.getElementById('doctrine-panel');
+  const scroller = document.getElementById('screen-search');
 
-  history.pushState({screen:'search', searchMode:'doctrine', sub:'verses', ci, ti}, '', '');
-  recordActivity();
+  if(pushHistory){
+    // Remember the list position so Back from the topic lands where it was
+    S._docListScroll = scroller ? scroller.scrollTop : 0;
+    history.pushState({screen:'search', searchMode:'doctrine', sub:'verses', ci, ti}, '', '');
+    recordActivity();
+  }
 
   panel.innerHTML = `
     <button class="dv-back" onclick="history.back()">
@@ -3906,6 +3955,7 @@ async function showDoctrineVerses(ci, ti){
     <div class="dv-title">${topic.name}</div>
     <div class="dv-desc">${topic.desc}</div>
     <div id="dv-verses"><div id="s-status">Loading verses…</div></div>`;
+  if(scroller) scroller.scrollTop = 0;
 
   const versesEl = document.getElementById('dv-verses');
 
@@ -3975,6 +4025,7 @@ async function showDoctrineVerses(ci, ti){
   });
 
   versesEl.innerHTML = cards.join('');
+  if(scrollY && scroller) scroller.scrollTop = scrollY;
 }
 
 /* ════ SEARCH ════ */
@@ -6750,28 +6801,53 @@ function renderInstallGuide(){
 }
 
 /* ════ OFFLINE CACHE ════ */
-const BIBLE_CACHE = 'kjv-bible-v1';
-const BIBLE_BASE  = 'https://raw.githubusercontent.com/aruljohn/Bible-kjv/master/';
+// How many of the 66 books are saved on this device.
+async function countCachedBooks(cache){
+  let n = 0;
+  for(const b of BOOKS) if(await cachedBookResponse(cache, b)) n++;
+  return n;
+}
 
-// Modify fetchBook to check Cache API first
-const _origFetch = window._fetchBookCache || {};
-
-async function fetchBookCached(url){
-  // Try Cache API first
-  try {
-    if('caches' in window){
-      const cache  = await caches.open(BIBLE_CACHE);
-      const cached = await cache.match(url);
-      if(cached) return cached.json();
+// Saves every book not yet on the device, a few at a time. Books are stored
+// as-is (not parsed), so this doesn't fill memory. onProgress(done, total).
+async function cacheAllBooks(onProgress){
+  const cache = await caches.open(BIBLE_CACHE);
+  let done = 0, failed = 0, next = 0;
+  const worker = async () => {
+    while(next < BOOKS.length){
+      const name = BOOKS[next++];
+      if(!(await cachedBookResponse(cache, name)) && !(await downloadBook(name, cache))) failed++;
+      done++;
+      if(onProgress) onProgress(done, BOOKS.length, name);
     }
-  } catch(e){}
-  // Fall back to network
-  const r = await fetch(url);
-  return r.json();
+  };
+  await Promise.all([worker(), worker(), worker()]);
+  return failed;
+}
+
+// After the app has settled, quietly save any books not yet on the device,
+// so searching and reading are instant and work offline from then on. It's
+// a one-time ~5 MB download; skipped when the browser's Data Saver is on.
+function backgroundCacheBooks(){
+  if(!('caches' in window) || _offlineDownloading) return;
+  if(navigator.connection && navigator.connection.saveData) return;
+  if(navigator.onLine === false) return;
+  if(LS.get('kjv_no_autocache', false)) return; // they cleared it in Settings
+  _offlineDownloading = true;
+  _bgDownload = cacheAllBooks().catch(()=>{}).finally(() => { _offlineDownloading = false; _bgDownload = null; });
+}
+
+// Removes book stores from older versions (kjv-bible-v0 …), never the
+// current one or the service worker's own fbckjv-bible-* caches.
+function cleanOldBibleCaches(){
+  if(!('caches' in window)) return;
+  caches.keys().then(keys => keys
+    .filter(k => k.startsWith('kjv-bible-') && k !== BIBLE_CACHE)
+    .forEach(k => caches.delete(k))).catch(()=>{});
 }
 
 let _offlineDownloading = false;
-
+let _bgDownload = null; // the background download, if one is running
 async function checkOfflineStatus(){
   const statusEl = document.getElementById('offline-status');
   const dlBtn    = document.getElementById('offline-download-btn');
@@ -6782,15 +6858,15 @@ async function checkOfflineStatus(){
     dlBtn.style.display = 'none'; return;
   }
   try {
-    const cache = await caches.open(BIBLE_CACHE);
-    const keys  = await cache.keys();
-    if(keys.length >= 60){
-      statusEl.textContent = `✅ Offline ready — ${keys.length}/66 books cached`;
+    const n = await countCachedBooks(await caches.open(BIBLE_CACHE));
+    if(n === BOOKS.length){
+      statusEl.textContent = `✅ Offline ready — all ${n} books saved`;
       dlBtn.style.display  = 'none';
       clrBtn.style.display = 'block';
-    } else if(keys.length > 0){
-      statusEl.textContent = `⚠️ Partial cache — ${keys.length}/66 books`;
+    } else if(n > 0){
+      statusEl.textContent = `⚠️ ${n}/${BOOKS.length} books saved${_offlineDownloading ? ' — downloading the rest…' : ''}`;
       dlBtn.textContent    = '⬇ Complete Download';
+      dlBtn.style.display  = 'block';
       clrBtn.style.display = 'block';
     } else {
       statusEl.textContent = 'Not downloaded — requires internet to read chapters';
@@ -6799,32 +6875,39 @@ async function checkOfflineStatus(){
     }
   } catch(e){ statusEl.textContent = 'Cache unavailable'; }
 }
-
 async function startOfflineDownload(){
-  if(_offlineDownloading) return;
-  _offlineDownloading = true;
   const btn      = document.getElementById('offline-download-btn');
   const progWrap = document.getElementById('offline-progress');
   const bar      = document.getElementById('offline-bar');
   const lbl      = document.getElementById('offline-progress-lbl');
   const statusEl = document.getElementById('offline-status');
+  if(_bgDownload){
+    // A background download is already running — let it finish, then the
+    // pass below shows progress and picks up anything it missed.
+    btn.style.display = 'none';
+    statusEl.textContent = 'Downloading…';
+    await _bgDownload;
+  }
+  if(_offlineDownloading) return;
+  _offlineDownloading = true;
   btn.style.display  = 'none';
   progWrap.style.display = 'block';
-
+  LS.set('kjv_no_autocache', false);
   try {
-    const cache = await caches.open(BIBLE_CACHE);
-    for(let i = 0; i < BOOKS.length; i++){
-      const bookName = BOOKS[i];
-      const url = BIBLE_BASE + encodeURIComponent(bookName) + '.json';
-      try { await cache.add(url); } catch(e){}
-      const pct = Math.round((i+1)/BOOKS.length*100);
-      bar.style.width = pct + '%';
-      lbl.textContent = `${i+1}/66 books — ${bookName}`;
-    }
-    statusEl.textContent = '✅ Offline ready — all 66 books cached';
+    const failed = await cacheAllBooks((done, total, bookName) => {
+      bar.style.width = Math.round(done/total*100) + '%';
+      lbl.textContent = `${done}/${total} books — ${bookName}`;
+    });
     progWrap.style.display = 'none';
-    document.getElementById('offline-clear-btn').style.display = 'block';
     lbl.textContent = '';
+    if(failed){
+      statusEl.textContent = `⚠️ ${failed} book${failed!==1?'s':''} didn't download — check your connection and try again`;
+      btn.textContent = '⬇ Complete Download';
+      btn.style.display = 'block';
+    } else {
+      statusEl.textContent = '✅ Offline ready — all 66 books saved';
+    }
+    document.getElementById('offline-clear-btn').style.display = 'block';
   } catch(e){
     statusEl.textContent = '⚠️ Download failed — check your connection and try again';
     btn.style.display = 'block';
@@ -6832,11 +6915,11 @@ async function startOfflineDownload(){
   }
   _offlineDownloading = false;
 }
-
 async function clearOfflineCache(){
   if(!confirm('Remove all cached Bible content? You\'ll need internet to read chapters again.')) return;
   try {
     await caches.delete(BIBLE_CACHE);
+    LS.set('kjv_no_autocache', true); // don't silently download it all again
     checkOfflineStatus();
   } catch(e){}
 }
