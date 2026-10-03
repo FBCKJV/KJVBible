@@ -8483,7 +8483,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v27';
+const WHATS_NEW_VERSION = 'v28';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -9025,33 +9025,32 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       <div style="font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">What's New</div>
       <div style="font-size:12px;color:var(--text-m);margin-top:4px">What's new in this update</div>
     </div>
-
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎨</div>
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔍</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Personalize Your Photo Cards</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Smarter Search</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          When you use <strong>your own photo</strong> on a verse card, you can now <strong>pinch to zoom and drag to reposition</strong> the picture, place the verse <strong>top, middle, or bottom</strong>, set <strong>left / center / right</strong> justification, and <strong>show or hide the church logo</strong>.
+          Search now matches <strong>whole words</strong> &mdash; <em>sin</em> finds sins, sinned and sinful, but no longer &ldquo;business&rdquo; or &ldquo;sing&rdquo;. Results are sorted by <strong>Best match</strong>, or tap <strong>Bible order</strong> to read them Genesis to Revelation.
         </div>
       </div>
     </div>
 
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🖼️</div>
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">❝</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Verse Cards on a Photo</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Exact Phrases</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Long-press a verse and open its card, then pick a <strong>scenic background</strong> &mdash; sunrise, mountains, ocean, meadow, or starry night &mdash; or tap <strong>📷</strong> to lay the verse over <strong>your own photo</strong>. Save or share it to socials in one tap. Your photo stays on your device.
+          Put words in quotes to find an <strong>exact phrase</strong>, like <em>&ldquo;god so loved&rdquo;</em>. Put a minus before a word to leave it out: <em>love -god</em>.
         </div>
       </div>
     </div>
 
     <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">↔️</div>
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📖</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Adjustable Margins</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">More Ways to Type a Reference</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Set how much side spacing the reading text has &mdash; <strong>Wide</strong>, <strong>Normal</strong>, or <strong>Narrow</strong> &mdash; under <strong>⚙ Settings &rarr; Display</strong>. Choose Narrow to bring the text closer to the edges.
+          Search understands <strong>Rev. 22:21</strong>, <strong>1John 3:16</strong>, <strong>First John 4:8</strong>, <strong>Jude 5</strong>, and ranges across chapters like <strong>John 3:16-4:2</strong>.
         </div>
       </div>
     </div>
