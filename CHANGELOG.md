@@ -6,6 +6,20 @@
 
 ## New Features
 
+### 👤 Bible People (v30)
+- **Search → Names** now covers the ~3,000 named people of the Bible (BibleData, CC BY 4.0) alongside Hitchcock's name meanings
+- **Name pages** tell same-named people apart — 24 Zechariahs, 6 Marys — most-mentioned first, each with a one-line description
+- **Person pages**: who they were (with tappable references), tribe, other names (*Abram — also called Abraham*; *Saul — also called Paul*), the name in **Hebrew/Greek** with transliteration and meaning, **family & connections** (father, mother, spouses, children, siblings, masters, allies…) as links, and every verse that names them
+- Searching a person's name shows a 👤 card for them; "Jesus" points to the topic *Jesus, the Christ*
+- Editorial choices in the build: the dataset's entries modelling God as "people" are left out, and "G-d"/"y-h-v-h" are written "God"/"the LORD" as in the KJV
+
+### 🔗 Everything Connected (v30)
+- **Verse card**: tap a verse to see the **people named in it** and the **doctrines that cite it** — each a link (Back returns to the reader)
+- **Map buttons in the reader** — chapters covered by a Bible map (Exodus 12–40, the kingdoms, the Gospels, Acts 13–28, …) show a 🗺️ button for it
+- **Recent searches** under the empty search box (remembered when a result is used; per device; clearable)
+- **Concordance word families** — an exact Concordance search offers the word's other forms: "Also include reigned, reigneth, reignest…"
+- **Names list** — each name's meaning now sits on its own line
+
 ### 📚 Bible Topics — Nave's Topical Bible (v29)
 - **~5,300 topics** from Nave's Topical Bible (Orville J. Nave, 1896 — public domain; digitized by BibleData, CC BY 4.0) with over 59,000 references, each checked against the KJV text
 - **Topic cards in Search** — search a subject (*forgiveness*, *prayer*, *tithing*, *the holy spirit*) or ask in plain words (*what does the Bible say about anger*) and a card for the topic appears above the verse results. A few modern words are mapped to Nave's terms (*worry* → Care, *gossip* → Talebearer, *generosity* → Liberality)
