@@ -212,6 +212,8 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Church dictionary notes (v31.01)** — new KJV notes for *baptism* and *baptize* (the ordinance: full immersion of one who has believed, in obedience to God — not sprinkling, not infants; Acts 8:36–38, Rom. 6:4), *elect* (those who have entered the election of grace by faith — not persons picked beforehand; Rom. 5:2, 11:5–6, 20, Matt. 24:22), *reprobation* (Rom. 1:24–28, 1 Tim. 4:2) and *predestination* (Rom. 8:29, Eph. 1:5); *election* revised to match. Each sits above Webster's 1828 text, and word forms find their note (*baptized* → baptize)
+- **Note references all tappable (v31.01)** — "Rom. 5:2; 11:5–6, 20" now links every reference (the book and chapter carry over), and "S.S." links to the Song of Solomon
 - **Faster, steadier loading (v28.01)** — Bible books are now saved on your device the first time they're read, and the rest download quietly in the background (a one-time ~5 MB, skipped when Data Saver is on). Searching and reading no longer re-download books every few minutes, and everything works offline afterward
 - **Offline download fixed (v28.01)** — "Download All 66 Books" was skipping all the numbered books (1 Samuel – 3 John) and Song of Solomon, so it always reported a partial download. It now saves all 66
 - **Doctrines Back button (v28.01)** — after opening a verse from a doctrine topic, Back returns to that topic where you left off instead of the closed-up Doctrines list; the list also remembers which categories were open and where you were scrolled
