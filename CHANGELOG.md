@@ -6,6 +6,15 @@
 
 ## New Features
 
+### 🔗 Compare Scripture, 📅 Bible Timeline, 📜 Concordance Verses (v33)
+- **Treasury of Scripture Knowledge** (1830s, public domain) — **305,906 cross-references** in 63,663 phrase groups, each tied to the KJV words it explains, from the CrossReferences.org KJV export (CC BY 4.0). Every reference was checked against the app's KJV text by `tools/build-treasury.js`; one file per book in `treasury/`, loaded and saved on the device on first use
+- **Verse card**: "Compare Scripture · N references" lists the verse's phrases ("the beginning", "the Word"); tapping one opens a **Compare Scripture** page with the verse (phrases marked) and each phrase's passages as cards (Back returns to the reader)
+- The hand-typed ✦ markers for New Testament quotations of the Old stay in the reader
+- **Bible Timeline** — a new **Search → Timeline** tab: 95 events in nine eras from the Creation to the Revelation, each with its key verse quoted from the app's own KJV text. Dates follow Archbishop Ussher's chronology (1650), as in the margins of older KJV reference Bibles, and are marked approximate. Edit `tools/timeline/events.js` and run `tools/build-timeline.js`
+- **Reader**: a chapter with a timeline event shows a "📅 About 1491 B.C." button beside the map button; it opens the timeline at that event (Back returns to the chapter)
+- **Concordance verses** — tapping a word opens its verses in place, grouped by book with the word marked (40 at first, then 80 more at a time), with "Open in Search ↗"; Back from a verse reopens the word. The verse count matches the concordance figure exactly
+- The verse card now scrolls when it's taller than the screen
+
 ### 📍 Bible Places (v32)
 - **~1,200 places named in the KJV** join **Search → Names**, from the OpenBible.info Bible Geocoding Data (CC BY 4.0) — plain geography drawn from over seventy atlases and reference works, with no commentary. Easton's Bible Dictionary was considered and set aside on doctrinal grounds
 - **Place pages**: the modern site (Bethel → Beitin) with how sure scholars are (Confident · Likely · Possible · Uncertain), any other suggested sites, the distance and direction from Jerusalem ("about 10 miles north"), coordinates with a map link, nearby Bible places (Capernaum → Chorazin, Bethsaida, Sea of Galilee), Hitchcock's name meaning, and every verse that names it

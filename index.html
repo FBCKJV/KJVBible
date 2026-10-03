@@ -220,9 +220,34 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .pp-find{display:block;width:100%;margin-top:14px}
 .nm-count{margin-left:8px;vertical-align:middle;font-size:10px}
 .ref-link{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold-d)}
-#vpop-links{padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px}
+#vpop-links,#vpop-tsk{padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px}
+#vpop-links .vd-label,#vpop-tsk .vd-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:5px}
 .vl-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
 .ch-map{background:none;border:1px solid var(--border);border-radius:20px;color:var(--gold);font-size:12px;padding:3px 12px;margin-top:6px;cursor:pointer}
+/* Treasury of Scripture Knowledge: phrase chips on the verse card + Compare page */
+.tsk-anchor{font-style:italic}
+.xv-verse{font-family:'Crimson Pro',serif;font-size:16px;line-height:1.55;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.xv-verse mark{background:rgba(201,148,58,.3);color:var(--gold-l);border-radius:2px;padding:0 1px}
+.xv-hint{font-size:12px;color:var(--text-m);font-style:italic;margin:0 2px 6px}
+.nv-body .rc{margin:0 0 8px}
+/* Bible timeline */
+.tl-era{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold);padding:16px 2px 6px;border-bottom:1px solid var(--border)}
+.tl-ev{display:flex;gap:12px;padding:10px 2px;border-bottom:1px solid var(--border);cursor:pointer;scroll-margin-top:48px}
+.tl-ev:hover{background:var(--surface)}
+.tl-ev.flash{outline:2px solid var(--gold);outline-offset:-2px;border-radius:6px}
+.tl-yr{flex-shrink:0;width:64px;text-align:right;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--gold);padding-top:3px;line-height:1.3}
+.tl-yr small{display:block;font-weight:400;color:var(--text-m);font-size:10px}
+.tl-main{flex:1;min-width:0;border-left:2px solid var(--border);padding-left:12px}
+.tl-t{font-family:'IM Fell English',serif;font-size:16px;color:var(--text)}
+.tl-q{font-family:'Crimson Pro',serif;font-size:14px;color:var(--text-d);font-style:italic;line-height:1.45;margin-top:2px}
+.tl-r{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m);margin-top:4px}
+/* Concordance: verses shown in place under a word */
+.cw-row.open{background:var(--surface)}
+.cw-body{padding:8px 0 12px;border-bottom:1px solid var(--border)}
+.cw-body .rc{margin-bottom:6px}
+.cw-bk{font-family:'IM Fell English',serif;font-size:14px;color:var(--gold);padding:8px 2px 4px}
+.cw-tools{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--text-m);margin:0 2px 4px}
+.cw-tools button{background:none;border:1px solid var(--border);color:var(--gold);border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer}
 .s-recent{margin-top:4px}
 .s-recent-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-m);padding:4px 2px}
 .s-recent-h button{background:none;border:none;color:var(--text-m);font-size:12px;cursor:pointer;text-decoration:underline}
@@ -407,7 +432,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 /* SINGLE VERSE POPUP */
 #vpop{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 #vpop.on{display:flex}
-#vpop-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:700px;display:flex;flex-direction:column;gap:10px;animation:su .22s ease;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+#vpop-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:700px;display:flex;flex-direction:column;gap:10px;animation:su .22s ease;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto}
 @keyframes su{from{transform:translateY(50px);opacity:0}}
 #vpop-ref{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 #vpop-txt{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);line-height:1.7;max-height:120px;overflow-y:auto}
@@ -1360,7 +1385,7 @@ body.light #home-watermark{
           color:var(--gold);font-size:13px;padding:2px 10px;cursor:pointer;
           display:none;transition:all .2s" title="Listen to this chapter">🔊</button>
       </div>
-      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button></div>
+      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button></div>
       <div id="verses"></div>
     </div>
   
@@ -1397,6 +1422,10 @@ body.light #home-watermark{
         <button class="smode" id="smode-maps" onclick="switchSearchMode('maps')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21"/><line x1="8" y1="3" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="21"/></svg>
           Maps
+        </button>
+        <button class="smode" id="smode-timeline" onclick="switchSearchMode('timeline')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+          Timeline
         </button>
       </div>
 
@@ -1447,6 +1476,7 @@ body.light #home-watermark{
           <div class="nv-credit">Topics from Nave's Topical Bible (Orville J. Nave, 1896 — public domain), digitized by BibleData (Brady Stephenson, CC BY 4.0).</div>
         </div>
         <div id="topic-view" style="display:none"></div>
+        <div id="xref-view" style="display:none"></div>
       </div>
 
       <!-- Concordance panel (A–Z word index) -->
@@ -1483,6 +1513,14 @@ body.light #home-watermark{
           Public-domain Bible maps from a 19th-century atlas. Tap a map to open it full-screen — pinch or use +/− to zoom.
         </div>
         <div id="maps-grid"></div>
+      </div>
+
+      <!-- Timeline panel (Ussher's chronology, Creation to Revelation) -->
+      <div id="timeline-panel" style="display:none">
+        <div style="font-size:12px;color:var(--text-m);margin-bottom:6px;font-style:italic">
+          From the Creation to the Revelation. Tap an event to read it. Dates follow Archbishop Ussher's chronology (1650), found in the margins of many older KJV Bibles, and are approximate.
+        </div>
+        <div id="timeline-list"><div id="s-status">Loading timeline…</div></div>
       </div>
     </div>
   </div>
@@ -1987,6 +2025,7 @@ body.light #home-watermark{
       <div id="vpop-nm-mean" style="font-size:11px;color:var(--text-m);margin-top:6px;font-style:italic">Meaning from Hitchcock's Bible Names Dictionary (1869)</div>
     </div>
     <div id="vpop-links" style="display:none"></div>
+    <div id="vpop-tsk" style="display:none"></div>
     <div class="hl-row">
       <span class="hl-label">Highlight</span>
       <div class="hl-dot" data-c="y" onclick="setHL('y')"></div>
@@ -2551,6 +2590,7 @@ function renderReader(){
   document.getElementById('r-prev').disabled = _bi===0 && S.ch===0;
   document.getElementById('r-next').disabled = _bi===BOOKS.length-1 && S.ch===S.bookData.chapters.length-1;
   updateChapterMapButton();
+  updateChapterTimeButton();
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
   recordHistory(S.book, S.ch);
 
@@ -2882,6 +2922,7 @@ function openVPop(ref,txt){
   }
   document.getElementById('vpop-name-def').style.display = 'none';
   fillVpopLinks(ref);
+  fillVpopTreasury(ref);
 
   const vp = document.getElementById('vpop');
   const wasOpen = vp.classList.contains('on');
@@ -5202,6 +5243,7 @@ function searchFor(q){
    search results) — at the scroll position it was left at. */
 const SUBVIEWS = {}; // sub → { mode, browse, view, open(key, push, scrollY) }
 SUBVIEWS.topic = { mode:'topics', browse:'topics-browse', view:'topic-view', open:(k, push, y) => openNaveTopic(k, push, y) };
+SUBVIEWS.xref = { mode:'topics', browse:'topics-browse', view:'xref-view', open:(k, push, y) => openTreasury(k, null, push, y) };
 function activeSubView(){
   const sv = S._subView;
   if(!sv || S.screen !== 'search') return null;
@@ -5280,7 +5322,7 @@ function loadCachedJSON(url){
 // Cards for a compact reference list "bookIndex.chapter:verses;…" — one per
 // verse or run of verses, with the text. Long runs show their opening
 // verses; whole chapters a preview. Shared by topic and person pages.
-async function refCardsHTML(refStr, limit){
+async function refCardsHTML(refStr, limit){ // refs: "bookIdx.ch:verses;…"
   const refs = refStr.split(';').slice(0, limit);
   const books = await Promise.all([...new Set(refs.map(r => +r.split('.')[0]))].map(b => fetchBook(BOOKS[b]).then(d => [b, d])));
   const data = Object.fromEntries(books);
@@ -5761,6 +5803,171 @@ function openDoctrineFromVerse(ci, ti){
   });
 }
 
+/* ════ TREASURY OF SCRIPTURE KNOWLEDGE ════
+   Cross-references for nearly every verse, each group tied to the KJV words
+   it explains ("the beginning" → Proverbs 8:22, John 1:1 …). Built into
+   treasury/0.json … 65.json (one file per book) by tools/build-treasury.js;
+   a book's file loads the first time one of its verses is opened. Verse keys
+   are "bookIdx.ch:v"; the references use refCardsHTML's compact form. */
+const TSK_VERSION = '2026-10-03'; // bump whenever tools/build-treasury.js is re-run
+function loadTreasury(b){ return loadCachedJSON(`treasury/${b}.json?v=${TSK_VERSION}`); }
+function tskKey(ref){
+  const m = (ref || '').match(/^(.+) (\d+):(\d+)$/);
+  const b = m ? BOOKS.indexOf(m[1]) : -1;
+  return b < 0 ? null : `${b}.${m[2]}:${m[3]}`;
+}
+// Some anchors are a whole verse — keep the chips short
+const tskShort = a => a.length > 34 ? a.slice(0, 32).replace(/[\s,;:]+\S*$/, '') + '…' : a;
+async function fillVpopTreasury(ref){
+  const el = document.getElementById('vpop-tsk');
+  if(!el) return;
+  el.style.display = 'none'; el.innerHTML = '';
+  const key = tskKey(ref);
+  if(!key) return;
+  const [b, cv] = key.split('.');
+  const T = await loadTreasury(b).catch(() => null);
+  if(S.popRef !== ref || !T || !T[cv]) return; // another verse opened meanwhile
+  const groups = T[cv], MAX = 8;
+  const n = groups.reduce((t, g) => t + g[1].split(';').length, 0);
+  el.innerHTML = `<div class="vd-label">🔗 Compare Scripture · ${n} reference${n !== 1 ? 's' : ''}</div><div class="vl-chips">`
+    + groups.slice(0, MAX).map((g, i) => `<button class="vl-chip" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',${i})">“<span class="tsk-anchor">${escapeHtml(tskShort(g[0]))}</span>”</button>`).join('')
+    + (groups.length > MAX ? `<button class="vl-chip" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',null)">+${groups.length - MAX} more</button>` : '')
+    + '</div>';
+  el.style.display = 'block';
+}
+function openTreasuryFromVerse(key, i){ leaveVPopThen(() => openTreasury(key, i)); }
+
+// The Compare Scripture page: the verse, then each phrase with its passages.
+// focus = the phrase tapped on the verse card (opened and scrolled to).
+async function openTreasury(key, focus=null, pushHistory=true, scrollY=0){
+  const [b, cv] = key.split('.');
+  const [c, v] = cv.split(':').map(Number);
+  const book = BOOKS[+b];
+  const [T, data] = await Promise.all([loadTreasury(b).catch(() => null), fetchBook(book)]);
+  if(!T || !T[cv]) return;
+  const groups = T[cv];
+  const scroller = document.getElementById('screen-search');
+  const view = document.getElementById('xref-view');
+  enterSubView('xref', key, pushHistory);
+  S._tskKey = key;
+  const total = groups.reduce((t, g) => t + g[1].split(';').length, 0);
+  S._tskOpen = S._tskOpen || {};
+  // Small lists open fully; otherwise just the phrase tapped (or the first)
+  const open = S._tskOpen[key] || (S._tskOpen[key] = new Set(total <= 12 ? groups.map((g, i) => i) : [focus === null ? 0 : focus]));
+  if(focus !== null) open.add(focus);
+  const vs = data && data.chapters[c - 1] && data.chapters[c - 1].verses.find(x => +x.verse === v);
+  let text = vs ? escapeHtml(vs.text) : '';
+  // Underline each phrase in the verse (not the ones that are the whole verse)
+  for(const [a] of groups){
+    if(!vs || a.length > vs.text.length * 0.7) continue;
+    const re = new RegExp(`(^|[^A-Za-z>])(${escapeHtml(a).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})(?![A-Za-z])`, 'i');
+    text = text.replace(re, '$1<mark>$2</mark>');
+  }
+  const ref = `${book} ${c}:${v}`;
+  view.innerHTML = `
+    <button class="dv-back" onclick="history.back()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <div class="dv-title">${escapeHtml(ref)}</div>
+    <div class="dv-desc">Compare Scripture · ${total} reference${total !== 1 ? 's' : ''} · Treasury of Scripture Knowledge</div>
+    <div class="xv-verse" tabindex="0" onclick="jumpToRef('${ref.replace(/'/g, "\\'")}')">${text}</div>
+    <div class="xv-hint">Each phrase of the verse, with the Scriptures that shed light on it:</div>
+    ${groups.map((g, i) => `<div class="nv-line" id="xvl-${i}">
+        <button class="nv-hdr" onclick="toggleTreasuryLine(${i})" aria-expanded="${open.has(i)}">
+          <span class="nv-lbl">“<span class="tsk-anchor">${escapeHtml(g[0])}</span>”</span>
+          <span class="cw-count">${g[1].split(';').length}</span><span class="doc-cat-arr${open.has(i) ? ' open' : ''}" id="xva-${i}">⌄</span>
+        </button>
+        <div class="nv-body" id="xvb-${i}"></div>
+      </div>`).join('')}
+    <div class="nv-credit">Cross-references from The Treasury of Scripture Knowledge (1830s — public domain), as arranged by CrossReferences.org (CC BY 4.0).</div>`;
+  scroller.scrollTop = 0;
+  await Promise.all([...open].map(i => fillTreasuryLine(i)));
+  if(S._tskKey !== key) return;
+  if(scrollY) scroller.scrollTop = scrollY;
+  else if(focus) document.getElementById('xvl-' + focus)?.scrollIntoView({block:'start'});
+}
+async function toggleTreasuryLine(i){
+  const open = S._tskOpen[S._tskKey];
+  const body = document.getElementById('xvb-' + i), arr = document.getElementById('xva-' + i);
+  if(!body) return;
+  if(open.has(i)){
+    open.delete(i); body.innerHTML = ''; arr.classList.remove('open');
+    body.previousElementSibling.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  open.add(i); arr.classList.add('open');
+  body.previousElementSibling.setAttribute('aria-expanded', 'true');
+  await fillTreasuryLine(i);
+}
+async function fillTreasuryLine(i, limit=12){
+  const key = S._tskKey, body = document.getElementById('xvb-' + i);
+  const [b, cv] = key.split('.');
+  const g = (await loadTreasury(b))[cv][i];
+  if(!body || !g) return;
+  const total = g[1].split(';').length;
+  body.innerHTML = '<div id="s-status" style="padding:8px 0">Loading verses…</div>';
+  const html = await refCardsHTML(g[1], limit);
+  if(S._tskKey !== key) return; // moved on meanwhile
+  body.innerHTML = html + (total > limit ? `<button class="nv-showmore" onclick="fillTreasuryLine(${i}, ${total})">Show ${total - limit} more</button>` : '');
+}
+
+/* ════ BIBLE TIMELINE ════
+   Creation to the Revelation, by era, with Ussher's dates. Built into
+   timeline.json by tools/build-timeline.js from tools/timeline/events.js.
+   Event: [year (negative = B.C.), title, book, firstCh, lastCh, keyRef, keyText] */
+const TIMELINE_VERSION = '2026-10-03'; // bump whenever tools/build-timeline.js is re-run
+function loadTimeline(){
+  return loadCachedJSON(`timeline.json?v=${TIMELINE_VERSION}`).then(d => S._timeline = d);
+}
+const tlYear = y => y < 0 ? `${-y}<small>B.C.</small>` : `${y}<small>A.D.</small>`;
+const tlYearText = y => y < 0 ? `${-y} B.C.` : `A.D. ${y}`;
+async function renderTimeline(){
+  const list = document.getElementById('timeline-list');
+  if(list.dataset.done) return;
+  const T = await loadTimeline().catch(() => null);
+  if(!T){ list.innerHTML = '<div id="s-status">Timeline unavailable — check your connection.</div>'; return; }
+  list.innerHTML = T.eras.map((era, ei) => `<div class="tl-era">${escapeHtml(era.n)}</div>` + era.e.map((e, i) => {
+    const [y, t, b, c1, c2, key, txt] = e;
+    const where = key + (c2 > c1 ? ` · ${b} ${c1}–${c2}` : '');
+    return `<div class="tl-ev" id="tl-${ei}-${i}" tabindex="0" onclick="jumpToRef('${key.replace(/'/g, "\\'")}')">
+      <div class="tl-yr">${tlYear(y)}</div>
+      <div class="tl-main"><div class="tl-t">${escapeHtml(t)}</div><div class="tl-q">“${escapeHtml(txt)}”</div><div class="tl-r">${escapeHtml(where)}</div></div>
+    </div>`;
+  }).join('')).join('');
+  list.dataset.done = '1';
+}
+// The event told in a chapter (the narrowest chapter range wins)
+function chapterEvent(book, ch){
+  if(!S._timeline) return null;
+  let best = null;
+  S._timeline.eras.forEach((era, ei) => era.e.forEach((e, i) => {
+    if(e[2] === book && ch >= e[3] && ch <= e[4] && (!best || e[4] - e[3] < best.e[4] - best.e[3])) best = {e, id:`tl-${ei}-${i}`};
+  }));
+  return best;
+}
+function updateChapterTimeButton(){
+  const btn = document.getElementById('ch-time-btn');
+  if(!btn) return;
+  const show = () => {
+    const hit = S.book && chapterEvent(S.book, S.ch + 1);
+    btn.style.display = hit ? 'inline-block' : 'none';
+    if(hit){ btn.textContent = '📅 About ' + tlYearText(hit.e[0]); btn.onclick = () => openTimelineAt(hit.id); }
+  };
+  if(S._timeline) show(); else { btn.style.display = 'none'; loadTimeline().then(show).catch(() => {}); }
+}
+async function openTimelineAt(id){
+  history.pushState({screen:'search', searchMode:'timeline'}, '', '');
+  showScreen('search', false);
+  switchSearchMode('timeline', false, false);
+  await renderTimeline();
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.scrollIntoView({block:'center'});
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 2000);
+}
+
 /* ════ MAPS FROM THE READER ════
    A chapter covered by one of the Bible maps shows a button for it under
    the chapter heading. [book, firstChapter, lastChapter, map file] — the
@@ -6024,6 +6231,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
   document.getElementById('concord-panel').style.display  = mode==='concord'  ? 'block':'none';
   document.getElementById('names-panel').style.display    = mode==='names'    ? 'block':'none';
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
+  document.getElementById('timeline-panel').style.display = mode==='timeline' ? 'block':'none';
   if(render){
     if(mode==='doctrine') renderDoctrines();
     if(mode==='dict') handleDictSearch(document.getElementById('dict-input').value || '');
@@ -6031,6 +6239,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
     if(mode==='concord') renderConcordance();
     if(mode==='names') renderNames();
     if(mode==='maps') renderMaps();
+    if(mode==='timeline') renderTimeline();
   }
   if(pushHistory) history.pushState({screen:'search', searchMode:mode}, '', '');
 }
@@ -6142,8 +6351,62 @@ function renderConcordRows(entries, label){
   list.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${label}</div>`
     + entries.map(e=>{
         const w = e[0].replace(/'/g,"\\'");
-        return `<button class="cw-row" onclick="concordSearch('${w}')"><span class="cw-word">${e[0]}</span><span class="cw-count">${e[1]}</span></button>`;
+        return `<button class="cw-row" data-w="${w}" aria-expanded="false" onclick="toggleConcordWord(this)"><span class="cw-word">${e[0]}</span><span class="cw-count">${e[1]}</span></button>`;
       }).join('');
+  // Coming back (e.g. Back from a verse): reopen the word that was open
+  const again = S._concWord && list.querySelector(`.cw-row[data-w="${S._concWord}"]`);
+  if(again) toggleConcordWord(again, true);
+}
+
+// Tapping a word shows its verses right under it, grouped by book, with the
+// word marked — exact whole-word matches, the same verses the count is from.
+async function toggleConcordWord(btn, restore=false){
+  const w = btn.dataset.w;
+  const list = document.getElementById('concord-list');
+  if(!restore && btn.classList.contains('open')){
+    btn.classList.remove('open'); btn.setAttribute('aria-expanded', 'false');
+    btn.nextElementSibling?.classList.contains('cw-body') && btn.nextElementSibling.remove();
+    S._concWord = null;
+    return;
+  }
+  list.querySelectorAll('.cw-body').forEach(x => x.remove());
+  list.querySelectorAll('.cw-row.open').forEach(x => { x.classList.remove('open'); x.setAttribute('aria-expanded', 'false'); });
+  btn.classList.add('open'); btn.setAttribute('aria-expanded', 'true');
+  const body = document.createElement('div');
+  body.className = 'cw-body';
+  body.innerHTML = '<div id="s-status" style="padding:6px 0">Loading verses…</div>';
+  btn.after(body);
+  if(S._concWord !== w || !S._concHits){ S._concWord = w; S._concHits = null; S._concShown = 0; }
+  if(!S._concHits){
+    const hits = await concordVerses(w, (done, all) => {
+      const st = body.querySelector('#s-status');
+      if(st) st.textContent = `Loading books… ${done} of ${all}`;
+    });
+    if(S._concWord !== w || !body.isConnected) return; // another word opened meanwhile
+    S._concHits = hits;
+  }
+  renderConcordHits(body, Math.max(S._concShown, 40));
+  if(restore) btn.scrollIntoView({block:'start'});
+}
+async function concordVerses(w, progress){
+  let done = 0;
+  const datas = await Promise.all(BOOKS.map(n => S.cache[n] ? S.cache[n] : fetchBook(n).then(d => { progress(++done, BOOKS.length); return d; })));
+  const re = new RegExp(`(?<![a-z])${w}(?![a-z])`);
+  return BOOKS.flatMap((n, i) => datas[i] ? bookSearchIndex(n, datas[i]).filter(v => re.test(v.lc)) : []);
+}
+function renderConcordHits(body, upto){
+  const w = S._concWord, hits = S._concHits;
+  S._concShown = Math.min(upto, hits.length);
+  const mark = new RegExp(`(?<![A-Za-z&])(${w})(?![A-Za-z])`, 'gi');
+  let html = `<div class="cw-tools"><span>${hits.length} verse${hits.length !== 1 ? 's' : ''}</span><button onclick="concordSearch('${w}')">Open in Search ↗</button></div>`;
+  let lastBook = '';
+  for(const v of hits.slice(0, S._concShown)){
+    if(v.book !== lastBook){ html += `<div class="cw-bk">${v.book}</div>`; lastBook = v.book; }
+    html += `<div tabindex="0" class="rc" onclick="jumpToRef('${v.ref.replace(/'/g, "\\'")}')"><div class="rc-ref">${v.ref}</div><div class="rc-txt">${escapeHtml(v.txt).replace(mark, '<mark>$1</mark>')}</div></div>`;
+  }
+  if(hits.length > S._concShown)
+    html += `<button class="nv-showmore" style="width:100%" onclick="renderConcordHits(this.parentNode, ${S._concShown + 80})">Show ${Math.min(80, hits.length - S._concShown)} more of ${hits.length - S._concShown}</button>`;
+  body.innerHTML = html;
 }
 // Hand a concordance word off to the keyword search, in exact whole-word mode
 // so the results match the concordance's precise verse count (no stems, no
@@ -9843,7 +10106,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v32';
+const WHATS_NEW_VERSION = 'v33';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -10397,6 +10660,36 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v33" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔗</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Compare Scripture</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Tap any verse while reading and its key phrases appear under <strong>Compare Scripture</strong> &mdash; from the <strong>Treasury of Scripture Knowledge</strong>, 300,000 cross-references for nearly every verse. Tap a phrase like <em>&ldquo;the beginning&rdquo;</em> to read the Scriptures that shed light on it.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v33" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📅</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Timeline</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>Search &rarr; Timeline</strong> walks from the Creation to the Revelation in 95 events, each with its verse, dated by Ussher&rsquo;s chronology from the old KJV margins. While reading, a <strong>📅 date button</strong> shows when the chapter took place.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v33" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📜</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Concordance Verses</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Tap a word in <strong>Search &rarr; Concordance</strong> and its verses open right there, grouped by book with the word marked &mdash; no more jumping over to Search.
+        </div>
+      </div>
+    </div>
+
     <div class="wn-item" data-wn="v32" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📍</div>
       <div>
