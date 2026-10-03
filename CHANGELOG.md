@@ -6,6 +6,16 @@
 
 ## New Features
 
+### 📖 Webster's 1828 Dictionary (v31)
+- **Search → Dictionary** is now Noah Webster's *American Dictionary of the English Language* (1828, public domain) — **62,412 entries** — with the church's **KJV notes** merged in: one entry per word, the note on top as "In the King James Bible", Webster beneath
+- Source: the akaitsurugi/webster1828 transcription (CC BY-SA 4.0), plus 21 entries it lacks from DataWar/1828-dictionary (MIT). DataWar's copy wasn't used as the base — ~800 of its entries are scraped website error pages and menu text
+- **Scripture references checked and repaired** — the transcription dropped or garbled digits (Hebrews 2:18 printed "Hebrews 2:1", Psalm 139:12 "Psalms 13:1"). All 5,814 references were checked against the KJV: 5,144 correct as printed, **454 repaired** to the exact verse (by matching the quotation, then the headword), 180 too garbled to recover are shown as the **chapter** (never a wrong verse), 35 confirmed by hand (spelling differences, references that illustrate an idea), 1 non-Scripture "reference" unlinked. Every repair is listed in `tools/webster1828/repairs.txt`
+- KJV spellings find Webster's (*savour* → savor, *succour* → succor), and words Webster lacks (*shittim*, *ephah*) show the church note alone
+- Long entries open to the first senses with "Show the full entry"; references are tappable, and Back returns to the entry
+- **Verse card**: a hard word now shows Webster's first definition under the church note, with a link to the full entry
+- **Search**: a single KJV word with a church note shows a 📖 dictionary card
+- The dictionary loads one letter at a time and is saved on the device
+
 ### 👤 Bible People (v30)
 - **Search → Names** now covers the ~3,000 named people of the Bible (BibleData, CC BY 4.0) alongside Hitchcock's name meanings
 - **Name pages** tell same-named people apart — 24 Zechariahs, 6 Marys — most-mentioned first, each with a one-line description
