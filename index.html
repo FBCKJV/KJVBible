@@ -154,9 +154,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 /* SEARCH */
 #screen-search{padding:12px}
 .s-wrap{position:relative;margin-bottom:12px}
-#s-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px 10px 40px;font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);outline:none;transition:border-color .15s}
-#s-input:focus{border-color:var(--gold-d)}
-#s-input::placeholder{color:var(--text-m)}
+#s-input,.s-wrap input[type=search]{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px 10px 40px;font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);outline:none;transition:border-color .15s}
+#s-input:focus,.s-wrap input[type=search]:focus{border-color:var(--gold-d)}
+#s-input::placeholder,.s-wrap input[type=search]::placeholder{color:var(--text-m)}
 .s-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-m)}
 #s-results{display:flex;flex-direction:column;gap:8px}
 .rc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all .15s}
@@ -172,8 +172,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .s-sort-btn.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 
 /* ── SEARCH MODE BAR ── */
-.smode-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
-.smode{flex:1 1 auto;min-width:92px;white-space:nowrap;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.smode-bar{display:flex;gap:6px;margin:0 -12px 12px;padding:0 12px 2px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.smode-bar::-webkit-scrollbar{display:none}
+.smode{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap;padding-left:12px!important;padding-right:12px!important;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
 .smode.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 /* Concordance (A–Z word index) + Bible Names (A–Z name index) */
 #topics-az,#concord-az,#names-az{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 12px}
@@ -241,6 +242,23 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .tl-t{font-family:'IM Fell English',serif;font-size:16px;color:var(--text)}
 .tl-q{font-family:'Crimson Pro',serif;font-size:14px;color:var(--text-d);font-style:italic;line-height:1.45;margin-top:2px}
 .tl-r{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m);margin-top:4px}
+/* Hymns */
+.hy-sec{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);padding:14px 2px 4px;border-bottom:1px solid var(--border)}
+.hy-row{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:10px 2px;cursor:pointer;color:var(--text);font-family:'Crimson Pro',serif}
+.hy-row:hover{background:var(--surface)}
+.hy-t{font-size:16px}
+.hy-a{font-size:12px;color:var(--text-m)}
+.hy-a mark,.hy-t mark{background:rgba(201,148,58,.3);color:var(--gold-l);border-radius:2px}
+.hy-by{font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);font-style:italic;margin:-6px 0 10px}
+.hy-st{display:flex;gap:10px;font-family:'Crimson Pro',serif;font-size:17px;line-height:1.55;color:var(--text);margin:0 0 14px}
+.hy-n{flex-shrink:0;width:18px;text-align:right;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--gold);padding-top:4px}
+.hy-ch{margin:-4px 0 16px 28px;padding:6px 0 6px 12px;border-left:2px solid var(--gold-d);font-family:'Crimson Pro',serif;font-size:16.5px;line-height:1.55;font-style:italic;color:var(--text-d)}
+.hy-ch-l{font-family:'Inter',sans-serif;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px}
+.hy-refs{margin:2px 0 16px}
+/* First mention + follow the thread */
+.fm-tag{display:inline-block;margin-left:8px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:8px;padding:1px 7px;vertical-align:1px}
+.rc-thread{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 8px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
+.wd-first{font-family:'Crimson Pro',serif;font-size:14px;color:var(--text-d);margin:12px 2px 0}
 /* Concordance: verses shown in place under a word */
 .cw-row.open{background:var(--surface)}
 .cw-body{padding:8px 0 12px;border-bottom:1px solid var(--border)}
@@ -1427,6 +1445,10 @@ body.light #home-watermark{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
           Timeline
         </button>
+        <button class="smode" id="smode-hymns" onclick="switchSearchMode('hymns')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          Hymns
+        </button>
       </div>
 
       <!-- Text search panel -->
@@ -1521,6 +1543,19 @@ body.light #home-watermark{
           From the Creation to the Revelation. Tap an event to read it. Dates follow Archbishop Ussher's chronology (1650), found in the margins of many older KJV Bibles, and are approximate.
         </div>
         <div id="timeline-list"><div id="s-status">Loading timeline…</div></div>
+      </div>
+
+      <!-- Hymns panel (public-domain hymns: browse by section + hymn page) -->
+      <div id="hymns-panel" style="display:none">
+        <div id="hymns-browse">
+          <div class="s-wrap" style="margin-bottom:10px">
+            <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="search" id="hymns-filter" placeholder="Find a hymn by title, words or author…" oninput="filterHymns(this.value)" autocomplete="off">
+          </div>
+          <div id="hymns-list"><div id="s-status">Loading hymns…</div></div>
+          <div class="nv-credit">Hymns whose words are in the public domain (written before 1928), with the Scriptures behind them.</div>
+        </div>
+        <div id="hymn-view" style="display:none"></div>
       </div>
     </div>
   </div>
@@ -5322,7 +5357,7 @@ function loadCachedJSON(url){
 // Cards for a compact reference list "bookIndex.chapter:verses;…" — one per
 // verse or run of verses, with the text. Long runs show their opening
 // verses; whole chapters a preview. Shared by topic and person pages.
-async function refCardsHTML(refStr, limit){ // refs: "bookIdx.ch:verses;…"
+async function refCardsHTML(refStr, limit, thread=false){ // refs: "bookIdx.ch:verses;…"; thread adds 🔗 to open that verse's Compare page
   const refs = refStr.split(';').slice(0, limit);
   const books = await Promise.all([...new Set(refs.map(r => +r.split('.')[0]))].map(b => fetchBook(BOOKS[b]).then(d => [b, d])));
   const data = Object.fromEntries(books);
@@ -5349,7 +5384,8 @@ async function refCardsHTML(refStr, limit){ // refs: "bookIdx.ch:verses;…"
       const more = whole ? ' <em class="nv-more">… whole chapter — tap to read</em>'
         : verses.length > MAXV ? ` <em class="nv-more">… ${verses.length - MAXV} more verses — tap to read</em>` : '';
       const ref = `${name} ${c}:${verses[0].verse}`.replace(/'/g, "\\'");
-      cards.push(`<div tabindex="0" class="rc${verses.length > 1 ? ' passage-block' : ''}" onclick="jumpToRef('${ref}')"><div class="rc-ref">${label}</div><div class="rc-txt">${flow}${more}</div></div>`);
+      const link = thread ? `<button class="rc-thread" title="Compare this verse" onclick="event.stopPropagation();openTreasury('${b}.${c}:${verses[0].verse}')">🔗 Compare</button>` : '';
+      cards.push(`<div tabindex="0" class="rc${verses.length > 1 ? ' passage-block' : ''}" onclick="jumpToRef('${ref}')"><div class="rc-ref">${link}${label}</div><div class="rc-txt">${flow}${more}</div></div>`);
     }
   }
   return cards.join('');
@@ -5844,7 +5880,7 @@ async function openTreasury(key, focus=null, pushHistory=true, scrollY=0){
   const [c, v] = cv.split(':').map(Number);
   const book = BOOKS[+b];
   const [T, data] = await Promise.all([loadTreasury(b).catch(() => null), fetchBook(book)]);
-  if(!T || !T[cv]) return;
+  if(!T || !T[cv]){ if(T) showToast(`The Treasury has no references for ${book} ${c}:${v}`); return; }
   const groups = T[cv];
   const scroller = document.getElementById('screen-search');
   const view = document.getElementById('xref-view');
@@ -5907,7 +5943,7 @@ async function fillTreasuryLine(i, limit=12){
   if(!body || !g) return;
   const total = g[1].split(';').length;
   body.innerHTML = '<div id="s-status" style="padding:8px 0">Loading verses…</div>';
-  const html = await refCardsHTML(g[1], limit);
+  const html = await refCardsHTML(g[1], limit, true);
   if(S._tskKey !== key) return; // moved on meanwhile
   body.innerHTML = html + (total > limit ? `<button class="nv-showmore" onclick="fillTreasuryLine(${i}, ${total})">Show ${total - limit} more</button>` : '');
 }
@@ -5966,6 +6002,62 @@ async function openTimelineAt(id){
   el.scrollIntoView({block:'center'});
   el.classList.add('flash');
   setTimeout(() => el.classList.remove('flash'), 2000);
+}
+
+/* ════ HYMNS ════
+   Public-domain hymns (words written before 1928), by section, each with the
+   Scriptures behind it. Built into hymns.json by tools/build-hymns.js from
+   tools/hymns/list.js and texts.json.
+   Hymn: [title, author, year, section, [[label, jumpRef], …], stanzas, chorus] */
+const HYMNS_VERSION = '2026-10-04'; // bump whenever tools/build-hymns.js is re-run
+SUBVIEWS.hymn = { mode:'hymns', browse:'hymns-browse', view:'hymn-view', open:(k, push, y) => openHymn(+k, push, y) };
+function loadHymns(){ return loadCachedJSON(`hymns.json?v=${HYMNS_VERSION}`).then(d => S._hymns = d.h); }
+async function renderHymns(){
+  showTabList('hymns');
+  const list = document.getElementById('hymns-list');
+  const H = await loadHymns().catch(() => null);
+  if(!H){ list.innerHTML = '<div id="s-status">Hymns unavailable — check your connection.</div>'; return; }
+  const filt = document.getElementById('hymns-filter');
+  if(filt && filt.value.trim()) return filterHymns(filt.value);
+  let sec = '';
+  list.innerHTML = H.map((h, i) => (h[3] !== sec ? `<div class="hy-sec">${escapeHtml(sec = h[3])}</div>` : '') + hymnRow(i)).join('');
+}
+const hymnRow = (i, mark) => { const h = S._hymns[i];
+  const m = t => mark ? escapeHtml(t).replace(mark, '<mark>$&</mark>') : escapeHtml(t);
+  return `<button class="hy-row" onclick="openHymn(${i})"><div class="hy-t">${m(h[0])}</div><div class="hy-a">${m(h[1])}, ${h[2]}</div></button>`; };
+// Title, author or any line of the words ("it is well", "crosby", "sinking sand")
+function filterHymns(q){
+  if(!S._hymns) return;
+  q = q.trim().toLowerCase();
+  if(!q) return renderHymns();
+  const norm = t => t.toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ');
+  const nq = norm(q);
+  const hits = S._hymns.map((h, i) => {
+    const words = [...h[5].flat(), ...h[6]];
+    const score = norm(h[0]).includes(nq) ? 3 : norm(h[1]).includes(nq) ? 2 : words.some(l => norm(l).includes(nq)) ? 1 : 0;
+    return [i, score];
+  }).filter(x => x[1]).sort((a, b) => b[1] - a[1]);
+  const list = document.getElementById('hymns-list');
+  const mark = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+  list.innerHTML = hits.length
+    ? `<div id="s-status" style="text-align:left;padding:0 0 8px">${hits.length} hymn${hits.length !== 1 ? 's' : ''}</div>` + hits.map(([i]) => hymnRow(i, mark)).join('')
+    : `<div id="s-status">No hymns match “${escapeHtml(q)}”</div>`;
+}
+async function openHymn(i, pushHistory=true, scrollY=0){
+  const H = S._hymns || await loadHymns().catch(() => null);
+  const h = H && H[i];
+  if(!h) return;
+  enterSubView('hymn', String(i), pushHistory);
+  const [t, a, y, sec, refs, stanzas, chorus] = h;
+  const chorusHTML = chorus.length ? `<div class="hy-ch"><div class="hy-ch-l">Refrain</div>${chorus.map(escapeHtml).join('<br>')}</div>` : '';
+  document.getElementById('hymn-view').innerHTML = `
+    <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
+    <div class="dv-title">${escapeHtml(t)}</div>
+    <div class="hy-by">${escapeHtml(a)}, ${y} · ${escapeHtml(sec)}</div>
+    <div class="vl-chips hy-refs">${refs.map(([label, r]) => `<button class="vl-chip" onclick="jumpToRef('${r.replace(/'/g, "\\'")}')">📖 ${escapeHtml(label)}</button>`).join('')}</div>
+    ${stanzas.map((st, n) => `<div class="hy-st"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div></div>` + (n === 0 ? chorusHTML : '')).join('')}
+    <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.</div>`;
+  document.getElementById('screen-search').scrollTop = scrollY || 0;
 }
 
 /* ════ MAPS FROM THE READER ════
@@ -6176,10 +6268,23 @@ async function openWord(key, pushHistory=true, scrollY=0){
       }).join('<div class="wd-sep"></div>')}
       <div class="wd-src">${r.entries.length ? 'Webster’s American Dictionary of the English Language, 1828' : ''}${r.entries.length && r.note ? ' · ' : ''}${r.note ? 'KJV note: Faith Baptist Church' : ''}</div>
     </div>
+    <div class="wd-first" id="wd-first"></div>
     <button class="nv-showmore pp-find" onclick="concordSearch('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔍 Find “${escapeHtml(r.noteWord || r.word)}” in Scripture</button>
     <div class="nv-credit">Noah Webster, An American Dictionary of the English Language (1828 — public domain); transcription by akaitsurugi/webster1828, CC BY-SA 4.0. Scripture references checked against the KJV.</div>`;
   S._wordShown = r;
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+  wordFirstMention(r);
+}
+// "⭐ First mention in Scripture: Genesis 6:8" — the law of first mention
+async function wordFirstMention(r){
+  const w = (r.noteWord ? dictKey(r.noteWord) : r.word || '').toLowerCase();
+  if(!/^[a-z]+$/.test(w)) return;
+  await loadConcordance().catch(() => null);
+  if(!S._concord || !concordVocab().has(w)) return; // not a word the KJV uses
+  const hits = await concordVerses(w, () => {});
+  const el = document.getElementById('wd-first');
+  if(!el || S._wordShown !== r || !hits.length) return;
+  el.innerHTML = `⭐ <b>First mention in Scripture:</b> <a href="#" class="ref-link" onclick="jumpToRef('${hits[0].ref.replace(/'/g, "\\'")}');return false">${hits[0].ref}</a> · used in ${hits.length} verse${hits.length !== 1 ? 's' : ''}`;
 }
 function wdShowAll(i){
   const r = S._wordShown, el = document.getElementById('wd-def-' + i);
@@ -6223,7 +6328,12 @@ function findDictCard(q){
 // render=false only switches panels (a sub-page is about to fill its tab)
 function switchSearchMode(mode, pushHistory=true, render=true){
   document.querySelectorAll('.smode').forEach(b=>b.classList.remove('on'));
-  document.getElementById('smode-'+mode).classList.add('on');
+  const tab = document.getElementById('smode-'+mode);
+  tab.classList.add('on');
+  // Keep the chosen tab in view in the scrolling tab row
+  const bar = tab.parentNode;
+  if(tab.offsetLeft < bar.scrollLeft || tab.offsetLeft + tab.offsetWidth > bar.scrollLeft + bar.clientWidth)
+    bar.scrollTo({left: tab.offsetLeft - (bar.clientWidth - tab.offsetWidth) / 2, behavior: 'smooth'});
   document.getElementById('search-panel').style.display   = mode==='search'   ? 'block':'none';
   document.getElementById('doctrine-panel').style.display = mode==='doctrine' ? 'block':'none';
   document.getElementById('dict-panel').style.display     = mode==='dict'     ? 'block':'none';
@@ -6232,6 +6342,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
   document.getElementById('names-panel').style.display    = mode==='names'    ? 'block':'none';
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   document.getElementById('timeline-panel').style.display = mode==='timeline' ? 'block':'none';
+  document.getElementById('hymns-panel').style.display    = mode==='hymns'    ? 'block':'none';
   if(render){
     if(mode==='doctrine') renderDoctrines();
     if(mode==='dict') handleDictSearch(document.getElementById('dict-input').value || '');
@@ -6240,6 +6351,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
     if(mode==='names') renderNames();
     if(mode==='maps') renderMaps();
     if(mode==='timeline') renderTimeline();
+    if(mode==='hymns') renderHymns();
   }
   if(pushHistory) history.pushState({screen:'search', searchMode:mode}, '', '');
 }
@@ -6402,7 +6514,7 @@ function renderConcordHits(body, upto){
   let lastBook = '';
   for(const v of hits.slice(0, S._concShown)){
     if(v.book !== lastBook){ html += `<div class="cw-bk">${v.book}</div>`; lastBook = v.book; }
-    html += `<div tabindex="0" class="rc" onclick="jumpToRef('${v.ref.replace(/'/g, "\\'")}')"><div class="rc-ref">${v.ref}</div><div class="rc-txt">${escapeHtml(v.txt).replace(mark, '<mark>$1</mark>')}</div></div>`;
+    html += `<div tabindex="0" class="rc" onclick="jumpToRef('${v.ref.replace(/'/g, "\\'")}')"><div class="rc-ref">${v.ref}${v === hits[0] ? '<span class="fm-tag">⭐ First mention</span>' : ''}</div><div class="rc-txt">${escapeHtml(v.txt).replace(mark, '<mark>$1</mark>')}</div></div>`;
   }
   if(hits.length > S._concShown)
     html += `<button class="nv-showmore" style="width:100%" onclick="renderConcordHits(this.parentNode, ${S._concShown + 80})">Show ${Math.min(80, hits.length - S._concShown)} more of ${hits.length - S._concShown}</button>`;
@@ -10106,7 +10218,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v33';
+const WHATS_NEW_VERSION = 'v34';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -10660,6 +10772,36 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v34" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎵</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">The Hymnal</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>Search &rarr; Hymns</strong> holds 89 beloved hymns &mdash; <em>Amazing Grace</em>, <em>Blessed Assurance</em>, <em>It Is Well</em>, <em>The Old Rugged Cross</em> and more &mdash; with every stanza, the refrain, and the Scriptures behind each hymn. Find one by title, author, or any line you remember.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v34" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">⭐</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">First Mention</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          In the <strong>Concordance</strong> and <strong>Dictionary</strong>, the first verse a word appears in is marked &mdash; <em>grace</em> first appears in Genesis 6:8.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v34" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔗</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Follow the Thread</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          On a <strong>Compare Scripture</strong> page, tap <strong>🔗 Compare</strong> on any verse to open its own references &mdash; and follow a truth from verse to verse. The Search tabs now sit in one row you can swipe.
+        </div>
+      </div>
+    </div>
+
     <div class="wn-item" data-wn="v33" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔗</div>
       <div>

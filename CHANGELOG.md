@@ -6,6 +6,16 @@
 
 ## New Features
 
+### 🎵 The Hymnal, ⭐ First Mention, 🔗 Follow the Thread (v34)
+- **Hymnal** — a new **Search → Hymns** tab with 89 hymns whose words are public domain (written before 1928), in nine sections from *Praise and Worship* to *Christmas and Easter*. Each hymn page shows the author and year, the Scriptures behind it (tappable), every stanza numbered, and the refrain
+- Find a hymn by title, author, or any line of the words ("sinking sand" → *The Solid Rock*)
+- Chosen from the hymns sung in Independent Baptist churches. Left out on purpose: texts still under copyright (*How Great Thou Art*, *Victory in Jesus*), Catholic-origin texts (*Silent Night*, *O Come All Ye Faithful*, *Faith of Our Fathers*), Unitarian authors, and sinless-perfection texts (*Love Divine*); *Standing on the Promises* omits the "perfect, present cleansing" stanza, as Baptist hymnals do
+- Words gathered from open collections (marvinjude/gospel-hymns, josmithua/song-data, pathawks/Christmas-Songs) and proofread against standard hymnals — typos fixed, garbled and missing stanzas restored. The words live in `tools/hymns/texts.json`, the list in `tools/hymns/list.js`; `tools/build-hymns.js` checks every Scripture reference against the KJV text
+- **First mention** — the Concordance marks the first verse a word appears in ("⭐ First mention"), and Dictionary word pages show "First mention in Scripture: Genesis 6:8 · used in 159 verses"
+- **Follow the thread** — verse cards on a Compare Scripture page have a "🔗 Compare" button that opens that verse's own references (Back steps back through the thread); a verse the Treasury doesn't cover says so
+- **Search tabs** sit in one swipeable row (nine tabs no longer wrap into three rows), and the chosen tab scrolls into view
+- The filter boxes on the Dictionary, Topics, Concordance, Names and Hymns tabs now share the main search box's style
+
 ### 🔗 Compare Scripture, 📅 Bible Timeline, 📜 Concordance Verses (v33)
 - **Treasury of Scripture Knowledge** (1830s, public domain) — **305,906 cross-references** in 63,663 phrase groups, each tied to the KJV words it explains, from the CrossReferences.org KJV export (CC BY 4.0). Every reference was checked against the app's KJV text by `tools/build-treasury.js`; one file per book in `treasury/`, loaded and saved on the device on first use
 - **Verse card**: "Compare Scripture · N references" lists the verse's phrases ("the beginning", "the Word"); tapping one opens a **Compare Scripture** page with the verse (phrases marked) and each phrase's passages as cards (Back returns to the reader)
