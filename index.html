@@ -197,6 +197,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .nv-more{color:var(--text-m);font-size:13px}
 .nv-showmore{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:13px;cursor:pointer}
 .nv-credit{font-size:11px;color:var(--text-m);font-style:italic;padding:10px 2px 0;border-top:1px solid var(--border);margin-top:12px}
+#whatsnew-modal .wn-item[hidden]{display:none!important}
+#whatsnew-modal .wn-item.wn-last{border-bottom:1px solid var(--border)}
 .s-dym{font-size:14px;color:var(--text-d);padding:0 0 8px}
 .s-dym a{color:var(--gold);font-weight:600;font-style:italic}
 .nm-row{display:block;width:100%;text-align:left;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
@@ -9029,6 +9031,15 @@ function showWhatsNewIfNeeded(){
   if(ob && ob.style.display === 'flex') return;
   const modal = document.getElementById('whatsnew-modal');
   if(!modal) return;
+  // Show only what's new since the last pop-up this person saw (v28 → just
+  // the v29 items); anyone who skipped releases sees all of them.
+  const rank = v => { const m = /^v(\d+)/.exec(v || ''); return m ? +m[1] : 0; };
+  const seen = rank(localStorage.getItem('kjv_whatsnew'));
+  const items = [...modal.querySelectorAll('.wn-item')];
+  items.forEach(el => { el.hidden = rank(el.dataset.wn) <= seen; el.classList.remove('wn-last'); });
+  const shown = items.filter(el => !el.hidden);
+  if(!shown.length) items.forEach(el => el.hidden = false); // never an empty pop-up
+  (shown.length ? shown : items).slice(-1)[0].classList.add('wn-last');
   modal.style.display = 'flex';
 }
 function dismissWhatsNew(){
@@ -9557,7 +9568,10 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       <div style="font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">What's New</div>
       <div style="font-size:12px;color:var(--text-m);margin-top:4px">What's new in this update</div>
     </div>
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+    <!-- Each item is tagged with the release it arrived in (data-wn). Someone
+         who already saw an earlier pop-up only sees the items newer than it;
+         someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v29" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📚</div>
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Topics</div>
@@ -9567,7 +9581,17 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       </div>
     </div>
 
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+    <div class="wn-item" data-wn="v28" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔍</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Smarter Search</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Search finds the <strong>verse you mean</strong>: type a phrase like <em>be still and know</em> and the best match comes first, or tap <strong>Bible order</strong> to read results Genesis to Revelation. Words match <strong>whole words</strong> (<em>sin</em> finds sinned and sinful, not &ldquo;business&rdquo;). Put words in quotes for an <strong>exact phrase</strong>, or a minus to leave one out: <em>love -god</em>.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v29" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">✏️</div>
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Did You Mean…?</div>
@@ -9577,7 +9601,17 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       </div>
     </div>
 
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="wn-item" data-wn="v28" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📖</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">More Ways to Type a Reference</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Search understands <strong>Rev. 22:21</strong>, <strong>1John 3:16</strong>, <strong>First John 4:8</strong>, <strong>Jude 5</strong>, and ranges across chapters like <strong>John 3:16-4:2</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v29" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">⚡</div>
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Faster &amp; Works Offline</div>
