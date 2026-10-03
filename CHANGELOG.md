@@ -6,6 +6,18 @@
 
 ## New Features
 
+### 📚 Bible Topics — Nave's Topical Bible (v29)
+- **~5,300 topics** from Nave's Topical Bible (Orville J. Nave, 1896 — public domain; digitized by BibleData, CC BY 4.0) with over 59,000 references, each checked against the KJV text
+- **Topic cards in Search** — search a subject (*forgiveness*, *prayer*, *tithing*, *the holy spirit*) or ask in plain words (*what does the Bible say about anger*) and a card for the topic appears above the verse results. A few modern words are mapped to Nave's terms (*worry* → Care, *gossip* → Talebearer, *generosity* → Liberality)
+- **Search → Topics** — browse every topic A–Z or filter by name
+- **Topic pages** — Nave's sub-topics as sections with the verse text; neighbouring verses read as one passage. Small topics open fully, big ones (*Jesus, the Christ* has 400+ sub-topics) start collapsed. "See …" links jump to related topics
+- **Back works everywhere** — from a verse back to its topic, from one topic back to the last, and from a topic back to your search results, each at the same scroll position
+- The topic data is saved on the device on first use, like the Bible books
+
+### ✏️ Did You Mean…? (v29)
+- When a search word never appears in the KJV, search suggests the closest real word — *beleive* → believe, *Nebuchadnezer* → Nebuchadnezzar, *thier sins* → their sins — and one tap searches it
+- Uses the Concordance's word list, so names and KJV spellings are suggested too; words that name a topic (*worry*) aren't treated as typos
+
 ### 🔍 Smarter Search (v28)
 - **Whole-word matching** with KJV word forms — *sin* finds sins, sinned, sinneth, sinful and sinner, but no longer "business" or "sing"; *love* finds loved, loveth, lovest and lovely
 - If nothing matches as a whole word, search falls back to words that **begin with** what you typed, so a half-typed word still finds verses

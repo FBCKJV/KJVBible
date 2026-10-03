@@ -176,7 +176,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .smode{flex:1 1 auto;min-width:92px;white-space:nowrap;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
 .smode.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 /* Concordance (A–Z word index) + Bible Names (A–Z name index) */
-#concord-az,#names-az{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 12px}
+#topics-az,#concord-az,#names-az{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 12px}
 .cz-btn{flex:0 0 auto;min-width:30px;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:6px 0;font-size:13px;font-weight:600;cursor:pointer}
 .cz-btn.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
 #concord-list,#names-list{display:flex;flex-direction:column}
@@ -186,6 +186,21 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .cw-count{font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;flex-shrink:0;background:var(--surface);border-radius:10px;padding:2px 9px}
 .cw-count.on{color:var(--gold)}
 /* Bible Names A–Z rows */
+.nv-name{font-family:'Crimson Pro',serif;font-size:16px}
+.nv-sub{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);padding:12px 2px 4px}
+.nv-line{border-bottom:1px solid var(--border)}
+.nv-hdr{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;color:var(--text);text-align:left;padding:10px 2px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:15.5px}
+.nv-hdr .nv-lbl{flex:1}
+.nv-body{display:flex;flex-direction:column;gap:8px}
+.nv-body:not(:empty){padding:2px 0 12px}
+.nv-see{display:block;background:none;border:none;color:var(--gold);font-size:13px;padding:7px 2px;cursor:pointer;text-align:left}
+.nv-more{color:var(--text-m);font-size:13px}
+.nv-showmore{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:13px;cursor:pointer}
+.nv-credit{font-size:11px;color:var(--text-m);font-style:italic;padding:10px 2px 0;border-top:1px solid var(--border);margin-top:12px}
+#whatsnew-modal .wn-item[hidden]{display:none!important}
+#whatsnew-modal .wn-item.wn-last{border-bottom:1px solid var(--border)}
+.s-dym{font-size:14px;color:var(--text-d);padding:0 0 8px}
+.s-dym a{color:var(--gold);font-weight:600;font-style:italic}
 .nm-row{display:block;width:100%;text-align:left;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
 .nm-row:hover{background:var(--surface)}
 .nm-name{font-family:'IM Fell English',serif;font-size:17px;color:var(--gold)}
@@ -1305,6 +1320,10 @@ body.light #home-watermark{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
           Dictionary
         </button>
+        <button class="smode" id="smode-topics" onclick="switchSearchMode('topics')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          Topics
+        </button>
         <button class="smode" id="smode-concord" onclick="switchSearchMode('concord')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="17" x2="13" y2="17"/><line x1="3.5" y1="7" x2="3.5" y2="7"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="17" x2="3.5" y2="17"/></svg>
           Concordance
@@ -1349,6 +1368,20 @@ body.light #home-watermark{
           Tip: While reading, tap any word in a verse to look it up instantly.
         </div>
         <div id="dict-results"></div>
+      </div>
+
+      <!-- Topics panel (Nave's Topical Bible: A–Z browse + topic page) -->
+      <div id="topics-panel" style="display:none">
+        <div id="topics-browse">
+          <div class="s-wrap" style="margin-bottom:10px">
+            <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="search" id="topics-filter" placeholder="Filter topics… (e.g. prayer, forgiveness)" oninput="filterNaveTopics(this.value)" autocomplete="off">
+          </div>
+          <div id="topics-az"></div>
+          <div id="topics-list"><div id="s-status">Loading topics…</div></div>
+          <div class="nv-credit">Topics from Nave's Topical Bible (Orville J. Nave, 1896 — public domain), digitized by BibleData (Brady Stephenson, CC BY 4.0).</div>
+        </div>
+        <div id="topic-view" style="display:none"></div>
       </div>
 
       <!-- Concordance panel (A–Z word index) -->
@@ -1500,6 +1533,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">❝</span><span class="tip-txt"><strong>Search for an exact phrase</strong> — put it in quotes, like <em>"god so loved"</em>. Put a minus before a word to leave it out: <em>love -god</em>. Switch between <em>Best match</em> and <em>Bible order</em> above the results</span></div>
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
+        <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
         <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 Bible people and places A–Z with the meaning of each name — tap one to find it in Scripture</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> has public-domain Bible maps — tap any map to open it full-screen and pinch or use +/− to zoom. They work offline</span></div>
@@ -3458,15 +3492,26 @@ window.addEventListener('popstate', e => {
     const scroller = document.getElementById('screen-search');
     const y = scroller ? scroller.scrollTop : 0;
     const wasDoctrine = S.screen === 'search' && document.getElementById('doctrine-panel').style.display !== 'none' && !document.getElementById('doctrine-list');
+    const wasTopicView = S.screen === 'search' && document.getElementById('topics-panel').style.display !== 'none' && document.getElementById('topic-view').style.display !== 'none';
+    const fromOtherScreen = S.screen !== 'search';
+    // Leaving a topic page: remember its scroll for when Back/Forward returns to it
+    if(wasTopicView && S._naveKey) (S._naveScroll || (S._naveScroll = {}))[S._naveKey] = y;
     showScreen('search', false);
     if(state.sub === 'verses' && DOCTRINES[state.ci] && DOCTRINES[state.ci].topics[state.ti]){
       // Back from a verse opened in a doctrine topic → that same topic
       switchSearchMode('doctrine', false);
       showDoctrineVerses(state.ci, state.ti, false, y);
+    } else if(state.sub === 'topic' && state.key){
+      // Back to a Nave's topic — from a verse (same scroll) or from another topic
+      openNaveTopic(state.key, false, fromOtherScreen ? y : ((S._naveScroll || {})[state.key] || 0));
     } else if(state.searchMode){
       switchSearchMode(state.searchMode, false);
       // Back from a topic to the doctrine list → where the list was scrolled
       if(state.searchMode === 'doctrine' && wasDoctrine && scroller) scroller.scrollTop = S._docListScroll || 0;
+      // Back from a topic page to the Topics list → where the list was scrolled
+      if(state.searchMode === 'topics' && wasTopicView && scroller) scroller.scrollTop = S._topicListScroll || 0;
+      // Back from a topic page to the tab it was opened from (e.g. search results)
+      else if(wasTopicView && scroller) scroller.scrollTop = S._fromTabScroll || 0;
     }
   } else if(state.screen === 'reader' && state.book && (state.book !== S.book || state.ch !== S.ch)){
     // Restore the reader to the book/chapter this history entry describes —
@@ -4499,6 +4544,8 @@ async function doSearch(raw) {
   const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
   S._topicMatches = findTopicMatches(cleaned);
   S._personalMatches = [];
+  S._naveMatches = [];
+  S._didYouMean = null;
   const strip = document.getElementById('s-book-strip');
 
   // ── 1. Reference search ──
@@ -4512,6 +4559,10 @@ async function doSearch(raw) {
   }
 
   // ── 2. Keyword search ──
+  // Topic and spelling data load alongside the books but never hold up
+  // the results — if they arrive later, the cards are added then.
+  const navesP   = loadNaves().catch(() => null);
+  const concordP = exactMode ? Promise.resolve(null) : loadConcordance().catch(() => null);
   const query = parseSearchQuery(cleaned);
   if (!query.words.length && !query.phrases.length) {
     el.innerHTML = renderTopicCards(S._topicMatches) + '<div id="s-status">Please enter a search term</div>';
@@ -4562,15 +4613,35 @@ async function doSearch(raw) {
     S._searchResults = res.partial.sort((a,b) => b.score - a.score || a.ord - b.ord).slice(0, 200);
   }
 
-  if (!S._searchResults.length) {
-    el.innerHTML = renderTopicCards(S._topicMatches)
-      + renderPersonalCards(S._personalMatches)
-      + `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
-    if (strip) strip.style.display = 'none';
-    return;
+  S._naveMatches = findNaveTopics(cleaned);
+  if (!exactMode) S._didYouMean = didYouMean(cleaned, query);
+  const render = () => {
+    if (!S._searchResults.length) {
+      el.innerHTML = renderTopicCards(S._topicMatches)
+        + renderNaveCards(S._naveMatches)
+        + renderPersonalCards(S._personalMatches)
+        + renderDidYouMean()
+        + `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
+      if (strip) strip.style.display = 'none';
+      return;
+    }
+    renderBookStrip();
+    renderSearchPage(0);
+  };
+  render();
+
+  // Late arrivals (first use only): topic cards and spelling suggestions
+  if (!S._naves || (!exactMode && !S._concord)) {
+    await Promise.all([navesP, concordP]);
+    if (gen !== S._searchGen) return;
+    const naves = findNaveTopics(cleaned);
+    const dym = exactMode ? null : didYouMean(cleaned, query);
+    if (naves.join() !== S._naveMatches.join() || dym !== S._didYouMean) {
+      S._naveMatches = naves; S._didYouMean = dym;
+      // Only redraw if the reader is still on the first page of results
+      if (!S._searchResults.length || (S._searchPage || 0) === 0) render();
+    }
   }
-  renderBookStrip();
-  renderSearchPage(0);
 }
 
 // Builds the result card for a reference query: a verse, a verse range
@@ -4704,9 +4775,10 @@ function renderSearchPage(startIdx, scroll){
     </div>`;
   }
 
+  S._searchPage = curPage - 1;
   // Each page replaces the last one (pages used to pile up underneath)
   el.innerHTML =
-    (curPage === 1 ? renderTopicCards(S._topicMatches) + renderPersonalCards(S._personalMatches) : '')
+    (curPage === 1 ? renderTopicCards(S._topicMatches) + renderNaveCards(S._naveMatches) + renderPersonalCards(S._personalMatches) + renderDidYouMean() : '')
     + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`
     + sortBar
     + page.map(r => {
@@ -4717,6 +4789,385 @@ function renderSearchPage(startIdx, scroll){
   if (scroll) el.scrollIntoView({block:'start'});
 }
 
+/* ════ NAVE'S TOPICAL BIBLE ════
+   ~5,300 subjects (Orville J. Nave, 1896 — public domain), built into
+   naves.json by tools/build-naves.js. Used two ways:
+     • Search shows a topic card when the query names a subject
+       ("forgiveness", "what does the bible say about anger")
+     • Search → Topics browses every subject A–Z
+   A topic page lists Nave's sub-topics as collapsible sections with the
+   verse text, plus "See …" links to related subjects. The file is saved on
+   the device on first use, like the Bible books. */
+const NAVES_URL = 'naves.json?v=2026-10-03'; // bump v= whenever tools/build-naves.js is re-run
+let _navesLoad = null;
+function loadNaves(){
+  if(S._naves) return Promise.resolve(S._naves);
+  return _navesLoad || (_navesLoad = (async () => {
+    let cache = null;
+    if('caches' in window){
+      try{
+        cache = await caches.open(BIBLE_CACHE);
+        const hit = await cache.match(NAVES_URL);
+        if(hit) return S._naves = prepNaves(await hit.json());
+      }catch(e){ cache = null; }
+    }
+    const r = await fetch(NAVES_URL);
+    if(!r.ok) throw new Error('http ' + r.status);
+    if(cache){
+      // Save this version and drop copies of older ones
+      cache.put(NAVES_URL, r.clone()).then(() => cache.keys()).then(keys => keys
+        .filter(k => /naves\.json/.test(k.url) && !k.url.endsWith(NAVES_URL))
+        .forEach(k => cache.delete(k))).catch(()=>{});
+    }
+    return S._naves = prepNaves(await r.json());
+  })().catch(e => { _navesLoad = null; throw e; }));
+}
+
+const _naveNorm = s => s.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+// Crude stemmer, just enough to pair "forgive"/"forgiving" with FORGIVENESS
+// and "pray" with PRAYER
+function naveStem(w){
+  for(const [suf, rep] of [['iveness','ive'],['fulness','ful'],['ness',''],['ings',''],['ing',''],['ies','y'],['ied','y'],['ers',''],['ed',''],['es',''],['s',''],['ly','']]){
+    if(w.length - suf.length >= 3 && w.endsWith(suf)){ w = w.slice(0, -suf.length) + rep; break; }
+  }
+  if(w.length >= 6 && w.endsWith('er')) w = w.slice(0, -2);
+  return w.replace(/e$/, '');
+}
+function prepNaves(data){
+  const keys = Object.keys(data.topics).sort();
+  const byNorm = new Map(), byHead = new Map(), byStem = new Map(), passages = {};
+  for(const k of keys){
+    const n = _naveNorm(k);
+    byNorm.set(n, k);
+    // "JESUS, THE CHRIST" is also found as "jesus"
+    const head = _naveNorm(k.split(',')[0]);
+    if(head !== n && !byHead.has(head)) byHead.set(head, k);
+    if(!n.includes(' ')){ const st = naveStem(n); if(!byStem.has(st)) byStem.set(st, []); byStem.get(st).push(k); }
+    passages[k] = data.topics[k].reduce((t, l) => t + (l[2] ? l[2].split(';').length : 0), 0);
+  }
+  return { ...data, keys, byNorm, byHead, byStem, passages };
+}
+
+// Modern words Nave doesn't use as subjects
+const NAVE_ALIASES = { angry:'ANGER', worry:'CARE', worries:'CARE', worrying:'CARE', anxious:'CARE', christ:'JESUS, THE CHRIST',
+  'holy ghost':'HOLY SPIRIT', generosity:'LIBERALITY', generous:'LIBERALITY', gossip:'TALEBEARER' };
+// Very common words whose (huge) Nave subjects would crowd a verse search
+const NAVE_SKIP = new Set(['bible','scripture','scriptures','verse','verses','say','says','about','tell','teach','teaches',
+  'mean','means','lord','god','man','men','people','day','days','thing','things','know','still','come','make','give',
+  'take','see','look','king','son','sons','house','land','hand','word','words','way','time','good','great','many']);
+
+// A topic that is only "See X" opens X instead
+function followNaveSee(k){
+  const N = S._naves;
+  for(let i = 0; i < 2 && k && N.topics[k]; i++){
+    const t = N.topics[k];
+    if(t.length === 1 && t[0][3]) k = t[0][3]; else break;
+  }
+  return k && N.topics[k] ? k : null;
+}
+
+function findNaveTopics(query){
+  const N = S._naves;
+  if(!N) return [];
+  const full = _naveNorm(query);
+  if(full.length < 3) return [];
+  const hits = [];
+  const add = k => { k = followNaveSee(k); if(k && !hits.includes(k)) hits.push(k); };
+  const words = full.split(' ');
+  const content = words.filter(w => !STOP.has(w)).join(' ');
+  // The whole query names a subject ("forgiveness", "the holy spirit")
+  for(const c of [full, content]){
+    if(!c) continue;
+    const k = N.byNorm.get(c) || N.byNorm.get(c.replace(/s$/, '')) || N.byNorm.get(c + 's')
+      || N.byHead.get(c) || NAVE_ALIASES[c] || (!c.includes(' ') && (N.byStem.get(naveStem(c)) || [])[0]);
+    if(k){ add(k); return hits; }
+  }
+  // Otherwise, subjects named by individual words ("…say about anger")
+  for(const w of words){
+    if(w.length < 4 || STOP.has(w) || NAVE_SKIP.has(w)) continue;
+    add(N.byNorm.get(w) || NAVE_ALIASES[w] || (N.byStem.get(naveStem(w)) || [])[0]);
+    if(hits.length >= 2) break;
+  }
+  return hits;
+}
+
+// "JESUS, THE CHRIST" → "Jesus, the Christ"
+function naveTitle(k){
+  const small = new Set(['of','the','and','in','to','a','an','for','on','by','with','as','at','or']);
+  return k.toLowerCase().replace(/[a-z][a-z']*/g, (w, i) => i > 0 && small.has(w) ? w : w[0].toUpperCase() + w.slice(1));
+}
+function naveSummary(k){
+  const N = S._naves, t = N.topics[k];
+  const subs = t.filter(l => l[1] && !l[3]).length, p = N.passages[k];
+  return [subs > 1 ? `${subs} sub-topics` : '', p ? `${p} passage${p !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ');
+}
+
+function renderNaveCards(keys){
+  if(!keys || !keys.length || !S._naves) return '';
+  return keys.map(k =>
+    `<div tabindex="0" class="rc ref-jump nv-card" onclick="openNaveTopicAt(${S._naves.keys.indexOf(k)})">
+      <div class="rc-ref">📚 Topic — ${escapeHtml(naveTitle(k))}</div>
+      <div class="rc-txt" style="opacity:.75">${naveSummary(k)} · Nave's Topical Bible — tap to open</div>
+    </div>`).join('');
+}
+
+/* ── Topics tab: A–Z browse + filter ── */
+S._topicsLetter = 'A';
+async function renderNaveBrowse(){
+  const list = document.getElementById('topics-list');
+  document.getElementById('topics-browse').style.display = '';
+  document.getElementById('topic-view').style.display = 'none';
+  if(!S._naves){
+    list.innerHTML = '<div id="s-status">Loading topics…</div>';
+    try{ await loadNaves(); }
+    catch(e){ list.innerHTML = '<div id="s-status">Topics unavailable — check your connection.</div>'; return; }
+  }
+  const az = document.getElementById('topics-az');
+  if(!az.children.length){
+    const letters = [...new Set(S._naves.keys.map(k => k[0]))].filter(L => /[A-Z]/.test(L));
+    az.innerHTML = letters.map(L => `<button class="cz-btn" data-l="${L}" onclick="selectNaveLetter('${L}')">${L}</button>`).join('');
+  }
+  const filt = document.getElementById('topics-filter');
+  if(filt && filt.value.trim()) filterNaveTopics(filt.value);
+  else selectNaveLetter(S._topicsLetter);
+}
+function selectNaveLetter(L){
+  if(!S._naves) return;
+  S._topicsLetter = L;
+  const filt = document.getElementById('topics-filter');
+  if(filt) filt.value = '';
+  document.querySelectorAll('#topics-az .cz-btn').forEach(b => b.classList.toggle('on', b.dataset.l === L));
+  const keys = S._naves.keys.filter(k => k[0] === L);
+  renderNaveRows(keys, `${keys.length} topics`);
+}
+function filterNaveTopics(q){
+  if(!S._naves) return;
+  q = _naveNorm(q);
+  if(!q){ selectNaveLetter(S._topicsLetter); return; }
+  document.querySelectorAll('#topics-az .cz-btn').forEach(b => b.classList.remove('on'));
+  const CAP = 300, keys = S._naves.keys;
+  // Prefix matches first, then other substring matches
+  const pre = keys.filter(k => _naveNorm(k).startsWith(q));
+  const out = pre.concat(keys.filter(k => !pre.includes(k) && _naveNorm(k).includes(q))).slice(0, CAP);
+  const label = out.length >= CAP ? `First ${CAP} matches — keep typing to narrow` : `${out.length} match${out.length !== 1 ? 'es' : ''}`;
+  renderNaveRows(out, out.length ? label : `No topics match “${escapeHtml(q)}”`);
+}
+function renderNaveRows(keys, label){
+  const list = document.getElementById('topics-list');
+  if(!keys.length){ list.innerHTML = `<div id="s-status">${label}</div>`; return; }
+  const N = S._naves;
+  list.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${label}</div>`
+    + keys.map(k => `<button class="cw-row" onclick="openNaveTopicAt(${N.keys.indexOf(k)})"><span class="nv-name">${escapeHtml(naveTitle(k))}</span>${N.passages[k] ? `<span class="cw-count">${N.passages[k]}</span>` : ''}</button>`).join('');
+}
+
+/* ── Topic page ── */
+function currentSearchMode(){
+  const on = document.querySelector('.smode.on');
+  return on ? on.id.replace('smode-', '') : 'search';
+}
+function openNaveTopicAt(i){ if(S._naves && S._naves.keys[i]) openNaveTopic(S._naves.keys[i]); }
+
+// pushHistory is false when Back returns to a topic (its history entry
+// already exists); scrollY then restores where the reader was.
+async function openNaveTopic(key, pushHistory=true, scrollY=0){
+  const N = await loadNaves().catch(() => null);
+  if(!N || !N.topics[key]) return;
+  const scroller = document.getElementById('screen-search');
+  const view = document.getElementById('topic-view');
+  if(pushHistory){
+    const mode = currentSearchMode();
+    const viewing = mode === 'topics' && view.style.display !== 'none';
+    // Remember where we were, so Back lands in the same place
+    if(viewing && S._naveKey) (S._naveScroll || (S._naveScroll = {}))[S._naveKey] = scroller.scrollTop;
+    else if(mode === 'topics') S._topicListScroll = scroller.scrollTop;
+    else S._fromTabScroll = scroller.scrollTop;
+    // Opened from another tab (e.g. a search card): make sure Back returns
+    // to that tab — the screen's history entry may not record which one.
+    const cur = history.state || {};
+    if(cur.screen === 'search' && !cur.searchMode && !viewing) history.replaceState({...cur, searchMode: mode}, '', '');
+    history.pushState({screen:'search', searchMode:'topics', sub:'topic', key}, '', '');
+  }
+  switchSearchMode('topics', false);
+  S._naveKey = key;
+  document.getElementById('topics-browse').style.display = 'none';
+  view.style.display = '';
+
+  const lines = N.topics[key];
+  const open = (S._naveOpen || (S._naveOpen = {}))[key] || (S._naveOpen[key] = new Set(
+    // Small topics open fully; big ones start collapsed
+    N.passages[key] <= 40 ? lines.map((l, i) => l[2] ? i : -1).filter(i => i >= 0) : []));
+  view.innerHTML = `
+    <button class="dv-back" onclick="history.back()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back
+    </button>
+    <div class="dv-title">${escapeHtml(naveTitle(key))}</div>
+    <div class="dv-desc">${naveSummary(key)} · Nave's Topical Bible</div>
+    ${lines.map((l, i) => {
+      const [depth, label, refs, see] = l;
+      const pad = `style="margin-left:${depth * 14}px"`;
+      if(see) return `<button class="nv-see" ${pad} onclick="openNaveTopicAt(${N.keys.indexOf(see)})">→ ${escapeHtml(naveSeeLabel(label, see))}</button>`;
+      if(!refs) return `<div class="nv-sub" ${pad}>${escapeHtml(naveTitle(label))}</div>`;
+      const n = refs.split(';').length;
+      return `<div class="nv-line" ${pad}>
+        <button class="nv-hdr" onclick="toggleNaveLine(${i})" aria-expanded="${open.has(i)}">
+          <span class="nv-lbl">${escapeHtml(label ? naveTitle(label) : 'Scriptures')}</span>
+          <span class="cw-count">${n}</span><span class="doc-cat-arr${open.has(i) ? ' open' : ''}" id="nva-${i}">⌄</span>
+        </button>
+        <div class="nv-body" id="nvb-${i}"></div>
+      </div>`;
+    }).join('')}
+    <div class="nv-credit">From Nave's Topical Bible (Orville J. Nave, 1896 — public domain), digitized by BibleData (Brady Stephenson, CC BY 4.0).</div>`;
+  scroller.scrollTop = 0;
+  await Promise.all([...open].map(i => fillNaveLine(i)));
+  if(scrollY) scroller.scrollTop = scrollY;
+}
+// "See SPEAKING, EVIL" → "See Speaking, Evil"
+function naveSeeLabel(label, see){ return 'See ' + naveTitle(label.replace(/^see\s+/i, '') || see); }
+
+async function toggleNaveLine(i){
+  const open = S._naveOpen[S._naveKey];
+  const body = document.getElementById('nvb-' + i), arr = document.getElementById('nva-' + i);
+  if(!body) return;
+  if(open.has(i)){
+    open.delete(i); body.innerHTML = ''; arr.classList.remove('open');
+    body.previousElementSibling.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  open.add(i); arr.classList.add('open');
+  body.previousElementSibling.setAttribute('aria-expanded', 'true');
+  await fillNaveLine(i);
+}
+
+// Renders one sub-topic's passages: a card per verse or verse range, with
+// the text. Long ranges show their opening verses; whole chapters a preview.
+async function fillNaveLine(i, limit=40){
+  const key = S._naveKey, body = document.getElementById('nvb-' + i);
+  const line = S._naves.topics[key][i];
+  if(!body || !line || !line[2]) return;
+  const refs = line[2].split(';');
+  body.innerHTML = '<div id="s-status" style="padding:8px 0">Loading verses…</div>';
+  const shown = refs.slice(0, limit);
+  const books = await Promise.all([...new Set(shown.map(r => +r.split('.')[0]))].map(b => fetchBook(BOOKS[b]).then(d => [b, d])));
+  if(S._naveKey !== key) return; // moved on to another topic meanwhile
+  const data = Object.fromEntries(books);
+  const cards = [];
+  for(const r of shown){
+    const [bc, vs] = r.split(':');
+    const [b, c] = bc.split('.').map(Number);
+    const ch = data[b] && data[b].chapters[c - 1];
+    if(!ch) continue;
+    const name = BOOKS[b];
+    // "4,5" and "39-41,42" read as one passage each (4–5, 39–42)
+    const ranges = vs ? vs.split(',').map(p => p.split('-').map(Number)).reduce((acc, [a, z]) => {
+      const last = acc[acc.length - 1];
+      if(last && a === (last[1] || last[0]) + 1) last[1] = z || a; else acc.push([a, z]);
+      return acc;
+    }, []) : [[1, ch.verses.length, 'whole']];
+    for(const [a, z0, whole] of ranges){
+      const z = z0 || a;
+      const verses = ch.verses.filter(v => +v.verse >= a && +v.verse <= z);
+      if(!verses.length) continue;
+      const MAXV = 6;
+      const label = whole ? `${name} ${c}` : `${name} ${c}:${a}${z > a ? '–' + z : ''}`;
+      const flow = verses.slice(0, whole ? 2 : MAXV).map(v => (verses.length > 1 ? `<sup class="vsuper">${v.verse}</sup>` : '') + v.text).join(' ');
+      const more = whole ? ' <em class="nv-more">… whole chapter — tap to read</em>'
+        : verses.length > MAXV ? ` <em class="nv-more">… ${verses.length - MAXV} more verses — tap to read</em>` : '';
+      const ref = `${name} ${c}:${verses[0].verse}`.replace(/'/g, "\\'");
+      cards.push(`<div tabindex="0" class="rc${verses.length > 1 ? ' passage-block' : ''}" onclick="jumpToRef('${ref}')"><div class="rc-ref">${label}</div><div class="rc-txt">${flow}${more}</div></div>`);
+    }
+  }
+  body.innerHTML = cards.join('')
+    + (refs.length > limit ? `<button class="nv-showmore" onclick="fillNaveLine(${i}, ${refs.length})">Show ${refs.length - limit} more passages</button>` : '');
+}
+
+/* ════ DID YOU MEAN ════
+   concordance.json lists every word in the KJV, so a query word missing
+   from it never appears in Scripture — most often a typo. Suggest the
+   closest real word (fewest edits; the more common word on a tie). */
+let _concordLoad = null;
+function loadConcordance(){
+  if(S._concord) return Promise.resolve(S._concord);
+  return _concordLoad || (_concordLoad = fetch('concordance.json')
+    .then(r => { if(!r.ok) throw new Error('http ' + r.status); return r.json(); })
+    .then(d => S._concord = d)
+    .catch(e => { _concordLoad = null; throw e; }));
+}
+function concordVocab(){
+  if(S._vocab) return S._vocab;
+  const m = new Map();
+  for(const L in S._concord.letters) for(const [w, c] of S._concord.letters[L]) m.set(w, c);
+  // The concordance leaves out common words ("their", "unto"); they're
+  // still valid suggestions for a typo like "thier"
+  for(const w of STOP) if(w.length >= 3 && !m.has(w)) m.set(w, 5000);
+  return S._vocab = m;
+}
+// Edit distance counting a swap of neighbouring letters as one edit
+// ("beleive" → "believe"); gives up early once it passes max.
+function editDistance(a, b, max){
+  if(Math.abs(a.length - b.length) > max) return max + 1;
+  let prev2 = null, prev = Array.from({length: b.length + 1}, (_, j) => j);
+  for(let i = 1; i <= a.length; i++){
+    const cur = [i];
+    let rowMin = i;
+    for(let j = 1; j <= b.length; j++){
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      let v = Math.min(prev[j] + 1, cur[j-1] + 1, prev[j-1] + cost);
+      if(prev2 && i > 1 && j > 1 && a[i-1] === b[j-2] && a[i-2] === b[j-1]) v = Math.min(v, prev2[j-2] + 1);
+      cur[j] = v; if(v < rowMin) rowMin = v;
+    }
+    if(rowMin > max) return max + 1;
+    prev2 = prev; prev = cur;
+  }
+  return prev[b.length];
+}
+// Letters two words share (as a multiset) — breaks ties between equally
+// close words: "lovd" is nearer "loved" than "lord"
+function sharedLetters(a, b){
+  const n = {}; let k = 0;
+  for(const ch of a) n[ch] = (n[ch] || 0) + 1;
+  for(const ch of b) if(n[ch] > 0){ n[ch]--; k++; }
+  return k;
+}
+function suggestWord(w, vocab){
+  const max = w.length <= 4 ? 1 : 2;
+  let best = null, bd = max + 1, bs = 0, bc = 0;
+  for(const [v, c] of vocab){
+    if(Math.abs(v.length - w.length) > max) continue;
+    const d = editDistance(w, v, max);
+    if(d > bd || d > max) continue;
+    const sh = sharedLetters(w, v);
+    if(d < bd || sh > bs || (sh === bs && c > bc)){ best = v; bd = d; bs = sh; bc = c; }
+  }
+  return best;
+}
+// The query with each unknown word replaced by its suggestion, or null
+function didYouMean(cleaned, query){
+  if(!S._concord) return null;
+  const vocab = concordVocab();
+  const fixes = {};
+  for(const w of new Set([...query.words, ...query.phrases.flat(), ...query.excluded])){
+    if(w.length < 3 || STOP.has(w) || /\d/.test(w) || vocab.has(w) || KJV_VARIANTS[w]) continue;
+    // A modern word that names a topic ("worry" → Care) isn't a typo
+    if(NAVE_ALIASES[w] || (S._naves && S._naves.byNorm.has(w))) continue;
+    const s = suggestWord(w, vocab);
+    if(s) fixes[w] = s;
+  }
+  if(!Object.keys(fixes).length) return null;
+  return cleaned.replace(/[A-Za-z’']+/g, t => fixes[t.toLowerCase()] || t);
+}
+function renderDidYouMean(){
+  return S._didYouMean
+    ? `<div class="s-dym">Did you mean <a href="#" onclick="searchFor(S._didYouMean);return false">${escapeHtml(S._didYouMean)}</a>?</div>`
+    : '';
+}
+function searchFor(q){
+  const inp = document.getElementById('s-input');
+  if(inp) inp.value = q;
+  clearTimeout(sTimer);
+  doSearch(q);
+}
+
 /* ════ KJV DICTIONARY ════ */
 
 function switchSearchMode(mode, pushHistory=true){
@@ -4725,11 +5176,13 @@ function switchSearchMode(mode, pushHistory=true){
   document.getElementById('search-panel').style.display   = mode==='search'   ? 'block':'none';
   document.getElementById('doctrine-panel').style.display = mode==='doctrine' ? 'block':'none';
   document.getElementById('dict-panel').style.display     = mode==='dict'     ? 'block':'none';
+  document.getElementById('topics-panel').style.display   = mode==='topics'   ? 'block':'none';
   document.getElementById('concord-panel').style.display  = mode==='concord'  ? 'block':'none';
   document.getElementById('names-panel').style.display    = mode==='names'    ? 'block':'none';
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   if(mode==='doctrine') renderDoctrines();
   if(mode==='dict') handleDictSearch('');
+  if(mode==='topics') renderNaveBrowse();
   if(mode==='concord') renderConcordance();
   if(mode==='names') renderNames();
   if(mode==='maps') renderMaps();
@@ -4792,9 +5245,7 @@ async function renderConcordance(){
   if(!S._concord){
     list.innerHTML = '<div id="s-status">Loading concordance…</div>';
     try{
-      const r = await fetch('concordance.json');
-      if(!r.ok) throw new Error('http '+r.status);
-      S._concord = await r.json();
+      await loadConcordance();
     }catch(e){
       list.innerHTML = '<div id="s-status">Concordance unavailable — check your connection.</div>';
       return;
@@ -8566,7 +9017,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v28';
+const WHATS_NEW_VERSION = 'v29';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -8580,6 +9031,15 @@ function showWhatsNewIfNeeded(){
   if(ob && ob.style.display === 'flex') return;
   const modal = document.getElementById('whatsnew-modal');
   if(!modal) return;
+  // Show only what's new since the last pop-up this person saw (v28 → just
+  // the v29 items); anyone who skipped releases sees all of them.
+  const rank = v => { const m = /^v(\d+)/.exec(v || ''); return m ? +m[1] : 0; };
+  const seen = rank(localStorage.getItem('kjv_whatsnew'));
+  const items = [...modal.querySelectorAll('.wn-item')];
+  items.forEach(el => { el.hidden = rank(el.dataset.wn) <= seen; el.classList.remove('wn-last'); });
+  const shown = items.filter(el => !el.hidden);
+  if(!shown.length) items.forEach(el => el.hidden = false); // never an empty pop-up
+  (shown.length ? shown : items).slice(-1)[0].classList.add('wn-last');
   modal.style.display = 'flex';
 }
 function dismissWhatsNew(){
@@ -9108,32 +9568,55 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       <div style="font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)">What's New</div>
       <div style="font-size:12px;color:var(--text-m);margin-top:4px">What's new in this update</div>
     </div>
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+    <!-- Each item is tagged with the release it arrived in (data-wn). Someone
+         who already saw an earlier pop-up only sees the items newer than it;
+         someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v29" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📚</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Topics</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Search a subject like <em>forgiveness</em>, <em>prayer</em> or <em>what does the Bible say about anger</em> and a <strong>topic card</strong> opens every passage on it, arranged by sub-topic &mdash; from <strong>Nave&rsquo;s Topical Bible</strong>. Or browse all 5,300 topics A&ndash;Z under <strong>Search &rarr; Topics</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v28" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔍</div>
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Smarter Search</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Search now matches <strong>whole words</strong> &mdash; <em>sin</em> finds sins, sinned and sinful, but no longer &ldquo;business&rdquo; or &ldquo;sing&rdquo;. Results are sorted by <strong>Best match</strong>, or tap <strong>Bible order</strong> to read them Genesis to Revelation.
+          Search finds the <strong>verse you mean</strong>: type a phrase like <em>be still and know</em> and the best match comes first, or tap <strong>Bible order</strong> to read results Genesis to Revelation. Words match <strong>whole words</strong> (<em>sin</em> finds sinned and sinful, not &ldquo;business&rdquo;). Put words in quotes for an <strong>exact phrase</strong>, or a minus to leave one out: <em>love -god</em>.
         </div>
       </div>
     </div>
 
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
-      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">❝</div>
+    <div class="wn-item" data-wn="v29" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">✏️</div>
       <div>
-        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Exact Phrases</div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Did You Mean…?</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Put words in quotes to find an <strong>exact phrase</strong>, like <em>&ldquo;god so loved&rdquo;</em>. Put a minus before a word to leave it out: <em>love -god</em>.
+          Misspell a word &mdash; <em>beleive</em>, <em>Nebuchadnezer</em>, <em>rightousness</em> &mdash; and search offers the right KJV spelling with one tap.
         </div>
       </div>
     </div>
 
-    <div style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+    <div class="wn-item" data-wn="v28" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📖</div>
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">More Ways to Type a Reference</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
           Search understands <strong>Rev. 22:21</strong>, <strong>1John 3:16</strong>, <strong>First John 4:8</strong>, <strong>Jude 5</strong>, and ranges across chapters like <strong>John 3:16-4:2</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="wn-item" data-wn="v29" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">⚡</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Faster &amp; Works Offline</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Books are now saved on your device as you use the app, so search is quicker and Scripture opens even without a connection. Back from a doctrine verse now returns you to that doctrine.
         </div>
       </div>
     </div>
