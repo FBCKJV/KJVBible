@@ -3663,6 +3663,8 @@ const KJV_DICT = {
   "asp": "A venomous serpent, likely the Egyptian cobra (Rom. 3:13).",
   "ass": "A donkey. A common beast of burden in Bible times.",
   "atonement": "Covering; reconciliation; making amends for sin. Christ\'s death makes atonement (Rom. 5:11).",
+  "baptism": "Immersion; a dipping or burying in water. As the church ordinance: the full immersion of one who has already believed, in obedience to God — NOT sprinkling, and NOT of infants (Acts 8:36–38). It pictures the believer \"buried with him by baptism\" (Rom. 6:4).",
+  "baptize": "To immerse; to dip under water. In the church: to immerse a believer in the ordinance of baptism — NOT to sprinkle or christen an infant (Acts 8:38).",
   "bath": "A unit of liquid measure, equal to an ephah — about 22 litres (1 Kings 7:26).",
   "begotten": "Born; brought forth. \'Only begotten\' (Gk. monogenes) means unique, one-of-a-kind (John 3:16).",
   "besom": "A broom; used figuratively for sweeping away nations (Isa. 14:23).",
@@ -3693,7 +3695,8 @@ const KJV_DICT = {
   "do well": "Doing what is right; prospering in obedience (Gen. 4:7).",
   "durst": "Dared; had the courage to do (John 21:12).",
   "ear": "To plough or till the ground — \'earing time\' is ploughing season (Gen. 45:6).",
-  "election": "God\'s choice; those chosen by God. \'Make your calling and election sure\' (2 Pet. 1:10).",
+  "elect": "Chosen. Of salvation, the elect are those who have entered into \"the election of grace\" by faith — a description of believers, NOT persons picked beforehand to be saved (Rom. 5:2; 11:5–6, 20; Matt. 24:22).",
+  "election": "God's choice. Of salvation: \"the election of grace\" — entered by faith, not by works (Rom. 5:2; 11:5–6). \"Make your calling and election sure\" (2 Pet. 1:10).",
   "emerods": "Tumours; haemorrhoids; used of the plague on the Philistines (1 Sam. 5:6).",
   "ensign": "A banner, flag, or standard — a rallying point for a nation (Isa. 11:12).",
   "ephah": "A unit of dry measure holding about a bushel (22 litres) (Ruth 2:17).",
@@ -3758,6 +3761,7 @@ const KJV_DICT = {
   "pilled": "Peeled; stripped of bark (Gen. 30:37).",
   "pottage": "A thick stew or soup. Esau sold his birthright for a pottage of lentils (Gen. 25:34).",
   "predestinate": "To foreordain; to determine beforehand — refers to God\'s sovereign purpose for believers (Rom. 8:29).",
+  "predestination": "Foreordaining. In Scripture, what God has determined beforehand for the believer — to be conformed to the image of His Son and adopted as His child (Rom. 8:29; Eph. 1:5).",
   "presently": "Immediately; at once — NOT after a while (Matt. 21:19).",
   "prevent": "To go before; to precede; to come before — NOT to stop (Ps. 88:13; 1 Thess. 4:15).",
   "privily": "Secretly; privately; in a hidden manner (Ps. 11:2; Matt. 1:19).",
@@ -3774,6 +3778,7 @@ const KJV_DICT = {
   "remission": "Forgiveness; the sending away of sins — \'remission of sins\' means sins fully forgiven (Matt. 26:28).",
   "rend": "To tear apart; to split — \'rend your heart\' means tear your heart (Joel 2:13).",
   "reprobate": "Rejected; failing the test; given over by God to a depraved mind as a judgment (Rom. 1:28).",
+  "reprobation": "Rejection. Of men: the state of those who reject the truth and are given over and given up by God to a reprobate mind, their conscience seared (Rom. 1:24–28; 1 Tim. 4:2).",
   "rie": "Rye or spelt; a type of grain (Ex. 9:32).",
   "ringstraked": "Streaked with rings of colour (Gen. 30:35).",
   "roe": "A small species of deer; also called roebuck. Known for swiftness (S.S. 2:9).",
@@ -5677,11 +5682,24 @@ function kjvNoteFor(key){
   }
   return S._noteIndex.get(key) || null;
 }
-// The notes cite Scripture in short form ("Rom. 7:8", "1 Cor. 13:1") — link those too
+// The notes cite Scripture in short form — "(Rom. 5:2; 11:5–6, 20; Matt. 24:22)".
+// Link each: a book name starts a reference; "11:5" after it keeps the book,
+// and a bare ", 20" keeps the book and chapter.
 function noteLinks(text){
-  return escapeHtml(text).replace(/\b((?:[1-3] ?)?[A-Z][a-z]+)\.? (\d+):(\d+)/g, (m, b, c, v) => {
-    const r = parseReference(`${b} ${c}:${v}`);
-    return r && r.verse ? `<a href="#" class="ref-link" onclick="jumpToRef('${r.book} ${r.chIdx + 1}:${r.verse}');return false">${m}</a>` : m;
+  const link = (label, book, c, v) => `<a href="#" class="ref-link" onclick="jumpToRef('${book} ${c}:${v}');return false">${label}</a>`;
+  return escapeHtml(text).replace(/\(([^)]*)\)/g, (all, inner) => {
+    let book = null, ch = null;
+    const out = inner.replace(/(S\.S\.|(?:[1-3] ?)?[A-Z][a-z]+)\.? (\d+):(\d+)|(\d+):(\d+)|(?<=, ?)(\d+)(?![\d:])/g, (m, b, c, v, c2, v2, v3) => {
+      if(b){
+        const r = parseReference(`${b === 'S.S.' ? 'Song' : b} ${c}:${v}`); // "S.S." = Song of Solomon
+        if(!r || !r.verse){ book = null; return m; }
+        book = r.book; ch = r.chIdx + 1; return link(m, book, ch, r.verse);
+      }
+      if(c2 && book){ ch = +c2; return link(m, book, ch, +v2); }
+      if(v3 && book && ch) return link(m, book, ch, +v3);
+      return m;
+    });
+    return '(' + out + ')';
   });
 }
 // Look a word up: Webster's entries (under the first form found) + the note
@@ -5691,7 +5709,8 @@ async function lookupWord(w){
   if(!L) return null;
   const shard = (S._dict && S._dict[L]) || await loadDictLetter(L);
   let key = forms.find(f => shard && shard[f]);
-  const noteHit = (key && kjvNoteFor(key)) || kjvNoteFor(forms[0]);
+  // a form's note reaches it too ("baptized" → the note on "baptize")
+  const noteHit = (key && (kjvNoteFor(key) || websterForms(key).map(kjvNoteFor).find(Boolean))) || forms.map(kjvNoteFor).find(Boolean);
   if(!key && !noteHit) return null;
   return { key: key || forms[0], word: key || dictKey(noteHit.word), entries: key ? shard[key] : [], note: noteHit ? noteHit.note : '', noteWord: noteHit ? noteHit.word : '' };
 }
