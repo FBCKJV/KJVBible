@@ -167,6 +167,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .rc-txt{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.5}
 .rc-txt mark{background:rgba(201,148,58,.3);color:var(--gold-l);border-radius:2px;padding:0 1px}
 #s-status{color:var(--text-m);font-size:13px;padding:20px 0;text-align:center}
+.s-sort{display:flex;gap:6px;margin:-2px 0 2px}
+.s-sort-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:12px;padding:3px 10px;font-size:12px;cursor:pointer}
+.s-sort-btn.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 
 /* ── SEARCH MODE BAR ── */
 .smode-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
@@ -1494,6 +1497,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
         <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The flame badge</strong> in the header tracks your daily reading streak — tap it to see your progress and milestone badges</span></div>
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
+        <div class="tip-row"><span class="tip-ico">❝</span><span class="tip-txt"><strong>Search for an exact phrase</strong> — put it in quotes, like <em>"god so loved"</em>. Put a minus before a word to leave it out: <em>love -god</em>. Switch between <em>Best match</em> and <em>Bible order</em> above the results</span></div>
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
@@ -4062,88 +4066,219 @@ const BOOK_ALIASES = {
 const STOP = new Set(['the','a','an','and','or','but','in','on','of','to','for','is','are','was','were','be','been','have','has','had','do','does','did','will','would','could','should','may','might','shall','that','this','with','by','from','at','he','she','they','we','you','i','my','his','her','their','our','it','its','not','so','as','if','no','up','out','me','him','us','them','all','now','who','what','when','where','how','one','also','then','here','there','which','into','upon','unto','thy','thee','thou','ye','said','they','came','went','made','knew','gave']);
 
 /* Try to parse query as Bible reference */
+// Single-chapter books: "Jude 5" means verse 5, not chapter 5.
+const ONE_CHAPTER_BOOKS = new Set(['Obadiah','Philemon','2 John','3 John','Jude']);
+// "I John", "First John", "1st John" → "1 John"
+const ORDINAL_PREFIX = {i:'1',ii:'2',iii:'3',first:'1',second:'2',third:'3','1st':'1','2nd':'2','3rd':'3'};
 function parseReference(raw) {
-  // Normalize: strip trailing punctuation, collapse spaces around : and -
-  const q = raw.trim().replace(/[?!.,;]+$/,'').replace(/\s*[:.:]\s*/g,':').replace(/\s*[-–]\s*/g,'-');
-  // Match: book + chapter + optional verse + optional verse-end range
-  const m = q.match(/^(\d\s+)?([a-zA-Z][a-zA-Z ]{1,18}?)\s+(\d{1,3})\s*(?:[:.]\s*(\d{1,3})(?:\s*[-–]\s*(\d{1,3}))?)?$/i);
+  // Normalize: strip trailing punctuation, drop the period after an
+  // abbreviation ("Rev. 22" → "Rev 22"), collapse spaces around : and -
+  const q = raw.trim().replace(/[?!.,;]+$/,'')
+    .replace(/([a-z])\.\s*/gi,'$1 ')
+    .replace(/\s*[:.]\s*/g,':').replace(/\s*[-–—]\s*/g,'-');
+  // Match: [digit] book chapter [:verse [-verse | -chapter:verse]]
+  const m = q.match(/^(\d)?\s*([a-zA-Z][a-zA-Z ]{1,18}?)\s*(\d{1,3})(?::(\d{1,3})(?:-(\d{1,3})(?::(\d{1,3}))?)?)?$/i);
   if (!m) return null;
 
-  const prefix  = (m[1]||'').trim();
-  const rawName = m[2].trim();
-  const chapter = parseInt(m[3]);
-  const verse   = m[4] ? parseInt(m[4]) : null;
-  const verseEnd = m[5] ? parseInt(m[5]) : null;
+  let prefix  = m[1] || '';
+  let rawName = m[2].trim();
+  const ord = !prefix && rawName.match(/^(iii|ii|i|first|second|third|1st|2nd|3rd)\s+(.+)$/i);
+  if (ord) { prefix = ORDINAL_PREFIX[ord[1].toLowerCase()]; rawName = ord[2]; }
 
-  const full  = (prefix ? prefix+rawName : rawName).toLowerCase().replace(/\s+/g,'');
+  let chapter  = parseInt(m[3]);
+  let verse    = m[4] ? parseInt(m[4]) : null;
+  let verseEnd = null, chapterEnd = null;
+  if (m[6]) { chapterEnd = parseInt(m[5]); verseEnd = parseInt(m[6]); }
+  else if (m[5]) verseEnd = parseInt(m[5]);
+
   const short = rawName.toLowerCase().replace(/\s+/g,'');
-  const withSpace = (prefix ? prefix+' '+rawName : rawName).toLowerCase();
-
-  let book = BOOK_ALIASES[full] || BOOK_ALIASES[short];
-  if (!book) book = BOOKS.find(b => b.toLowerCase().startsWith(withSpace));
-  if (!book) book = BOOKS.find(b => b.toLowerCase().replace(/\s+/g,'').startsWith(full));
-
+  let book;
+  if (prefix) {
+    // A numbered book must actually start with that number — "1 am 3" is
+    // not Amos 3.
+    const full = prefix + short;
+    book = BOOK_ALIASES[full] || BOOKS.find(b => b.toLowerCase().replace(/\s+/g,'').startsWith(full));
+    if (book && !book.startsWith(prefix)) book = null;
+  } else {
+    book = BOOK_ALIASES[short]
+      || BOOKS.find(b => b.toLowerCase().startsWith(rawName.toLowerCase()))
+      || BOOKS.find(b => !/^\d/.test(b) && b.toLowerCase().replace(/\s+/g,'').startsWith(short));
+  }
   if (!book || chapter < 1) return null;
-  return { book, chIdx: chapter - 1, verse, verseEnd };
+
+  if (ONE_CHAPTER_BOOKS.has(book) && verse === null && chapter > 1) { verse = chapter; chapter = 1; }
+  if (chapterEnd !== null && chapterEnd <= chapter) {
+    // "John 3:16-3:18" is a same-chapter range; a backwards range is ignored
+    verseEnd = chapterEnd === chapter ? verseEnd : null;
+    chapterEnd = null;
+  }
+  return { book, chIdx: chapter - 1, verse, verseEnd,
+           chEndIdx: chapterEnd !== null ? chapterEnd - 1 : null };
 }
 
-// KJV variant expansion — modern→KJV and KJV→modern equivalents
+// KJV variant expansion — modern→KJV and KJV→modern equivalents. Regular
+// endings (-s, -ed, -eth, -est, -ing…) are added by inflectionPattern, so
+// these cover only the irregular forms. Words in STOP never reach here.
 const KJV_VARIANTS = {
   // Pronouns
-  'thee':['thee','thou','you'],'thou':['thee','thou','you'],
-  'thy':['thy','your'],'thine':['thine','your','yours'],
-  'ye':['ye','you'],'you':['you','ye','thee','thou'],
+  'thine':['thine','your','yours'],
   'yourself':['yourself','thyself'],'thyself':['thyself','yourself'],
   // KJV verb forms
-  'hath':['hath','have','has'],'have':['have','hath','has'],
-  'has':['has','hath','have'],
+  'hath':['hath','have','has'],
   'doth':['doth','does','do'],'doest':['doest','do','does'],
-  'saith':['saith','say','said','says'],'said':['said','saith'],
+  'saith':['saith','say','said','says'],
   'spake':['spake','spoke','speak'],'spoke':['spoke','spake'],
+  'speak':['speak','spake','spoken'],
   'wilt':['wilt','will'],'shalt':['shalt','shall'],
   'art':['art','are'],'wast':['wast','was'],
   'canst':['canst','can'],'wouldest':['wouldest','would'],
   // Show/shew
-  'show':['show','shew'],'shew':['shew','show','showed','shown'],
+  'show':['show','shew','shewn'],'shew':['shew','show','shewn','shown'],
   'showing':['showing','shewing'],'shewing':['shewing','showing'],
-  // Know/believe/love variants
-  'knoweth':['knoweth','know','knows'],'know':['know','knoweth','knew'],
-  'believeth':['believeth','believe','believes'],'believe':['believe','believeth'],
-  'loveth':['loveth','love','loves'],'love':['love','loveth','loved'],
-  'cometh':['cometh','come','comes'],'goeth':['goeth','go','goes'],
-  'giveth':['giveth','give','gives'],'giveth':['giveth','give','gives'],
+  // Know/believe/love/give variants
+  'knoweth':['knoweth','know','knows'],'know':['know','knew','known'],
+  'believeth':['believeth','believe','believes'],
+  'loveth':['loveth','love','loves'],
+  'cometh':['cometh','come','comes','came'],'come':['come','came'],
+  'goeth':['goeth','go','goes'],'go':['go','went','gone'],
+  'giveth':['giveth','give','gives'],'give':['give','gave','given'],
   'seeketh':['seeketh','seek','seeks'],'keepeth':['keepeth','keep','keeps'],
   'doeth':['doeth','do','does'],
   // Common KJV terms
   'brethren':['brethren','brother','brothers'],
   'brother':['brother','brethren'],
-  'approved':['approved','approveth'],
-  'approved':['approved','approveth'],
-  'study':['study','studieth'],
-  // Modern → archaic
-  'ask':['ask','asketh'],'asked':['asked','asketh'],
-  'sent':['sent','sendeth'],'send':['send','sendeth'],
-  'speak':['speak','spake','spoken','speaketh'],
+  'sin':['sin','sinner'],
+  'send':['send','sent'],'sent':['sent','send'],
 };
 
-/* Fuzzy word match with KJV variant support */
-function wordMatches(text, word) {
-  const variants = KJV_VARIANTS[word] || [word];
-  for (const v of variants) {
-    if (text.includes(v)) return true;
-    if (v.length > 4 && text.includes(v.slice(0,-1))) return true;
-  }
-  return false;
+/* ── Query parsing & matching ──
+   A keyword query becomes a list of terms, each a regex tested against the
+   lowercased verse text:
+     word      the word or a KJV variant as a whole word, plus common
+               inflections (love → loved, loveth, lovest, lovely; sin →
+               sins, sinned, sinful; mercy → mercies, merciful)
+     "a b c"   the exact phrase (punctuation between the words is ignored)
+     -word     excluded — verses containing it are dropped
+   Matching is whole-word, so "sin" never hits "business" and "art" never
+   hits "earth". Three modes:
+     strict    the default described above
+     prefix    each word may also begin a longer word — the retry when
+               strict finds nothing, so a half-typed word still finds verses
+     exact     the bare word only, no inflections or variants — the
+               Concordance and Names handoff, so counts match its index */
+const _reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function inflectionPattern(w){
+  const e = _reEsc(w);
+  // Endings any word may take; "es" only where English uses it (wars, not
+  // "wares"), and -ly/-ness/-less only on longer words (ear ≠ "early").
+  let suf = 's|ed|eth|est|ing|ings|er|ers|ful';
+  if (/(s|x|z|ch|sh|o)$/.test(w)) suf += '|es';
+  if (w.length >= 4) suf += '|ly|fully|fulness|ness|less';
+  // love → loved, lover, lovest, loveth (only after an e: "war" ≠ "ward")
+  if (w.endsWith('e')) suf += '|d|r|rs|st|th';
+  const alts = [`${e}(?:${suf})?`];
+  // come → coming
+  if (w.length >= 4 && w.endsWith('e')) alts.push(`${_reEsc(w.slice(0,-1))}(?:ing|ings)`);
+  // mercy → mercies, merciful
+  if (w.length >= 4 && /[^aeiou]y$/.test(w)) alts.push(`${_reEsc(w.slice(0,-1))}i(?:es|ed|eth|est|er|ers|ful|fully|ness|ly)`);
+  // sin → sinned, sinneth, sinning
+  if (/^[a-z]*[^aeiou][aeiou][bdgklmnprt]$/.test(w)) alts.push(`${e}${w.slice(-1)}(?:ed|eth|est|ing)`);
+  return alts.join('|');
+}
+function wordPattern(word, mode){
+  if (mode === 'exact') return `\\b${_reEsc(word)}\\b`;
+  const body = (KJV_VARIANTS[word] || [word]).map(inflectionPattern).join('|');
+  return mode === 'prefix' ? `\\b(?:${body}|${_reEsc(word)}[a-z]*)\\b` : `\\b(?:${body})\\b`;
+}
+// `gap` lets up to that many extra words sit between the phrase's words
+function phrasePattern(words, mode, gap = 0){
+  const last = words.length - 1;
+  const sep = gap ? `(?:[^a-z0-9]+[a-z0-9]+){0,${gap}}[^a-z0-9]+` : '[^a-z0-9]+';
+  return '\\b' + words.map((w,i) => _reEsc(w) + (mode === 'prefix' && i === last ? '[a-z]*' : '')).join(sep) + '\\b';
 }
 
-// Exact whole-word match — no stemming, no substrings, no variants. Used by
-// the Concordance so "reign" returns only "reign", never "reigned",
-// "reigneth", or "sovereign". Regexes are cached per word.
-const _exactWordRe = {};
-function wordMatchesExact(text, word) {
-  let re = _exactWordRe[word];
-  if (!re) re = _exactWordRe[word] = new RegExp('\\b' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b');
-  return re.test(text);
+const _tokenize = s => s.replace(/'s\b/g,'').replace(/[^a-z0-9\s]+/g,' ').split(/\s+/).filter(Boolean);
+function parseSearchQuery(q){
+  q = q.toLowerCase().replace(/[‘’]/g,"'").replace(/[“”]/g,'"');
+  const phrases = [], excluded = [], all = [];
+  // "quoted phrase" — an unclosed quote counts too, so typing works live
+  q = q.replace(/"([^"]*)"?/g, (_, p) => {
+    const w = _tokenize(p);
+    if (w.length > 1) phrases.push(w); else all.push(...w);
+    return ' ';
+  });
+  for (const t of q.split(/\s+/)) {
+    if (t.length > 1 && t[0] === '-') excluded.push(..._tokenize(t.slice(1)));
+    else all.push(..._tokenize(t));
+  }
+  let words = all.filter(w => w.length >= 2 && !STOP.has(w));
+  if (!words.length && !phrases.length) {
+    // Only common words ("I am that I am", "it is finished") — search them
+    // as a phrase rather than throwing them all away.
+    const kept = all.filter(w => w.length >= 1);
+    if (kept.length > 1) phrases.push(kept);
+    else words = kept.filter(w => w.length >= 2);
+  }
+  return { words, phrases, excluded, all };
+}
+
+// Turns a parsed query into regexes for one matching mode.
+function buildSearchTerms(query, mode){
+  const terms = [
+    ...query.words.map(w => ({ src: wordPattern(w, mode), exact: new RegExp(`\\b${_reEsc(w)}\\b`) })),
+    ...query.phrases.map(p => ({ src: phrasePattern(p, mode) })),
+  ];
+  terms.forEach(t => t.re = new RegExp(t.src));
+  const exclude = query.excluded.map(w => new RegExp(wordPattern(w, mode === 'exact' ? 'exact' : 'strict')));
+  // All the typed words together, in order (a word or two between them is
+  // fine: "lord my shepherd" → "the LORD is my shepherd") — the strongest
+  // relevance signal
+  const together = query.all.length > 1 && !query.phrases.length ? new RegExp(phrasePattern(query.all, mode, 2)) : null;
+  return { terms, exclude, together };
+}
+
+// Lowercased verse text per book, built once on first search so a scan
+// never re-lowercases ~31,000 verses on every keystroke. `ord` is the
+// verse's canonical position, for Bible-order sorting.
+const _searchIndex = {};
+function bookSearchIndex(bookName, data){
+  if (_searchIndex[bookName]) return _searchIndex[bookName];
+  const base = BOOKS.indexOf(bookName) * 100000;
+  let i = 0;
+  return _searchIndex[bookName] = data.chapters.flatMap(ch => ch.verses.map(v => ({
+    ref: `${bookName} ${ch.chapter}:${v.verse}`, book: bookName,
+    txt: v.text, lc: v.text.toLowerCase(), ord: base + i++,
+  })));
+}
+
+// Scores every verse of the given books. `full` hit every term; `partial`
+// hit at least one (kept for the "closest matches" fallback).
+function scanVerses(indexes, query, mode){
+  const { terms, exclude, together } = buildSearchTerms(query, mode);
+  const full = [], partial = [];
+  for (const verses of indexes) {
+    for (const v of verses) {
+      const lc = v.lc;
+      let hits = 0, score = 0;
+      const pos = [];
+      for (const t of terms) {
+        const m = t.re.exec(lc);
+        if (!m) continue;
+        hits++; pos.push(m.index);
+        score += 2 + (t.exact && t.exact.test(lc) ? 1 : 0); // the word as typed beats an inflection
+      }
+      if (!hits || exclude.some(re => re.test(lc))) continue;
+      // Proximity boost: terms close together score higher
+      if (pos.length > 1) {
+        const span = Math.max(...pos) - Math.min(...pos);
+        score += span < 30 ? 8 : span < 60 ? 4 : span < 100 ? 2 : 0;
+      }
+      if (together && together.test(lc)) score += 10;
+      const entry = { ref: v.ref, book: v.book, txt: v.txt, ord: v.ord, score };
+      (hits === terms.length ? full : partial).push(entry);
+    }
+  }
+  return { full, partial, terms };
 }
 
 // Testament filter state
@@ -4153,10 +4288,13 @@ function setSearchFilter(f){
   document.querySelectorAll('.sf-btn').forEach((b,i)=>{
     b.classList.toggle('on', ['all','ot','nt'][i]===f);
   });
-  // Re-run current search with new filter
+  // Re-run current search with new filter (cheap — books stay in memory).
+  // A Concordance/Names exact-word search stays exact if the box is unchanged.
   const inp = document.getElementById('s-input') || document.querySelector('#search-panel input');
-  if(inp && inp.value.trim().length >= 2) doSearch(inp.value.trim());
-  else { renderBookStrip(); renderSearchPage(0); }
+  if(inp && inp.value.trim().length >= 2){
+    if(S._searchExact && inp.value.trim() === S._searchQuery) S._exactNext = true;
+    doSearch(inp.value.trim());
+  }
 }
 
 function isOT(bookName){ return BOOKS.indexOf(bookName) < 39; }
@@ -4255,10 +4393,11 @@ function renderTopicCards(matches){
   ).join('');
 }
 
-// Search the user's own notes and bookmarks with the same keywords as the
+// Search the user's own notes and bookmarks with the same terms as the
 // Scripture scan — years of accumulated notes deserve to be findable too.
-function searchPersonal(searchOn){
-  const matchAll = t => { const lt=(t||'').toLowerCase(); return searchOn.every(w=>lt.includes(w)); };
+function searchPersonal(query, mode){
+  const { terms, exclude } = buildSearchTerms(query, mode);
+  const matchAll = t => { const lt=(t||'').toLowerCase(); return terms.every(x=>x.re.test(lt)) && !exclude.some(re=>re.test(lt)); };
   const hits = [];
   Object.entries(S.notes).forEach(([ref,note])=>{
     if(matchAll(ref+' '+note)) hits.push({kind:'📝 Your note', ref, prev:note});
@@ -4304,270 +4443,227 @@ async function doSearch(raw) {
   // consume it here so any subsequent typed search reverts to normal matching.
   const exactMode = S._exactNext === true;
   S._exactNext = false;
-  S._searchExact = exactMode; // persists for this result set (book-filter re-scan)
+  S._searchExact = exactMode; // persists for this result set (testament re-run)
   // Strip trailing punctuation for reference check
   const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
   S._topicMatches = findTopicMatches(cleaned);
+  S._personalMatches = [];
+  const strip = document.getElementById('s-book-strip');
 
   // ── 1. Reference search ──
   const ref = parseReference(cleaned);
   if (ref) {
+    if (strip) strip.style.display = 'none';
     const data = await fetchBook(ref.book);
     if (gen !== S._searchGen) return;
-    if (!data) { el.innerHTML = `<div id="s-status">Could not load ${ref.book}</div>`; return; }
-    const chIdx = Math.min(ref.chIdx, data.chapters.length - 1);
-    const ch    = data.chapters[chIdx];
-
-    if (ref.verse) {
-      const endV = ref.verseEnd || ref.verse;
-      // Show verse or verse range
-      const verses = ch.verses.filter(v => {
-        const vn = parseInt(v.verse);
-        return vn >= ref.verse && vn <= endV;
-      });
-      const refLabel = endV > ref.verse
-        ? `${ref.book} ${chIdx+1}:${ref.verse}–${endV}`
-        : `${ref.book} ${chIdx+1}:${ref.verse}`;
-      el.innerHTML = `
-        <div tabindex="0" class="rc ref-jump" onclick="jumpToRef('${(ref.book+' '+(chIdx+1)+':'+ref.verse).replace(/'/g,"\\'")}')">
-          <div class="rc-ref">↗ Jump to ${refLabel}</div>
-          ${verses.map(v=>`<div class="rc-txt"><strong style="color:var(--gold);font-size:11px">${v.verse}</strong> ${v.text}</div>`).join('')}
-        </div>`;
-    } else {
-      el.innerHTML = `<div id="s-status" style="text-align:left;padding:0 0 8px">${ch.verses.length} verses — ${ref.book} ${chIdx+1}</div>`
-        + ch.verses.map(v => {
-            const r = `${ref.book} ${chIdx+1}:${v.verse}`;
-            return `<div tabindex="0" class="rc" onclick="jumpToRef('${r.replace(/'/g,"\\'")}')"><div class="rc-ref">${r}</div><div class="rc-txt">${v.text}</div></div>`;
-          }).join('');
-    }
+    el.innerHTML = renderReferenceResult(ref, data);
     return;
   }
 
   // ── 2. Keyword search ──
-  // Strip punctuation from query before processing
-  const lower = cleaned.toLowerCase().replace(/[?!.,;:'"]+/g,'');
-  const allWords = lower.split(/\s+/).filter(w => w.length >= 2);
-  const keywords = allWords.filter(w => !STOP.has(w) && w.length >= 3);
-  const searchOn = keywords.length > 0 ? keywords : allWords.filter(w => w.length >= 2);
-
-  if (searchOn.length === 0) {
+  const query = parseSearchQuery(cleaned);
+  if (!query.words.length && !query.phrases.length) {
     el.innerHTML = renderTopicCards(S._topicMatches) + '<div id="s-status">Please enter a search term</div>';
     return;
   }
-  S._personalMatches = searchPersonal(searchOn);
+  S._personalMatches = searchPersonal(query, exactMode ? 'exact' : 'prefix');
 
-  // ── Progressive search: scan all books, count accurately, show results up to MAX ──
-  const MAX = Infinity; // store all results, paginate in display
-  S._searchResults    = [];
-  S._partialResults   = []; // verses matching *some* but not all keywords — used as a fallback below
-  S._isPartialFallback = false;
-  S._searchQuery   = cleaned;
-  S._searchOn      = searchOn;
-  S._searchLower   = lower;
-  S._bookFilter    = null;
-  S._bookCounts    = {};
-  S._totalCount    = 0;
-
-  el.innerHTML = `<div id="s-status">Searching…</div>`;
-  const strip = document.getElementById('s-book-strip');
-  if(strip) strip.style.display = 'none';
-
-  for (const bookName of BOOKS) {
-    if (!passesFilter(bookName)) continue;
-    const data = await fetchBook(bookName);
+  // Load every book in the testament filter in parallel (one at a time was
+  // the slow part on a cold cache), then scan them all in memory.
+  const names = BOOKS.filter(passesFilter);
+  let datas;
+  if (!names.every(n => S.cache[n])) {
+    let done = 0;
+    el.innerHTML = `<div id="s-status">Loading books…</div>`;
+    datas = await Promise.all(names.map(n => fetchBook(n).then(d => {
+      done++;
+      if (gen === S._searchGen && done < names.length) {
+        const st = document.getElementById('s-status');
+        if (st) st.textContent = `Loading books… ${done} of ${names.length}`;
+      }
+      return d;
+    })));
     if (gen !== S._searchGen) return; // a newer search started — abandon this one
-    if (!data) continue;
+  } else {
+    datas = names.map(n => S.cache[n]);
+  }
+  const indexes = names.map((n, i) => datas[i] && bookSearchIndex(n, datas[i])).filter(Boolean);
 
-    const matchFn = exactMode ? wordMatchesExact : wordMatches;
-    let bookCount = 0;
-    for (const ch of data.chapters) {
-      for (const v of ch.verses) {
-        const txt = v.text.toLowerCase();
-        const matched = searchOn.filter(w => matchFn(txt, w));
-        if (!matched.length) continue;
-
-        // Proximity boost: keywords appearing close together score higher
-        let proxBoost = 0;
-        if (searchOn.length > 1) {
-          const pos = searchOn.map(w => {
-            const vars = KJV_VARIANTS[w] || [w];
-            for(const vv of vars){ const i = txt.indexOf(vv); if(i>=0) return i; }
-            return txt.length;
-          });
-          const span = Math.max(...pos) - Math.min(...pos);
-          proxBoost = span < 30 ? 8 : span < 60 ? 4 : span < 100 ? 2 : 0;
-        }
-        const entry = {
-          ref: `${bookName} ${ch.chapter}:${v.verse}`,
-          txt: v.text,
-          book: bookName,
-          score: matched.length + (txt.includes(lower.slice(0,20)) ? 5 : 0) + proxBoost
-        };
-
-        if (matched.length === searchOn.length) {
-          bookCount++;
-          S._searchResults.push(entry);
-        } else {
-          // Keeps every verse hit on at least one keyword, in case the strict
-          // AND search above comes up empty and we fall back to this below.
-          S._partialResults.push(entry);
-        }
-      }
-    }
-
-    if (bookCount > 0) {
-      S._bookCounts[bookName] = bookCount;
-      S._totalCount += bookCount;
-      // Update UI after each book with results
-      renderBookStrip();
-      if (S._searchResults.length > 0 && Object.keys(S._bookCounts).length === 1) {
-        renderSearchPage(0); // show first results immediately
-      }
-    }
+  let mode = exactMode ? 'exact' : 'strict';
+  let res = scanVerses(indexes, query, mode);
+  if (!res.full.length && !exactMode) {
+    // Nothing as whole words — maybe a word is still being typed ("beginn")
+    const pre = scanVerses(indexes, query, 'prefix');
+    if (pre.full.length || !res.partial.length) { res = pre; mode = 'prefix'; }
   }
 
-  // Final render
+  S._searchQuery = cleaned;
+  S._searchMatchMode = mode;
+  S._searchTerms = res.terms;
+  S._bookFilter = null;
+  S._isPartialFallback = false;
+  S._searchResults = res.full;
+  if (!res.full.length && res.terms.length > 1 && res.partial.length) {
+    // OR-fallback — nothing matched every term. Rather than a dead end,
+    // promote the closest partial matches (verses hitting *some* of the
+    // terms). With a single term, "partial" and "no match" are the same.
+    S._isPartialFallback = true;
+    S._searchResults = res.partial.sort((a,b) => b.score - a.score || a.ord - b.ord).slice(0, 200);
+  }
+
   if (!S._searchResults.length) {
-    // #2: OR-fallback — nothing matched every keyword. Rather than a dead
-    // end, promote the closest partial matches (verses hitting *some* of the
-    // keywords), ranked the same way full matches are. Only worth doing with
-    // 2+ keywords — with a single keyword, "partial" and "no match" are the
-    // same thing.
-    if (searchOn.length > 1 && S._partialResults.length) {
-      S._isPartialFallback = true;
-      S._searchResults = S._partialResults.sort((a,b) => b.score - a.score).slice(0, 200);
-      S._bookCounts = {};
-      S._searchResults.forEach(r => { S._bookCounts[r.book] = (S._bookCounts[r.book]||0) + 1; });
-      S._totalCount = S._searchResults.length;
-      renderBookStrip();
-      renderSearchPage(0);
-      return;
-    }
     el.innerHTML = renderTopicCards(S._topicMatches)
       + renderPersonalCards(S._personalMatches)
       + `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
-    if(strip) strip.style.display = 'none';
+    if (strip) strip.style.display = 'none';
     return;
   }
+  renderBookStrip();
   renderSearchPage(0);
+}
+
+// Builds the result card for a reference query: a verse, a verse range
+// (within a chapter or across chapters), or a whole chapter.
+function renderReferenceResult(ref, data){
+  if (!data) return `<div id="s-status">Could not load ${ref.book}</div>`;
+  const nCh = data.chapters.length;
+  if (ref.chIdx >= nCh) {
+    return `<div id="s-status">${ref.book} has only ${nCh} chapter${nCh !== 1 ? 's' : ''}.</div>`;
+  }
+  const chIdx = ref.chIdx;
+  const ch = data.chapters[chIdx];
+  const card = (r, txt) => `<div tabindex="0" class="rc" onclick="jumpToRef('${r.replace(/'/g,"\\'")}')"><div class="rc-ref">${r}</div><div class="rc-txt">${txt}</div></div>`;
+
+  if (!ref.verse) {
+    return `<div id="s-status" style="text-align:left;padding:0 0 8px">${ch.verses.length} verses — ${ref.book} ${chIdx+1}</div>`
+      + ch.verses.map(v => card(`${ref.book} ${chIdx+1}:${v.verse}`, v.text)).join('');
+  }
+  if (ref.verse > ch.verses.length) {
+    return `<div id="s-status">${ref.book} ${chIdx+1} has only ${ch.verses.length} verses.</div>`;
+  }
+
+  // Collect [chapterNumber, verse] pairs for the requested span
+  const picked = [];
+  if (ref.chEndIdx !== null) {
+    const endCh = Math.min(ref.chEndIdx, nCh - 1);
+    for (let c = chIdx; c <= endCh; c++) {
+      for (const v of data.chapters[c].verses) {
+        const vn = parseInt(v.verse);
+        if (c === chIdx && vn < ref.verse) continue;
+        if (c === ref.chEndIdx && vn > ref.verseEnd) continue;
+        picked.push([c + 1, v]);
+      }
+    }
+  } else {
+    const endV = ref.verseEnd && ref.verseEnd > ref.verse ? ref.verseEnd : ref.verse;
+    for (const v of ch.verses) {
+      const vn = parseInt(v.verse);
+      if (vn >= ref.verse && vn <= endV) picked.push([chIdx + 1, v]);
+    }
+  }
+  const last = picked[picked.length - 1];
+  const multiCh = last[0] !== chIdx + 1;
+  const refLabel = picked.length === 1
+    ? `${ref.book} ${chIdx+1}:${ref.verse}`
+    : `${ref.book} ${chIdx+1}:${ref.verse}–${multiCh ? last[0] + ':' : ''}${last[1].verse}`;
+  return `
+    <div tabindex="0" class="rc ref-jump" onclick="jumpToRef('${(ref.book+' '+(chIdx+1)+':'+ref.verse).replace(/'/g,"\\'")}')">
+      <div class="rc-ref">↗ Jump to ${refLabel}</div>
+      ${picked.map(([c, v]) => `<div class="rc-txt"><strong style="color:var(--gold);font-size:11px">${multiCh ? c + ':' : ''}${v.verse}</strong> ${v.text}</div>`).join('')}
+    </div>`;
 }
 
 function renderBookStrip(){
   const strip = document.getElementById('s-book-strip');
   if(!strip) return;
-  const counts = S._bookCounts || {};
-  const books  = Object.keys(counts);
+  const counts = {};
+  (S._searchResults || []).forEach(r => { counts[r.book] = (counts[r.book] || 0) + 1; });
+  const books = BOOKS.filter(b => counts[b]);
   if(!books.length){ strip.style.display='none'; return; }
 
-  const total = S._totalCount || 0;
-  const scanning = Object.keys(counts).length < BOOKS.filter(b=>passesFilter(b)).length;
-
+  const total = (S._searchResults || []).length;
   strip.style.display = 'flex';
-  const allLabel = scanning ? `${total}…` : total.toLocaleString();
   strip.innerHTML =
-    `<span class="s-bchip ${!S._bookFilter?'on':''}" onclick="setBookFilter(null)">All<span class="s-bchip-n">${allLabel}</span></span>` +
+    `<span class="s-bchip ${!S._bookFilter?'on':''}" onclick="setBookFilter(null)">All<span class="s-bchip-n">${total.toLocaleString()}</span></span>` +
     books.map(b =>
       `<span class="s-bchip ${S._bookFilter===b?'on':''}" onclick="setBookFilter('${b.replace(/'/g,"\\'")}')"><span>${b}</span><span class="s-bchip-n">${counts[b].toLocaleString()}</span></span>`
     ).join('');
 }
 
+// Book chips filter the results already in hand — no re-scan, and it works
+// for "closest matches" fallback results too.
 function setBookFilter(book){
   S._bookFilter = book;
   renderBookStrip(); // update chip highlight
-
-  if(book){
-    // Show ALL results for this specific book (fetch if needed)
-    showAllInBook(book);
-  } else {
-    renderSearchPage(0);
-  }
-}
-
-async function showAllInBook(bookName){
-  const el = document.getElementById('s-results');
-  el.innerHTML = `<div id="s-status">Loading ${bookName}…</div>`;
-
-  const searchOn = S._searchOn || [];
-  const lower    = S._searchLower || '';
-  const data = await fetchBook(bookName);
-  if(!data){ el.innerHTML = `<div id="s-status">Could not load ${bookName}</div>`; return; }
-
-  const matchFn = S._searchExact ? wordMatchesExact : wordMatches;
-  const bookResults = [];
-  for(const ch of data.chapters){
-    for(const v of ch.verses){
-      const txt = v.text.toLowerCase();
-      if(searchOn.every(w => matchFn(txt, w))){
-        bookResults.push({
-          ref: `${bookName} ${ch.chapter}:${v.verse}`,
-          txt: v.text, book: bookName,
-          score: searchOn.filter(w=>matchFn(txt,w)).length + (txt.includes(lower.slice(0,20))?5:0)
-        });
-      }
-    }
-  }
-
-  // Temporarily replace _searchResults with this book's results for pagination
-  const saved = S._searchResults;
-  S._searchResults = bookResults;
   renderSearchPage(0);
-  S._searchResults = saved; // restore
-  // Keep book results available for pagination
-  S._bookPageResults = bookResults;
 }
 
-function renderSearchPage(startIdx){
-  const el      = document.getElementById('s-results');
-  const allResults = (S._bookFilter && S._bookPageResults) ? S._bookPageResults : (S._searchResults || []);
-  const filtered = S._bookFilter ? allResults.filter(r => r.book === S._bookFilter) : allResults;
-  const cleaned = S._searchQuery  || '';
-  const PAGE    = 300;
-  const page    = filtered.slice(startIdx, startIdx + PAGE);
-  const total   = filtered.length;
-  const MAX     = Infinity;
-  const curPage = Math.floor(startIdx / PAGE) + 1;
-  const totalPages = Math.ceil(total / PAGE);
+// Relevance (best matches first) or Bible order (Genesis → Revelation).
+// Remembered per device.
+S.searchSort = (() => { try { return localStorage.getItem('kjv_search_sort') === 'canon' ? 'canon' : 'relevance'; } catch(e) { return 'relevance'; } })();
+function setSearchSort(sort){
+  S.searchSort = sort;
+  try { localStorage.setItem('kjv_search_sort', sort); } catch(e) {}
+  renderSearchPage(0);
+}
 
-  const sw = cleaned.toLowerCase().replace(/[?!.,;:'"]+/g,'').split(/\s+/).filter(w=>w.length>=2&&!STOP.has(w));
-  const reStr = sw.length ? sw.map(w=>(KJV_VARIANTS[w]||[w]).concat([w]).map(v=>v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')).join('|') : null;
-  const re = reStr ? new RegExp(`(${reStr})`, 'gi') : null;
+function renderSearchPage(startIdx, scroll){
+  const el      = document.getElementById('s-results');
+  const all     = S._searchResults || [];
+  const filtered = (S._bookFilter ? all.filter(r => r.book === S._bookFilter) : all.slice())
+    .sort(S.searchSort === 'canon' ? (a,b) => a.ord - b.ord : (a,b) => b.score - a.score || a.ord - b.ord);
+  const cleaned = S._searchQuery  || '';
+  const PAGE    = 100;
+  const total   = filtered.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE));
+  startIdx = Math.min(Math.max(0, startIdx || 0), (totalPages - 1) * PAGE);
+  const page    = filtered.slice(startIdx, startIdx + PAGE);
+  const curPage = Math.floor(startIdx / PAGE) + 1;
+
+  // Highlight exactly what matched, using the same patterns as the scan
+  const terms = S._searchTerms || [];
+  const re = terms.length ? new RegExp(terms.map(t => t.src).join('|'), 'gi') : null;
 
   const filterLabel = (S.searchFilter==='ot')?' · Old Testament':(S.searchFilter==='nt')?' · New Testament':'';
   const bookLabel   = S._bookFilter ? ` · ${S._bookFilter}` : '';
   const pageNote = totalPages > 1 ? ` · page ${curPage} of ${totalPages}` : '';
+  const qq = cleaned.includes('"') ? '' : '"'; // a "quoted phrase" query already has its quotes
+  const q = `${qq}<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>${qq}`;
+  const statusText = S._isPartialFallback
+    ? `No exact matches — showing the ${total.toLocaleString()} closest verse${total!==1?'s':''}${filterLabel}${bookLabel} for ${q}${pageNote}`
+    : S._searchMatchMode === 'prefix'
+      ? `No whole-word matches — ${total.toLocaleString()} verse${total!==1?'s':''} with words beginning ${q}${filterLabel}${bookLabel}${pageNote}`
+      : `${total.toLocaleString()} result${total!==1?'s':''}${filterLabel}${bookLabel} for ${q}${pageNote}`;
 
-  if (startIdx===0) {
-    const statusText = S._isPartialFallback
-      ? `No exact matches — showing the ${total.toLocaleString()} closest verse${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}`
-      : `${total.toLocaleString()} result${total!==1?'s':''}${filterLabel}${bookLabel} for "<strong style="color:var(--gold)">${escapeHtml(cleaned)}</strong>"${pageNote}`;
-    el.innerHTML = renderTopicCards(S._topicMatches) + renderPersonalCards(S._personalMatches) + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`;
-  } else {
-    const old = el.querySelector('button');
-    if(old) old.remove();
-    const oldEnd = el.querySelector('.s-end');
-    if(oldEnd) oldEnd.remove();
-  }
+  const sortBtn = (key, label) => `<button class="s-sort-btn${S.searchSort===key?' on':''}" onclick="setSearchSort('${key}')">${label}</button>`;
+  const sortBar = total > 1 ? `<div class="s-sort">${sortBtn('relevance','Best match')}${sortBtn('canon','Bible order')}</div>` : '';
 
-  page.forEach(r => {
-    const hi = re ? r.txt.replace(re,'<mark>$1</mark>') : r.txt;
-    el.insertAdjacentHTML('beforeend', `<div tabindex="0" class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')"><div class="rc-ref">${r.ref}</div><div class="rc-txt">${hi}</div></div>`);
-  });
-
-  // Page navigation chips
+  let pager = '';
   if(totalPages > 1){
     const visPages = [];
     for(let p = 1; p <= totalPages; p++){
       if(p === 1 || p === totalPages || Math.abs(p - curPage) <= 2) visPages.push(p);
       else if(visPages[visPages.length-1] !== '…') visPages.push('…');
     }
-    const pagerHTML = `<div style="display:flex;gap:6px;flex-wrap:wrap;padding:10px 0 4px;align-items:center">
+    pager = `<div style="display:flex;gap:6px;flex-wrap:wrap;padding:10px 0 4px;align-items:center">
       ${visPages.map(p => p==='…'
         ? `<span style="color:var(--text-m);font-size:13px">…</span>`
-        : `<button onclick="renderSearchPage(${(p-1)*PAGE})" style="background:${p===curPage?'var(--gold)':'var(--surface)'};color:${p===curPage?'var(--bg)':'var(--text-d)'};border:1px solid ${p===curPage?'var(--gold)':'var(--border)'};border-radius:6px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer;min-width:36px">P${p}</button>`
+        : `<button onclick="renderSearchPage(${(p-1)*PAGE},true)" style="background:${p===curPage?'var(--gold)':'var(--surface)'};color:${p===curPage?'var(--bg)':'var(--text-d)'};border:1px solid ${p===curPage?'var(--gold)':'var(--border)'};border-radius:6px;padding:5px 10px;font-size:13px;font-weight:600;cursor:pointer;min-width:36px">P${p}</button>`
       ).join('')}
     </div>`;
-    el.insertAdjacentHTML('beforeend', pagerHTML);
   }
+
+  // Each page replaces the last one (pages used to pile up underneath)
+  el.innerHTML =
+    (curPage === 1 ? renderTopicCards(S._topicMatches) + renderPersonalCards(S._personalMatches) : '')
+    + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`
+    + sortBar
+    + page.map(r => {
+        const hi = re ? r.txt.replace(re, '<mark>$&</mark>') : r.txt;
+        return `<div tabindex="0" class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')"><div class="rc-ref">${r.ref}</div><div class="rc-txt">${hi}</div></div>`;
+      }).join('')
+    + pager;
+  if (scroll) el.scrollIntoView({block:'start'});
 }
 
 /* ════ KJV DICTIONARY ════ */
