@@ -6,6 +6,23 @@
 
 ## New Features
 
+### 🔍 Smarter Search (v28)
+- **Whole-word matching** with KJV word forms — *sin* finds sins, sinned, sinneth, sinful and sinner, but no longer "business" or "sing"; *love* finds loved, loveth, lovest and lovely
+- If nothing matches as a whole word, search falls back to words that **begin with** what you typed, so a half-typed word still finds verses
+- **Exact phrases** in quotes (*"god so loved"*) and **leave words out** with a minus (*love -god*)
+- Queries made only of common words (*"it is finished"*) are searched as a phrase instead of being ignored
+- Results sort by **Best match** or **Bible order** — the choice is remembered on each device
+- Highlighting marks exactly the words that matched
+- **Fixed:** page 2 and later now replace the list instead of piling up underneath it; 100 results per page
+- **Fixed:** book chips now work on "closest matches" results instead of showing nothing
+- Books load in parallel with a progress counter, so the first search is faster
+- Switching Old/New Testament keeps Concordance and Names searches in exact-word mode
+
+### 📖 Better Reference Search (v28)
+- Understands **Rev. 22:21**, **1John 3:16**, **I John** / **First John**, and ranges across chapters like **John 3:16-4:2**
+- Single-chapter books read **Jude 5** as verse 5 — this also restores five Jude verses that were missing from the Doctrines list
+- Out-of-range references say so (*"Genesis has only 50 chapters"*) instead of quietly showing a different chapter
+
 ### 🏞️ Real Photo Scene Backgrounds (v27)
 - Replaced the two weakest procedural scenes (ocean, mountains-gradient) with **real bundled photographs**: a golden-hour wildflower **Meadow** and soft **Misty Mountains** at dawn
 - Added a **Calvary** scene (three crosses over Jerusalem) and an **Empty Tomb** scene
