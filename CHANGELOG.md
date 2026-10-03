@@ -7,7 +7,7 @@
 ## New Features
 
 ### 🎵 The Hymnal, ⭐ First Mention, 🔗 Follow the Thread (v34)
-- **Hymnal** — a new **Search → Hymns** tab with 89 hymns whose words are public domain (written before 1928), in nine sections from *Praise and Worship* to *Christmas and Easter*. Each hymn page shows the author and year, the Scriptures behind it (tappable), every stanza numbered, and the refrain
+- **Hymnal** — a new **Search → Hymns** tab with 98 hymns whose words are public domain (written before 1928), in nine sections from *Praise and Worship* to *Christmas and Easter*. Each hymn page shows the author and year, the Scriptures behind it (tappable), every stanza numbered, and the refrain
 - Find a hymn by title, author, or any line of the words ("sinking sand" → *The Solid Rock*)
 - Chosen from the hymns sung in Independent Baptist churches. Left out on purpose: texts still under copyright (*How Great Thou Art*, *Victory in Jesus*), Catholic-origin texts (*Silent Night*, *O Come All Ye Faithful*, *Faith of Our Fathers*), Unitarian authors, and sinless-perfection texts (*Love Divine*); *Standing on the Promises* omits the "perfect, present cleansing" stanza, as Baptist hymnals do
 - Words gathered from open collections (marvinjude/gospel-hymns, josmithua/song-data, pathawks/Christmas-Songs) and proofread against standard hymnals — typos fixed, garbled and missing stanzas restored. The words live in `tools/hymns/texts.json`, the list in `tools/hymns/list.js`; `tools/build-hymns.js` checks every Scripture reference against the KJV text
@@ -239,6 +239,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Nine more hymns (v34.01)** — *Softly and Tenderly*, *Jesus Paid It All*, *Whosoever Will*, *Bringing in the Sheaves*, *Jesus Saves*, *Wonderful Words of Life*, *Holy Bible, Book Divine*, *Shall We Gather at the River?* and *Christ the Lord Is Risen Today* — the hymnal now has 98. Seven came from lindsaysperring/GetHymnLyrics (an Adventist hymnal) and were restored to the standard wording (*Jesus Paid It All*: “Jesus died my soul to save, my lips shall still repeat”; *Softly and Tenderly*: all four stanzas)
 - **What's New complete (v32.01)** — the pop-up now lists every feature from versions 28–32, newest first, including the church dictionary notes (baptism, the elect, predestination) and the fixed "Download All 66 Books"
 - **Church dictionary notes (v31.01)** — new KJV notes for *baptism* and *baptize* (the ordinance: full immersion of one who has believed, in obedience to God — not sprinkling, not infants; Acts 8:36–38, Rom. 6:4), *elect* (those who have entered the election of grace by faith — not persons picked beforehand; Rom. 5:2, 11:5–6, 20, Matt. 24:22), *reprobation* (Rom. 1:24–28, 1 Tim. 4:2) and *predestination* (Rom. 8:29, Eph. 1:5); *election* revised to match. Each sits above Webster's 1828 text, and word forms find their note (*baptized* → baptize)
 - **Note references all tappable (v31.01)** — "Rom. 5:2; 11:5–6, 20" now links every reference (the book and chapter carry over), and "S.S." links to the Song of Solomon

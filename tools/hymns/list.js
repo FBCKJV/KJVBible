@@ -30,6 +30,7 @@ module.exports = [
   ['The Old Rugged Cross', 'George Bennard', 1913, 'The Blood and the Cross', '1 Corinthians 1:18'],
   ['At Calvary', 'William R. Newell', 1895, 'The Blood and the Cross', 'Luke 23:33'],
   ['At the Cross', 'Isaac Watts', 1707, 'The Blood and the Cross', 'Isaiah 53:5'],
+  ['Jesus Paid It All', 'Elvina M. Hall', 1865, 'The Blood and the Cross', 'Isaiah 1:18'],
   ['Rock of Ages', 'Augustus M. Toplady', 1776, 'The Blood and the Cross', '1 Corinthians 10:4; Isaiah 26:4'],
   ['There Is a Fountain', 'William Cowper', 1772, 'The Blood and the Cross', 'Zechariah 13:1'],
   ['When I See the Blood', 'John G. Foote', 1892, 'The Blood and the Cross', 'Exodus 12:13'],
@@ -40,6 +41,8 @@ module.exports = [
   // ── Salvation and Invitation
   ['Amazing Grace', 'John Newton', 1779, 'Salvation and Invitation', 'Ephesians 2:8; 1 Chronicles 17:16'],
   ['Just As I Am', 'Charlotte Elliott', 1835, 'Salvation and Invitation', 'John 6:37'],
+  ['Softly and Tenderly', 'Will L. Thompson', 1880, 'Salvation and Invitation', 'Matthew 11:28'],
+  ['Whosoever Will', 'Philip P. Bliss', 1870, 'Salvation and Invitation', 'Revelation 22:17'],
   ['Pass Me Not', 'Fanny J. Crosby', 1868, 'Salvation and Invitation', 'Luke 18:38'],
   ['Almost Persuaded', 'Philip P. Bliss', 1871, 'Salvation and Invitation', 'Acts 26:28'],
   ['Christ Receiveth Sinful Men', 'Erdmann Neumeister', 1718, 'Salvation and Invitation', 'Luke 15:2'],
@@ -81,17 +84,21 @@ module.exports = [
   ['Blest Be the Tie That Binds', 'John Fawcett', 1782, 'The Christian Life', 'Ephesians 4:3; Galatians 6:2'],
   // ── Soulwinning and Missions
   ['Rescue the Perishing', 'Fanny J. Crosby', 1869, 'Soulwinning and Missions', 'Jude 1:22-23'],
+  ['Bringing in the Sheaves', 'Knowles Shaw', 1874, 'Soulwinning and Missions', 'Psalm 126:6'],
   ['Send the Light', 'Charles H. Gabriel', 1890, 'Soulwinning and Missions', 'Acts 13:47; Matthew 5:16'],
   ['Let the Lower Lights Be Burning', 'Philip P. Bliss', 1871, 'Soulwinning and Missions', 'Matthew 5:16'],
   ['I Love to Tell the Story', 'A. Katherine Hankey', 1866, 'Soulwinning and Missions', 'Psalm 66:16'],
   ['Tell Me the Old, Old Story', 'A. Katherine Hankey', 1866, 'Soulwinning and Missions', '1 Corinthians 15:3-4'],
   ['The Ninety and Nine', 'Elizabeth C. Clephane', 1868, 'Soulwinning and Missions', 'Luke 15:4'],
   ['Throw Out the Life-Line', 'Edward S. Ufford', 1888, 'Soulwinning and Missions', 'Jude 1:23'],
+  ['Jesus Saves', 'Priscilla J. Owens', 1882, 'Soulwinning and Missions', 'Isaiah 62:11; Romans 10:13'],
   ['To the Work', 'Fanny J. Crosby', 1869, 'Soulwinning and Missions', 'John 9:4'],
   // ── Prayer and the Word
   ['Sweet Hour of Prayer', 'William W. Walford', 1845, 'Prayer and the Word', 'Matthew 6:6'],
   ['I Must Tell Jesus', 'Elisha A. Hoffman', 1893, 'Prayer and the Word', 'Hebrews 4:16'],
   ['Did You Think to Pray?', 'Mary A. Kidder', 1876, 'Prayer and the Word', '1 Thessalonians 5:17'],
+  ['Wonderful Words of Life', 'Philip P. Bliss', 1874, 'Prayer and the Word', 'John 6:68'],
+  ['Holy Bible, Book Divine', 'John Burton', 1803, 'Prayer and the Word', 'Psalm 119:105'],
   ['Thy Word Have I Hid in My Heart', 'Ernest O. Sellers', 1908, 'Prayer and the Word', 'Psalm 119:11, 105'],
   // ── Heaven and His Coming
   ['When We All Get to Heaven', 'Eliza E. Hewitt', 1898, 'Heaven and His Coming', 'John 14:2-3'],
@@ -101,11 +108,13 @@ module.exports = [
   ['Christ Returneth', 'H. L. Turner', 1878, 'Heaven and His Coming', 'Acts 1:11'],
   ['Is It the Crowning Day?', 'George W. Whitcomb', 1913, 'Heaven and His Coming', 'Titus 2:13'],
   ["There's a Great Day Coming", 'Will L. Thompson', 1887, 'Heaven and His Coming', 'Matthew 25:31-32'],
+  ['Shall We Gather at the River?', 'Robert Lowry', 1864, 'Heaven and His Coming', 'Revelation 22:1'],
   // ── Christmas and Easter
   ['Joy to the World', 'Isaac Watts', 1719, 'Christmas and Easter', 'Psalm 98:4-9'],
   ['Hark! the Herald Angels Sing', 'Charles Wesley', 1739, 'Christmas and Easter', 'Luke 2:13-14'],
   ['Angels from the Realms of Glory', 'James Montgomery', 1816, 'Christmas and Easter', 'Luke 2:8-15'],
   ['O Little Town of Bethlehem', 'Phillips Brooks', 1868, 'Christmas and Easter', 'Micah 5:2'],
   ['Away in a Manger', 'Anonymous', 1885, 'Christmas and Easter', 'Luke 2:7'],
+  ['Christ the Lord Is Risen Today', 'Charles Wesley', 1739, 'Christmas and Easter', 'Matthew 28:6'],
   ['Low in the Grave He Lay', 'Robert Lowry', 1874, 'Christmas and Easter', 'Luke 24:6'],
 ];
