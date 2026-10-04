@@ -2017,7 +2017,7 @@ body.light #home-watermark{
       <div class="tips-section">
         <div class="tips-section-lbl">💡 Tips & Shortcuts</div>
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code</span></div>
-        <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text or print to PDF from ☰ Studies.</span></div>
+        <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then copy, share, highlight, bookmark, or create a screenshot card</span></div>
@@ -6692,6 +6692,7 @@ function nbRenderMenu(){
       <button class="nb-tb" onclick="nbNew()">＋ New study</button>
       <button class="nb-tb" onclick="nbShare()">📤 Share as text</button>
       <button class="nb-tb" onclick="nbCopy()">📋 Copy</button>
+      <button class="nb-tb" onclick="nbCopyMarkdown()" title="Headings, points, verses and slide breaks marked out — for Claude, Google Docs, Word or a slide maker">Ⓜ️ Copy as Markdown</button>
       <button class="nb-tb" onclick="nbPrint()">🖨️ Print / PDF</button></div>`;
 }
 function nbSwitch(id){
@@ -6752,6 +6753,55 @@ function nbText(st){
   walk(box);
   out.push('', '— KJV Bible · Faith Baptist Church');
   return out.join('\n').replace(/\n{3,}/g, '\n\n');
+}
+// Markdown form: # title, ## headings, - and 1. lists (indented for an outline),
+// **bold** and *italic*, > verses with their reference, --- at each ✂ slide
+// break — a structure Claude, Google Docs, Word and slide makers all read
+function nbMarkdown(st){
+  const box = document.createElement('div');
+  box.innerHTML = nbClean(st.h);
+  const out = [`# ${st.t}`, ''];
+  const inline = el => [...el.childNodes].map(c => {
+    if(c.nodeType === 3) return c.textContent;
+    if(c.nodeType !== 1 || /^(UL|OL)$/.test(c.tagName) || c.classList.contains('nb-ref')) return '';
+    if(c.tagName === 'BR') return '  \n';
+    const t = inline(c), m = t.match(/^(\s*)([\s\S]*?)(\s*)$/);
+    if(!m[2]) return t;
+    if(/^(B|STRONG)$/.test(c.tagName)) return `${m[1]}**${m[2]}**${m[3]}`;
+    if(/^(I|EM)$/.test(c.tagName)) return `${m[1]}*${m[2]}*${m[3]}`;
+    return t;
+  }).join('').replace(/[ \t]+/g, ' ');
+  const block = () => { if(out[out.length - 1] !== '') out.push(''); };
+  const list = (el, depth) => { let i = 0;
+    for(const c of el.children){
+      if(c.tagName === 'LI'){
+        out.push('   '.repeat(depth) + (el.tagName === 'OL' ? `${++i}. ` : '- ') + inline(c).trim());
+        [...c.children].filter(x => /^(UL|OL)$/.test(x.tagName)).forEach(x => list(x, depth + 1));
+      } else if(/^(UL|OL)$/.test(c.tagName)) list(c, depth + 1);
+    } };
+  const walk = node => [...node.childNodes].forEach(n => {
+    if(n.nodeType === 3){ const t = n.textContent.trim(); if(t){ block(); out.push(t); } return; }
+    if(n.nodeType !== 1) return;
+    const tag = n.tagName;
+    if(tag === 'H3'){ block(); out.push(`## ${n.textContent.trim()}`, ''); }
+    else if(tag === 'HR'){ block(); out.push('---', ''); }
+    else if(tag === 'UL' || tag === 'OL'){ block(); list(n, 0); out.push(''); }
+    else if(tag === 'BLOCKQUOTE'){
+      const r = n.querySelector('.nb-ref'), label = r ? r.textContent.trim() : '';
+      block();
+      inline(n).trim().split(/\n/).forEach(l => out.push('> ' + l.trim()));
+      if(label) out.push(`> — ${label} (KJV)`);
+      out.push('');
+    }
+    else if(/^(P|DIV)$/.test(tag) && n.querySelector('ul,ol,blockquote,h3,hr')) walk(n);
+    else { const t = inline(n).trim(); if(t){ block(); out.push(t, ''); } }
+  });
+  walk(box);
+  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+}
+function nbCopyMarkdown(){
+  nbStore();
+  navigator.clipboard?.writeText(nbMarkdown(nbActive())).then(() => showToast('Study copied as Markdown'), () => showToast('Could not copy'));
 }
 function nbShare(){
   nbStore();
