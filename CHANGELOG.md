@@ -6,6 +6,16 @@
 
 ## New Features
 
+### ⚔️ Sword Drill, Rebuilt (v38)
+- **Fixed:** the game screen's styles were lost in a June 24 upload — since then it showed default browser buttons and unstyled text. The game screen is restyled to match the app: the verse in large Crimson Pro, gold blank lines sized to each word, the current word highlighted, a slim progress bar
+- **Four ways to practice**, each harder than the last: **📖 Learn** (read it, hide a quarter of the words at a time, tap a blank to peek), **🔤 First Letters** (type the first letter of each word), **🧩 Word Order** (tap the next word from six choices — no keyboard, good for children), **⚔ Full Recall** (type every word; finishing masters the verse as Challenge did). The last mode used is remembered
+- **One input bar** stays above the keyboard; a word is accepted the moment it's right — no Enter, no keyboard closing and reopening between words. The game resizes to sit above the on-screen keyboard
+- **💡 Hints** (Full Recall: one more letter of the word; First Letters: the word; Word Order: the right chip glows) and **mistakes** are counted; finishing gives **1–3 stars** with the time and best time; a wrong guess shakes gently (and buzzes on phones)
+- **After a verse**: "Try Word Order ›" / "Try Full Recall ›" steps up a level; Full Recall shows the review date as before
+- **Verse list**: a **▶ Practice next** card at the top (a review that's due, a verse started but not mastered, or the next new one); labels read new / practiced 2× / mastered
+- Progress, mastery, badges, streaks and the review schedule are saved exactly as before (First Letters and Word Order count as Guided, Full Recall as Challenge)
+- "Roman's Road" corrected to **Romans Road** (memory pack, badge and home card)
+
 ### ✦ Clearer Cross-References (v37)
 - **Verse card**: the "Compare Scripture" chips are replaced by a plain **Cross-references** list — a "✦ Quoted in" / "✦ Quotes" row for the New Testament quotations, then up to four key words from the Treasury, each with its first three references as chips ("Rom 8:36", "Ps 79:2–3") and "+N"
 - **Tap a reference to read it in the card** (tap again to close), with "Read in context ↗", "🔗 Its references" and "📝＋"; tap a word ("“killed” ›"), "+N" or **See all N ›** for the Compare page
