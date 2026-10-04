@@ -23,7 +23,7 @@ out=[]
 total=0
 for k,(t,rng,stops) in J.items():
   rows=[];years=set()
-  for i,st in enumerate([s for s in stops if not s[0].startswith('~')],1):
+  for i,st in enumerate([s for s in stops if s[0] not in ('~','@')],1):
     n,ref,note=st[:3]; label=st[3] if len(st)>3 else n
     m,_=resolve(n,ref); p=P[m[0]]
     b,cv=ref.rsplit(' ',1); e=event(b,int(cv.split(':')[0]))

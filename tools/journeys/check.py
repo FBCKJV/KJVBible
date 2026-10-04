@@ -16,7 +16,7 @@ if __name__=='__main__':
     print('##',t)
     for st in stops:
       n,ref,note=st[:3]
-      if n.startswith('~'): print('   (waypoint)',n); continue
+      if n in ("~","@"): continue
       m,ids=resolve(n,ref)
       if not m:
         allm=[i for i,p in P.items() if p['n'].lower()==n.lower()]

@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🧭 Bible Journeys (v41)
+- **Eighteen journeys** (`journeys.json`, built by `tools/journeys/build.py` from the approved stop list in `tools/journeys/draft.py`): Abraham; Jacob; Joseph sold into Egypt; the Exodus & the wilderness; David fleeing Saul; Elijah; Jonah; carried away to Babylon; the return from captivity; the birth and childhood of Jesus; Jesus' ministry; the last week & the resurrection; Saul's conversion; Philip and Peter; Paul's first, second and third journeys; Paul's voyage to Rome — 196 stops
+- **Every stop is a verse that names the place**, checked against the places data when built. Conventional sites throughout (the southern Exodus route, Mount Sinai at Jebel Musa, mount Hor at Jebel Harun, the crossing at the head of the Gulf of Suez); uncertain sites and the lines to them are dashed. The sermon on the mount is shown at the traditional Mount of Beatitudes (dashed); the transfiguration's "high mountain apart" shows both suggested sites, Hermon and Tabor, as dotted references. Routes follow the Euphrates and the coasts where travellers went (under Cyprus and Crete on the voyage to Rome); a dotted arrow points from Joppa "toward Tarshish"
+- **The journey player**: the route on the parchment map with numbered stops (tap one to go there); a card with the stop, what happened, the verse itself, **‹ Back**, **Read ›** and **Next stop ›** — the route draws on as you go
+- **Text, timeline and map lead to one another**: under a chapter title, **🧭 Paul's second journey** opens the journey at that chapter's stop (📍 Where also lists it); each stop's **📅 About A.D. 52 ›** opens the timeline at its event (dates come from the timeline, so they always agree); on the timeline, events a journey belongs to have **🧭**, and every event has **📍** to show its places on the map
+- **Search → Maps**: a 🧭 Journeys list (Old and New Testament) between the map explorer and the classic maps; a place's card and its place page list the journeys passing through it ("Bethel — Abraham's journey · stop 4")
+- **Timeline**: new event "David flees from Saul" (1062 B.C., 1 Samuel 19–27)
+
 ### 🗺️ What Happened Here? (v40)
 - **Search → Maps is now a map explorer**: the parchment map of the Bible lands with every place that has a suggested site, opening on the land of Israel. Zoomed out, the most-named places show; zoom in and more appear, with names wherever they fit (Jerusalem, Samaria, Tyre… in bold first; regions are hollow rings, since the atlas names already label them)
 - **Find a place**: type in the box ("beth") for the best matches — exact names first, then the most-named (Bethel, Bethlehem, Bethany…)
