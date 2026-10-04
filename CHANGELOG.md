@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🗂️ Two-Column Search on Big Screens (v45)
+- **List and page side by side** (1100px and wider): in **Topics, Names (people and places), the Dictionary and Hymns**, the list stays on the left (scrolling on its own) and a topic, person, place, word or hymn opens on the right; before one is chosen the right side says what to tap. Back steps through pages as before; turning a tablet to portrait goes back to one column
+- **Search page**: tool tiles in a row of four; **search results** in two columns of verse cards
+- **Map explorer**: the place card ("What happened here") beside the map instead of below it; **journeys** listed three across
+- **Timeline** in two columns; **concordance** words in columns (a word's verses open full width beneath it)
+- **Saved** bookmarks, highlights and notes in two columns; **Plans** kept to a readable width
+- Phones are unchanged
+
 ### 📽 Classroom Present & Resizable Panels (v44)
 - **📽 Classroom preset** in Present mode: one verse at a time, never smaller than a back row can read (6.5% of the screen height); a verse too long for that runs onto a second screen ("Esther 8:9 (1 of 2)") instead of shrinking — the arrows and clicker step through the screens, and going back lands on a long verse's last screen
 - **Projector themes**: the ◐ button now cycles Dark, Light, **High contrast** (white on black, heavier type, yellow reference) and **High contrast light** (black on white)
@@ -318,6 +326,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Reading Plans styling restored (v45)** — the plan cards, today's reading card and the day list lost their styles in the June 24 upload (the same one that dropped the Sword Drill styles) and showed as plain text with grey browser buttons; the styles are restored from the June 21 version
 - **Clean-up (v41.01)** — red letter is gone for good: anyone who had turned it on before the button was removed still saw some chapters in orange with no way to turn it off; that code is removed (and no longer synced). Also removed code nothing used any more — the old word pop-up, an old backup/import pair, an unused theme toggle and a handful of leftover helpers and styles (about 170 lines). The help text says 96 timeline events; the changelog counts ten classic maps
 - **Full verse on the verse card (v38.02)** — long verses were cut off in a 120px box with its own scrollbar (e.g. Genesis 12:8, Psalm 44:22); the whole verse now shows, and the card itself scrolls when it is taller than the screen
 - **Sword Drill polish (v38.01)** — a 💡 hint in Full Recall now shows its letters inside the blank, on the line, instead of under a strike-through underline; inside a verse the top-left button reads “‹ Verses” and the ✕ Close (which left the game for Home) is hidden until you're back on the verse list
