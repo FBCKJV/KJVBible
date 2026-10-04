@@ -3120,5 +3120,309 @@
   ],
   "src": "josmithua/song-data (Believers Hymn Book)",
   "author": "Robert Lowry (1874)"
+ },
+ "Jesus Paid It All": {
+  "v": [
+   [
+    "I hear the Saviour say,",
+    "“Thy strength indeed is small;",
+    "Child of weakness, watch and pray,",
+    "Find in Me thine all in all.”"
+   ],
+   [
+    "Lord, now indeed I find",
+    "Thy power, and Thine alone,",
+    "Can change the leper’s spots",
+    "And melt the heart of stone."
+   ],
+   [
+    "For nothing good have I",
+    "Whereby Thy grace to claim;",
+    "I’ll wash my garments white",
+    "In the blood of Calvary’s Lamb."
+   ],
+   [
+    "And when, before the throne,",
+    "I stand in Him complete,",
+    "“Jesus died my soul to save,”",
+    "My lips shall still repeat."
+   ]
+  ],
+  "ch": [
+   "Jesus paid it all,",
+   "All to Him I owe;",
+   "Sin had left a crimson stain,",
+   "He washed it white as snow."
+  ],
+  "src": "lindsaysperring/GetHymnLyrics, restored to the standard wording"
+ },
+ "Softly and Tenderly": {
+  "v": [
+   [
+    "Softly and tenderly Jesus is calling,",
+    "Calling for you and for me;",
+    "See, on the portals He’s waiting and watching,",
+    "Watching for you and for me."
+   ],
+   [
+    "Why should we tarry when Jesus is pleading,",
+    "Pleading for you and for me?",
+    "Why should we linger and heed not His mercies,",
+    "Mercies for you and for me?"
+   ],
+   [
+    "Time is now fleeting, the moments are passing,",
+    "Passing from you and from me;",
+    "Shadows are gathering, deathbeds are coming,",
+    "Coming for you and for me."
+   ],
+   [
+    "O for the wonderful love He has promised,",
+    "Promised for you and for me!",
+    "Though we have sinned, He has mercy and pardon,",
+    "Pardon for you and for me."
+   ]
+  ],
+  "ch": [
+   "Come home, come home,",
+   "Ye who are weary, come home;",
+   "Earnestly, tenderly, Jesus is calling,",
+   "Calling, O sinner, come home!"
+  ],
+  "src": "lindsaysperring/GetHymnLyrics, restored to the standard wording"
+ },
+ "Whosoever Will": {
+  "v": [
+   [
+    "“Whosoever heareth,” shout, shout the sound!",
+    "Spread the blessed tidings all the world around;",
+    "Tell the joyful news wherever man is found,",
+    "“Whosoever will may come.”"
+   ],
+   [
+    "Whosoever cometh need not delay;",
+    "Now the door is open, enter while you may;",
+    "Jesus is the true, the only Living Way:",
+    "“Whosoever will may come.”"
+   ],
+   [
+    "“Whosoever will,” the promise is secure;",
+    "“Whosoever will,” forever must endure;",
+    "“Whosoever will!” ’tis life forevermore;",
+    "“Whosoever will may come.”"
+   ]
+  ],
+  "ch": [
+   "“Whosoever will, whosoever will!”",
+   "Send the proclamation over vale and hill;",
+   "’Tis a loving Father calls the wanderer home:",
+   "“Whosoever will may come.”"
+  ],
+  "src": "standard hymnal text"
+ },
+ "Bringing in the Sheaves": {
+  "v": [
+   [
+    "Sowing in the morning, sowing seeds of kindness,",
+    "Sowing in the noontide and the dewy eve;",
+    "Waiting for the harvest, and the time of reaping,",
+    "We shall come rejoicing, bringing in the sheaves."
+   ],
+   [
+    "Sowing in the sunshine, sowing in the shadows,",
+    "Fearing neither clouds nor winter’s chilling breeze;",
+    "By and by the harvest, and the labor ended,",
+    "We shall come rejoicing, bringing in the sheaves."
+   ],
+   [
+    "Going forth with weeping, sowing for the Master,",
+    "Though the loss sustained our spirit often grieves;",
+    "When our weeping’s over, He will bid us welcome,",
+    "We shall come rejoicing, bringing in the sheaves."
+   ]
+  ],
+  "ch": [
+   "Bringing in the sheaves, bringing in the sheaves,",
+   "We shall come rejoicing, bringing in the sheaves;",
+   "Bringing in the sheaves, bringing in the sheaves,",
+   "We shall come rejoicing, bringing in the sheaves."
+  ],
+  "src": "lindsaysperring/GetHymnLyrics, restored to the standard wording"
+ },
+ "Jesus Saves": {
+  "v": [
+   [
+    "We have heard the joyful sound:",
+    "Jesus saves! Jesus saves!",
+    "Spread the tidings all around:",
+    "Jesus saves! Jesus saves!",
+    "Bear the news to every land,",
+    "Climb the steeps and cross the waves;",
+    "Onward! ’tis our Lord’s command;",
+    "Jesus saves! Jesus saves!"
+   ],
+   [
+    "Waft it on the rolling tide:",
+    "Jesus saves! Jesus saves!",
+    "Tell to sinners far and wide:",
+    "Jesus saves! Jesus saves!",
+    "Sing, ye islands of the sea;",
+    "Echo back, ye ocean caves;",
+    "Earth shall keep her jubilee:",
+    "Jesus saves! Jesus saves!"
+   ],
+   [
+    "Sing above the battle strife:",
+    "Jesus saves! Jesus saves!",
+    "By His death and endless life",
+    "Jesus saves! Jesus saves!",
+    "Sing it softly through the gloom,",
+    "When the heart for mercy craves;",
+    "Sing in triumph o’er the tomb:",
+    "Jesus saves! Jesus saves!"
+   ],
+   [
+    "Give the winds a mighty voice:",
+    "Jesus saves! Jesus saves!",
+    "Let the nations now rejoice:",
+    "Jesus saves! Jesus saves!",
+    "Shout salvation full and free,",
+    "Highest hills and deepest caves;",
+    "This our song of victory:",
+    "Jesus saves! Jesus saves!"
+   ]
+  ],
+  "ch": [],
+  "src": "lindsaysperring/GetHymnLyrics, restored to the standard wording"
+ },
+ "Wonderful Words of Life": {
+  "v": [
+   [
+    "Sing them over again to me,",
+    "Wonderful words of life;",
+    "Let me more of their beauty see,",
+    "Wonderful words of life.",
+    "Words of life and beauty,",
+    "Teach me faith and duty;"
+   ],
+   [
+    "Christ, the blessed One, gives to all",
+    "Wonderful words of life;",
+    "Sinner, list to the loving call,",
+    "Wonderful words of life.",
+    "All so freely given,",
+    "Wooing us to heaven;"
+   ],
+   [
+    "Sweetly echo the gospel call,",
+    "Wonderful words of life;",
+    "Offer pardon and peace to all,",
+    "Wonderful words of life.",
+    "Jesus, only Saviour,",
+    "Sanctify forever;"
+   ]
+  ],
+  "ch": [
+   "Beautiful words, wonderful words,",
+   "Wonderful words of life;",
+   "Beautiful words, wonderful words,",
+   "Wonderful words of life."
+  ],
+  "src": "lindsaysperring/GetHymnLyrics, restored to the standard wording"
+ },
+ "Holy Bible, Book Divine": {
+  "v": [
+   [
+    "Holy Bible, Book divine,",
+    "Precious treasure, thou art mine;",
+    "Mine to tell me whence I came;",
+    "Mine to teach me what I am;"
+   ],
+   [
+    "Mine to chide me when I rove;",
+    "Mine to show a Saviour’s love;",
+    "Mine thou art to guide and guard;",
+    "Mine to punish or reward."
+   ],
+   [
+    "Mine to comfort in distress,",
+    "Suffering in this wilderness;",
+    "Mine to show, by living faith,",
+    "Man can triumph over death."
+   ],
+   [
+    "Mine to tell of joys to come,",
+    "And the rebel sinner’s doom;",
+    "O thou holy Book divine,",
+    "Precious treasure, thou art mine."
+   ]
+  ],
+  "ch": [],
+  "src": "standard hymnal text"
+ },
+ "Shall We Gather at the River?": {
+  "v": [
+   [
+    "Shall we gather at the river,",
+    "Where bright angel feet have trod,",
+    "With its crystal tide forever",
+    "Flowing by the throne of God?"
+   ],
+   [
+    "On the margin of the river,",
+    "Washing up its silver spray,",
+    "We will walk and worship ever,",
+    "All the happy golden day."
+   ],
+   [
+    "Ere we reach the shining river,",
+    "Lay we every burden down;",
+    "Grace our spirits will deliver,",
+    "And provide a robe and crown."
+   ],
+   [
+    "Soon we’ll reach the shining river,",
+    "Soon our pilgrimage will cease;",
+    "Soon our happy hearts will quiver",
+    "With the melody of peace."
+   ]
+  ],
+  "ch": [
+   "Yes, we’ll gather at the river,",
+   "The beautiful, the beautiful river;",
+   "Gather with the saints at the river",
+   "That flows by the throne of God."
+  ],
+  "src": "lindsaysperring/GetHymnLyrics, restored to the standard wording"
+ },
+ "Christ the Lord Is Risen Today": {
+  "v": [
+   [
+    "Christ the Lord is risen today, Alleluia!",
+    "Sons of men and angels say, Alleluia!",
+    "Raise your joys and triumphs high, Alleluia!",
+    "Sing, ye heavens, and earth, reply, Alleluia!"
+   ],
+   [
+    "Lives again our glorious King, Alleluia!",
+    "Where, O death, is now thy sting? Alleluia!",
+    "Once He died our souls to save, Alleluia!",
+    "Where’s thy victory, boasting grave? Alleluia!"
+   ],
+   [
+    "Love’s redeeming work is done, Alleluia!",
+    "Fought the fight, the battle won, Alleluia!",
+    "Death in vain forbids Him rise, Alleluia!",
+    "Christ hath opened Paradise, Alleluia!"
+   ],
+   [
+    "Soar we now where Christ hath led, Alleluia!",
+    "Following our exalted Head, Alleluia!",
+    "Made like Him, like Him we rise, Alleluia!",
+    "Ours the cross, the grave, the skies, Alleluia!"
+   ]
+  ],
+  "ch": [],
+  "src": "lindsaysperring/GetHymnLyrics, restored to the standard wording"
  }
 }
