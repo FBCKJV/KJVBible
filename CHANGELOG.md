@@ -6,6 +6,12 @@
 
 ## New Features
 
+### 📍 Where Is This Taking Place? (v39)
+- **A map of the Bible lands, drawn in the app**: a parchment-style map from Rome to Persia (coastlines, the Sea of Galilee, the Dead Sea, the Nile, Jordan, Euphrates and Tigris) built from Natural Earth's public-domain outlines (`bible-lands.json`, made by `tools/build-bible-lands.js`). No map service and no internet needed once it has loaded
+- **Pins**: a gold pin for each place, labelled with the Bible name and today's name ("Bethel · today Beitin"); a dashed ring where the site is uncertain; places sharing one suggested site become one pin ("Baal-zephon & Pi-hahiroth"). Labels move left, right, above or below so they don't overlap
+- **Zoom and pan**: pinch, scroll or + / − to zoom from the whole region down to a few miles; drag to move; ⌖ returns to the places. Old-atlas names (EGYPT, ASSYRIA, CANAAN, JUDAEA, GALILEE, The Great Sea…) appear at the zoom where they fit; zoomed in, the other Bible places nearby show as small dots. Tap a pin or dot for its name, kind and certainty, and **Open ›** for its place page
+- **Three places to find it**: **📍 Where · N places** under the chapter title (all the places named in the chapter, with a chip for each to fly to it); **🗺️ Show on map** under "Places in this verse" in the verse card; and a map on every place page under "Where it was" (⤢ for full screen). The "Open in a map ↗" link stays
+
 ### ⚔️ Sword Drill, Rebuilt (v38)
 - **Fixed:** the game screen's styles were lost in a June 24 upload — since then it showed default browser buttons and unstyled text. The game screen is restyled to match the app: the verse in large Crimson Pro, gold blank lines sized to each word, the current word highlighted, a slim progress bar
 - **Four ways to practice**, each harder than the last: **📖 Learn** (read it, hide a quarter of the words at a time, tap a blank to peek), **🔤 First Letters** (type the first letter of each word), **🧩 Word Order** (tap the next word from six choices — no keyboard, good for children), **⚔ Full Recall** (type every word; finishing masters the verse as Challenge did). The last mode used is remembered

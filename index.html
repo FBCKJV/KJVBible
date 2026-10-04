@@ -272,6 +272,30 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #cat-bar.on{display:flex}
 #cat-home{display:flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:18px;padding:6px 12px 6px 9px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
 #cat-title{font-family:'IM Fell English',serif;font-size:19px;color:var(--gold)}
+/* Where is this? — parchment map of the Bible lands (same in every theme) */
+.wm{position:relative;border:1px solid #8a6d3b;border-radius:12px;overflow:hidden;background:#cdd6c8;touch-action:none;user-select:none;-webkit-user-select:none}
+.wm svg{display:block;width:100%;height:100%;cursor:grab}
+.wm-base path{vector-effect:non-scaling-stroke}
+.wm svg:active{cursor:grabbing}
+.wm::after{content:'';position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 40px rgba(90,60,20,.35);border-radius:12px}
+.wm-ctl{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:5px;z-index:2}
+.wm-ctl button{width:34px;height:34px;border-radius:9px;border:1px solid #8a6d3b;background:rgba(244,232,204,.92);color:#5b4426;font-size:18px;line-height:1;cursor:pointer;font-family:Georgia,serif}
+.wm-info{position:absolute;left:8px;right:52px;bottom:8px;z-index:2;display:none;align-items:center;gap:8px;background:rgba(244,232,204,.95);border:1px solid #8a6d3b;border-radius:10px;padding:7px 10px;color:#3d2b12;font-family:'Crimson Pro',Georgia,serif;font-size:15px;line-height:1.25}
+.wm-info.on{display:flex}
+.wm-info b{color:#6a4510}
+.wm-info button{margin-left:auto;flex-shrink:0;background:#6a4510;color:#f4e8cc;border:none;border-radius:8px;padding:5px 10px;font-size:12.5px;cursor:pointer;font-family:'Inter',sans-serif}
+.wm-credit{position:absolute;left:8px;top:8px;z-index:1;font-size:9px;color:rgba(61,43,18,.6);font-family:'Inter',sans-serif;pointer-events:none}
+.wm-embed{height:240px;margin:10px 0 4px}
+.wm-inline{height:220px;margin:4px 0 8px}
+.wm-chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0 0}
+#wm-overlay{position:fixed;inset:0;z-index:330;background:var(--bg);display:none;flex-direction:column;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))}
+#wm-overlay.on{display:flex}
+#wm-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+#wm-title{flex:1;font-family:'IM Fell English',serif;font-size:20px;color:var(--gold)}
+#wm-sub{font-size:12px;color:var(--text-m);margin:-4px 0 8px}
+#wm-map{flex:1;min-height:0}
+#wm-list{max-height:28vh;overflow-y:auto}
+.wm-show{margin:2px 0 8px}
 /* Hymns */
 .hy-sec{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);padding:14px 2px 4px;border-bottom:1px solid var(--border)}
 .hy-row{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:10px 2px;cursor:pointer;color:var(--text);font-family:'Crimson Pro',serif}
@@ -1525,7 +1549,7 @@ body.light #home-watermark{
           color:var(--gold);font-size:13px;padding:2px 10px;cursor:pointer;
           display:none;transition:all .2s" title="Listen to this chapter">🔊</button>
       </div>
-      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button></div>
+      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button> <button id="ch-where-btn" class="ch-map" style="display:none" onclick="openChapterMap()">📍 Where</button></div>
       <div id="verses"></div>
     </div>
   
@@ -2086,6 +2110,14 @@ body.light #home-watermark{
       </button>
     </div>
   </div>
+</div>
+
+<!-- WHERE IS THIS? map overlay -->
+<div id="wm-overlay" role="dialog" aria-label="Map">
+  <div id="wm-head"><div id="wm-title"></div><button class="nb-tb" onclick="closePopover('wm-overlay')" aria-label="Close">✕</button></div>
+  <div id="wm-sub"></div>
+  <div id="wm-map" class="wm"></div>
+  <div id="wm-list" class="wm-chips"></div>
 </div>
 
 <!-- STUDY NOTEBOOK -->
@@ -2795,6 +2827,7 @@ function renderReader(){
   document.getElementById('r-next').disabled = _bi===BOOKS.length-1 && S.ch===S.bookData.chapters.length-1;
   updateChapterMapButton();
   updateChapterTimeButton();
+  updateChapterWhereButton();
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
   recordHistory(S.book, S.ch);
 
@@ -3741,7 +3774,7 @@ function goBack(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel'];
+const POPOVER_IDS = ['xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
 function openPopover(id){
   const el = document.getElementById(id);
   if(!el || el.classList.contains('on')) return;
@@ -5929,7 +5962,8 @@ async function openPlace(id, pushHistory=true, scrollY=0){
         <div class="pl-why">${escapeHtml(conf)}: ${escapeHtml(confWhy)}.</div>
         ${fromJer ? `<div class="pl-dist">About ${fmtMiles(fromJer.miles)} ${fromJer.dir} of Jerusalem</div>` : ''}
         <div class="pl-coords"><span>${p.ll[0].toFixed(4)}°N, ${p.ll[1].toFixed(4)}°E</span> · <a href="${osm}" target="_blank" rel="noopener">Open in a map ↗</a></div>
-      </div>` : `<div class="pl-site"><div class="pl-site-name">Location unknown</div><div class="pl-why">Scholars have not identified where this place was.</div></div>`}
+      </div>
+      <div class="wm wm-embed" id="pl-map"></div>` : `<div class="pl-site"><div class="pl-site-name">Location unknown</div><div class="pl-why">Scholars have not identified where this place was.</div></div>`}
     ${p.o ? `<div class="pp-h">Other suggested sites</div>${p.o.map(([s, c, la, lo]) => {
       const [cl] = placeConfidence(c);
       return `<div class="pl-alt"><span>${escapeHtml(s)}</span><span class="pl-conf pl-${placeConfidence(c)[2]}">${cl}</span>${p.ll ? `<span class="pl-alt-d">${fmtMiles(placeDistance(p.ll, [la, lo]).miles)} away</span>` : ''}</div>`; }).join('')}` : ''}
@@ -5943,6 +5977,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
     <button class="nv-showmore pp-find" onclick="placeSearch('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔍 Find every “${escapeHtml(p.n)}” in Scripture</button>
     <div class="nv-credit">Locations from the OpenBible.info Bible Geocoding Data (CC BY 4.0), which draws on over seventy atlases and reference works. Distances are straight-line. Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain).</div>`;
   S._placeOpen = S._placeOpen || {};
+  if(p.ll) wmMount(document.getElementById('pl-map'), [wmPin(id, true)], {expand: () => openWhereMap(p.n, placeType(p.t), [wmPin(id, true)])});
   if(!(id in S._placeOpen)) S._placeOpen[id] = openVerses;
   if(S._placeOpen[id]) await fillPlaceVerses();
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
@@ -6003,7 +6038,8 @@ function fillVpopLinks(ref){
       (people.length ? `<div class="vd-label">👤 People in this verse</div><div class="vl-chips">${people.map(id =>
         `<button class="vl-chip" onclick="event.stopPropagation();openPersonFromVerse('${id}')">${escapeHtml(personName(id))}</button>`).join('')}</div>` : '')
       + (places.length ? `<div class="vd-label">📍 Places in this verse</div><div class="vl-chips">${places.map(id =>
-        `<button class="vl-chip" onclick="event.stopPropagation();openPlaceFromVerse('${id}')">${escapeHtml(placeNameInVerse(S._places[id], S.popTxt || ''))}</button>`).join('')}</div>` : '')
+        `<button class="vl-chip" onclick="event.stopPropagation();openPlaceFromVerse('${id}')">${escapeHtml(placeNameInVerse(S._places[id], S.popTxt || ''))}</button>`).join('')}</div>`
+        + (places.some(id => S._places[id].ll) ? `<button class="vl-chip wm-show" onclick="event.stopPropagation();vpopShowMap(this)">🗺️ Show on map</button><div id="vpop-map"></div>` : '') : '')
       + (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
         `<button class="vl-chip" onclick="event.stopPropagation();openDoctrineFromVerse(${ci},${ti})">${escapeHtml(DOCTRINES[ci].topics[ti].name)}</button>`).join('')}</div>` : '');
     el.style.display = 'block';
@@ -6691,6 +6727,252 @@ function openSearchTab(){
   }
   showScreen('search');   // pushes the Search entry
   clearToHub();
+}
+
+/* ════ WHERE IS THIS? — the Bible lands map ════
+   An offline parchment map of the Bible lands (Rome to Persia) drawn from
+   Natural Earth's public-domain outlines (bible-lands.json, built by
+   tools/build-bible-lands.js). Pins come from the places data: a gold pin
+   for a known site, a dashed ring where scholars are unsure. Drag to pan,
+   pinch or scroll (or + / −) to zoom; zoomed in, nearby Bible places appear
+   as dots. Used by the reader's 📍 Where button, the verse card and place
+   pages. Coordinates: x = lon·cos 33°, y = −lat. */
+const LANDS_VERSION = '2026-10-04';
+const WM_K = Math.cos(33 * Math.PI / 180);
+function loadLands(){ return S._lands ? Promise.resolve(S._lands) : loadCachedJSON(`bible-lands.json?v=${LANDS_VERSION}`).then(d => S._lands = d); }
+const wmPathD = (f, close) => { let d = ''; for(let i = 0; i < f.length; i += 2) d += (i ? 'L' : 'M') + (f[i]*WM_K).toFixed(3) + ' ' + (-f[i+1]).toFixed(3); return d + (close ? 'Z' : ''); };
+// Old-atlas region names, each shown within a zoom range (map width in degrees)
+const WM_LABELS = [
+  ['The Great Sea', 34.2, 25.5, 9, 60, 1], ['Red Sea', 21.5, 38.4, 6, 60, 1], ['Persian Gulf', 27.3, 51.0, 6, 60, 1], ['Black Sea', 43.2, 34.5, 6, 60, 1], ['Caspian Sea', 41.5, 50.8, 6, 60, 1],
+  ['EGYPT', 26.6, 30.6, 5, 60], ['ARABIA', 24.5, 44.0, 6, 60], ['ASSYRIA', 36.4, 43.6, 4, 60], ['CHALDEA', 31.4, 45.6, 4, 60], ['PERSIA', 30.5, 53.5, 6, 60],
+  ['ASIA MINOR', 39.2, 32.5, 5, 60], ['GREECE', 39.2, 21.9, 4, 60], ['ITALY', 42.4, 12.8, 4, 60], ['SINAI', 29.3, 33.8, 2.5, 25], ['SYRIA', 34.9, 37.8, 3, 30],
+  ['MESOPOTAMIA', 35.6, 40.6, 4, 40], ['MEDIA', 35.4, 49.0, 4, 40], ['ARMENIA', 39.6, 42.8, 4, 40], ['CYPRUS', 35.1, 33.2, 1.5, 25], ['CRETE', 35.25, 24.9, 1.5, 25],
+  ['CANAAN', 31.9, 35.1, 2.2, 9], ['JUDAEA', 31.55, 35.05, 0.4, 2.2], ['SAMARIA', 32.25, 35.2, 0.4, 2.2], ['GALILEE', 32.85, 35.4, 0.4, 2.2], ['PHILISTIA', 31.55, 34.55, 0.4, 2.2],
+  ['MOAB', 31.4, 35.8, 0.4, 3], ['EDOM', 30.6, 35.55, 0.4, 3], ['GILEAD', 32.3, 35.85, 0.4, 3], ['PHOENICIA', 33.6, 35.4, 0.6, 3], ['NEGEV', 30.85, 34.8, 0.4, 3],
+  ['Dead Sea', 31.5, 35.48, 0.2, 2.5, 1], ['Sea of Galilee', 32.83, 35.6, 0.15, 1.6, 1], ['Jordan', 32.25, 35.58, 0.25, 1.6, 1], ['Nile', 27.7, 30.75, 1, 12, 1], ['Euphrates', 34.5, 40.6, 1.5, 20, 1], ['Tigris', 35.0, 43.25, 1.5, 20, 1],
+];
+function wmBaseSVG(){
+  if(S._landsSvg) return S._landsSvg;
+  const L = S._lands, [w, so, e, n] = L.box;
+  S._landsSvg = `<rect x="${w*WM_K}" y="${-n}" width="${(e-w)*WM_K}" height="${n-so}" fill="#cdd6c8"/>`
+    + `<g fill="#efe2bf" stroke="#8a6d3b" stroke-width="0.6" stroke-linejoin="round">${L.land.map(r => `<path d="${wmPathD(r, 1)}"/>`).join('')}</g>`
+    + `<g fill="#cdd6c8" stroke="#7d8f8a" stroke-width="0.5">${L.lakes.map(([, r]) => `<path d="${wmPathD(r, 1)}"/>`).join('')}</g>`
+    + `<g fill="none" stroke="#7b98a6" stroke-width="1.1" stroke-linecap="round">${L.rivers.map(([, r]) => `<path d="${wmPathD(r)}"/>`).join('')}</g>`;
+  return S._landsSvg;
+}
+// A modern name worth "today …" — not a region, not a description ("between Gerar and Beersheba")
+const wmToday = p => p.s && p.t !== 'region' && /^[A-Z]/.test(p.s) && !/ (in|of) |site|palace|church|theater|branch/i.test(p.s) && p.s.length <= 30 && p.s.toLowerCase() !== p.n.toLowerCase() ? p.s : '';
+// A pin for a place id: "Bethel · today Beitin"
+function wmPin(id, main){
+  const p = S._places[id];
+  if(!p || !p.ll) return null;
+  const today = wmToday(p);
+  return {id, name: p.n, today, ll: p.ll, sure: p.c != null && p.c >= 450, main: !!main};
+}
+// Mount a map in el. pins: [{id,name,today,ll,sure,main}]; opts.expand adds a ⤢ button
+function wmMount(el, pins, opts = {}){
+  if(!el) return;
+  pins = pins.filter(Boolean);
+  el.classList.add('wm');
+  el.innerHTML = '<div class="wm-credit">Map: Natural Earth</div><div style="display:flex;align-items:center;justify-content:center;height:100%;color:#5b4426;font-family:Georgia,serif;font-style:italic">Drawing the map…</div>';
+  Promise.all([loadLands(), loadPlaces()]).then(() => wmDraw(el, pins, opts)).catch(() => { el.innerHTML = '<div style="padding:20px;text-align:center;color:#5b4426">Map unavailable offline until it has loaded once.</div>'; });
+}
+function wmDraw(el, pins, opts){
+  // Places sharing one site become one pin ("Pi-hahiroth & Baal-zephon")
+  const merged = [];
+  for(const p of pins){
+    const m = merged.find(q => Math.abs(q.ll[0]-p.ll[0]) < 0.01 && Math.abs(q.ll[1]-p.ll[1]) < 0.01);
+    if(m){ if(!m.ids.includes(p.id)){ m.ids.push(p.id); m.name += ' & ' + p.name; m.main = m.main || p.main; } }
+    else merged.push({...p, ids:[p.id]});
+  }
+  pins = merged;
+  const [bw, bs, be, bn] = S._lands.box;
+  const FULLW = (be - bw) * WM_K, MINW = 0.22;
+  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><g class="wm-base">${wmBaseSVG()}</g><g class="wm-lab"></g><g class="wm-dots"></g><g class="wm-pins"></g></svg>
+    <div class="wm-credit">Map: Natural Earth</div>
+    <div class="wm-ctl"><button aria-label="Zoom in">+</button><button aria-label="Zoom out">−</button><button aria-label="Fit" title="Back to the places">⌖</button>${opts.expand ? '<button aria-label="Full screen" title="Full screen">⤢</button>' : ''}</div>
+    <div class="wm-info"></div>`;
+  const svg = el.querySelector('svg'), gLab = el.querySelector('.wm-lab'), gDots = el.querySelector('.wm-dots'), gPins = el.querySelector('.wm-pins'), info = el.querySelector('.wm-info');
+  const V = {x:0, y:0, w:FULLW};
+  const size = () => [el.clientWidth || 300, el.clientHeight || 220];
+  // Start framed on the places, never closer than a region (~250 km across)
+  function fit(){
+    const [cw, ch] = size(), asp = ch / cw;
+    if(!pins.length){ V.w = FULLW; V.x = bw*WM_K; V.y = -bn + ((bn-bs) - FULLW*asp)/2; return; }
+    const xs = pins.map(p => p.ll[1]*WM_K), ys = pins.map(p => -p.ll[0]);
+    let x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    let w = Math.max(pins.length === 1 ? 1.5 : 2.4, (x1 - x0) * 1.5 + 0.6, ((y1 - y0) * 1.5 + 0.6) / asp);
+    w = Math.min(w, FULLW);
+    V.w = w; V.x = (x0 + x1) / 2 - w / 2; V.y = (y0 + y1) / 2 - w * asp / 2;
+  }
+  function clamp(){
+    const [cw, ch] = size(), asp = ch / cw;
+    V.w = Math.max(MINW, Math.min(FULLW, V.w));
+    const h = V.w * asp;
+    V.x = Math.max(bw*WM_K, Math.min(be*WM_K - V.w, V.x));
+    V.y = Math.max(-bn, Math.min(-bs - h, V.y));
+    if(h > bn - bs) V.y = -bn - (h - (bn - bs)) / 2;
+  }
+  let dotsTimer = null, pinBoxes = [];
+  function update(){
+    clamp();
+    const [cw, ch] = size(), asp = ch / cw, h = V.w * asp, u = V.w / cw; // map units per screen pixel
+    svg.setAttribute('viewBox', `${V.x} ${V.y} ${V.w} ${h}`);
+    const tr = (lon, lat) => `translate(${(lon*WM_K).toFixed(4)} ${(-lat).toFixed(4)}) scale(${u})`;
+    // Each label goes right, left, below or above its pin — wherever it clears the others
+    const boxes = pins.map(p => { const x = (p.ll[1]*WM_K - V.x)/u, y = (-p.ll[0] - V.y)/u; return p.sure ? [x-10, y-30, x+10, y] : [x-15, y-15, x+15, y+15]; });
+    const lay = pins.map((p, i) => {
+      const [x0, y0, x1, y1] = boxes[i], cy = p.sure ? y0 + 11 : (y0 + y1) / 2;
+      const w = Math.max(p.name.length * 8, p.today ? (p.today.length + 6) * 6.3 : 0), h = p.today ? 30 : 16;
+      const tries = [[x1+3, cy-11, 'start'], [x0-3-w, cy-11, 'end'], [(x0+x1)/2-w/2, y1+2, 'middle'], [(x0+x1)/2-w/2, y0-h-2, 'middle']];
+      for(const [lx, ly, a] of tries){
+        const r = [lx, ly, lx+w, ly+h];
+        if(!boxes.some(b => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1])){ boxes.push(r); return [lx, ly, a, w, (x0+x1)/2, p.sure ? y1 : cy]; }
+      }
+      return null; // no room: the name shows on tap
+    });
+    pinBoxes = boxes;
+    const lbl = (p, i) => {
+      const L = lay[i]; if(!L) return '';
+      const [lx, ly, a, w, px, py] = L, tx = (a === 'start' ? lx : a === 'end' ? lx + w : lx + w/2) - px, ty = ly - py;
+      return `<text x="${tx}" y="${ty + 13}" text-anchor="${a}" font-family="Georgia,serif" font-size="14" font-weight="bold" fill="#2e1f0a" stroke="#f4e8cc" stroke-width="3.5" paint-order="stroke">${escapeHtml(p.name)}</text>`
+        + (p.today ? `<text x="${tx}" y="${ty + 27}" text-anchor="${a}" font-family="Georgia,serif" font-size="11.5" font-style="italic" fill="#5b4426" stroke="#f4e8cc" stroke-width="3" paint-order="stroke">today ${escapeHtml(p.today)}</text>` : '');
+    };
+    gPins.innerHTML = pins.map((p, i) => `<g transform="${tr(p.ll[1], p.ll[0])}" data-i="${i}" style="cursor:pointer">`
+      + (p.sure ? `<path d="M0 0 C-3 -7 -10 -12 -10 -19 A10 10 0 1 1 10 -19 C10 -12 3 -7 0 0Z" fill="${p.main ? '#b8862f' : '#c9943a'}" stroke="#3d2b12" stroke-width="1.6"/><circle cy="-19" r="3.6" fill="#3d2b12"/>`
+                : `<circle r="15" fill="rgba(184,134,47,.22)" stroke="#6a4510" stroke-width="1.6" stroke-dasharray="4 3"/><circle r="3.5" fill="#6a4510"/>`)
+      + lbl(p, i) + '</g>').join('');
+    gLab.innerHTML = WM_LABELS.filter(l => V.w >= l[3] && V.w <= l[4]).map(([t, lat, lon, , , water]) =>
+      `<text transform="${tr(lon, lat)}" text-anchor="middle" font-family="Georgia,serif" font-size="${water ? 12 : 13}" ${water ? 'font-style="italic" fill="#4f6b74"' : 'letter-spacing="3" fill="rgba(91,68,38,.75)"'}>${escapeHtml(t)}</text>`).join('');
+    clearTimeout(dotsTimer); dotsTimer = setTimeout(drawDots, 120);
+  }
+  // Zoomed in: other Bible places in view as small dots (names when closer)
+  function drawDots(){
+    if(V.w > 4){ gDots.innerHTML = ''; return; }
+    const [cw, ch] = size(), h = V.w * ch / cw, u = V.w / cw, shown = new Set(pins.map(p => p.id));
+    const near = [], seen = new Set();
+    for(const [id, p] of Object.entries(S._places)){
+      if(!p.ll || shown.has(id) || seen.has(p.n)) continue;
+      if(pins.some(q => Math.abs(q.ll[0]-p.ll[0]) < 0.01 && Math.abs(q.ll[1]-p.ll[1]) < 0.01)) continue;
+      const x = p.ll[1]*WM_K, y = -p.ll[0];
+      if(x < V.x || x > V.x + V.w || y < V.y || y > V.y + h) continue;
+      seen.add(p.n); near.push([id, p, (p.v.match(/;/g) || []).length]);
+    }
+    near.sort((a, b) => b[2] - a[2]);
+    const labels = V.w < 1.8, taken = pinBoxes.slice();
+    const fits = p => { // a dot's name shows only where it clears the pins and other names
+      const x = (p.ll[1]*WM_K - V.x)/u, y = (-p.ll[0] - V.y)/u, r = [x+5, y-8, x+8+p.n.length*6, y+6];
+      if(taken.some(b => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1])) return false;
+      taken.push(r); return true;
+    };
+    gDots.innerHTML = near.slice(0, V.w > 1.8 ? 30 : V.w > 0.9 ? 70 : 140).map(([id, p], i) => `<g transform="translate(${(p.ll[1]*WM_K).toFixed(4)} ${(-p.ll[0]).toFixed(4)}) scale(${u})" data-d="${id}" style="cursor:pointer">
+      <circle r="9" fill="transparent"/><circle r="3.2" fill="#7a5520" stroke="#f4e8cc" stroke-width="1"/>
+      ${labels && i < 60 && fits(p) ? `<text x="6" y="4" font-family="Georgia,serif" font-size="11" fill="#5b4426" stroke="#f4e8cc" stroke-width="2.5" paint-order="stroke">${escapeHtml(p.n)}</text>` : ''}</g>`).join('');
+  }
+  function showInfo(id, ids){
+    if(ids && ids.length > 1){
+      info.innerHTML = `<span>📍 ${ids.map(k => `<b>${escapeHtml(S._places[k].n)}</b>`).join(' & ')}<br><span style="font-size:12.5px;color:#6b5434">Same suggested site</span></span>` + ids.map(k => `<button data-k="${k}">${escapeHtml(S._places[k].n)} ›</button>`).join('');
+      info.querySelectorAll('button').forEach((b, j) => { b.style.marginLeft = j ? '0' : 'auto'; b.onclick = e => { e.stopPropagation(); wmOpenPlace(b.dataset.k); }; });
+      info.classList.add('on'); return;
+    }
+    const p = S._places[id];
+    if(!p){ info.classList.remove('on'); return; }
+    const today = wmToday(p) ? ` · today ${escapeHtml(p.s)}` : p.s && p.t !== 'region' && p.s.toLowerCase() !== p.n.toLowerCase() ? ` · ${escapeHtml(p.s)}` : '';
+    info.innerHTML = `<span>📍 <b>${escapeHtml(p.n)}</b>${today}<br><span style="font-size:12.5px;color:#6b5434">${escapeHtml(placeType(p.t))} · ${placeConfidence(p.c)[0]}</span></span><button>Open ›</button>`;
+    info.querySelector('button').onclick = e => { e.stopPropagation(); wmOpenPlace(id); };
+    info.classList.add('on');
+  }
+  function zoomAt(f, sx, sy){ // f < 1 zooms in; (sx, sy) screen point to keep fixed
+    const [cw, ch] = size(), u = V.w / cw;
+    const mx = V.x + sx * u, my = V.y + sy * u;
+    const nw = Math.max(MINW, Math.min(FULLW, V.w * f)), nu = nw / cw;
+    V.x = mx - sx * nu; V.y = my - sy * nu; V.w = nw; update();
+  }
+  // Drag, pinch, wheel
+  const ptrs = new Map(); let moved = false, start = null, pinch = null;
+  const local = e => { const r = svg.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  svg.addEventListener('pointerdown', e => { svg.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, local(e)); moved = false; start = local(e); if(ptrs.size === 2){ const [a, b] = [...ptrs.values()]; pinch = {d: Math.hypot(a[0]-b[0], a[1]-b[1]), w: V.w}; } });
+  svg.addEventListener('pointermove', e => {
+    if(!ptrs.has(e.pointerId)) return;
+    const prev = ptrs.get(e.pointerId), cur = local(e); ptrs.set(e.pointerId, cur);
+    if(ptrs.size === 1){
+      if(Math.hypot(cur[0]-start[0], cur[1]-start[1]) > 4) moved = true;
+      const u = V.w / size()[0]; V.x -= (cur[0]-prev[0]) * u; V.y -= (cur[1]-prev[1]) * u; update();
+    } else if(ptrs.size === 2 && pinch){
+      moved = true;
+      const [a, b] = [...ptrs.values()], d = Math.hypot(a[0]-b[0], a[1]-b[1]);
+      zoomAt((pinch.w * pinch.d / d) / V.w, (a[0]+b[0])/2, (a[1]+b[1])/2);
+    }
+  });
+  const end = e => {
+    ptrs.delete(e.pointerId); if(ptrs.size < 2) pinch = null;
+    if(!moved && e.type === 'pointerup'){
+      const t = document.elementFromPoint(e.clientX, e.clientY);
+      const pin = t && t.closest('[data-i]'), dot = t && t.closest('[data-d]');
+      if(pin && el.contains(pin)){ const q = pins[+pin.dataset.i]; showInfo(q.id, q.ids); }
+      else if(dot && el.contains(dot)) showInfo(dot.dataset.d);
+      else info.classList.remove('on');
+    }
+  };
+  svg.addEventListener('pointerup', end); svg.addEventListener('pointercancel', end);
+  svg.addEventListener('wheel', e => { e.preventDefault(); const [x, y] = local(e); zoomAt(e.deltaY > 0 ? 1.25 : 0.8, x, y); }, {passive:false});
+  const [bIn, bOut, bFit, bBig] = el.querySelectorAll('.wm-ctl button');
+  const mid = () => { const [cw, ch] = size(); return [cw/2, ch/2]; };
+  bIn.onclick = e => { e.stopPropagation(); zoomAt(0.6, ...mid()); };
+  bOut.onclick = e => { e.stopPropagation(); zoomAt(1.6, ...mid()); };
+  bFit.onclick = e => { e.stopPropagation(); fit(); update(); };
+  if(bBig) bBig.onclick = e => { e.stopPropagation(); opts.expand(); };
+  fit(); update();
+  if(pins.length === 1 && el.clientHeight > 320) showInfo(pins[0].id, pins[0].ids);
+  el._wmFocus = id => { const p = pins.find(q => q.ids.includes(id)); if(!p) return; const [cw, ch] = size(); V.w = Math.min(V.w, 2.4); V.x = p.ll[1]*WM_K - V.w/2; V.y = -p.ll[0] - V.w*ch/cw/2; update(); showInfo(p.id, p.ids); };
+  if(window.ResizeObserver){ const ro = new ResizeObserver(() => update()); ro.observe(el); }
+}
+// Leaving a map (overlay or verse card) for a place page
+function wmOpenPlace(id){
+  const ov = document.getElementById('wm-overlay');
+  if(ov.classList.contains('on')) leavePopoverThen('wm-overlay', () => leaveVPopThen(() => openPlace(id)));
+  else leaveVPopThen(() => openPlace(id));
+}
+// The full-screen map
+function openWhereMap(title, sub, pins){
+  pins = pins.filter(Boolean);
+  document.getElementById('wm-title').textContent = title;
+  document.getElementById('wm-sub').textContent = sub || '';
+  const list = document.getElementById('wm-list');
+  list.innerHTML = pins.length > 1 ? pins.map(p => `<button class="vl-chip" onclick="document.getElementById('wm-map')._wmFocus('${p.id}')">📍 ${escapeHtml(p.name)}</button>`).join('') : '';
+  openPopover('wm-overlay');
+  requestAnimationFrame(() => wmMount(document.getElementById('wm-map'), pins));
+}
+// Reader: the places named in this chapter
+function chapterPlaces(){
+  if(!S._placesByVerse || !S.bookData) return [];
+  const ch = S.bookData.chapters[S.ch], ids = [], seen = new Set();
+  for(const v of ch.verses) for(const id of placesInVerse(`${S.book} ${S.ch+1}:${v.verse}`)){
+    const p = S._places[id];
+    if(p && p.ll && !seen.has(p.n)){ seen.add(p.n); ids.push(id); }
+  }
+  return ids;
+}
+function updateChapterWhereButton(){
+  const btn = document.getElementById('ch-where-btn');
+  if(!btn) return;
+  const show = () => { const n = chapterPlaces().length; btn.style.display = n ? 'inline-block' : 'none'; btn.textContent = `📍 Where · ${n} place${n !== 1 ? 's' : ''}`; };
+  if(S._placesByVerse) show(); else { btn.style.display = 'none'; loadPlaces().then(show).catch(() => {}); }
+}
+function openChapterMap(){
+  const ids = chapterPlaces();
+  openWhereMap(`Places in ${S.book} ${S.ch + 1}`, `${ids.length} place${ids.length !== 1 ? 's' : ''} named in this chapter · tap a pin for details`, ids.map(id => wmPin(id)));
+}
+// Verse card: the verse's places on a small map, shown on request
+function vpopShowMap(btn){
+  const box = document.getElementById('vpop-map');
+  if(!box) return;
+  if(box.childElementCount){ box.innerHTML = ''; box.className = ''; btn.textContent = '🗺️ Show on map'; return; }
+  btn.textContent = '🗺️ Hide map';
+  box.className = 'wm wm-inline';
+  const pins = placesInVerse(S.popRef).map(id => wmPin(id)).filter(Boolean)
+    .filter((p, i, a) => a.findIndex(q => q.name === p.name) === i);
+  wmMount(box, pins, {expand: () => openWhereMap(S.popRef, 'Places in this verse', pins)});
 }
 
 /* ════ MAPS FROM THE READER ════
@@ -10927,7 +11209,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v38';
+const WHATS_NEW_VERSION = 'v39';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -11481,6 +11763,15 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v39" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📍</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Where Is This Taking Place?</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          A parchment map of the Bible lands, drawn right in the app and working offline. Tap <strong>📍 Where</strong> under a chapter title to see every place in the chapter pinned &mdash; the Bible name with today&rsquo;s name. Pinch or scroll to zoom from the whole region down to the towns nearby, and drag to look around. The map is also in the verse card (<strong>🗺️ Show on map</strong>) and on every place page.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v38" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">⚔️</div>
       <div>
