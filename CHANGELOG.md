@@ -18,7 +18,7 @@
 - **Search → Maps is now a map explorer**: the parchment map of the Bible lands with every place that has a suggested site, opening on the land of Israel. Zoomed out, the most-named places show; zoom in and more appear, with names wherever they fit (Jerusalem, Samaria, Tyre… in bold first; regions are hollow rings, since the atlas names already label them)
 - **Find a place**: type in the box ("beth") for the best matches — exact names first, then the most-named (Bethel, Bethlehem, Bethany…)
 - **What happened here**: tap a place for its card — today's name, kind, how sure the site is, verse count — and its chapters grouped by part of the Bible (Creation & the patriarchs, The Exodus & the wilderness, The conquest & the judges, The kings, Exile & return, Poetry & wisdom, The prophets, The Gospels, The early church, The letters & Revelation). Open a group for the verses themselves (ten at a time, "Show all"); **Place page ›** opens the full place page, and Back returns to the map as you left it
-- **Classic maps** — the nine 19th-century atlas plates — now sit below the explorer as "📜 Classic maps"
+- **Classic maps** — the ten 19th-century atlas plates — now sit below the explorer as "📜 Classic maps"
 - **Reader**: the 📍 Where button takes the place of the classic-map button; when a classic plate covers the chapter, the live map shows "📜 Classic map: … ›" under its title. Chapters with a plate but no mapped places still show the plate's button
 - Map labels no longer pile up: atlas names step aside for pins, and town names avoid both
 
@@ -296,6 +296,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Clean-up (v41.01)** — red letter is gone for good: anyone who had turned it on before the button was removed still saw some chapters in orange with no way to turn it off; that code is removed (and no longer synced). Also removed code nothing used any more — the old word pop-up, an old backup/import pair, an unused theme toggle and a handful of leftover helpers and styles (about 170 lines). The help text says 96 timeline events; the changelog counts ten classic maps
 - **Full verse on the verse card (v38.02)** — long verses were cut off in a 120px box with its own scrollbar (e.g. Genesis 12:8, Psalm 44:22); the whole verse now shows, and the card itself scrolls when it is taller than the screen
 - **Sword Drill polish (v38.01)** — a 💡 hint in Full Recall now shows its letters inside the blank, on the line, instead of under a strike-through underline; inside a verse the top-left button reads “‹ Verses” and the ✕ Close (which left the game for Home) is hidden until you're back on the verse list
 - **What's New wording (v36.01)** — the v34 *Follow the Thread* item no longer mentions the swipeable tab row that v36 replaced with the Search hub
