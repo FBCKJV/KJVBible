@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 📽 Classroom Present & Resizable Panels (v44)
+- **📽 Classroom preset** in Present mode: one verse at a time, never smaller than a back row can read (6.5% of the screen height); a verse too long for that runs onto a second screen ("Esther 8:9 (1 of 2)") instead of shrinking — the arrows and clicker step through the screens, and going back lands on a long verse's last screen
+- **Projector themes**: the ◐ button now cycles Dark, Light, **High contrast** (white on black, heavier type, yellow reference) and **High contrast light** (black on white)
+- **🖱 Clicker only**: hides the buttons entirely — step with a clicker, keyboard or tap; touch or move near the bottom edge to bring them back
+- **Present settings travel with the restore code** (text size, verses per screen, theme, Classroom, Clicker only — `kjv_pres` is now synced)
+- **Resizable panels on wide screens**: drag the edge of the verse card, Study Notebook, Where map or a journey's stop column to make it wider or narrower; double-tap the edge to reset. The chapter always keeps at least 480px. Widths are remembered per device (`kjv_panes`, deliberately not synced — a width for a big monitor would not suit a tablet)
+- Phones are unchanged
+
 ### 🖥️ Tablets and Big Screens (v43)
 - **Side by side on wide screens** (1100px and wider — an iPad in landscape, a laptop, a classroom panel): the **verse card** opens as a panel on the right with the chapter still readable on the left (tap another verse and the card changes); **📍 Where** maps open on the right half; the **Study Notebook** opens on the right with the chapter beside it — and a verse card then rises over the chapter, so the notebook stays in view
 - **Journeys**: the map on the left, the stop card in a column on the right
