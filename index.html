@@ -275,7 +275,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 /* Where is this? — parchment map of the Bible lands (same in every theme) */
 .wm{position:relative;border:1px solid #8a6d3b;border-radius:12px;overflow:hidden;background:#cdd6c8;touch-action:none;user-select:none;-webkit-user-select:none}
 .wm svg{display:block;width:100%;height:100%;cursor:grab}
-.wm-base path{vector-effect:non-scaling-stroke}
+.wm-base path,.wm-route path{vector-effect:non-scaling-stroke}
 .wm svg:active{cursor:grabbing}
 .wm::after{content:'';position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 40px rgba(90,60,20,.35);border-radius:12px}
 .wm-ctl{position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:5px;z-index:2}
@@ -296,6 +296,29 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #wm-map{flex:1;min-height:0}
 #wm-list{max-height:28vh;overflow-y:auto}
 .wm-show{margin:2px 0 8px}
+/* Journeys */
+#wm-overlay.jr #wm-list{max-height:46vh;display:block;padding-top:8px}
+.jr-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 13px}
+.jr-top{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-m);font-family:'Inter',sans-serif}
+.jr-top button{margin-left:auto;background:none;border:1px solid var(--border);color:var(--gold-l);border-radius:14px;padding:3px 9px;font-size:12px;cursor:pointer}
+.jr-place{font-family:'IM Fell English',serif;font-size:20px;color:var(--gold);margin:4px 0 0}
+.jr-place span{font-family:'Crimson Pro',serif;font-size:14px;color:var(--text-m);font-style:italic}
+.jr-d{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);margin:2px 0 6px}
+.jr-v{font-family:'Crimson Pro',serif;font-size:15px;line-height:1.5;color:var(--text);border-left:3px solid var(--gold);padding:2px 0 2px 10px;margin:4px 0}
+.jr-v b{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;display:block}
+.jr-site{font-size:12.5px;color:var(--text-m);font-style:italic;margin:4px 0}
+.jr-nav{display:flex;gap:8px;margin-top:9px}
+.jr-nav button{flex:1;padding:9px 6px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13.5px;cursor:pointer;font-family:'Inter',sans-serif}
+.jr-nav button.go{background:var(--gold);color:#1a1206;border-color:var(--gold);font-weight:600}
+.jr-nav button:disabled{opacity:.35}
+.jr-list{display:grid;gap:8px}
+.jr-item{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;cursor:pointer;text-align:left;color:var(--text);width:100%}
+.jr-item b{font-family:'IM Fell English',serif;font-weight:normal;font-size:16px;color:var(--gold)}
+.jr-item small{display:block;font-size:11.5px;color:var(--text-m);font-family:'Inter',sans-serif;margin-top:1px}
+.jr-item i{margin-left:auto;font-style:normal;color:var(--text-m)}
+.jr-sub{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin:12px 0 6px;font-weight:600}
+.tl-btns{display:inline-flex;gap:4px;float:right;margin-left:4px}
+.tl-btns button{background:none;border:1px solid var(--border);border-radius:12px;padding:1px 7px;font-size:12px;cursor:pointer;color:var(--text-m)}
 /* Hymns */
 .hy-sec{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);padding:14px 2px 4px;border-bottom:1px solid var(--border)}
 .hy-row{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:10px 2px;cursor:pointer;color:var(--text);font-family:'Crimson Pro',serif}
@@ -1566,7 +1589,7 @@ body.light #home-watermark{
           color:var(--gold);font-size:13px;padding:2px 10px;cursor:pointer;
           display:none;transition:all .2s" title="Listen to this chapter">🔊</button>
       </div>
-      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button> <button id="ch-where-btn" class="ch-map" style="display:none" onclick="openChapterMap()">📍 Where</button></div>
+      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button> <button id="ch-where-btn" class="ch-map" style="display:none" onclick="openChapterMap()">📍 Where</button> <span id="ch-jr"></span></div>
       <div id="verses"></div>
     </div>
   
@@ -1705,6 +1728,9 @@ body.light #home-watermark{
         <div id="mx-sugg" class="wm-chips"></div>
         <div id="mx-map" class="wm"></div>
         <div id="mx-here"></div>
+        <div class="mx-h">🧭 Journeys</div>
+        <div style="font-size:12px;color:var(--text-m);margin-bottom:6px;font-style:italic">Follow a journey stop by stop — each stop is a verse that names the place, with its date on the timeline. Dashed lines mark sites that are uncertain.</div>
+        <div id="jr-list"></div>
         <div class="mx-h">📜 Classic maps</div>
         <div style="font-size:12px;color:var(--text-m);margin-bottom:12px;font-style:italic">
           Public-domain Bible maps from a 19th-century atlas. Tap a map to open it full-screen — pinch or use +/− to zoom.
@@ -2853,6 +2879,7 @@ function renderReader(){
   updateChapterMapButton();
   updateChapterTimeButton();
   updateChapterWhereButton();
+  updateChapterJourneyButtons();
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
   recordHistory(S.book, S.ch);
 
@@ -5988,7 +6015,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
         ${fromJer ? `<div class="pl-dist">About ${fmtMiles(fromJer.miles)} ${fromJer.dir} of Jerusalem</div>` : ''}
         <div class="pl-coords"><span>${p.ll[0].toFixed(4)}°N, ${p.ll[1].toFixed(4)}°E</span> · <a href="${osm}" target="_blank" rel="noopener">Open in a map ↗</a></div>
       </div>
-      <div class="wm wm-embed" id="pl-map"></div>` : `<div class="pl-site"><div class="pl-site-name">Location unknown</div><div class="pl-why">Scholars have not identified where this place was.</div></div>`}
+ <div class="wm wm-embed" id="pl-map"></div><div id="pl-jr"></div>` : `<div class="pl-site"><div class="pl-site-name">Location unknown</div><div class="pl-why">Scholars have not identified where this place was.</div></div>`}
     ${p.o ? `<div class="pp-h">Other suggested sites</div>${p.o.map(([s, c, la, lo]) => {
       const [cl] = placeConfidence(c);
       return `<div class="pl-alt"><span>${escapeHtml(s)}</span><span class="pl-conf pl-${placeConfidence(c)[2]}">${cl}</span>${p.ll ? `<span class="pl-alt-d">${fmtMiles(placeDistance(p.ll, [la, lo]).miles)} away</span>` : ''}</div>`; }).join('')}` : ''}
@@ -6002,6 +6029,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
     <button class="nv-showmore pp-find" onclick="placeSearch('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔍 Find every “${escapeHtml(p.n)}” in Scripture</button>
     <div class="nv-credit">Locations from the OpenBible.info Bible Geocoding Data (CC BY 4.0), which draws on over seventy atlases and reference works. Distances are straight-line. Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain).</div>`;
   S._placeOpen = S._placeOpen || {};
+  journeysAt(id).then(list => { const b = document.getElementById('pl-jr'); if(b && list.length) b.innerHTML = `<div class="wm-chips" style="padding:2px 0 6px">${list.map(([j, i]) => `<button class="vl-chip" onclick="openJourney('${j.id}', ${i})">🧭 ${escapeHtml(j.t)} · stop ${i + 1}</button>`).join('')}</div>`; });
   if(p.ll) wmMount(document.getElementById('pl-map'), [wmPin(id, true)], {expand: () => openWhereMap(p.n, placeType(p.t), [wmPin(id, true)])});
   if(!(id in S._placeOpen)) S._placeOpen[id] = openVerses;
   if(S._placeOpen[id]) await fillPlaceVerses();
@@ -6240,7 +6268,7 @@ async function fillTreasuryLine(i, limit=12){
    Creation to the Revelation, by era, with Ussher's dates. Built into
    timeline.json by tools/build-timeline.js from tools/timeline/events.js.
    Event: [year (negative = B.C.), title, book, firstCh, lastCh, keyRef, keyText] */
-const TIMELINE_VERSION = '2026-10-03'; // bump whenever tools/build-timeline.js is re-run
+const TIMELINE_VERSION = '2026-10-04'; // bump whenever tools/build-timeline.js is re-run
 function loadTimeline(){
   return loadCachedJSON(`timeline.json?v=${TIMELINE_VERSION}`).then(d => S._timeline = d);
 }
@@ -6250,13 +6278,14 @@ async function renderTimeline(){
   const list = document.getElementById('timeline-list');
   if(list.dataset.done) return;
   const T = await loadTimeline().catch(() => null);
+  await loadJourneys().catch(() => null);
   if(!T){ list.innerHTML = '<div id="s-status">Timeline unavailable — check your connection.</div>'; return; }
   list.innerHTML = T.eras.map((era, ei) => `<div class="tl-era">${escapeHtml(era.n)}</div>` + era.e.map((e, i) => {
     const [y, t, b, c1, c2, key, txt] = e;
     const where = key + (c2 > c1 ? ` · ${b} ${c1}–${c2}` : '');
     return `<div class="tl-ev" id="tl-${ei}-${i}" tabindex="0" onclick="jumpToRef('${key.replace(/'/g, "\\'")}')">
       <div class="tl-yr">${tlYear(y)}</div>
-      <div class="tl-main"><button class="tl-nb" onclick="event.stopPropagation();nbAddEvent(${ei},${i})" title="Add to study">📝＋</button><div class="tl-t">${escapeHtml(t)}</div><div class="tl-q">“${escapeHtml(txt)}”</div><div class="tl-r">${escapeHtml(where)}</div></div>
+      <div class="tl-main"><button class="tl-nb" onclick="event.stopPropagation();nbAddEvent(${ei},${i})" title="Add to study">📝＋</button><span class="tl-btns">${tlJourney(`tl-${ei}-${i}`)}<button onclick="event.stopPropagation();tlMap(${ei},${i})" title="The places on the map" aria-label="Map">📍</button></span><div class="tl-t">${escapeHtml(t)}</div><div class="tl-q">“${escapeHtml(txt)}”</div><div class="tl-r">${escapeHtml(where)}</div></div>
     </div>`;
   }).join('')).join('');
   list.dataset.done = '1';
@@ -6816,11 +6845,11 @@ function wmDraw(el, pins, opts){
   pins = mergePins(pins);
   const [bw, bs, be, bn] = S._lands.box;
   const FULLW = (be - bw) * WM_K, MINW = 0.22;
-  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><g class="wm-base">${wmBaseSVG()}</g><g class="wm-lab"></g><g class="wm-dots"></g><g class="wm-pins"></g></svg>
+  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><g class="wm-base">${wmBaseSVG()}</g><g class="wm-lab"></g><g class="wm-route"></g><g class="wm-dots"></g><g class="wm-stops"></g><g class="wm-pins"></g></svg>
     <div class="wm-credit">Map: Natural Earth</div>
     <div class="wm-ctl"><button aria-label="Zoom in">+</button><button aria-label="Zoom out">−</button><button aria-label="Fit" title="Back to the places">⌖</button>${opts.expand ? '<button aria-label="Full screen" title="Full screen">⤢</button>' : ''}</div>
     <div class="wm-info"></div>`;
-  const svg = el.querySelector('svg'), gLab = el.querySelector('.wm-lab'), gDots = el.querySelector('.wm-dots'), gPins = el.querySelector('.wm-pins'), info = el.querySelector('.wm-info');
+  const svg = el.querySelector('svg'), gRoute = el.querySelector('.wm-route'), gStops = el.querySelector('.wm-stops'), gLab = el.querySelector('.wm-lab'), gDots = el.querySelector('.wm-dots'), gPins = el.querySelector('.wm-pins'), info = el.querySelector('.wm-info');
   const V = {x:0, y:0, w:FULLW};
   const size = () => [el.clientWidth || 300, el.clientHeight || 220];
   // Start framed on the places, never closer than a region (~250 km across)
@@ -6828,9 +6857,11 @@ function wmDraw(el, pins, opts){
     const [cw, ch] = size(), asp = ch / cw;
     if(!pins.length && opts.start){ const [cw2, ch2] = size(); V.w = opts.start.w; V.x = opts.start.ll[1]*WM_K - V.w/2; V.y = -opts.start.ll[0] - V.w*ch2/cw2/2; return; }
     if(!pins.length){ V.w = FULLW; V.x = bw*WM_K; V.y = -bn + ((bn-bs) - FULLW*asp)/2; return; }
-    const xs = pins.map(p => p.ll[1]*WM_K), ys = pins.map(p => -p.ll[0]);
+    const pts = opts.route ? opts.route.j.s.flatMap(s => s.alts ? s.alts.map(a => a[1]) : s.to ? [s.ll, s.to] : [s.ll]) : pins.map(p => p.ll);
+    const xs = pts.map(ll => ll[1]*WM_K), ys = pts.map(ll => -ll[0]);
     let x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
-    let w = Math.max(pins.length === 1 ? 1.5 : 2.4, (x1 - x0) * 1.5 + 0.6, ((y1 - y0) * 1.5 + 0.6) / asp);
+    const pad = opts.route ? 1.2 : 1.5;
+    let w = Math.max(pins.length === 1 && !opts.route ? 1.5 : 2.4, (x1 - x0) * pad + 0.6, ((y1 - y0) * pad + 0.6) / asp);
     w = Math.min(w, FULLW);
     V.w = w; V.x = (x0 + x1) / 2 - w / 2; V.y = (y0 + y1) / 2 - w * asp / 2;
   }
@@ -6877,11 +6908,48 @@ function wmDraw(el, pins, opts){
     labBoxes = labs.map(([t, lat, lon]) => { const x = (lon*WM_K - V.x)/u, y = (-lat - V.y)/u, hw = t.length * 5.5; return [x - hw, y - 12, x + hw, y + 4]; });
     gLab.innerHTML = labs.map(([t, lat, lon, , , water]) =>
       `<text transform="${tr(lon, lat)}" text-anchor="middle" font-family="Georgia,serif" font-size="${water ? 12 : 13}" ${water ? 'font-style="italic" fill="#4f6b74"' : 'letter-spacing="3" fill="rgba(91,68,38,.75)"'}>${escapeHtml(t)}</text>`).join('');
+    if(opts.route) drawStops(u, boxes);
     clearTimeout(dotsTimer); dotsTimer = setTimeout(drawDots, 120);
+  }
+  // Journeys: the route in map units (drawn once per stop), the numbered stops at screen size
+  function drawRoute(){
+    const {j, cur} = opts.route, S2 = j.s, P = ll => `${(ll[1]*WM_K).toFixed(4)} ${(-ll[0]).toFixed(4)}`;
+    let d = '', from = S2[0].alts ? null : S2[0].ll;
+    for(let i = 1; i < S2.length; i++){
+      const st = S2[i], prev = S2[i-1], done = i <= cur, dash = st.u || prev.u;
+      const style = `stroke="${done ? '#8b2e16' : 'rgba(139,46,22,.38)'}" stroke-width="${done ? 3 : 2}"${dash ? ' stroke-dasharray="7 5"' : ''}`;
+      if(st.alts){ // several suggested sites: a dotted line to each, the route goes on from the stop before
+        for(const a of st.alts) d += `<path d="M${P(from)}L${P(a[1])}" fill="none" ${style} stroke-dasharray="2 5" stroke-linecap="round"/>`;
+        continue;
+      }
+      d += `<path d="M${P(from)}${(st.via || []).map(v => 'L' + P(v)).join('')}L${P(st.ll)}" fill="none" ${style} stroke-linejoin="round" stroke-linecap="round"/>`;
+      from = st.ll;
+    }
+    for(const st of S2) if(st.to) d += `<path d="M${P(st.ll)}L${P(st.to)}" fill="none" stroke="rgba(139,46,22,.55)" stroke-width="2" stroke-dasharray="2 5" stroke-linecap="round"/>`;
+    gRoute.innerHTML = d;
+  }
+  function drawStops(u, boxes){
+    const {j, cur} = opts.route, groups = [];
+    j.s.forEach((st, i) => (st.alts ? st.alts.map(a => a[1]) : [st.ll]).forEach(ll => {
+      const g = groups.find(q => Math.abs(q.ll[0]-ll[0]) < 0.01 && Math.abs(q.ll[1]-ll[1]) < 0.01);
+      if(g) g.ix.push(i); else groups.push({ll, ix:[i]});
+    }));
+    const taken = boxes.slice(), hit = r => taken.some(b => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]);
+    const tr = ll => `translate(${(ll[1]*WM_K).toFixed(4)} ${(-ll[0]).toFixed(4)}) scale(${u})`;
+    gStops.innerHTML = groups.filter(g => !g.ix.includes(cur)).map(g => {
+      const nums = g.ix.map(i => i + 1).join('·'), seen = g.ix.some(i => i < cur), r = Math.max(8, 4 + nums.length * 3.2);
+      const name = j.s[g.ix[0]].n, x = (g.ll[1]*WM_K - V.x)/u, y = (-g.ll[0] - V.y)/u, box = [x + r + 2, y - 8, x + r + 6 + name.length * 6.3, y + 6];
+      const lab = !hit(box) && (taken.push(box), true);
+      const pick = g.ix.find(i => i > cur) ?? g.ix[0];
+      return `<g transform="${tr(g.ll)}" data-s="${pick}" style="cursor:pointer"><circle r="${r + 4}" fill="transparent"/>`
+        + `<rect x="${-r}" y="-8" width="${2*r}" height="16" rx="8" fill="${seen ? '#8b2e16' : '#f4e8cc'}" stroke="#8b2e16" stroke-width="1.5"/>`
+        + `<text y="4" text-anchor="middle" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="${seen ? '#f4e8cc' : '#8b2e16'}">${nums}</text>`
+        + (lab ? `<text x="${r + 4}" y="4" font-family="Georgia,serif" font-size="11.5" fill="#3d2b12" stroke="#f4e8cc" stroke-width="2.5" paint-order="stroke">${escapeHtml(name)}</text>` : '') + '</g>';
+    }).join('') + j.s.filter(st => st.to).map(st => `<text transform="${tr(st.to)}" text-anchor="middle" y="-6" font-family="Georgia,serif" font-style="italic" font-size="11.5" fill="#8b2e16" stroke="#f4e8cc" stroke-width="2.5" paint-order="stroke">← ${escapeHtml(st.to[2])}</text>`).join('');
   }
   // Zoomed in: other Bible places in view as small dots (names when closer)
   function drawDots(){
-    if(V.w > 4 && !opts.explore){ gDots.innerHTML = ''; return; }
+    if((V.w > 4 && !opts.explore) || (opts.route && V.w > 1.6)){ gDots.innerHTML = ''; return; }
     const [cw, ch] = size(), h = V.w * ch / cw, u = V.w / cw, shown = new Set(pins.map(p => p.id));
     const near = [], seen = new Set();
     for(const [id, p] of Object.entries(S._places)){
@@ -6945,8 +7013,9 @@ function wmDraw(el, pins, opts){
     ptrs.delete(e.pointerId); if(ptrs.size < 2) pinch = null;
     if(!moved && e.type === 'pointerup'){
       const t = document.elementFromPoint(e.clientX, e.clientY);
-      const pin = t && t.closest('[data-i]'), dot = t && t.closest('[data-d]');
-      if(pin && el.contains(pin)){ const q = pins[+pin.dataset.i]; opts.onSelect ? opts.onSelect(q.id) : showInfo(q.id, q.ids); }
+      const pin = t && t.closest('[data-i]'), dot = t && t.closest('[data-d]'), stop = t && t.closest('[data-s]');
+      if(stop && el.contains(stop)) opts.route.onStop(+stop.dataset.s);
+      else if(pin && el.contains(pin)){ const q = pins[+pin.dataset.i]; opts.onSelect ? opts.onSelect(q.id) : showInfo(q.id, q.ids); }
       else if(dot && el.contains(dot)) opts.onSelect ? opts.onSelect(dot.dataset.d) : showInfo(dot.dataset.d);
       else info.classList.remove('on');
     }
@@ -6959,8 +7028,19 @@ function wmDraw(el, pins, opts){
   bOut.onclick = e => { e.stopPropagation(); zoomAt(1.6, ...mid()); };
   bFit.onclick = e => { e.stopPropagation(); fit(); update(); };
   if(bBig) bBig.onclick = e => { e.stopPropagation(); opts.expand(); };
+  if(opts.route) drawRoute();
   fit(); update();
-  if(pins.length === 1 && el.clientHeight > 320) showInfo(pins[0].id, pins[0].ids);
+  // Journeys: move to stop i — redraw the route to there, keep the stop in view
+  el._wmStop = i => {
+    opts.route.cur = i; pins = mergePins(wmStopPins(opts.route.j.s[i])); drawRoute();
+    const [cw, ch] = size(), h = V.w * ch / cw, m = V.w * 0.12;
+    for(const p of pins){
+      const x = p.ll[1]*WM_K, y = -p.ll[0];
+      if(x < V.x + m || x > V.x + V.w - m || y < V.y + m*1.5 || y > V.y + h - m){ V.x = x - V.w/2; V.y = y - h/2; break; }
+    }
+    update();
+  };
+  if(pins.length === 1 && el.clientHeight > 320 && !opts.route) showInfo(pins[0].id, pins[0].ids);
   el._wmFocus = id => { const p = pins.find(q => q.ids.includes(id)); if(!p) return; const [cw, ch] = size(); V.w = Math.min(V.w, 2.4); V.x = p.ll[1]*WM_K - V.w/2; V.y = -p.ll[0] - V.w*ch/cw/2; update(); showInfo(p.id, p.ids); };
   // Explorer: make one place the pin and bring it into view
   el._wmSelect = id => {
@@ -6980,6 +7060,7 @@ function wmOpenPlace(id){
 // The full-screen map
 function openWhereMap(title, sub, pins, classic=-1){
   pins = pins.filter(Boolean);
+  document.getElementById('wm-overlay').classList.remove('jr');
   document.getElementById('wm-title').textContent = title;
   document.getElementById('wm-sub').innerHTML = escapeHtml(sub || '') + (classic >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openMap(${classic}))">📜 Classic map: ${escapeHtml(MAPS[classic].t)} ›</button>` : '');
   const list = document.getElementById('wm-list');
@@ -7008,6 +7089,8 @@ function updateChapterWhereButton(){
 function openChapterMap(){
   const ids = chapterPlaces();
   openWhereMap(`Places in ${S.book} ${S.ch + 1}`, `${ids.length} place${ids.length !== 1 ? 's' : ''} named in this chapter · tap a pin for details`, ids.map(id => wmPin(id)), chapterMap(S.book, S.ch + 1));
+  const jr = chapterJourneys();
+  if(jr.length) document.getElementById('wm-sub').insertAdjacentHTML('beforeend', jr.map(([j, i]) => ` <button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openJourney('${j.id}', ${i}))">🧭 ${escapeHtml(j.t)} ›</button>`).join(''));
 }
 // Verse card: the verse's places on a small map, shown on request
 function vpopShowMap(btn){
@@ -7073,8 +7156,10 @@ function mxHere(id){
     <div class="mx-m">${today}${escapeHtml(placeType(p.t))} · site ${placeConfidence(p.c)[0].toLowerCase()} · named in ${n} verse${n !== 1 ? 's' : ''}</div>
     <div class="mx-wh">What happened here</div>
     ${eras.map(([t, rs], i) => `<div class="mx-era" data-r="${rs.join(';')}"><button onclick="mxEra(this.parentNode)" aria-expanded="false"><i>›</i><b>${t}</b><span style="color:var(--text-m);font-size:13px">${escapeHtml(mxBooks(rs))}</span><span class="mx-c">${rs.length} ch.</span></button><div class="mx-body"></div></div>`).join('')}
+    <div class="mx-jr"></div>
     <button class="vl-chip" style="margin-top:8px" onclick="openPlace('${id}')">Place page ›</button>
   </div>`;
+  journeysAt(id).then(list => { const b = box.querySelector('.mx-jr'); if(b && list.length) b.innerHTML = `<div class="mx-wh" style="margin-top:10px">On these journeys</div><div class="wm-chips" style="padding-top:4px">${list.map(([j, i]) => `<button class="vl-chip" onclick="openJourney('${j.id}', ${i})">🧭 ${escapeHtml(j.t)} · stop ${i + 1}</button>`).join('')}</div>`; });
   if(eras.length === 1) mxEra(box.querySelector('.mx-era'));
 }
 const mxBooks = rs => { const b = [...new Set(rs.map(r => BOOKS[+r.split('.')[0]]))]; return b.length > 3 ? `${b.slice(0, 3).join(', ')} +${b.length - 3}` : b.join(', '); };
@@ -7086,6 +7171,110 @@ async function mxEra(div, limit=10){
   body.innerHTML = '<div style="padding:6px 0;color:var(--text-m);font-size:13px">Loading verses…</div>';
   const rs = div.dataset.r, total = rs.split(';').length;
   body.innerHTML = await refCardsHTML(rs, limit) + (total > limit ? `<button class="nv-showmore" onclick="mxEra(this.closest('.mx-era'), ${total})">Show all ${total} chapters</button>` : '');
+}
+
+/* ════ JOURNEYS ════
+   Eighteen journeys, from Abraham to Paul's voyage to Rome, each a list of
+   stops that are verses naming the place (journeys.json, built by
+   tools/journeys/build.py from the approved stop list). The route draws on
+   stop by stop; dashed where the site is uncertain. Each stop carries its
+   date and timeline entry, so the text, the timeline and the map lead to
+   one another: the reader's 🧭 button, the timeline's 🧭 and 📍, and each
+   stop's Read › and 📅 About ›. */
+const JOURNEYS_VERSION = '2026-10-04';
+function loadJourneys(){ return S._journeys ? Promise.resolve(S._journeys) : loadCachedJSON(`journeys.json?v=${JOURNEYS_VERSION}`).then(d => S._journeys = d.j); }
+const jrDates = j => !j.y ? '' : j.y[0] === j.y[1] ? 'about ' + tlYearText(j.y[0]) : `about ${tlYearText(j.y[0])} – ${tlYearText(j.y[1])}`;
+// The pin(s) for a stop: a place pin, or dashed rings for each suggested site
+function wmStopPins(st){
+  if(st.alts) return st.alts.map((a, k) => ({id:'alt' + k, name:a[0], today:'', ll:a[1], sure:false, main:true}));
+  const p = st.p && S._places[st.p];
+  return [{id: st.p || 'stop', name: st.n, today: p && !st.ov ? wmToday(p) : '', ll: st.ll, sure: !st.u, main: true}];
+}
+async function openJourney(id, i=0){
+  const [list] = await Promise.all([loadJourneys(), loadLands(), loadPlaces()]);
+  const j = list.find(x => x.id === id);
+  if(!j) return;
+  S._jr = {j, i};
+  const ov = document.getElementById('wm-overlay');
+  ov.classList.add('jr');
+  document.getElementById('wm-title').textContent = '🧭 ' + j.t;
+  document.getElementById('wm-sub').textContent = `${j.r} · ${jrDates(j)} · ${j.s.length} stops`;
+  if(!ov.classList.contains('on')) openPopover('wm-overlay');
+  requestAnimationFrame(() => {
+    const el = document.getElementById('wm-map');
+    el.classList.add('wm');
+    wmDraw(el, wmStopPins(j.s[i]), {route: {j, cur: i, onStop: jrGo}});
+    jrCard();
+  });
+}
+function jrGo(i){
+  const J = S._jr; if(!J || i < 0 || i >= J.j.s.length) return;
+  J.i = i;
+  document.getElementById('wm-map')._wmStop(i);
+  jrCard();
+}
+async function jrCard(){
+  const {j, i} = S._jr, st = j.s[i], box = document.getElementById('wm-list');
+  const p = st.p && !st.ov && S._places[st.p], today = p && wmToday(p) ? ` <span>· today ${escapeHtml(p.s)}</span>` : '';
+  box.innerHTML = `<div class="jr-card">
+    <div class="jr-top"><span>Stop ${i + 1} of ${j.s.length}</span>${st.y != null ? `<button onclick="jrTimeline()">📅 About ${tlYearText(st.y)} ›</button>` : ''}</div>
+    <div class="jr-place">📍 ${escapeHtml(st.n)}${today}</div>
+    <div class="jr-d">${escapeHtml(st.d)}</div>
+    <div class="jr-v"><b>${escapeHtml(st.r)}</b><span class="jr-vt">…</span></div>
+    ${st.site ? `<div class="jr-site">${escapeHtml(st.site)}</div>` : st.u ? '<div class="jr-site">The site is uncertain — drawn dashed.</div>' : ''}
+    <div class="jr-nav"><button onclick="jrGo(${i - 1})" ${i ? '' : 'disabled'}>‹ Back</button><button onclick="jrRead()">Read ›</button><button class="go" onclick="jrGo(${i + 1})" ${i < j.s.length - 1 ? '' : 'disabled'}>Next stop ›</button></div>
+  </div>`;
+  const [book, cv] = [st.r.slice(0, st.r.lastIndexOf(' ')), st.r.slice(st.r.lastIndexOf(' ') + 1)], [c, v] = cv.split(':').map(Number);
+  const d = await fetchBook(book).catch(() => null), vs = d && d.chapters[c - 1] && d.chapters[c - 1].verses.find(x => +x.verse === v);
+  const t = box.querySelector('.jr-vt');
+  if(t && S._jr.i === i) t.textContent = vs ? ' ' + vs.text : '';
+}
+function jrRead(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => jumpToRef(st.r)); }
+function jrTimeline(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => openTimelineAt(st.e)); }
+// Search → Maps: the list
+async function renderJourneyList(){
+  const el = document.getElementById('jr-list');
+  if(!el || el.dataset.done) return;
+  const list = await loadJourneys().catch(() => null);
+  if(!list){ el.innerHTML = '<div style="font-size:13px;color:var(--text-m)">Journeys unavailable offline until they have loaded once.</div>'; return; }
+  const nt = j => BOOKS.indexOf(j.s[0].r.slice(0, j.s[0].r.lastIndexOf(' '))) >= 39;
+  const item = j => `<button class="jr-item" onclick="openJourney('${j.id}')"><span><b>${escapeHtml(j.t)}</b><small>${escapeHtml(j.r)} · ${jrDates(j)} · ${j.s.length} stops</small></span><i>›</i></button>`;
+  el.innerHTML = `<div class="jr-sub">Old Testament</div><div class="jr-list">${list.filter(j => !nt(j)).map(item).join('')}</div>`
+    + `<div class="jr-sub">New Testament</div><div class="jr-list">${list.filter(nt).map(item).join('')}</div>`;
+  el.dataset.done = '1';
+}
+// Journeys passing through a place: [[journey, first stop there]]
+function journeysAt(id){
+  return loadJourneys().then(list => {
+    const p = S._places && S._places[id];
+    return list.map(j => [j, j.s.findIndex(st => st.p === id || (p && st.p && S._places[st.p] && S._places[st.p].n === p.n && Math.abs(st.ll[0]-p.ll[0]) < 0.02))]).filter(x => x[1] >= 0);
+  }).catch(() => []);
+}
+// Reader: journeys with a stop in this chapter: [[journey, first stop in it]]
+function chapterJourneys(){
+  if(!S._journeys || !S.book) return [];
+  const pre = `${S.book} ${S.ch + 1}:`;
+  return S._journeys.map(j => [j, j.s.findIndex(st => st.r.startsWith(pre))]).filter(x => x[1] >= 0);
+}
+function updateChapterJourneyButtons(){
+  const box = document.getElementById('ch-jr');
+  if(!box) return;
+  const show = () => { box.innerHTML = chapterJourneys().slice(0, 2).map(([j, i]) => `<button class="ch-map" onclick="openJourney('${j.id}', ${i})">🧭 ${escapeHtml(j.t)}</button>`).join(' '); };
+  if(S._journeys) show(); else { box.innerHTML = ''; loadJourneys().then(show).catch(() => {}); }
+}
+// Timeline: 🧭 for an event a journey belongs to, 📍 for its places
+function tlJourney(eid){
+  const j = (S._journeys || []).map(j => [j, j.s.findIndex(st => st.e === eid)]).find(x => x[1] >= 0);
+  return j ? `<button onclick="event.stopPropagation();openJourney('${j[0].id}', ${j[1]})" title="${escapeHtml(j[0].t)}" aria-label="Journey">🧭</button>` : '';
+}
+async function tlMap(ei, i){
+  await loadPlaces();
+  const [y, t, b, c1, c2] = S._timeline.eras[ei].e[i], ids = [], seen = new Set();
+  const d = await fetchBook(b);
+  for(let c = c1; c <= c2; c++) for(const v of d.chapters[c - 1].verses) for(const id of placesInVerse(`${b} ${c}:${v.verse}`)){
+    const p = S._places[id]; if(p && p.ll && !seen.has(p.n)){ seen.add(p.n); ids.push(id); }
+  }
+  openWhereMap(t, `${tlYearText(y)} · ${b} ${c1}${c2 > c1 ? '–' + c2 : ''} · ${ids.length} place${ids.length !== 1 ? 's' : ''}`, ids.map(id => wmPin(id)));
 }
 
 /* ════ MAPS FROM THE READER ════
@@ -7383,7 +7572,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
     if(mode==='topics') renderNaveBrowse();
     if(mode==='concord') renderConcordance();
     if(mode==='names') renderNames();
-    if(mode==='maps'){ renderMaps(); mxMount(); }
+    if(mode==='maps'){ renderMaps(); mxMount(); renderJourneyList(); }
     if(mode==='timeline') renderTimeline();
     if(mode==='hymns') renderHymns();
   }
@@ -11322,7 +11511,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v40';
+const WHATS_NEW_VERSION = 'v41';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -11876,6 +12065,15 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v41" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🧭</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Journeys</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Follow eighteen journeys stop by stop &mdash; Abraham, the Exodus, David, Elijah, Jonah, the captivity, the Lord Jesus, and Paul all the way to Rome. Each stop is a verse that names the place, with its date on the timeline; tap <strong>Next stop ›</strong> and watch the route draw on. Find them in <strong>Search &rarr; Maps</strong>, under a chapter (<strong>🧭</strong>), and on the timeline, where every event now has <strong>📍</strong> for its places.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v40" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🗺️</div>
       <div>

@@ -53,6 +53,7 @@ module.exports = [
   { era: 'The Kingdom', events: [
     [-1095, 'Saul made king', '1 Samuel', 8, 15, '10:24'],
     [-1063, 'David anointed; Goliath slain', '1 Samuel', 16, 17, '17:47'],
+    [-1062, 'David flees from Saul', '1 Samuel', 19, 27, '23:14'],
     [-1056, 'David king over Judah in Hebron', '2 Samuel', 1, 4, '2:4'],
     [-1048, 'David king over all Israel; Jerusalem taken', '2 Samuel', 5, 5, '5:3'],
     [-1042, 'The ark brought to Jerusalem', '2 Samuel', 6, 7, '6:14'],
