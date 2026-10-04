@@ -274,6 +274,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Full verse on the verse card (v38.02)** — long verses were cut off in a 120px box with its own scrollbar (e.g. Genesis 12:8, Psalm 44:22); the whole verse now shows, and the card itself scrolls when it is taller than the screen
 - **Sword Drill polish (v38.01)** — a 💡 hint in Full Recall now shows its letters inside the blank, on the line, instead of under a strike-through underline; inside a verse the top-left button reads “‹ Verses” and the ✕ Close (which left the game for Home) is hidden until you're back on the verse list
 - **What's New wording (v36.01)** — the v34 *Follow the Thread* item no longer mentions the swipeable tab row that v36 replaced with the Search hub
 - **Nine more hymns (v34.01)** — *Softly and Tenderly*, *Jesus Paid It All*, *Whosoever Will*, *Bringing in the Sheaves*, *Jesus Saves*, *Wonderful Words of Life*, *Holy Bible, Book Divine*, *Shall We Gather at the River?* and *Christ the Lord Is Risen Today* — the hymnal now has 98. Seven came from lindsaysperring/GetHymnLyrics (an Adventist hymnal) and were restored to the standard wording (*Jesus Paid It All*: “Jesus died my soul to save, my lips shall still repeat”; *Softly and Tenderly*: all four stanzas)
