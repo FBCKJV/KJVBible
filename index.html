@@ -451,6 +451,23 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #saved-search{width:100%;box-sizing:border-box;margin-bottom:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:14px;font-family:'Inter',sans-serif}
 #saved-search:focus{outline:none;border-color:var(--gold)}
 /* Maps */
+#mx-filter{width:100%;box-sizing:border-box;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:14px;font-family:'Inter',sans-serif}
+#mx-filter:focus{outline:none;border-color:var(--gold)}
+#mx-sugg{padding:8px 0 4px}
+#mx-sugg:empty{display:none}
+#mx-map{height:56vh;max-height:520px;margin:8px 0 10px}
+.mx-h{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);margin:18px 0 6px}
+.mx-place{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:6px}
+.mx-place .mx-n{font-family:'IM Fell English',serif;font-size:20px;color:var(--gold)}
+.mx-place .mx-m{font-size:12.5px;color:var(--text-m);margin:2px 0 8px}
+.mx-wh{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:6px 0 2px}
+.mx-era{border-top:1px solid var(--border)}
+.mx-era > button{width:100%;display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--text);padding:10px 2px;font-size:14.5px;font-family:'Crimson Pro',serif;cursor:pointer;text-align:left}
+.mx-era > button b{color:var(--gold-l);font-weight:600}
+.mx-era > button span.mx-c{margin-left:auto;font-size:12px;color:var(--text-m);font-family:'Inter',sans-serif;white-space:nowrap}
+.mx-era > button i{font-style:normal;color:var(--text-m);transition:transform .15s}
+.mx-era.open > button i{transform:rotate(90deg)}
+.mx-era .mx-body{padding:0 0 8px}
 #maps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .map-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
 .map-card:active{opacity:.7}
@@ -1681,6 +1698,14 @@ body.light #home-watermark{
 
       <!-- Maps panel -->
       <div id="maps-panel" style="display:none">
+        <div style="font-size:12px;color:var(--text-m);margin-bottom:8px;font-style:italic">
+          Every place named in the Bible on one map. Tap a place to see what happened there — pinch or use +/− to zoom, drag to look around.
+        </div>
+        <input id="mx-filter" type="search" placeholder="Find a place — Bethel, Nineveh, Corinth…" autocomplete="off" oninput="mxFilter()">
+        <div id="mx-sugg" class="wm-chips"></div>
+        <div id="mx-map" class="wm"></div>
+        <div id="mx-here"></div>
+        <div class="mx-h">📜 Classic maps</div>
         <div style="font-size:12px;color:var(--text-m);margin-bottom:12px;font-style:italic">
           Public-domain Bible maps from a 19th-century atlas. Tap a map to open it full-screen — pinch or use +/− to zoom.
         </div>
@@ -1833,7 +1858,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
         <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it</span></div>
         <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
-        <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> has public-domain Bible maps — tap any map to open it full-screen and pinch or use +/− to zoom. They work offline</span></div>
+        <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> shows every Bible place on one map — tap a place to see what happened there. The classic atlas maps are below it. All of it works offline. In the reader, <strong>📍 Where</strong> maps the places in the chapter</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — start Bible in a Year, NT in 30 Days, or Proverbs in a Month. Chapters check off automatically as you read</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
         <div class="tip-row"><span class="tip-ico">⚔️</span><span class="tip-txt"><strong>Sword Drill</strong> (home screen) hides verses in your heart with fill-in-the-blank memory, spaced review and badges — add any verse you like under <strong>My Verses</strong></span></div>
@@ -6659,7 +6684,7 @@ const SEARCH_TOOLS = [
   {m:'concord',  i:'📜', n:'Concordance', d:'Every word of the KJV'},
   {m:'names',    i:'👤', n:'Names',       d:'People, places & meanings'},
   {m:'timeline', i:'📅', n:'Timeline',    d:'Creation to Revelation'},
-  {m:'maps',     i:'🗺️', n:'Maps',        d:'Bible atlas plates'},
+  {m:'maps',     i:'🗺️', n:'Maps',        d:'Every place · atlas plates'},
   {m:'hymns',    i:'🎵', n:'Hymns',       d:'98 hymns of the faith'},
 ];
 function renderSearchHub(){
@@ -6779,13 +6804,16 @@ function wmMount(el, pins, opts = {}){
 }
 function wmDraw(el, pins, opts){
   // Places sharing one site become one pin ("Pi-hahiroth & Baal-zephon")
-  const merged = [];
-  for(const p of pins){
-    const m = merged.find(q => Math.abs(q.ll[0]-p.ll[0]) < 0.01 && Math.abs(q.ll[1]-p.ll[1]) < 0.01);
-    if(m){ if(!m.ids.includes(p.id)){ m.ids.push(p.id); m.name += ' & ' + p.name; m.main = m.main || p.main; } }
-    else merged.push({...p, ids:[p.id]});
-  }
-  pins = merged;
+  const mergePins = list => {
+    const merged = [];
+    for(const p of list.filter(Boolean)){
+      const m = merged.find(q => Math.abs(q.ll[0]-p.ll[0]) < 0.01 && Math.abs(q.ll[1]-p.ll[1]) < 0.01);
+      if(m){ if(!m.ids.includes(p.id)){ m.ids.push(p.id); m.name += ' & ' + p.name; m.main = m.main || p.main; } }
+      else merged.push({...p, ids:[p.id]});
+    }
+    return merged;
+  };
+  pins = mergePins(pins);
   const [bw, bs, be, bn] = S._lands.box;
   const FULLW = (be - bw) * WM_K, MINW = 0.22;
   el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><g class="wm-base">${wmBaseSVG()}</g><g class="wm-lab"></g><g class="wm-dots"></g><g class="wm-pins"></g></svg>
@@ -6798,6 +6826,7 @@ function wmDraw(el, pins, opts){
   // Start framed on the places, never closer than a region (~250 km across)
   function fit(){
     const [cw, ch] = size(), asp = ch / cw;
+    if(!pins.length && opts.start){ const [cw2, ch2] = size(); V.w = opts.start.w; V.x = opts.start.ll[1]*WM_K - V.w/2; V.y = -opts.start.ll[0] - V.w*ch2/cw2/2; return; }
     if(!pins.length){ V.w = FULLW; V.x = bw*WM_K; V.y = -bn + ((bn-bs) - FULLW*asp)/2; return; }
     const xs = pins.map(p => p.ll[1]*WM_K), ys = pins.map(p => -p.ll[0]);
     let x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
@@ -6813,7 +6842,7 @@ function wmDraw(el, pins, opts){
     V.y = Math.max(-bn, Math.min(-bs - h, V.y));
     if(h > bn - bs) V.y = -bn - (h - (bn - bs)) / 2;
   }
-  let dotsTimer = null, pinBoxes = [];
+  let dotsTimer = null, pinBoxes = [], labBoxes = [];
   function update(){
     clamp();
     const [cw, ch] = size(), asp = ch / cw, h = V.w * asp, u = V.w / cw; // map units per screen pixel
@@ -6842,13 +6871,17 @@ function wmDraw(el, pins, opts){
       + (p.sure ? `<path d="M0 0 C-3 -7 -10 -12 -10 -19 A10 10 0 1 1 10 -19 C10 -12 3 -7 0 0Z" fill="${p.main ? '#b8862f' : '#c9943a'}" stroke="#3d2b12" stroke-width="1.6"/><circle cy="-19" r="3.6" fill="#3d2b12"/>`
                 : `<circle r="15" fill="rgba(184,134,47,.22)" stroke="#6a4510" stroke-width="1.6" stroke-dasharray="4 3"/><circle r="3.5" fill="#6a4510"/>`)
       + lbl(p, i) + '</g>').join('');
-    gLab.innerHTML = WM_LABELS.filter(l => V.w >= l[3] && V.w <= l[4]).map(([t, lat, lon, , , water]) =>
+    // Atlas names step aside for the pins and their labels
+    const clear = (lat, lon, t) => { const x = (lon*WM_K - V.x)/u, y = (-lat - V.y)/u, hw = t.length * 5.5; return !boxes.some(b => x - hw < b[2] && x + hw > b[0] && y - 12 < b[3] && y + 4 > b[1]); };
+    const labs = WM_LABELS.filter(l => V.w >= l[3] && V.w <= l[4] && clear(l[1], l[2], l[0]));
+    labBoxes = labs.map(([t, lat, lon]) => { const x = (lon*WM_K - V.x)/u, y = (-lat - V.y)/u, hw = t.length * 5.5; return [x - hw, y - 12, x + hw, y + 4]; });
+    gLab.innerHTML = labs.map(([t, lat, lon, , , water]) =>
       `<text transform="${tr(lon, lat)}" text-anchor="middle" font-family="Georgia,serif" font-size="${water ? 12 : 13}" ${water ? 'font-style="italic" fill="#4f6b74"' : 'letter-spacing="3" fill="rgba(91,68,38,.75)"'}>${escapeHtml(t)}</text>`).join('');
     clearTimeout(dotsTimer); dotsTimer = setTimeout(drawDots, 120);
   }
   // Zoomed in: other Bible places in view as small dots (names when closer)
   function drawDots(){
-    if(V.w > 4){ gDots.innerHTML = ''; return; }
+    if(V.w > 4 && !opts.explore){ gDots.innerHTML = ''; return; }
     const [cw, ch] = size(), h = V.w * ch / cw, u = V.w / cw, shown = new Set(pins.map(p => p.id));
     const near = [], seen = new Set();
     for(const [id, p] of Object.entries(S._places)){
@@ -6859,15 +6892,19 @@ function wmDraw(el, pins, opts){
       seen.add(p.n); near.push([id, p, (p.v.match(/;/g) || []).length]);
     }
     near.sort((a, b) => b[2] - a[2]);
-    const labels = V.w < 1.8, taken = pinBoxes.slice();
-    const fits = p => { // a dot's name shows only where it clears the pins and other names
-      const x = (p.ll[1]*WM_K - V.x)/u, y = (-p.ll[0] - V.y)/u, r = [x+5, y-8, x+8+p.n.length*6, y+6];
-      if(taken.some(b => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1])) return false;
-      taken.push(r); return true;
+    const labels = opts.explore ? V.w < 14 : V.w < 1.8, taken = pinBoxes.slice(), major = [];
+    const hit = (r, list) => list.some(b => r[0] < b[2] && r[2] > b[0] && r[1] < b[3] && r[3] > b[1]);
+    const fits = (p, i) => { // a dot's name shows only where it clears the pins and other names;
+      const x = (p.ll[1]*WM_K - V.x)/u, y = (-p.ll[0] - V.y)/u, r = [x+5, y-8, x+8+p.n.length*(i < 6 ? 7 : 6), y+6];
+      if(hit(r, taken) || (!(opts.explore && i < 6) && hit(r, labBoxes))) return false; // the best-known outrank atlas names
+      taken.push(r); if(opts.explore && i < 6) major.push(r); return true;
     };
-    gDots.innerHTML = near.slice(0, V.w > 1.8 ? 30 : V.w > 0.9 ? 70 : 140).map(([id, p], i) => `<g transform="translate(${(p.ll[1]*WM_K).toFixed(4)} ${(-p.ll[0]).toFixed(4)}) scale(${u})" data-d="${id}" style="cursor:pointer">
-      <circle r="9" fill="transparent"/><circle r="3.2" fill="#7a5520" stroke="#f4e8cc" stroke-width="1"/>
-      ${labels && i < 60 && fits(p) ? `<text x="6" y="4" font-family="Georgia,serif" font-size="11" fill="#5b4426" stroke="#f4e8cc" stroke-width="2.5" paint-order="stroke">${escapeHtml(p.n)}</text>` : ''}</g>`).join('');
+    const cap = opts.explore ? (V.w > 20 ? 30 : V.w > 8 ? 50 : V.w > 3 ? 80 : V.w > 1.2 ? 120 : 180) : V.w > 1.8 ? 30 : V.w > 0.9 ? 70 : 140;
+    // Drawn least-named first so the major places sit on top and win a tap
+    gDots.innerHTML = near.slice(0, cap).map(([id, p], i) => [i, `<g transform="translate(${(p.ll[1]*WM_K).toFixed(4)} ${(-p.ll[0]).toFixed(4)}) scale(${u})" data-d="${id}" style="cursor:pointer">
+      <circle r="9" fill="transparent"/>${p.t === 'region' ? '<circle r="3.4" fill="#f4e8cc" stroke="#7a5520" stroke-width="1.4"/>' : `<circle r="${opts.explore && i < 6 ? 4.2 : 3.2}" fill="#7a5520" stroke="#f4e8cc" stroke-width="1"/>`}
+      ${labels && p.t !== 'region' && i < (opts.explore ? 45 : 60) && fits(p, i) ? `<text x="6" y="4" font-family="Georgia,serif" font-size="${opts.explore && i < 6 ? 12.5 : 11}" ${opts.explore && i < 6 ? 'font-weight="bold" fill="#3d2b12"' : 'fill="#5b4426"'} stroke="#f4e8cc" stroke-width="2.5" paint-order="stroke">${escapeHtml(p.n)}</text>` : ''}</g>`]).reverse().sort((a, b) => (near[b[0]][1].t === 'region') - (near[a[0]][1].t === 'region')).map(x => x[1]).join(''); // region rings underneath
+    [...gLab.children].forEach((t, k) => { if(labBoxes[k] && hit(labBoxes[k], major)) t.remove(); });
   }
   function showInfo(id, ids){
     if(ids && ids.length > 1){
@@ -6909,8 +6946,8 @@ function wmDraw(el, pins, opts){
     if(!moved && e.type === 'pointerup'){
       const t = document.elementFromPoint(e.clientX, e.clientY);
       const pin = t && t.closest('[data-i]'), dot = t && t.closest('[data-d]');
-      if(pin && el.contains(pin)){ const q = pins[+pin.dataset.i]; showInfo(q.id, q.ids); }
-      else if(dot && el.contains(dot)) showInfo(dot.dataset.d);
+      if(pin && el.contains(pin)){ const q = pins[+pin.dataset.i]; opts.onSelect ? opts.onSelect(q.id) : showInfo(q.id, q.ids); }
+      else if(dot && el.contains(dot)) opts.onSelect ? opts.onSelect(dot.dataset.d) : showInfo(dot.dataset.d);
       else info.classList.remove('on');
     }
   };
@@ -6925,6 +6962,13 @@ function wmDraw(el, pins, opts){
   fit(); update();
   if(pins.length === 1 && el.clientHeight > 320) showInfo(pins[0].id, pins[0].ids);
   el._wmFocus = id => { const p = pins.find(q => q.ids.includes(id)); if(!p) return; const [cw, ch] = size(); V.w = Math.min(V.w, 2.4); V.x = p.ll[1]*WM_K - V.w/2; V.y = -p.ll[0] - V.w*ch/cw/2; update(); showInfo(p.id, p.ids); };
+  // Explorer: make one place the pin and bring it into view
+  el._wmSelect = id => {
+    pins = mergePins([wmPin(id, true)]);
+    const p = pins[0]; if(!p){ update(); return; }
+    const [cw, ch] = size(); V.w = Math.min(V.w, 2.2);
+    V.x = p.ll[1]*WM_K - V.w/2; V.y = -p.ll[0] - V.w*ch/cw/2; update();
+  };
   if(window.ResizeObserver){ const ro = new ResizeObserver(() => update()); ro.observe(el); }
 }
 // Leaving a map (overlay or verse card) for a place page
@@ -6934,10 +6978,10 @@ function wmOpenPlace(id){
   else leaveVPopThen(() => openPlace(id));
 }
 // The full-screen map
-function openWhereMap(title, sub, pins){
+function openWhereMap(title, sub, pins, classic=-1){
   pins = pins.filter(Boolean);
   document.getElementById('wm-title').textContent = title;
-  document.getElementById('wm-sub').textContent = sub || '';
+  document.getElementById('wm-sub').innerHTML = escapeHtml(sub || '') + (classic >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openMap(${classic}))">📜 Classic map: ${escapeHtml(MAPS[classic].t)} ›</button>` : '');
   const list = document.getElementById('wm-list');
   list.innerHTML = pins.length > 1 ? pins.map(p => `<button class="vl-chip" onclick="document.getElementById('wm-map')._wmFocus('${p.id}')">📍 ${escapeHtml(p.name)}</button>`).join('') : '';
   openPopover('wm-overlay');
@@ -6956,12 +7000,14 @@ function chapterPlaces(){
 function updateChapterWhereButton(){
   const btn = document.getElementById('ch-where-btn');
   if(!btn) return;
-  const show = () => { const n = chapterPlaces().length; btn.style.display = n ? 'inline-block' : 'none'; btn.textContent = `📍 Where · ${n} place${n !== 1 ? 's' : ''}`; };
+  // The live map takes the classic plate's place; the plate stays a link inside it
+  const classic = document.getElementById('ch-map-btn');
+  const show = () => { const n = chapterPlaces().length; btn.style.display = n ? 'inline-block' : 'none'; btn.textContent = `📍 Where · ${n} place${n !== 1 ? 's' : ''}`; if(n && classic) classic.style.display = 'none'; };
   if(S._placesByVerse) show(); else { btn.style.display = 'none'; loadPlaces().then(show).catch(() => {}); }
 }
 function openChapterMap(){
   const ids = chapterPlaces();
-  openWhereMap(`Places in ${S.book} ${S.ch + 1}`, `${ids.length} place${ids.length !== 1 ? 's' : ''} named in this chapter · tap a pin for details`, ids.map(id => wmPin(id)));
+  openWhereMap(`Places in ${S.book} ${S.ch + 1}`, `${ids.length} place${ids.length !== 1 ? 's' : ''} named in this chapter · tap a pin for details`, ids.map(id => wmPin(id)), chapterMap(S.book, S.ch + 1));
 }
 // Verse card: the verse's places on a small map, shown on request
 function vpopShowMap(btn){
@@ -6973,6 +7019,73 @@ function vpopShowMap(btn){
   const pins = placesInVerse(S.popRef).map(id => wmPin(id)).filter(Boolean)
     .filter((p, i, a) => a.findIndex(q => q.name === p.name) === i);
   wmMount(box, pins, {expand: () => openWhereMap(S.popRef, 'Places in this verse', pins)});
+}
+
+/* ════ SEARCH → MAPS: the map explorer ════
+   The whole Bible lands with every place that has a suggested site. Tap a
+   place (or find it by name) and "What happened here" lists the chapters
+   naming it, grouped by the part of the Bible, opening to the verses
+   themselves. The classic atlas plates sit below. */
+const WM_ERAS = [
+  [0, 0, 'Creation & the patriarchs'], [1, 4, 'The Exodus & the wilderness'], [5, 7, 'The conquest & the judges'],
+  [8, 13, 'The kings'], [14, 16, 'Exile & return'], [17, 21, 'Poetry & wisdom'], [22, 38, 'The prophets'],
+  [39, 42, 'The Gospels'], [43, 43, 'The early church'], [44, 65, 'The letters & Revelation'],
+];
+function mxMount(){
+  const el = document.getElementById('mx-map');
+  if(!el || el.dataset.on) return;
+  el.dataset.on = '1';
+  wmMount(el, S._mxSel ? [wmPin(S._mxSel, true)] : [], {explore: true, start: {ll: [32.2, 35.6], w: 5}, onSelect: mxSelect});
+  if(S._mxSel) loadPlaces().then(() => mxHere(S._mxSel));
+}
+function mxSelect(id){
+  S._mxSel = id;
+  const el = document.getElementById('mx-map');
+  if(el._wmSelect) el._wmSelect(id);
+  mxHere(id);
+  document.getElementById('mx-sugg').innerHTML = '';
+}
+function mxFilter(){
+  const q = document.getElementById('mx-filter').value.trim().toLowerCase(), box = document.getElementById('mx-sugg');
+  if(!q){ box.innerHTML = ''; return; }
+  loadPlaces().then(() => {
+    // Exact name, then names starting with it, then containing it — the most-named places first in each
+    const rank = p => { const ns = [p.n, ...(p.a || [])].map(n => n.toLowerCase()); return ns.includes(q) ? 0 : ns.some(n => n.startsWith(q)) ? 1 : ns.some(n => n.includes(q)) ? 2 : 9; };
+    const weight = p => p.v.split(';').length;
+    const names = new Set();
+    const hits = Object.entries(S._places).filter(([, p]) => p.ll && rank(p) < 9)
+      .sort((a, b) => rank(a[1]) - rank(b[1]) || weight(b[1]) - weight(a[1]))
+      .filter(([, p]) => !names.has(p.n) && names.add(p.n)).slice(0, 8);
+    box.innerHTML = hits.length ? hits.map(([id, p]) => `<button class="vl-chip" onclick="mxSelect('${id}')">📍 ${escapeHtml(p.n)}${wmToday(p) ? ` <span style="opacity:.7">· ${escapeHtml(p.s)}</span>` : ''}</button>`).join('')
+      : '<div style="font-size:13px;color:var(--text-m)">No place by that name on the map.</div>';
+  });
+}
+// "What happened here": the place's chapters, by part of the Bible
+function mxHere(id){
+  const p = S._places[id], box = document.getElementById('mx-here');
+  if(!p || !box) return;
+  const refs = p.v.split(';');
+  const eras = WM_ERAS.map(([a, z, t]) => [t, refs.filter(r => { const b = +r.split('.')[0]; return b >= a && b <= z; })]).filter(e => e[1].length);
+  const today = wmToday(p) ? `today ${escapeHtml(p.s)} · ` : '';
+  const n = refCount(p.v);
+  box.innerHTML = `<div class="mx-place">
+    <div class="mx-n">📍 ${escapeHtml(p.n)}</div>
+    <div class="mx-m">${today}${escapeHtml(placeType(p.t))} · site ${placeConfidence(p.c)[0].toLowerCase()} · named in ${n} verse${n !== 1 ? 's' : ''}</div>
+    <div class="mx-wh">What happened here</div>
+    ${eras.map(([t, rs], i) => `<div class="mx-era" data-r="${rs.join(';')}"><button onclick="mxEra(this.parentNode)" aria-expanded="false"><i>›</i><b>${t}</b><span style="color:var(--text-m);font-size:13px">${escapeHtml(mxBooks(rs))}</span><span class="mx-c">${rs.length} ch.</span></button><div class="mx-body"></div></div>`).join('')}
+    <button class="vl-chip" style="margin-top:8px" onclick="openPlace('${id}')">Place page ›</button>
+  </div>`;
+  if(eras.length === 1) mxEra(box.querySelector('.mx-era'));
+}
+const mxBooks = rs => { const b = [...new Set(rs.map(r => BOOKS[+r.split('.')[0]]))]; return b.length > 3 ? `${b.slice(0, 3).join(', ')} +${b.length - 3}` : b.join(', '); };
+async function mxEra(div, limit=10){
+  const body = div.querySelector('.mx-body'), open = !div.classList.contains('open') || limit > 10;
+  div.classList.toggle('open', open);
+  div.firstElementChild.setAttribute('aria-expanded', String(open));
+  if(!open){ body.innerHTML = ''; return; }
+  body.innerHTML = '<div style="padding:6px 0;color:var(--text-m);font-size:13px">Loading verses…</div>';
+  const rs = div.dataset.r, total = rs.split(';').length;
+  body.innerHTML = await refCardsHTML(rs, limit) + (total > limit ? `<button class="nv-showmore" onclick="mxEra(this.closest('.mx-era'), ${total})">Show all ${total} chapters</button>` : '');
 }
 
 /* ════ MAPS FROM THE READER ════
@@ -7270,7 +7383,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
     if(mode==='topics') renderNaveBrowse();
     if(mode==='concord') renderConcordance();
     if(mode==='names') renderNames();
-    if(mode==='maps') renderMaps();
+    if(mode==='maps'){ renderMaps(); mxMount(); }
     if(mode==='timeline') renderTimeline();
     if(mode==='hymns') renderHymns();
   }
@@ -11209,7 +11322,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v39';
+const WHATS_NEW_VERSION = 'v40';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -11763,6 +11876,15 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v40" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🗺️</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">What Happened Here?</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>Search &rarr; Maps</strong> now opens a map with every place in the Bible. Tap a town, or find one by name, to see <strong>what happened there</strong> &mdash; its chapters grouped from the patriarchs to the early church, each opening to the verses. The classic atlas maps are just below, and in the reader they&rsquo;re a link inside <strong>📍 Where</strong>.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v39" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📍</div>
       <div>

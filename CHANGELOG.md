@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🗺️ What Happened Here? (v40)
+- **Search → Maps is now a map explorer**: the parchment map of the Bible lands with every place that has a suggested site, opening on the land of Israel. Zoomed out, the most-named places show; zoom in and more appear, with names wherever they fit (Jerusalem, Samaria, Tyre… in bold first; regions are hollow rings, since the atlas names already label them)
+- **Find a place**: type in the box ("beth") for the best matches — exact names first, then the most-named (Bethel, Bethlehem, Bethany…)
+- **What happened here**: tap a place for its card — today's name, kind, how sure the site is, verse count — and its chapters grouped by part of the Bible (Creation & the patriarchs, The Exodus & the wilderness, The conquest & the judges, The kings, Exile & return, Poetry & wisdom, The prophets, The Gospels, The early church, The letters & Revelation). Open a group for the verses themselves (ten at a time, "Show all"); **Place page ›** opens the full place page, and Back returns to the map as you left it
+- **Classic maps** — the nine 19th-century atlas plates — now sit below the explorer as "📜 Classic maps"
+- **Reader**: the 📍 Where button takes the place of the classic-map button; when a classic plate covers the chapter, the live map shows "📜 Classic map: … ›" under its title. Chapters with a plate but no mapped places still show the plate's button
+- Map labels no longer pile up: atlas names step aside for pins, and town names avoid both
+
 ### 📍 Where Is This Taking Place? (v39)
 - **A map of the Bible lands, drawn in the app**: a parchment-style map from Rome to Persia (coastlines, the Sea of Galilee, the Dead Sea, the Nile, Jordan, Euphrates and Tigris) built from Natural Earth's public-domain outlines (`bible-lands.json`, made by `tools/build-bible-lands.js`). No map service and no internet needed once it has loaded
 - **Pins**: a gold pin for each place, labelled with the Bible name and today's name ("Bethel · today Beitin"); a dashed ring where the site is uncertain; places sharing one suggested site become one pin ("Baal-zephon & Pi-hahiroth"). Labels move left, right, above or below so they don't overlap
