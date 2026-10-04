@@ -222,7 +222,24 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .nm-count{margin-left:8px;vertical-align:middle;font-size:10px}
 .ref-link{color:var(--gold);text-decoration:none;border-bottom:1px dotted var(--gold-d)}
 #vpop-links,#vpop-tsk{padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px}
-#vpop-links .vd-label,#vpop-tsk .vd-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:5px}
+#vpop-links .vd-label,#vpop-tsk .xr-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+#vpop-tsk .xr-head .vd-label{margin:0}
+.xr-all{background:none;border:1px solid var(--gold-d);color:var(--gold);border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
+.xr-row{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:1px dashed var(--border)}
+.xr-ph{flex:0 0 38%;min-width:0;text-align:left;background:none;border:none;padding:0;color:var(--gold);font-family:'Crimson Pro',serif;font-style:italic;font-size:14.5px;cursor:pointer;line-height:1.3;overflow-wrap:anywhere}
+.xr-ph.xr-q{font-style:normal;font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:default}
+.xr-refs{flex:1;display:flex;flex-wrap:wrap;gap:5px}
+.xr-ref{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:12px;padding:2px 9px;font-size:12.5px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap}
+.xr-ref.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.xr-ref.xr-more{color:var(--gold)}
+.xr-morephr{background:none;border:none;color:var(--gold);font-size:12.5px;padding:6px 0 0;cursor:pointer}
+.xr-pv{margin-top:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 8px 8px 0}
+.xr-pv-ref{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.xr-pv-txt{font-family:'Crimson Pro',serif;font-size:15.5px;line-height:1.5;color:var(--text)}
+.xr-pv-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.xr-pv-acts button{background:none;border:1px solid var(--border);color:var(--gold);border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer}
+.xr-hint{font-size:11px;color:var(--text-m);font-style:italic;margin-top:6px}
+#vpop-tsk .vd-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:5px}
 .vl-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
 .ch-map{background:none;border:1px solid var(--border);border-radius:20px;color:var(--gold);font-size:12px;padding:3px 12px;margin-top:6px;cursor:pointer}
 /* Treasury of Scripture Knowledge: phrase chips on the verse card + Compare page */
@@ -873,9 +890,9 @@ body.scourby-open #reader-float-nav {
 
 /* ── VERSE CROSS-REFERENCES ── */
 .xref-mark{
-  display:inline-block;color:var(--gold);font-size:10px;
-  cursor:pointer;margin-left:3px;vertical-align:super;
-  line-height:0;opacity:.75;transition:opacity .15s;user-select:none;
+  display:block;color:var(--gold);font-size:14px;
+  cursor:pointer;margin:2px -8px 0 0;padding:4px 8px 10px;
+  line-height:1;opacity:.85;transition:opacity .15s;user-select:none;text-align:right;
 }
 .xref-mark:hover{opacity:1}
 
@@ -2758,6 +2775,7 @@ function renderReader(){
   });
   document.getElementById('screen-reader').scrollTop=0;
   updateHeaderState();
+  addXRefMarkers();
 }
 
 /* ════ MULTI-SELECT ════ */
@@ -5951,22 +5969,66 @@ function tskKey(ref){
 }
 // Some anchors are a whole verse — keep the chips short
 const tskShort = a => a.length > 34 ? a.slice(0, 32).replace(/[\s,;:]+\S*$/, '') + '…' : a;
+// Short book names for reference chips ("Rom 8:36")
+const BOOK_ABBR = ['Gen','Ex','Lev','Num','Deut','Josh','Judg','Ruth','1 Sam','2 Sam','1 Kgs','2 Kgs','1 Chr','2 Chr','Ezra','Neh','Esth','Job','Ps','Prov','Eccl','Song','Isa','Jer','Lam','Ezek','Dan','Hos','Joel','Amos','Obad','Jonah','Mic','Nah','Hab','Zeph','Hag','Zech','Mal','Matt','Mark','Luke','John','Acts','Rom','1 Cor','2 Cor','Gal','Eph','Phil','Col','1 Thess','2 Thess','1 Tim','2 Tim','Titus','Phlm','Heb','Jas','1 Pet','2 Pet','1 John','2 John','3 John','Jude','Rev'];
+// "44.8:36,37" → {label:"Rom 8:36–37", full:"Romans 8:36–37", jump:"Romans 8:36", b, c, a, z}
+function xrParse(r){
+  const [bc, vs] = r.split(':'), [b, c] = bc.split('.').map(Number);
+  const first = (vs || '1').split(',')[0].split('-'), a = +first[0];
+  const nums = (vs || '1').split(/[,-]/).map(Number), z = Math.max(...nums);
+  const span = z > a ? `${a}–${z}` : `${a}`;
+  return {b, c, a, z, label: `${BOOK_ABBR[b]} ${c}:${span}`, full: `${BOOKS[b]} ${c}:${span}`, jump: `${BOOKS[b]} ${c}:${a}`};
+}
+const xrChip = r => { const x = xrParse(r); return `<button class="xr-ref" data-r="${r}" onclick="event.stopPropagation();xrPreview(this)">${escapeHtml(x.label)}</button>`; };
+// The verse card's cross-references: the New/Old Testament quotation (✦) and
+// the Treasury's phrases, each with its first few references. A reference
+// opens right in the card; a phrase or "See all" opens the Compare page.
 async function fillVpopTreasury(ref){
   const el = document.getElementById('vpop-tsk');
   if(!el) return;
   el.style.display = 'none'; el.innerHTML = '';
   const key = tskKey(ref);
   if(!key) return;
+  const m = ref.match(/^(.+) (\d+):(\d+)$/);
+  const qkey = `${m[1]}:${m[2]}:${m[3]}`;
+  const quotes = VERSE_XREF[qkey] ? ['Quotes', VERSE_XREF[qkey]] : VERSE_XREF_REV[qkey] ? ['Quoted in', VERSE_XREF_REV[qkey]] : null;
+  const qRefs = quotes ? mergeXRefRanges(quotes[1]).map(r => `${BOOKS.indexOf(r.book)}.${r.ch}:${r.v}${r.vEnd > r.v ? '-' + r.vEnd : ''}`) : [];
   const [b, cv] = key.split('.');
-  const T = await loadTreasury(b).catch(() => null);
-  if(S.popRef !== ref || !T || !T[cv]) return; // another verse opened meanwhile
-  const groups = T[cv], MAX = 8;
-  const n = groups.reduce((t, g) => t + g[1].split(';').length, 0);
-  el.innerHTML = `<div class="vd-label">🔗 Compare Scripture · ${n} reference${n !== 1 ? 's' : ''}</div><div class="vl-chips">`
-    + groups.slice(0, MAX).map((g, i) => `<button class="vl-chip" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',${i})">“<span class="tsk-anchor">${escapeHtml(tskShort(g[0]))}</span>”</button>`).join('')
-    + (groups.length > MAX ? `<button class="vl-chip" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',null)">+${groups.length - MAX} more</button>` : '')
-    + '</div>';
-  el.style.display = 'block';
+  const draw = T => {
+    if(S.popRef !== ref) return; // another verse opened meanwhile
+    const groups = (T && T[cv]) || [], MAXG = 4, MAXR = 3;
+    const n = groups.reduce((t, g) => t + g[1].split(';').length, 0);
+    if(!groups.length && !qRefs.length){ el.style.display = 'none'; return; }
+    el.innerHTML = `<div class="xr-head"><span class="vd-label">🔗 Cross-references</span>${n ? `<button class="xr-all" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',null)">See all ${n} ›</button>` : ''}</div>`
+      + (qRefs.length ? `<div class="xr-row"><span class="xr-ph xr-q">✦ ${quotes[0]}</span><span class="xr-refs">${qRefs.map(xrChip).join('')}</span></div>` : '')
+      + groups.slice(0, MAXG).map((g, i) => { const rs = g[1].split(';');
+          return `<div class="xr-row"><button class="xr-ph" title="All references for this phrase" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',${i})">“${escapeHtml(tskShort(g[0]))}” ›</button><span class="xr-refs">${rs.slice(0, MAXR).map(xrChip).join('')}${rs.length > MAXR ? `<button class="xr-ref xr-more" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',${i})">+${rs.length - MAXR}</button>` : ''}</span></div>`; }).join('')
+      + (groups.length > MAXG ? `<button class="xr-morephr" onclick="event.stopPropagation();openTreasuryFromVerse('${key}',null)">${groups.length - MAXG} more phrase${groups.length - MAXG !== 1 ? 's' : ''} ›</button>` : '')
+      + `<div id="xr-prev"></div><div class="xr-hint">Tap a reference to read it here · tap a phrase to see all its references</div>`;
+    el.style.display = 'block';
+  };
+  if(qRefs.length) draw(null); // the quotation shows at once
+  draw(await loadTreasury(b).catch(() => null));
+}
+// A reference read right inside the verse card (tap again to close)
+async function xrPreview(btn){
+  const box = document.getElementById('xr-prev'), r = btn.dataset.r;
+  if(!box) return;
+  const was = btn.classList.contains('on');
+  document.querySelectorAll('#vpop-tsk .xr-ref.on').forEach(x => x.classList.remove('on'));
+  if(was){ box.innerHTML = ''; return; }
+  btn.classList.add('on');
+  const x = xrParse(r);
+  box.innerHTML = `<div class="xr-pv"><div class="xr-pv-ref">${escapeHtml(x.full)}</div><div class="xr-pv-txt">Loading…</div></div>`;
+  const data = await fetchBook(BOOKS[x.b]);
+  if(!btn.classList.contains('on')) return;
+  const vs = data && data.chapters[x.c - 1] ? data.chapters[x.c - 1].verses.filter(v => +v.verse >= x.a && +v.verse <= x.z).slice(0, 6) : [];
+  const txt = vs.map(v => (vs.length > 1 ? `<sup class="vsuper">${v.verse}</sup>` : '') + escapeHtml(v.text)).join(' ');
+  const j = x.jump.replace(/'/g, "\\'");
+  box.innerHTML = `<div class="xr-pv"><div class="xr-pv-ref">${escapeHtml(x.full)}</div><div class="xr-pv-txt">${txt || 'Verse not found.'}</div>
+    <div class="xr-pv-acts"><button onclick="event.stopPropagation();leaveVPopThen(()=>jumpToRef('${j}'))">Read in context ↗</button>
+    <button onclick="event.stopPropagation();openTreasuryFromVerse('${x.b}.${x.c}:${x.a}',null)">🔗 Its references</button>
+    <button onclick="event.stopPropagation();nbAddVerse('${j}', ${JSON.stringify(vs.map(v => v.text).join(' ')).replace(/"/g, '&quot;')})">📝＋</button></div></div>`;
 }
 function openTreasuryFromVerse(key, i){ leaveVPopThen(() => openTreasury(key, i)); }
 
@@ -8548,20 +8610,25 @@ let _xrefs = null, _xrefIdx = 0, _xrefBook = null, _xrefCh = null, _xrefV = null
 function addXRefMarkers(){
   if(!S.book || S.ch === null) return;
   const chN = S.ch + 1;
+  const books = new Set();
   document.querySelectorAll('.vblock').forEach(el => {
+    if(el.querySelector('.xref-mark')) return; // already marked (returning to the reader)
     const vnum = parseInt(el.dataset.vnum);
     const key  = `${S.book}:${chN}:${vnum}`;
     const refs = VERSE_XREF[key] || VERSE_XREF_REV[key];
     if(!refs) return;
+    refs.forEach(r => books.add(r.book));
     const span = document.createElement('span');
     span.className = 'xref-mark';
     span.textContent = '✦';
     span.title = mergeXRefRanges(refs).map(r=>r.ref).join(' · ');
     span.onclick = e => { e.stopPropagation(); showXRef(refs); };
-    // Insert after .vnum span
+    // Under the verse number, in the margin — so the verse text isn't pushed over
     const vnumEl = el.querySelector('.vnum');
-    if(vnumEl) vnumEl.after(span);
+    if(vnumEl) vnumEl.appendChild(span);
   });
+  // Have the quoted books ready so the card opens at once
+  setTimeout(() => books.forEach(b => fetchBook(b).catch(() => {})), 600);
 }
 
 // Collapse runs of consecutive verses from the same chapter into one tab
@@ -10730,7 +10797,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v36';
+const WHATS_NEW_VERSION = 'v37';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -11284,6 +11351,16 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v37" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">✦</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Clearer Cross-References</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Tap a verse and its <strong>cross-references</strong> are listed plainly &mdash; where the New Testament quotes it (✦), and the key words with their references. Tap any reference to <strong>read it right there</strong>; tap a word or <strong>See all</strong> for the full list. The gold ✦ beside a verse number is easier to tap and opens the quotation at once.
+        </div>
+      </div>
+    </div>
+
     <div class="wn-item" data-wn="v36" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🧭</div>
       <div>

@@ -6,6 +6,11 @@
 
 ## New Features
 
+### ✦ Clearer Cross-References (v37)
+- **Verse card**: the "Compare Scripture" chips are replaced by a plain **Cross-references** list — a "✦ Quoted in" / "✦ Quotes" row for the New Testament quotations, then up to four key words from the Treasury, each with its first three references as chips ("Rom 8:36", "Ps 79:2–3") and "+N"
+- **Tap a reference to read it in the card** (tap again to close), with "Read in context ↗", "🔗 Its references" and "📝＋"; tap a word ("“killed” ›"), "+N" or **See all N ›** for the Compare page
+- **✦ gems fixed**: each quoted verse now shows one gem (returning to the reader no longer added another each time), placed under the verse number so the verse text isn't pushed over, with a larger tap target so it opens the quotation instead of the verse card; chapters reached with Prev/Next now get their gems too, and the quoted books load in the background so the pop-up opens at once
+
 ### 🧭 A New Search Page (v36)
 - **Search is now a hub**: under the search box, eight tiles open each study tool — Doctrines, Topics, Dictionary, Concordance, Names, Timeline, Maps, Hymns (the swipeable tab row is gone). The tiles hide while search results are showing and return when the box is cleared
 - **Inside a tool**, a "‹ Search" bar with the tool's name leads back to the hub
