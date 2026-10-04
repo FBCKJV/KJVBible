@@ -172,7 +172,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .s-sort-btn.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 
 /* ── SEARCH MODE BAR ── */
-.smode-bar{display:flex;gap:6px;margin:0 -12px 12px;padding:0 12px 2px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.smode-bar{display:none!important;gap:6px;margin:0 -12px 12px;padding:0 12px 2px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
 .smode-bar::-webkit-scrollbar{display:none}
 .smode{flex:0 0 auto;scroll-snap-align:start;white-space:nowrap;padding-left:12px!important;padding-right:12px!important;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
 .smode.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
@@ -242,6 +242,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .tl-t{font-family:'IM Fell English',serif;font-size:16px;color:var(--text)}
 .tl-q{font-family:'Crimson Pro',serif;font-size:14px;color:var(--text-d);font-style:italic;line-height:1.45;margin-top:2px}
 .tl-r{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m);margin-top:4px}
+/* Search hub: every study tool on the Search page; a category bar inside each */
+#s-hub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px}
+.hub-t{display:flex;align-items:center;gap:10px;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;color:var(--text);min-height:58px}
+.hub-t:hover,.hub-t:active{border-color:var(--gold-d);background:var(--bg3)}
+.hub-i{font-size:22px;flex-shrink:0;width:28px;text-align:center}
+.hub-n{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);line-height:1.15}
+.hub-d{font-family:'Crimson Pro',serif;font-size:12.5px;color:var(--text-m);line-height:1.25}
+#s-resume{display:none;align-items:center;gap:10px;width:100%;text-align:left;background:var(--surface);border:1px dashed var(--gold-d);border-radius:10px;padding:9px 12px;margin:10px 0 0;cursor:pointer;color:var(--text);font-family:'Crimson Pro',serif;font-size:15px}
+#s-resume .rs-l{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m)}
+#cat-bar{display:none;align-items:center;gap:10px;margin:0 0 12px}
+#cat-bar.on{display:flex}
+#cat-home{display:flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:18px;padding:6px 12px 6px 9px;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif}
+#cat-title{font-family:'IM Fell English',serif;font-size:19px;color:var(--gold)}
 /* Hymns */
 .hy-sec{font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);padding:14px 2px 4px;border-bottom:1px solid var(--border)}
 .hy-row{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--border);padding:10px 2px;cursor:pointer;color:var(--text);font-family:'Crimson Pro',serif}
@@ -1488,6 +1501,8 @@ body.light #home-watermark{
         </button>
       </div>
 
+      <div id="cat-bar"><button id="cat-home" onclick="goSearchHome()" aria-label="Search home"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>Search</button><span id="cat-title"></span></div>
+
       <!-- Text search panel -->
       <div id="search-panel">
         <div class="s-wrap">
@@ -1499,6 +1514,8 @@ body.light #home-watermark{
           <button class="sf-btn" onclick="setSearchFilter('ot')">Old Testament</button>
           <button class="sf-btn" onclick="setSearchFilter('nt')">New Testament</button>
         </div>
+        <button id="s-resume" onclick="searchResume()"></button>
+        <div id="s-hub"></div>
         <div id="s-book-strip" style="display:none"></div>
         <div id="s-results"><div id="s-status">Enter a word, phrase, or reference (e.g. Matthew 24:24)</div></div>
       </div>
@@ -2062,7 +2079,7 @@ body.light #home-watermark{
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     Home
   </button>
-  <button class="bn" id="bn-search" onclick="showScreen('search')">
+  <button class="bn" id="bn-search" onclick="openSearchTab()">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
     Search
   </button>
@@ -3594,6 +3611,7 @@ function nextCh(){
 function goToChapters(){showScreen('chapters');}
 
 function showScreen(name, pushHistory=true){
+  if(name !== 'search') captureSearchSpot();
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
   document.getElementById('screen-'+name)?.classList.add('on');
@@ -3728,6 +3746,10 @@ window.addEventListener('popstate', e => {
       // Back to a topic/person/name page — from a verse (same scroll) or
       // from another sub-page (the scroll it was left at)
       SUBVIEWS[state.sub].open(state.key, false, fromOtherScreen ? y : ((S._viewScroll || {})[state.sub + ':' + state.key] || 0));
+    } else if(!state.searchMode){
+      // The Search page itself (opened from the bottom bar) — the hub
+      switchSearchMode('search', false);
+      if(scroller) scroller.scrollTop = 0;
     } else if(state.searchMode){
       switchSearchMode(state.searchMode, false);
       // Back from a topic to the doctrine list → where the list was scrolled
@@ -4210,6 +4232,7 @@ function toggleDocCat(ci){
 // already exists); scrollY then restores where the reader was in it.
 async function showDoctrineVerses(ci, ti, pushHistory=true, scrollY=0){
   const topic = DOCTRINES[ci].topics[ti];
+  S._docTopic = [ci, ti];
   const panel = document.getElementById('doctrine-panel');
   const scroller = document.getElementById('screen-search');
 
@@ -4762,6 +4785,7 @@ function handleSearch(q) {
 
 async function doSearch(raw) {
   const el = document.getElementById('s-results');
+  showSearchHub(false);
   // Staleness guard: fetchBook awaits below can take seconds on a cold
   // cache, and the user can retrigger doSearch mid-scan. Each run takes a
   // generation number; after every await, a run that is no longer current
@@ -5204,7 +5228,7 @@ async function openNaveTopic(key, pushHistory=true, scrollY=0){
       Back
     </button>
     <div class="dv-title">${escapeHtml(naveTitle(key))}</div>
-    <div class="dv-desc">${naveSummary(key)} · Nave's Topical Bible</div>
+    <div class="dv-desc">${[naveSummary(key), "Nave's Topical Bible"].filter(Boolean).join(' · ')}</div>
     <button class="nb-add" onclick="nbAddTopic()">📝＋ Add to Study</button>
     ${lines.map((l, i) => {
       const [depth, label, refs, see] = l;
@@ -6459,6 +6483,88 @@ function nbAddMap(){
   if(m) nbAppend(`<p><b>🗺️ Map: ${nbEsc(m.t)}</b> — ${nbEsc(m.d)}</p>`, m.t);
 }
 
+/* ════ SEARCH HUB ════
+   The Search page lists every study tool. A tool opens its own page with a
+   "‹ Search" bar back to the hub. Back walks back through whatever was
+   opened, then to the hub, then out of Search. Coming back to Search from
+   the bottom bar starts at the hub, with a card to continue where you were. */
+const SEARCH_TOOLS = [
+  {m:'doctrine', i:'📑', n:'Doctrines',   d:'What our church believes'},
+  {m:'topics',   i:'📚', n:'Topics',      d:"Nave's 5,300 Bible topics"},
+  {m:'dict',     i:'📖', n:'Dictionary',  d:"Webster's 1828 + KJV notes"},
+  {m:'concord',  i:'📜', n:'Concordance', d:'Every word of the KJV'},
+  {m:'names',    i:'👤', n:'Names',       d:'People, places & meanings'},
+  {m:'timeline', i:'📅', n:'Timeline',    d:'Creation to Revelation'},
+  {m:'maps',     i:'🗺️', n:'Maps',        d:'Bible atlas plates'},
+  {m:'hymns',    i:'🎵', n:'Hymns',       d:'98 hymns of the faith'},
+];
+function renderSearchHub(){
+  const hub = document.getElementById('s-hub');
+  if(!hub) return;
+  if(!hub.children.length) hub.innerHTML = SEARCH_TOOLS.map(t =>
+    `<button class="hub-t" onclick="switchSearchMode('${t.m}')"><span class="hub-i">${t.i}</span><span><div class="hub-n">${t.n}</div><div class="hub-d">${escapeHtml(t.d)}</div></span></button>`).join('');
+  const inp = document.getElementById('s-input');
+  showSearchHub(!inp || inp.value.trim().length < 2);
+}
+function showSearchHub(on){
+  const hub = document.getElementById('s-hub'), rs = document.getElementById('s-resume');
+  if(hub) hub.style.display = on ? '' : 'none';
+  if(rs) rs.style.display = on && S._resume ? 'flex' : 'none';
+}
+// Where you were in Search, for the "Continue" card on the hub
+function captureSearchSpot(){
+  if(S.screen !== 'search') return;
+  const mode = currentSearchMode(), sv = activeSubView();
+  const tool = SEARCH_TOOLS.find(t => t.m === mode);
+  const q = (document.getElementById('s-input') || {}).value || '';
+  if(sv){
+    const v = document.getElementById(SUBVIEWS[sv.sub].view), t = v && v.querySelector('.dv-title, .wd-word');
+    S._resume = {sub: sv.sub, key: sv.key, label: `${tool ? tool.n + ' › ' : ''}${t ? t.textContent.trim() : ''}`};
+  } else if(mode === 'doctrine' && S._docTopic && document.getElementById('dv-verses')){
+    S._resume = {doc: S._docTopic, label: `Doctrines › ${DOCTRINES[S._docTopic[0]].topics[S._docTopic[1]].name}`};
+  } else if(tool){
+    S._resume = {mode, label: tool.n};
+  } else if(q.trim().length >= 2){
+    S._resume = {q: q.trim(), label: `Results for “${q.trim()}”`};
+  }
+  const rs = document.getElementById('s-resume');
+  if(rs && S._resume) rs.innerHTML = `<span style="font-size:18px">↩</span><span><div class="rs-l">Continue where you were</div>${escapeHtml(S._resume.label)}</span>`;
+}
+function searchResume(){
+  const r = S._resume;
+  if(!r) return;
+  if(r.sub && SUBVIEWS[r.sub]){ history.pushState({screen:'search', searchMode:SUBVIEWS[r.sub].mode}, '', ''); SUBVIEWS[r.sub].open(r.key, true); }
+  else if(r.doc){ switchSearchMode('doctrine'); showDoctrineVerses(r.doc[0], r.doc[1]); }
+  else if(r.mode) switchSearchMode(r.mode);
+  else if(r.q){ history.pushState({screen:'search', searchMode:'search'}, '', ''); searchFor(r.q); }
+}
+// The Search page fresh: the box empty, every tool listed
+function clearToHub(){
+  const inp = document.getElementById('s-input');
+  if(inp) inp.value = '';
+  S._subView = null;
+  switchSearchMode('search', false);
+  renderSearchHome();
+  document.getElementById('screen-search').scrollTop = 0;
+}
+// "‹ Search" in a tool's bar, or the Search tab tapped while in Search
+function goSearchHome(){
+  captureSearchSpot();
+  history.pushState({screen:'search'}, '', '');
+  clearToHub();
+}
+// The bottom bar's Search button
+function openSearchTab(){
+  if(S.screen === 'search'){
+    if(currentSearchMode() === 'search' && !(document.getElementById('s-input').value || '').trim()){
+      document.getElementById('s-input').focus(); return;
+    }
+    goSearchHome(); return;
+  }
+  showScreen('search');   // pushes the Search entry
+  clearToHub();
+}
+
 /* ════ MAPS FROM THE READER ════
    A chapter covered by one of the Bible maps shows a button for it under
    the chapter heading. [book, firstChapter, lastChapter, map file] — the
@@ -6505,6 +6611,7 @@ function forgetRecentSearches(){ LS.set(RECENT_KEY, []); renderSearchHome(); }
 function renderSearchHome(){
   const el = document.getElementById('s-results');
   if(!el) return;
+  renderSearchHub();
   const recent = recentSearches();
   el.innerHTML = '<div id="s-status">Enter a word, phrase, or reference (e.g. Matthew 24:24)</div>'
     + (recent.length ? `<div class="s-recent"><div class="s-recent-h"><span>Recent searches</span><button onclick="forgetRecentSearches()">Clear</button></div>
@@ -6743,6 +6850,10 @@ function switchSearchMode(mode, pushHistory=true, render=true){
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   document.getElementById('timeline-panel').style.display = mode==='timeline' ? 'block':'none';
   document.getElementById('hymns-panel').style.display    = mode==='hymns'    ? 'block':'none';
+  const cat = SEARCH_TOOLS.find(t => t.m === mode);
+  document.getElementById('cat-bar').classList.toggle('on', !!cat);
+  document.getElementById('cat-title').textContent = cat ? cat.n : '';
+  if(mode === 'search') renderSearchHub();
   if(render){
     if(mode==='doctrine') renderDoctrines();
     if(mode==='dict') handleDictSearch(document.getElementById('dict-input').value || '');
@@ -10619,7 +10730,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v35';
+const WHATS_NEW_VERSION = 'v36';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -11173,6 +11284,16 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v36" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🧭</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">A New Search Page</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Every study tool is now laid out on the <strong>Search</strong> page &mdash; Doctrines, Topics, Dictionary, Concordance, Names, Timeline, Maps and Hymns. <strong>Back</strong> walks you back step by step to Search, then Home, and <strong>↩ Continue where you were</strong> picks up right where you left off.
+        </div>
+      </div>
+    </div>
+
     <div class="wn-item" data-wn="v35" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📝</div>
       <div>
