@@ -6,6 +6,13 @@
 
 ## New Features
 
+### 🎞️ Teach From Your Study (v46)
+- **🎦 Present a study as slides** (new button in the Study Notebook's top bar): the study's name is the title slide; each heading starts a slide, with its points, lists and quote boxes beneath it (a long run continues on the next slide); every verse added with 📝＋ gets its own large verse slide with its reference. Step with the space bar, arrows, a tap, a swipe or a clicker; all the Present settings apply (A− / A+, Classroom, the four themes, Clicker only)
+- **✂ Slide break** in the notebook toolbar starts a new slide wherever you put it (shown as a dashed "new slide" line in the study)
+- **Pasting a lesson** (for example from a web page or another app) now keeps its headings, lists, quote boxes, bold and italic — any heading level becomes a study heading; colours, fonts, tables, images and scripts are left out
+- **🔎 Go to a verse** while presenting (or press /): type "Rom 8:28" or "Psalm 23" and it jumps there; when you came from a study, **↩ Lesson** returns to the slide you were on
+- **🎦 Present a journey**: from a journey's stop card — the map fills the top of the screen with the route, and the stop, what happened and its verse fill the bottom in large type; space / arrows / clicker step through the stops, Esc or ✕ Exit returns
+
 ### 🗂️ Two-Column Search on Big Screens (v45)
 - **List and page side by side** (1100px and wider): in **Topics, Names (people and places), the Dictionary and Hymns**, the list stays on the left (scrolling on its own) and a topic, person, place, word or hymn opens on the right; before one is chosen the right side says what to tap. Back steps through pages as before; turning a tablet to portrait goes back to one column
 - **Search page**: tool tiles in a row of four; **search results** in two columns of verse cards

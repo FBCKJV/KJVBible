@@ -311,6 +311,37 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #pres-overlay.hc #pres-txt,#pres-overlay.hcl #pres-txt{font-weight:600}
 #pres-overlay.hc #pres-ref,#pres-overlay.hcl #pres-ref{font-weight:700}
 #pres-bar{flex-wrap:wrap}
+#pres-goto{display:none;gap:8px;justify-content:center;padding:0 12px 6px}
+#pres-goto.on{display:flex}
+#pres-goto input{width:min(460px,70vw);height:48px;border-radius:12px;border:1px solid #c9943a;background:rgba(0,0,0,.35);color:inherit;font-size:20px;padding:0 14px;font-family:'Crimson Pro',serif}
+#pres-overlay.light #pres-goto input,#pres-overlay.hcl #pres-goto input{background:#fff}
+#pres-goto button{height:48px;min-width:56px;border-radius:12px;border:1px solid rgba(201,148,58,.5);background:rgba(201,148,58,.15);color:inherit;font-size:16px;cursor:pointer}
+/* slides from a study */
+#pres-overlay.s-title #pres-txt,#pres-overlay.s-head #pres-txt{font-family:'IM Fell English',serif;color:#e8b860}
+#pres-overlay.light.s-title #pres-txt,#pres-overlay.light.s-head #pres-txt,#pres-overlay.hcl.s-title #pres-txt,#pres-overlay.hcl.s-head #pres-txt{color:#7a4e10}
+#pres-overlay.hc.s-title #pres-txt,#pres-overlay.hc.s-head #pres-txt{color:#ffd54a}
+#pres-overlay.s-text #pres-txt{text-align:left;line-height:1.35}
+#pres-overlay.s-text #pres-txt p,#pres-overlay.s-text #pres-txt div{margin:0 0 .45em}
+#pres-overlay.s-text #pres-txt ul,#pres-overlay.s-text #pres-txt ol{margin:0 0 .45em;padding-left:1.1em}
+#pres-overlay.s-text #pres-txt li{margin:.12em 0}
+#pres-overlay.s-text #pres-txt blockquote{margin:.2em 0 .5em;padding:.2em .6em;border-left:.12em solid #c9943a;font-style:italic}
+#pres-overlay.s-text #pres-txt b,#pres-overlay.s-text #pres-txt strong{color:#e8b860}
+#pres-overlay.light.s-text #pres-txt b,#pres-overlay.hcl.s-text #pres-txt b{color:#7a3300}
+#pres-overlay.hc.s-text #pres-txt b{color:#ffd54a}
+#pres-overlay.s-text #pres-txt .nb-ref{display:none}
+/* a journey presented: the map full screen, the stop in large type */
+#wm-overlay.jr.jpres.on{display:block;padding:0}
+#wm-overlay.jr.jpres #wm-head,#wm-overlay.jr.jpres #wm-sub,#wm-overlay.jr.jpres .pane-grip{display:none}
+#wm-overlay.jr.jpres #wm-map{position:absolute;top:0;left:0;right:0;bottom:min(40vh,380px);border-radius:0;border:0;height:auto}
+#wm-overlay.jr.jpres #wm-list{position:absolute;left:0;right:0;bottom:0;height:min(40vh,380px);max-height:none;overflow:auto;z-index:3;padding:0;display:block}
+#wm-overlay.jr.jpres .jr-card{background:#140c04;padding:1.2vw 2.5vw;border-radius:0;border-width:2px 0 0;border-color:#7a5520;min-height:100%;box-sizing:border-box}
+#wm-overlay.jr.jpres .jr-place{font-size:clamp(24px,3.2vw,60px)}
+#wm-overlay.jr.jpres .jr-place span{font-size:.55em}
+#wm-overlay.jr.jpres .jr-d{font-size:clamp(18px,1.9vw,36px)}
+#wm-overlay.jr.jpres .jr-v{font-size:clamp(18px,2.1vw,40px)}
+#wm-overlay.jr.jpres .jr-v b{font-size:.5em}
+#wm-overlay.jr.jpres .jr-top{font-size:clamp(12px,1vw,18px)}
+#wm-overlay.jr.jpres .jr-nav button{font-size:clamp(14px,1.2vw,22px);padding:1vh 1vw}
 #pres-bar button.on{background:#c9943a;color:#1a1206;border-color:#c9943a}
 #pres-overlay.clicker #pres-bar{opacity:0;pointer-events:none}
 #pres-overlay.clicker.peek #pres-bar{opacity:1;pointer-events:auto}
@@ -394,6 +425,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-ed li{margin:2px 0}
 #nb-ed blockquote{margin:8px 0 10px;padding:8px 12px;border-left:3px solid var(--gold-d);background:var(--surface);border-radius:0 8px 8px 0;font-style:italic;color:var(--text-d)}
 #nb-ed blockquote.nb-v{font-style:normal;color:var(--text)}
+#nb-ed hr{border:0;border-top:2px dashed var(--gold-d);margin:16px 0;position:relative;overflow:visible}
+#nb-ed hr::after{content:'✂ new slide';position:absolute;right:0;top:-9px;font-size:10px;font-family:'Inter',sans-serif;color:var(--gold-d);background:var(--bg);padding:0 4px}
 #nb-ed .nb-ref{display:inline-block;font-family:'Inter',sans-serif;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-right:6px;cursor:pointer;border-bottom:1px dotted var(--gold-d)}
 #nb-foot{font-size:11px;color:var(--text-m);padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
 .rc-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
@@ -2281,11 +2314,14 @@ body.light #home-watermark{
 <!-- PRESENT MODE: Scripture large for a projector or classroom panel -->
 <div id="pres-overlay" role="dialog" aria-label="Present">
   <div id="pres-stage"><div id="pres-ref"></div><div id="pres-txt"></div></div>
+  <form id="pres-goto" onsubmit="event.preventDefault();presGoto()"><input id="pres-goto-in" placeholder="Go to a verse — e.g. Rom 8:28" autocomplete="off" enterkeyhint="go"><button type="submit">Go</button><button type="button" onclick="presGotoClose()">✕</button></form>
   <div id="pres-bar">
     <button onclick="presStep(-1)" aria-label="Previous">‹</button>
     <span id="pres-pos"></span>
     <button onclick="presFont(-1)" aria-label="Smaller text">A−</button>
     <button onclick="presFont(1)" aria-label="Larger text">A+</button>
+    <button id="pres-lesson" onclick="presBackToLesson()" style="display:none">↩ Lesson</button>
+    <button onclick="presGotoOpen()" title="Go to a verse (/)" aria-label="Go to a verse">🔎</button>
     <button id="pres-count" onclick="presCount()">1 verse</button>
     <button id="pres-class" onclick="presClassroom()" title="One verse, never smaller than a back row can read; long verses run onto a second screen">📽 Classroom</button>
     <button id="pres-theme" onclick="presTheme()" aria-label="Colours">◐ Dark</button>
@@ -2311,6 +2347,7 @@ body.light #home-watermark{
   <div id="nb-top">
     <button class="nb-tb" onclick="closePopover('nb-panel')" aria-label="Close">✕</button>
     <input id="nb-title" maxlength="80" placeholder="Name this study" aria-label="Study name" oninput="nbTitleInput(this.value)">
+    <button class="nb-tb" onclick="presOpenStudy()" title="Present this study as slides">🎦 Present</button>
     <button class="nb-tb" id="nb-menu-btn" onclick="nbToggleMenu()">☰ Studies</button>
   </div>
   <div id="nb-menu"></div>
@@ -2326,6 +2363,7 @@ body.light #home-watermark{
     <span class="sep"></span>
     <button onclick="nbCmd('quote')" title="Quote box">❝</button>
     <button onclick="nbCmd('p')" title="Plain text">¶</button>
+    <button onclick="nbCmd('hr')" title="Slide break — start a new slide here when presenting">✂</button>
     <span class="sep"></span>
     <button onclick="nbCmd('undo')" title="Undo">↶</button>
     <button onclick="nbCmd('redo')" title="Redo">↷</button>
@@ -6542,11 +6580,13 @@ function nbCreate(title){
 function nbClean(html){
   const tpl = document.createElement('template');
   tpl.innerHTML = html;
-  const ALLOW = new Set(['P','DIV','BR','H3','UL','OL','LI','BLOCKQUOTE','B','STRONG','I','EM','SPAN']);
+  const ALLOW = new Set(['P','DIV','BR','H3','HR','UL','OL','LI','BLOCKQUOTE','B','STRONG','I','EM','SPAN']);
   const walk = node => [...node.childNodes].forEach(n => {
     if(n.nodeType === 3) return;
     if(n.nodeType !== 1 || /^(SCRIPT|STYLE|TEMPLATE|IFRAME|OBJECT)$/.test(n.tagName)){ n.remove(); return; }
     walk(n);
+    // Headings of any level (a lesson pasted from elsewhere) become study headings
+    if(/^H[1-6]$/.test(n.tagName) && n.tagName !== 'H3'){ const h = document.createElement('h3'); h.append(...n.childNodes); n.replaceWith(h); return; }
     if(!ALLOW.has(n.tagName)){ n.replaceWith(...n.childNodes); return; }
     const ref = n.tagName === 'SPAN' && n.classList.contains('nb-ref') ? n.dataset.ref : null;
     const verse = n.tagName === 'BLOCKQUOTE' && n.classList.contains('nb-v');
@@ -6594,6 +6634,7 @@ function nbCmd(c){
   else if(c === 'p') document.execCommand('formatBlock', false, 'p');
   else if(c === 'ul') document.execCommand('insertUnorderedList');
   else if(c === 'ol') document.execCommand('insertOrderedList');
+  else if(c === 'hr') document.execCommand('insertHorizontalRule');
   else document.execCommand(c); // bold, italic, indent, outdent, undo, redo
   clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 300);
 }
@@ -6605,10 +6646,13 @@ function nbCmd(c){
     document.getElementById('nb-status').textContent = 'Saving…';
     clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 500);
   });
-  // Pasted text keeps the fixed note font: plain text only
+  // Pasted text keeps the fixed note font; a pasted lesson keeps its headings,
+  // lists, quotes, bold and italic (nothing else survives nbClean)
   ed.addEventListener('paste', e => {
     e.preventDefault();
-    document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain'));
+    const cd = e.clipboardData || window.clipboardData, html = cd.getData('text/html');
+    if(html) document.execCommand('insertHTML', false, nbClean(html.replace(/<!--[\s\S]*?-->/g, '')));
+    else document.execCommand('insertText', false, cd.getData('text/plain'));
   });
   // Tap a verse reference to read it (the study stays as it was)
   ed.addEventListener('click', e => {
@@ -7199,7 +7243,7 @@ function wmOpenPlace(id){
 // The full-screen map
 function openWhereMap(title, sub, pins, classic=-1){
   pins = pins.filter(Boolean);
-  document.getElementById('wm-overlay').classList.remove('jr');
+  document.getElementById('wm-overlay').classList.remove('jr', 'jpres');
   document.getElementById('wm-title').textContent = title;
   document.getElementById('wm-sub').innerHTML = escapeHtml(sub || '') + (classic >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openMap(${classic}))">📜 Classic map: ${escapeHtml(MAPS[classic].t)} ›</button>` : '');
   const list = document.getElementById('wm-list');
@@ -7324,13 +7368,17 @@ async function mxEra(div, limit=10){
    screen rather than shrinking. Colours: dark, light, and two high-contrast
    themes for projectors that wash colour out. 🖱 Clicker only hides the
    buttons. Settings travel with the restore code (kjv_pres). */
-const PRES = {book:null, ch:0, v:0, count:1, scale:1, theme:'dark', classroom:false, clicker:false, parts:null, part:0, idle:null};
+const PRES = {book:null, ch:0, v:0, count:1, scale:1, theme:'dark', classroom:false, clicker:false, parts:null, part:0, idle:null, mode:'bible', deck:null, di:0};
 const PRES_THEMES = [['dark','◐ Dark'], ['light','◐ Light'], ['hc','◑ High contrast'], ['hcl','◑ High contrast light']];
-function presOpen(ref){
+function presOpen(ref, keepDeck){
   const r = ref && parseReference(ref);
   if(r && r.book){ PRES.book = r.book; PRES.ch = r.chIdx; PRES.v = Math.max(0, (r.verse || 1) - 1); }
   else { PRES.book = S.book; PRES.ch = S.ch; PRES.v = 0; }
-  PRES.part = 0;
+  PRES.part = 0; PRES.mode = 'bible';
+  if(!keepDeck) PRES.deck = null;
+  presShow();
+}
+function presShow(){
   const o = LS.get('kjv_pres', {}) || {};
   PRES.count = o.count || 1; PRES.scale = o.scale || 1;
   PRES.theme = o.theme || (o.light ? 'light' : 'dark');
@@ -7341,6 +7389,75 @@ function presOpen(ref){
   presFull(true);
   presRender();
   presWake();
+}
+// ── Presenting a study: the Study Notebook as slides ──
+// The study's name is the title slide; each heading starts a slide; points,
+// lists and quote boxes fill text slides (a long run continues on the next);
+// every verse added with 📝＋ is its own large verse slide; ✂ forces a break.
+function presBuildDeck(st){
+  const tpl = document.createElement('template');
+  tpl.innerHTML = nbClean(st.h || '');
+  const slides = [{k:'title', t: st.t || 'Study'}];
+  let sec = '', buf = [], len = 0;
+  const flush = () => {
+    if(!buf.length) return;
+    const last = slides[slides.length - 1];
+    if(last.k === 'head' && last.t === sec) slides.pop(); // the heading becomes this slide's title
+    slides.push({k:'text', t:sec, h:buf.join('')}); buf = []; len = 0;
+  };
+  for(const n of [...tpl.content.childNodes]){
+    if(n.nodeType === 3){ const t = n.textContent.trim(); if(t){ buf.push(`<p>${escapeHtml(t)}</p>`); len += t.length; } continue; }
+    if(n.nodeType !== 1) continue;
+    if(n.tagName === 'H3'){ flush(); sec = n.textContent.trim(); if(sec) slides.push({k:'head', t:sec}); continue; }
+    if(n.tagName === 'HR'){ flush(); continue; }
+    if(n.tagName === 'BLOCKQUOTE' && n.classList.contains('nb-v')){
+      flush();
+      const r = n.querySelector('.nb-ref'), label = r ? r.textContent.trim() : '', ref = r ? r.dataset.ref : '';
+      if(r) r.remove();
+      slides.push({k:'verse', t:sec, label, ref, txt:n.textContent.replace(/\s+/g, ' ').trim()});
+      continue;
+    }
+    const t = n.textContent.trim();
+    if(!t && !n.querySelector('br')) continue;
+    if(len + t.length > 420 && buf.length) flush();
+    buf.push(n.outerHTML); len += t.length;
+  }
+  flush();
+  return slides;
+}
+function presOpenStudy(){
+  nbStore && nbStore();
+  const st = nbActive();
+  const deck = presBuildDeck(st);
+  if(deck.length < 2){ showToast('Add a heading, some points or a verse to this study first'); return; }
+  PRES.deck = deck; PRES.di = 0; PRES.mode = 'deck';
+  presShow();
+}
+function presRenderSlide(){
+  const sl = PRES.deck[PRES.di], ov = document.getElementById('pres-overlay');
+  const refEl = document.getElementById('pres-ref'), txt = document.getElementById('pres-txt');
+  ov.classList.remove('s-title', 's-head', 's-text', 's-verse'); ov.classList.add('s-' + sl.k);
+  PRES.parts = null;
+  if(sl.k === 'title'){ refEl.textContent = 'Faith Baptist Church'; txt.textContent = sl.t; }
+  else if(sl.k === 'head'){ refEl.textContent = PRES.deck[0].t; txt.textContent = sl.t; }
+  else if(sl.k === 'text'){ refEl.textContent = sl.t || PRES.deck[0].t; txt.innerHTML = sl.h; }
+  else { refEl.textContent = sl.label || sl.ref; txt.textContent = sl.txt; }
+  document.getElementById('pres-pos').textContent = `Slide ${PRES.di + 1} of ${PRES.deck.length}`;
+  presApplyLook();
+  presFit();
+}
+function presBackToLesson(){ if(!PRES.deck) return; PRES.mode = 'deck'; presRender(); }
+// ── Go to a verse (🔎 or /) ──
+function presGotoOpen(){
+  const f = document.getElementById('pres-goto'), inp = document.getElementById('pres-goto-in');
+  f.classList.add('on'); inp.value = ''; setTimeout(() => inp.focus(), 30);
+}
+function presGotoClose(){ document.getElementById('pres-goto').classList.remove('on'); document.getElementById('pres-goto-in').blur(); }
+function presGoto(){
+  const v = document.getElementById('pres-goto-in').value.trim(), r = v && parseReference(v);
+  if(!r || !r.book){ showToast('Type a reference such as John 3:16 or Rom 8'); return; }
+  PRES.book = r.book; PRES.ch = r.chIdx; PRES.v = Math.max(0, (r.verse || 1) - 1); PRES.part = 0; PRES.mode = 'bible';
+  presGotoClose(); presApplyLook(); presRender();
 }
 function presFromReader(){
   const sel = typeof getSelectedSorted === 'function' ? getSelectedSorted() : [];
@@ -7353,13 +7470,15 @@ function presSave(){
 }
 function presApplyLook(){
   const ov = document.getElementById('pres-overlay');
+  document.getElementById('pres-lesson').style.display = PRES.deck && PRES.mode === 'bible' ? '' : 'none';
+  if(PRES.mode !== 'deck') ov.classList.remove('s-title', 's-head', 's-text', 's-verse');
   ['light','hc','hcl'].forEach(c => ov.classList.toggle(c, PRES.theme === c));
   ov.classList.toggle('clicker', PRES.clicker);
   const t = PRES_THEMES.find(x => x[0] === PRES.theme) || PRES_THEMES[0];
   document.getElementById('pres-theme').textContent = t[1];
   document.getElementById('pres-class').classList.toggle('on', PRES.classroom);
   document.getElementById('pres-click').classList.toggle('on', PRES.clicker);
-  document.getElementById('pres-count').style.display = PRES.classroom ? 'none' : '';
+  document.getElementById('pres-count').style.display = PRES.classroom || PRES.mode === 'deck' ? 'none' : '';
 }
 const presPer = () => PRES.classroom ? 1 : PRES.count;
 const presMinFont = () => PRES.classroom ? Math.max(28, window.innerHeight * 0.065) : 16;
@@ -7368,6 +7487,7 @@ function presRoom(){
   return stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - ref.offsetHeight - parseFloat(getComputedStyle(ref).marginBottom) - 8;
 }
 async function presRender(){
+  if(PRES.mode === 'deck') return presRenderSlide();
   const d = await fetchBook(PRES.book).catch(() => null);
   if(!d) return;
   const ch = d.chapters[PRES.ch], vs = ch.verses.slice(PRES.v, PRES.v + presPer());
@@ -7419,6 +7539,11 @@ function presFit(){
   stage.style.overflowY = txt.scrollHeight > room ? 'auto' : 'hidden';
 }
 async function presStep(dir){
+  if(PRES.mode === 'deck'){
+    const ni = PRES.di + dir;
+    if(ni >= 0 && ni < PRES.deck.length){ PRES.di = ni; presRenderSlide(); }
+    return;
+  }
   // A long verse in Classroom: its next / previous screen first
   if(PRES.parts){
     const np = PRES.part + dir;
@@ -7483,6 +7608,8 @@ function presWake(e){
   document.addEventListener('keydown', e => {
     if(!ov.classList.contains('on')) return;
     const k = e.key;
+    if(e.target && e.target.id === 'pres-goto-in'){ if(k === 'Escape'){ e.preventDefault(); presGotoClose(); } return; } // typing a reference
+    if(k === '/' || k === 'g'){ e.preventDefault(); presGotoOpen(); return; }
     if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(k)){ e.preventDefault(); presStep(1); presWake(); }
     else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(k)){ e.preventDefault(); presStep(-1); presWake(); }
     else if(k === 'Escape') closePopover('pres-overlay');
@@ -7557,7 +7684,7 @@ async function openJourney(id, i=0){
   if(!j) return;
   S._jr = {j, i};
   const ov = document.getElementById('wm-overlay');
-  ov.classList.add('jr');
+  ov.classList.add('jr'); ov.classList.remove('jpres');
   document.getElementById('wm-title').textContent = '🧭 ' + j.t;
   document.getElementById('wm-sub').textContent = `${j.r} · ${jrDates(j)} · ${j.s.length} stops`;
   if(!ov.classList.contains('on')) openPopover('wm-overlay');
@@ -7578,7 +7705,7 @@ async function jrCard(){
   const {j, i} = S._jr, st = j.s[i], box = document.getElementById('wm-list');
   const p = st.p && !st.ov && S._places[st.p], today = p && wmToday(p) ? ` <span>· today ${escapeHtml(p.s)}</span>` : '';
   box.innerHTML = `<div class="jr-card">
-    <div class="jr-top"><span>Stop ${i + 1} of ${j.s.length}</span>${st.y != null ? `<button onclick="jrTimeline()">📅 About ${tlYearText(st.y)} ›</button>` : ''}</div>
+    <div class="jr-top"><span>Stop ${i + 1} of ${j.s.length}</span>${st.y != null ? `<button onclick="jrTimeline()">📅 About ${tlYearText(st.y)} ›</button>` : ''}<button onclick="jrPresent()" style="margin-left:6px">${document.getElementById('wm-overlay').classList.contains('jpres') ? '✕ Exit' : '🎦 Present'}</button></div>
     <div class="jr-place">📍 ${escapeHtml(st.n)}${today}</div>
     <div class="jr-d">${escapeHtml(st.d)}</div>
     <div class="jr-v"><b>${escapeHtml(st.r)}</b><span class="jr-vt">…</span></div>
@@ -7590,6 +7717,22 @@ async function jrCard(){
   const t = box.querySelector('.jr-vt');
   if(t && S._jr.i === i) t.textContent = vs ? ' ' + vs.text : '';
 }
+// Present a journey: the map full screen, the stop in large type; space / arrows / clicker step
+function jrPresent(){
+  const ov = document.getElementById('wm-overlay'), on = !ov.classList.contains('jpres');
+  ov.classList.toggle('jpres', on);
+  try{ if(on && document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); else if(!on && document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+  jrCard();
+  // re-frame the route for the new map size
+  setTimeout(() => { const f = document.querySelector('#wm-map .wm-ctl button[aria-label="Fit"]'); if(f) f.click(); }, 120);
+}
+document.addEventListener('keydown', e => {
+  const ov = document.getElementById('wm-overlay');
+  if(!ov || !ov.classList.contains('jpres') || !ov.classList.contains('on')) return;
+  if(['ArrowRight','ArrowDown','PageDown',' ','Enter'].includes(e.key)){ e.preventDefault(); jrGo(S._jr.i + 1); }
+  else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key)){ e.preventDefault(); jrGo(S._jr.i - 1); }
+  else if(e.key === 'Escape'){ e.preventDefault(); jrPresent(); }
+});
 function jrRead(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => jumpToRef(st.r)); }
 function jrTimeline(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => openTimelineAt(st.e)); }
 // Search → Maps: the list
@@ -11784,7 +11927,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v45';
+const WHATS_NEW_VERSION = 'v46';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -12295,6 +12438,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v46" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎞️</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Teach From Your Study</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Write your lesson in the 📝 Study Notebook, then tap <strong>🎦 Present</strong> &mdash; it becomes slides: a title slide, a slide for each heading and its points, and every verse large on its own. <strong>✂</strong> starts a new slide wherever you like, and a lesson pasted in keeps its headings and lists. While presenting, <strong>🔎</strong> (or the / key) jumps to any verse and <strong>↩ Lesson</strong> brings you back. Journeys can be presented too: the map full screen, the stop and its verse in large type.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v45" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🗂️</div>
       <div>
