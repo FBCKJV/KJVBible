@@ -333,6 +333,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Copy as Markdown (v46.01)** — ☰ Studies in the Study Notebook gains **Ⓜ️ Copy as Markdown**: the study with `#` title, `##` headings, `-` and `1.` lists (indented for an outline), **bold** and *italic*, `>` verses followed by their reference, and `---` at each ✂ slide break — the plain-text structure Claude, Google Docs, Word and slide makers read, so a lesson built in the app can be taken anywhere
 - **Reading Plans styling restored (v45)** — the plan cards, today's reading card and the day list lost their styles in the June 24 upload (the same one that dropped the Sword Drill styles) and showed as plain text with grey browser buttons; the styles are restored from the June 21 version
 - **Clean-up (v41.01)** — red letter is gone for good: anyone who had turned it on before the button was removed still saw some chapters in orange with no way to turn it off; that code is removed (and no longer synced). Also removed code nothing used any more — the old word pop-up, an old backup/import pair, an unused theme toggle and a handful of leftover helpers and styles (about 170 lines). The help text says 96 timeline events; the changelog counts ten classic maps
 - **Full verse on the verse card (v38.02)** — long verses were cut off in a 120px box with its own scrollbar (e.g. Genesis 12:8, Psalm 44:22); the whole verse now shows, and the card itself scrolls when it is taller than the screen
