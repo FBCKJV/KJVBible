@@ -274,6 +274,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Sword Drill polish (v38.01)** — a 💡 hint in Full Recall now shows its letters inside the blank, on the line, instead of under a strike-through underline; inside a verse the top-left button reads “‹ Verses” and the ✕ Close (which left the game for Home) is hidden until you're back on the verse list
 - **What's New wording (v36.01)** — the v34 *Follow the Thread* item no longer mentions the swipeable tab row that v36 replaced with the Search hub
 - **Nine more hymns (v34.01)** — *Softly and Tenderly*, *Jesus Paid It All*, *Whosoever Will*, *Bringing in the Sheaves*, *Jesus Saves*, *Wonderful Words of Life*, *Holy Bible, Book Divine*, *Shall We Gather at the River?* and *Christ the Lord Is Risen Today* — the hymnal now has 98. Seven came from lindsaysperring/GetHymnLyrics (an Adventist hymnal) and were restored to the standard wording (*Jesus Paid It All*: “Jesus died my soul to save, my lips shall still repeat”; *Softly and Tenderly*: all four stanzas)
 - **What's New complete (v32.01)** — the pop-up now lists every feature from versions 28–32, newest first, including the church dictionary notes (baptism, the elect, predestination) and the fixed "Download All 66 Books"

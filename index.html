@@ -1170,9 +1170,9 @@ body.light #home-watermark{
 .mw-k{color:var(--text)}
 .mw-k.just{animation:mw-pop .35s ease}
 @keyframes mw-pop{0%{color:var(--gold);text-shadow:0 0 8px rgba(201,148,58,.6)}100%{color:var(--text)}}
-.mw-b{display:inline-block;height:1.05em;vertical-align:-.12em;border-bottom:2px solid var(--gold-d);opacity:.7;margin:0 1px}
+.mw-b{display:inline-block;height:1.2em;line-height:1.2em;vertical-align:baseline;text-align:left;border-bottom:2px solid var(--gold-d);opacity:.7;margin:0 1px}
 .mw-b.cur{border-bottom:3px solid var(--gold);opacity:1;background:rgba(201,148,58,.14);border-radius:4px 4px 0 0;animation:mw-blink 1.4s ease-in-out infinite}
-.mw-b.cur.hinted{width:auto!important;min-width:1.2em;padding:0 2px;color:var(--gold);font-style:italic;animation:none}
+.mw-h{color:var(--gold);font-weight:600;padding-left:2px}
 @keyframes mw-blink{50%{background:rgba(201,148,58,.28)}}
 .mw-b.bad{animation:mw-shake .35s ease;border-bottom-color:#d9534f;background:rgba(217,83,79,.18)}
 @keyframes mw-shake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
@@ -1957,12 +1957,12 @@ body.light #home-watermark{
 <!-- VERSE MEMORY OVERLAY -->
 <div id="mem-overlay">
   <div id="mem-hdr">
-    <button id="mem-back" onclick="memBack()">&#8592; Back</button>
+    <button id="mem-back" onclick="memBack()">&#8249; Verses</button>
     <div id="mem-hdr-center">
       <span id="mem-hdr-title">⚔ Sword Drill</span>
       <span id="mem-hdr-sub">Verse Memorization</span>
     </div>
-    <button id="mem-close-btn" onclick="closeMemorize()">Close ✕</button>
+    <button id="mem-close-btn" onclick="closeMemorize()" title="Close Sword Drill">✕ Close</button>
   </div>
 
   <!-- Verse selection -->
@@ -9448,6 +9448,7 @@ function showToast(msg){
 /* ── OPEN / CLOSE / BACK ── */
 function openMemorize(){
   document.getElementById('mem-overlay').classList.add('on');
+  document.getElementById('mem-close-btn').style.visibility='';
   history.pushState({screen:'mem-overlay'},'','');
   const ms = memGetMastery();
   memUpdateStreakDisplay(ms);
@@ -9464,6 +9465,7 @@ function memBack(){
   document.getElementById('mem-hdr-title').textContent='⚔ Sword Drill';
   document.getElementById('mem-hdr-sub').textContent='Verse Memorization';
   document.getElementById('mem-back').style.display='none';
+  document.getElementById('mem-close-btn').style.visibility='';
   M.active=null; M.done=true;
   document.getElementById('mem-input').blur();
   renderMemSelect(); // refresh status dots
@@ -9760,6 +9762,7 @@ const memNorm = w => w.toLowerCase().replace(/[’']/g, '').replace(/[^a-z]/g, '
 async function startMem(refStr){
   document.getElementById('mem-hdr-title').textContent=refStr;
   document.getElementById('mem-back').style.display='block';
+  document.getElementById('mem-close-btn').style.visibility='hidden';
   document.getElementById('mem-select').style.display='none';
   document.getElementById('mem-game').style.display='flex';
   // "Psalm 1:1-2" → the verses joined
@@ -9807,7 +9810,8 @@ function memFocusInput(){
   if(document.activeElement!==inp) inp.focus({preventScroll:true});
 }
 // Blank width follows the word's length so the verse keeps its shape
-const memBlank = (t, i, cls='') => `<span class="mw-b${cls}" data-i="${i}" style="width:${Math.max(1.2, t.word.length*0.52)}em"></span>`;
+// (a zero-width space keeps every blank on the same text baseline, hinted or not)
+const memBlank = (t, i, cls='', inner='') => `<span class="mw-b${cls}" data-i="${i}" style="min-width:${Math.max(1.2, t.word.length*0.52)}em">${inner}&#8203;</span>`;
 function memRender(justIdx){
   const el=document.getElementById('mem-verse-text');
   el.innerHTML=M.tokens.map((t,i)=>{
@@ -9819,7 +9823,7 @@ function memRender(justIdx){
     } else if(M.revealed.has(i)){
       w = `<span class="mw-k${i===justIdx?' just':''}">${t.word}</span>`;
     } else if(i===M.cur){
-      w = M.hintLv ? `<span class="mw-b cur hinted" data-i="${i}">${t.word.slice(0,M.hintLv)}…</span>` : memBlank(t,i,' cur');
+      w = memBlank(t, i, ' cur', M.hintLv ? `<span class="mw-h">${t.word.slice(0,M.hintLv)}</span>` : '');
     } else w = memBlank(t,i);
     return `<span class="mw">${t.pre}${w}${t.post}</span> `;
   }).join('');
