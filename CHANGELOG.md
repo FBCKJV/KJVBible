@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🖥️ Tablets and Big Screens (v43)
+- **Side by side on wide screens** (1100px and wider — an iPad in landscape, a laptop, a classroom panel): the **verse card** opens as a panel on the right with the chapter still readable on the left (tap another verse and the card changes); **📍 Where** maps open on the right half; the **Study Notebook** opens on the right with the chapter beside it — and a verse card then rises over the chapter, so the notebook stays in view
+- **Journeys**: the map on the left, the stop card in a column on the right
+- **Map explorer**: a taller map
+- **Larger touch targets** on big touch screens (chapter buttons, verse-card buttons, chips, journey buttons, map zoom)
+- **Back closes the newest card first** when several are open side by side
+- Phones are unchanged
+
 ### 🎦 Present Mode (v42)
 - **Scripture on the big screen** for a projector, TV or classroom panel: opens full screen from **🎦 Present** under a chapter title (from verse 1, or the first selected verse) or in the verse card (from that verse)
 - **As large as the screen allows**: the text is sized to fill the screen; **A− / A+** adjust it; **1 / 2 / 3 verses** at a time with verse numbers

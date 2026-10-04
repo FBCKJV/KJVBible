@@ -1459,6 +1459,38 @@ body.light #home-watermark{
 .ch-num-btn.cur{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 .ch-num-btn:active{opacity:.6}
 #reader-loc{cursor:pointer}
+/* Wide screens (tablets in landscape, classroom panels): the verse card,
+   notebook and map open beside the text instead of over it */
+@media (min-width:1100px){
+  #vpop{background:transparent;backdrop-filter:none;pointer-events:none;align-items:stretch;justify-content:flex-end;z-index:340}
+  #vpop-inner{pointer-events:auto;width:440px;max-width:440px;border-radius:0;border-width:0 0 0 1px;overflow-y:auto;max-height:none;margin-top:56px;padding-bottom:84px;animation:sr .22s ease;box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+  @keyframes sr{from{transform:translateX(40px);opacity:0}}
+  #nb-panel{left:auto;width:min(48vw,680px);border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+  #wm-overlay:not(.jr){left:auto;width:50vw;border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+  #wm-overlay.jr.on{display:grid;grid-template-columns:1fr 420px;grid-template-rows:auto auto 1fr;column-gap:14px}
+  #wm-overlay.jr #wm-head,#wm-overlay.jr #wm-sub{grid-column:1/-1}
+  #wm-overlay.jr #wm-map{grid-column:1;grid-row:3;min-height:0}
+  #wm-overlay.jr #wm-list{grid-column:2;grid-row:3;max-height:none;overflow-y:auto;padding-top:0}
+  #wm-overlay.jr .jr-v{font-size:17px}
+  #wm-overlay.jr .jr-nav{flex-wrap:wrap}
+  /* the chapter stays in view beside an open panel */
+  body:has(#vpop.on) #screen-reader{padding-right:440px}
+  body:has(#nb-panel.on) #screen-reader{padding-right:min(48vw,680px)}
+  body:has(#wm-overlay.on:not(.jr)) #screen-reader{padding-right:50vw}
+  #mx-map{height:62vh;max-height:760px}
+  /* notebook open: the verse card rises over the chapter, the notebook stays in view */
+  body:has(#nb-panel.on) #vpop{right:min(48vw,680px);justify-content:center;align-items:flex-end}
+  body:has(#nb-panel.on) #vpop-inner{width:100%;max-width:620px;margin-top:0;border-radius:18px 18px 0 0;border-width:1px 1px 0;max-height:72vh;padding-bottom:84px;animation:su .22s ease}
+  body:has(#nb-panel.on):has(#vpop.on) #screen-reader{padding-right:min(48vw,680px)}
+}
+/* Big touch screens: larger targets for a finger at a board */
+@media (min-width:1100px) and (pointer:coarse){
+  .ch-map{font-size:15px;padding:9px 16px}
+  .pa{font-size:14px;padding:12px 8px}
+  .vl-chip{font-size:14px;padding:7px 13px}
+  .jr-nav button{padding:13px 8px;font-size:15px}
+  .wm-ctl button{width:44px;height:44px;font-size:22px}
+}
 </style>
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
@@ -3224,7 +3256,7 @@ function openVPop(ref,txt){
   vp.classList.add('on');
   // Push a history entry so the device Back button closes the card (see the
   // popstate handler) instead of navigating the page underneath it.
-  if(!wasOpen) history.pushState({screen:S.screen, modal:'vpop'}, '', '');
+  if(!wasOpen){ vp.dataset.t = ++LAYER_SEQ; history.pushState({screen:S.screen, modal:'vpop'}, '', ''); }
 }
 
 function showVpopDictList(){
@@ -3826,10 +3858,13 @@ function goBack(){
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
 const POPOVER_IDS = ['pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
+// Order the cards were opened in: on a wide screen several can be open side
+// by side (the verse card beside the notebook), and Back closes the newest
+let LAYER_SEQ = 0;
 function openPopover(id){
   const el = document.getElementById(id);
   if(!el || el.classList.contains('on')) return;
-  el.classList.add('on');
+  el.classList.add('on'); el.dataset.t = ++LAYER_SEQ;
   history.pushState({screen:S.screen, modal:id}, '', '');
 }
 function closePopover(id){
@@ -3847,16 +3882,11 @@ window.addEventListener('popstate', e => {
 
   // Close any open pop-over card first — Back dismisses the card instead of
   // navigating the page beneath it (each pushed a history entry when opened).
-  for(const _pid of POPOVER_IDS){
-    const _pel = document.getElementById(_pid);
-    if(_pel && _pel.classList.contains('on')){ _pel.classList.remove('on'); if(_pid === 'pres-overlay') presEnd(); return; }
-  }
-
-  // Close the verse card if open — Back dismisses the card instead of
-  // navigating the page beneath it.
-  const _vpop = document.getElementById('vpop');
-  if(_vpop && _vpop.classList.contains('on')){
-    _vpop.classList.remove('on');
+  // (and the verse card) — the most recently opened one, when several are open
+  const _open = [...POPOVER_IDS, 'vpop'].map(id => document.getElementById(id)).filter(el => el && el.classList.contains('on'));
+  if(_open.length){
+    const _top = _open.reduce((a, b) => (+b.dataset.t || 0) > (+a.dataset.t || 0) ? b : a);
+    _top.classList.remove('on'); if(_top.id === 'pres-overlay') presEnd();
     return;
   }
 
@@ -11528,7 +11558,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v42';
+const WHATS_NEW_VERSION = 'v43';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -12039,6 +12069,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v43" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🖥️</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Made for Tablets and Big Screens</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          On an iPad, a laptop or a classroom panel, the verse card, the map and the Study Notebook now open <strong>beside</strong> the chapter instead of over it &mdash; read on the left, study on the right. Journeys show the stop card beside the map, and buttons are larger for a finger at the board.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v42" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎦</div>
       <div>
