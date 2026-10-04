@@ -456,11 +456,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #dict-results .empty{color:var(--text-m);font-size:13px;text-align:center;padding:20px 0}
 
 /* Word-tap popup */
-#word-pop{position:fixed;bottom:70px;left:12px;right:12px;background:var(--bg2);border:1px solid var(--gold-d);border-radius:12px;padding:14px 16px;z-index:250;display:none;animation:su .2s ease;box-shadow:0 8px 32px rgba(0,0,0,.5);max-width:700px;margin:0 auto}
-#word-pop.on{display:block}
-#wp-word{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);margin-bottom:6px}
-#wp-def{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.6}
-#wp-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--text-m);font-size:18px;cursor:pointer;line-height:1}
 /* SAVED */
 #screen-saved{padding:12px}
 .tab-bar{display:flex;gap:6px;margin-bottom:14px}
@@ -702,7 +697,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .rr-preview, .rr-ref, .rr-theme,
 #rr-sub,
 .dv-title, .dv-desc,
-#wp-def, #wp-word,
 .vnote-chip,
 #s-status { font-size: var(--font-v) }
 
@@ -863,12 +857,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   background: rgba(180,60,60,.2);
   margin: 0 12px 12px;
 }
-
-/* ── RED LETTER ── */
-.rl-verse .vtxt { color: #c8703a !important }
-.light .rl-verse .vtxt { color: #a04820 !important }
-#btn-rl { font-size:11px; font-weight:700; letter-spacing:.04em }
-#btn-rl.on { background:rgba(200,112,58,.2); color:#c8703a; border-color:#c8703a }
 
 /* ── FLOATING CHAPTER NAV ── */
 #reader-topbar {
@@ -1098,9 +1086,6 @@ body.light #home-watermark{
 
 /* Inline input */
 /* ── Scourby Audio Player ── */
-#scourby-btn{background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;
-  color:var(--text-m);font-size:20px;line-height:1;transition:color .2s;display:none}
-#scourby-btn.active{color:var(--gold)}
 #scourby-bar{display:none;position:fixed;bottom:60px;left:0;right:0;z-index:200;
   background:var(--bg2);border-top:1px solid var(--border);
   border-bottom:1px solid var(--border);
@@ -1327,14 +1312,6 @@ body.light #home-watermark{
 /* Reveal button */
 #mem-reveal-btn{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;transition:all .15s}
 #mem-reveal-btn.on{background:rgba(201,148,58,.2);color:var(--gold);border-color:var(--gold-d)}
-
-/* ── DICT TRIGGER on verse ── */
-
-/* word-pop multi-word support */
-#wp-def{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.7;max-height:220px;overflow-y:auto}
-.wp-word-entry{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.wp-word-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
-.wp-word-title{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);margin-bottom:2px}
 
 /* ── Welcome/Migration Announcement ── */
 #welcome-modal{
@@ -3054,10 +3031,6 @@ function getMultiRef(){
   return `${base}:${sorted[0].vnum}–${sorted[sorted.length-1].vnum}`;
 }
 
-function getMultiText(){
-  return getSelectedSorted().map(v=>`[${v.vnum}] ${v.txt}`).join('\n');
-}
-
 function multiCopy(){
   const sorted = getSelectedSorted();
   if(!sorted.length) return;
@@ -3579,11 +3552,6 @@ function drawCardBase(ctx, W, H, PAD, t, radius){
   ctx.strokeStyle = t.border; ctx.lineWidth = 1.5;
   rr(ctx, 2, 2, W - 4, H - 4, radius - 1); ctx.stroke();
 }
-function drawCross(ctx, W, y, size, t){
-  ctx.textAlign = 'center';
-  ctx.font = `${size}px serif`; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.28;
-  ctx.fillText('✝', W / 2, y); ctx.globalAlpha = 1;
-}
 function drawRef(ctx, W, y, size, t){
   ctx.textAlign = 'center'; ctx.fillStyle = t.ref;
   ctx.font = `700 ${size}px Georgia, serif`;
@@ -3777,7 +3745,6 @@ function nextCh(){
     }
   }
 }
-function goToChapters(){showScreen('chapters');}
 
 function showScreen(name, pushHistory=true){
   if(name !== 'search') captureSearchSpot();
@@ -3789,7 +3756,7 @@ function showScreen(name, pushHistory=true){
   // Pause Scourby when leaving reader context
   if(name==='books'){
     const aud=document.getElementById('scourby-audio');
-    if(aud&&!aud.paused){aud.pause();const pp=document.getElementById('sb-playpause');if(pp)pp.textContent='▶';const btn=document.getElementById('scourby-btn');if(btn)btn.classList.remove('active');}
+    if(aud&&!aud.paused){aud.pause();const pp=document.getElementById('sb-playpause');if(pp)pp.textContent='▶';}
   }
   // Stop chapter mode when leaving reader (but keep book mode running)
   if(name!=='reader' && SA.chMode){
@@ -3797,7 +3764,7 @@ function showScreen(name, pushHistory=true){
   }
   if(name==='saved')  renderSaved();
   if(name==='plans')  renderPlansScreen();
-  if(name==='reader') setTimeout(()=>{applyRL();showParallelBar();addXRefMarkers();}, 80);
+  if(name==='reader') setTimeout(()=>{showParallelBar();addXRefMarkers();}, 80);
   if(name==='books')  updateContinueBanner();
   if(name!=='reader') exitSelectMode();
   if(pushHistory) history.pushState({screen:name}, '', '');
@@ -3946,12 +3913,10 @@ function updateHeaderState(){
   const back   = document.getElementById('btn-back');
   const sel    = document.getElementById('btn-select');
   const selAll = document.getElementById('btn-select-all');
-  const rl     = document.getElementById('btn-rl');
   const show   = S.screen==='reader'||S.screen==='chapters';
   back.style.display   = show?'flex':'none';
   sel.style.display    = S.screen==='reader'?'flex':'none';
   selAll.style.display = S.screen==='reader'?'flex':'none';
-  if(rl){ rl.style.display = S.screen==='reader'?'flex':'none'; rl.classList.toggle('on', S.rlOn); }
   document.getElementById('logo').textContent =
     S.screen==='reader'?S.book:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
 }
@@ -7845,8 +7810,6 @@ function namesSearch(name){
   doSearch(q);
 }
 
-function normWord(w){ return w.toLowerCase().replace(/[^a-z ]/g,'').trim(); }
-
 /* ── Dictionary verse trigger ── */
 // Only these truly archaic/obscure words show the Abc badge
 const DICT_HARD = new Set([
@@ -7912,45 +7875,6 @@ function getVerseNames(text){
   }
   return out;
 }
-
-function showVerseDictWords(words){
-  if(typeof words==='string') words=JSON.parse(words);
-  const pop=document.getElementById('word-pop');
-  document.getElementById('wp-word').textContent=
-    words.length===1?words[0].word.charAt(0).toUpperCase()+words[0].word.slice(1)
-                    :words.length+' words in this verse';
-  const defEl=document.getElementById('wp-def');
-  if(words.length===1){
-    defEl.textContent=words[0].def;
-  } else {
-    defEl.innerHTML=words.map(w=>
-      '<div class="wp-word-entry"><div class="wp-word-title">'+
-      w.word.charAt(0).toUpperCase()+w.word.slice(1)+
-      '</div><div>'+w.def+'</div></div>'
-    ).join('');
-  }
-  pop.classList.add('on');
-}
-
-/* word-tap removed — dict trigger on verse block used instead */
-
-function getWordAtPoint(x,y){
-  try{
-    let node,offset;
-    if(document.caretRangeFromPoint){const r=document.caretRangeFromPoint(x,y);if(!r)return null;node=r.startContainer;offset=r.startOffset;}
-    else if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(x,y);if(!p)return null;node=p.offsetNode;offset=p.offset;}
-    else return null;
-    if(!node||node.nodeType!==Node.TEXT_NODE)return null;
-    const txt=node.textContent;
-    let s=offset,e2=offset;
-    while(s>0&&/[a-zA-Z']/.test(txt[s-1]))s--;
-    while(e2<txt.length&&/[a-zA-Z']/.test(txt[e2]))e2++;
-    if(s===e2)return null;
-    return txt.slice(s,e2).toLowerCase().replace(/[^a-z]/g,'');
-  }catch(e){return null;}
-}
-
-function closeWordPop(){ document.getElementById('word-pop').classList.remove('on'); }
 
 /* ════ SAVED ════ */
 function switchTab(n){S.activeTab=n;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));document.getElementById('tab-'+n).classList.add('on');document.getElementById('panel-'+n).classList.add('on');renderSaved();}
@@ -8449,43 +8373,6 @@ function abandonPlan(){
     LS.set('kjv_active_plan', null);
     renderPlansScreen();
   }
-}
-
-/* ════════════════════════════════
-   RED LETTER
-════════════════════════════════ */
-// Chapters that are predominantly Jesus speaking (book:ch, 1-indexed)
-const RL_SET = new Set([
-  // Matthew — Sermon on Mount + major discourses
-  'Matthew:5','Matthew:6','Matthew:7','Matthew:10','Matthew:11',
-  'Matthew:13','Matthew:18','Matthew:23','Matthew:24','Matthew:25',
-  // Mark
-  'Mark:4','Mark:9','Mark:13',
-  // Luke
-  'Luke:6','Luke:10','Luke:11','Luke:12','Luke:15','Luke:16','Luke:17','Luke:18','Luke:21',
-  // John — Upper Room + I AM discourses
-  'John:3','John:5','John:6','John:7','John:8','John:10',
-  'John:12','John:13','John:14','John:15','John:16','John:17',
-  // Revelation — letters to churches
-  'Revelation:1','Revelation:2','Revelation:3','Revelation:22',
-]);
-
-S.rlOn = LS.get('kjv_rl', false);
-
-function toggleRL(){
-  S.rlOn = !S.rlOn;
-  LS.set('kjv_rl', S.rlOn);
-  document.getElementById('btn-rl').classList.toggle('on', S.rlOn);
-  // Re-apply to current chapter
-  applyRL();
-}
-
-function applyRL(){
-  const chKey = `${S.book}:${S.ch+1}`;
-  const isRL = S.rlOn && RL_SET.has(chKey);
-  document.querySelectorAll('.vblock').forEach(el => {
-    el.classList.toggle('rl-verse', isRL);
-  });
 }
 
 /* ════════════════════════════════
@@ -10508,8 +10395,6 @@ function memStepUp(){
   const order=['learn','letters','order','full'], i=order.indexOf(M.mode);
   setMemMode(order[Math.min(i+1, order.length-1)]);
 }
-// Kept for anything that still calls the old name
-function resetMem(){ memRestart(); }
 
 function fmtTime(s){const m=Math.floor(s/60);return m>0?`${m}m ${s%60}s`:`${s}s`;}
 
@@ -10601,7 +10486,6 @@ function memLaunchConfetti(){
   draw();
 }
 
-function submitMemWord(){}  /* no-op — input bar removed */
 
 /* ── Float nav scroll-hide ── */
 (function(){
@@ -10839,8 +10723,6 @@ function repairStreak(){
 function openSwordCertificate(){
   const canvas = document.getElementById('scr-canvas');
   drawSwordCertificate(canvas);
-  const refEl = document.getElementById('scr-ref');
-  if(refEl) refEl.textContent = '⚔️ Sword Drill Certificate';
   const ov = document.getElementById('scr-overlay');
   ov.style.zIndex = '530'; // above mem-overlay (520)
   ov.classList.add('on');
@@ -11278,7 +11160,6 @@ function scourbyLoad(bookName){
 
   document.getElementById('sb-label').textContent = 'Loading ' + bookName + '...';
   document.getElementById('scourby-bar').classList.add('on'); document.body.classList.add('scourby-open');
-  const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.add('active');
   document.getElementById('sb-playpause').textContent = '⏸';
 
   // Same book already loaded — just play/resume from saved pos
@@ -11309,11 +11190,9 @@ function scourbyToggle(){
   if(audio.paused){
     audio.play();
     document.getElementById('sb-playpause').textContent = '⏸';
-    const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.add('active');
   } else {
     audio.pause();
     document.getElementById('sb-playpause').textContent = '▶';
-    const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.remove('active');
   }
 }
 
@@ -11322,7 +11201,6 @@ function scourbyStop(){
   audio.pause(); audio.src = '';
   SA.book = null;
   document.getElementById('scourby-bar').classList.remove('on'); document.body.classList.remove('scourby-open');
-  const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.remove('active');
   document.getElementById('sb-progress-fill').style.width = '0%';
 }
 
@@ -11401,7 +11279,6 @@ function scourbyTimeUpdate(){
 
 function scourbyOnEnded(){
   document.getElementById('sb-playpause').textContent = '▶';
-  const _sb=document.getElementById('scourby-btn');if(_sb)_sb.classList.remove('active');
   if(SA.chMode) scourbyClearChapterPos(SA.book, SA.chIdx); // last chapter ran to file end
   scouryySavePos(SA.book, 0); // reset book position on completion
   document.getElementById('sb-label').textContent = SA.book + ' — Finished ✓';
@@ -11585,40 +11462,6 @@ async function obRestoreCode(){
 }
 
 
-function exportAppData(){
-  const data={};
-  for(let i=0;i<localStorage.length;i++){
-    const k=localStorage.key(i);
-    // The restore code is the credential to this user's cloud sync — a
-    // backup string pasted into a group chat shouldn't carry it. The
-    // receiving device generates its own code (or uses Restore by Code).
-    if(k==='kjv_rc') continue;
-    data[k]=localStorage.getItem(k);
-  }
-  const b64=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-  if(navigator.share){
-    navigator.share({title:'FBC KJV Bible — My Data Backup',text:b64});
-  } else {
-    navigator.clipboard?.writeText(b64).then(()=>{
-      showToast('✅ Data copied to clipboard — paste on your new device to restore');
-    });
-  }
-}
-
-function importAppData(){
-  const code=prompt('Paste your backup code here:');
-  if(!code||!code.trim())return;
-  try{
-    const data=JSON.parse(decodeURIComponent(escape(atob(code.trim()))));
-    const keys=Object.keys(data);
-    keys.forEach(k=>localStorage.setItem(k,data[k]));
-    showToast(`✅ Restored ${keys.length} items — reloading...`);
-    setTimeout(()=>location.reload(),2000);
-  }catch(e){
-    alert('Could not read that backup code. Make sure you copied the full code.');
-  }
-}
-
 /* ════ FIREBASE SYNC ════ */
 const FB_CONFIG = {
   apiKey: "AIzaSyAN4H-5wCxpLat6guLSecBRyeTMjDdVtBQ",
@@ -11653,7 +11496,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_rl','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies'
+  'kjv_books_read','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies'
 ];
 
 let _db = null;
@@ -11784,12 +11627,6 @@ async function fbRestore(code){
   }
 }
 
-function showRestoreCode(){
-  const code = fbGetCode();
-  const el = document.getElementById('rc-display-code');
-  if(el) el.textContent = code;
-}
-
 function copyRestoreCode(){
   const code = fbGetCode();
   navigator.clipboard?.writeText(code).then(()=>{
@@ -11876,8 +11713,6 @@ window.addEventListener('popstate', function(e){
 }, {capture:true});
 
 /* ════ SETTINGS ════ */
-function toggleFP(id){const el=document.getElementById(id);el.classList.toggle('on');}
-document.addEventListener('click',e=>{if(!e.target.closest('[id^="fp-"]')&&!e.target.closest('.hbtn'))document.querySelectorAll('[id^="fp-"]').forEach(p=>p.classList.remove('on'));});
 function applyFont(sz){S.fontSize=sz;document.documentElement.style.setProperty('--font-v',sz+'px');const fl=document.getElementById('set-font-label');if(fl)fl.textContent=sz;}
 function changeFont(d){applyFont(Math.min(24,Math.max(13,S.fontSize+d)));LS.set('kjv_fs',S.fontSize);}
 
@@ -11934,7 +11769,6 @@ function closeSettings(e){
   if(e && e.target && e.target.id!=='settings-sheet') return;
   history.back();
 }
-function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme',S.theme);document.body.classList.toggle('light',S.theme==='light');document.getElementById('theme-color-meta').content=S.theme==='light'?'#f7f2e8':'#0e0800';}
 </script>
 
 
@@ -12187,7 +12021,7 @@ function toggleTheme(){S.theme=S.theme==='dark'?'light':'dark';LS.set('kjv_theme
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Bible Timeline</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          <strong>Search &rarr; Timeline</strong> walks from the Creation to the Revelation in 95 events, each with its verse, dated by Ussher&rsquo;s chronology from the old KJV margins. While reading, a <strong>📅 date button</strong> shows when the chapter took place.
+          <strong>Search &rarr; Timeline</strong> walks from the Creation to the Revelation in 96 events, each with its verse, dated by Ussher&rsquo;s chronology from the old KJV margins. While reading, a <strong>📅 date button</strong> shows when the chapter took place.
         </div>
       </div>
     </div>
