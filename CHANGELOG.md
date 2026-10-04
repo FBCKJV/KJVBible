@@ -6,6 +6,13 @@
 
 ## New Features
 
+### 🧭 A New Search Page (v36)
+- **Search is now a hub**: under the search box, eight tiles open each study tool — Doctrines, Topics, Dictionary, Concordance, Names, Timeline, Maps, Hymns (the swipeable tab row is gone). The tiles hide while search results are showing and return when the box is cleared
+- **Inside a tool**, a "‹ Search" bar with the tool's name leads back to the hub
+- **Back works step by step**: from a result, back through each page you opened (a related topic, a person, a place…), then the tool's list, then the Search hub, then Home. Before, a plain Search entry re-showed the last tool, so Back seemed to skip straight to Home
+- **Coming back to Search** from the bottom bar starts at the hub, with a "↩ Continue where you were" card (e.g. *Names › Abel*, *Doctrines › Eternal Security*, *Results for “grace”*); tapping Search while already in Search returns to the hub
+- **Fixed:** topics that are only a "See …" pointer (*Abarim → See Nebo*) no longer show a stray "·" before "Nave's Topical Bible"
+
 ### 📝 Sermon & Study Notebook (v35)
 - **📝 in the top bar** opens the active study over whatever screen you're on (Back or ✕ closes it and leaves you where you were)
 - **Simple editing in one fixed font**: heading, bold, italic, bullet list, numbered outline with indent/outdent levels (Tab / Shift+Tab on a keyboard), quote box, plain text, undo/redo. Pasted text comes in as plain text so every study stays in the note font
