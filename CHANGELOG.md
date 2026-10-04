@@ -6,6 +6,12 @@
 
 ## New Features
 
+### 🎦 Present Mode (v42)
+- **Scripture on the big screen** for a projector, TV or classroom panel: opens full screen from **🎦 Present** under a chapter title (from verse 1, or the first selected verse) or in the verse card (from that verse)
+- **As large as the screen allows**: the text is sized to fill the screen; **A− / A+** adjust it; **1 / 2 / 3 verses** at a time with verse numbers
+- **Step on** with the ‹ › buttons, a tap on the right or left of the screen, a swipe, the keyboard (→ ← space, Enter) or a presentation clicker (Page Up / Page Down) — on through chapters and into the next book
+- **◐ light page** for bright rooms (black on white); the controls fade after a few seconds and return on any touch; ⛶ full screen; ✕, Esc or Back closes. Text size, verses per screen and light/dark are remembered
+
 ### 🧭 Bible Journeys (v41)
 - **Eighteen journeys** (`journeys.json`, built by `tools/journeys/build.py` from the approved stop list in `tools/journeys/draft.py`): Abraham; Jacob; Joseph sold into Egypt; the Exodus & the wilderness; David fleeing Saul; Elijah; Jonah; carried away to Babylon; the return from captivity; the birth and childhood of Jesus; Jesus' ministry; the last week & the resurrection; Saul's conversion; Philip and Peter; Paul's first, second and third journeys; Paul's voyage to Rome — 196 stops
 - **Every stop is a verse that names the place**, checked against the places data when built. Conventional sites throughout (the southern Exodus route, Mount Sinai at Jebel Musa, mount Hor at Jebel Harun, the crossing at the head of the Gulf of Suez); uncertain sites and the lines to them are dashed. The sermon on the mount is shown at the traditional Mount of Beatitudes (dashed); the transfiguration's "high mountain apart" shows both suggested sites, Hermon and Tabor, as dotted references. Routes follow the Euphrates and the coasts where travellers went (under Cyprus and Crete on the voyage to Rome); a dotted arrow points from Joppa "toward Tarshish"
