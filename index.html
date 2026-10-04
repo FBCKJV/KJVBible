@@ -303,6 +303,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #pres-stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:4vh 7vw 2vh;overflow:hidden;cursor:pointer}
 #pres-ref{font-family:'IM Fell English',serif;color:#c9943a;font-size:clamp(20px,3.2vw,56px);margin-bottom:2.5vh;text-align:center}
 #pres-overlay.light #pres-ref{color:#7a4e10}
+/* projector themes: pure contrast, heavier type */
+#pres-overlay.hc{background:#000;color:#fff}
+#pres-overlay.hc #pres-ref,#pres-overlay.hc #pres-txt sup{color:#ffd54a}
+#pres-overlay.hcl{background:#fff;color:#000}
+#pres-overlay.hcl #pres-ref,#pres-overlay.hcl #pres-txt sup{color:#7a3300}
+#pres-overlay.hc #pres-txt,#pres-overlay.hcl #pres-txt{font-weight:600}
+#pres-overlay.hc #pres-ref,#pres-overlay.hcl #pres-ref{font-weight:700}
+#pres-bar{flex-wrap:wrap}
+#pres-bar button.on{background:#c9943a;color:#1a1206;border-color:#c9943a}
+#pres-overlay.clicker #pres-bar{opacity:0;pointer-events:none}
+#pres-overlay.clicker.peek #pres-bar{opacity:1;pointer-events:auto}
 #pres-txt{font-family:'Crimson Pro',Georgia,serif;line-height:1.38;text-align:center;overflow:hidden}
 #pres-txt sup{font-size:.45em;color:#c9943a;margin-right:.25em;font-family:'Inter',sans-serif;font-weight:600}
 #pres-bar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));transition:opacity .4s}
@@ -332,6 +343,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .jr-item small{display:block;font-size:11.5px;color:var(--text-m);font-family:'Inter',sans-serif;margin-top:1px}
 .jr-item i{margin-left:auto;font-style:normal;color:var(--text-m)}
 .jr-sub{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin:12px 0 6px;font-weight:600}
+.pane-grip{display:none}
 .tl-btns{display:inline-flex;gap:4px;float:right;margin-left:4px}
 .tl-btns button{background:none;border:1px solid var(--border);border-radius:12px;padding:1px 7px;font-size:12px;cursor:pointer;color:var(--text-m)}
 /* Hymns */
@@ -1463,25 +1475,33 @@ body.light #home-watermark{
    notebook and map open beside the text instead of over it */
 @media (min-width:1100px){
   #vpop{background:transparent;backdrop-filter:none;pointer-events:none;align-items:stretch;justify-content:flex-end;z-index:340}
-  #vpop-inner{pointer-events:auto;width:440px;max-width:440px;border-radius:0;border-width:0 0 0 1px;overflow-y:auto;max-height:none;margin-top:56px;padding-bottom:84px;animation:sr .22s ease;box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+  #vpop-inner{pointer-events:auto;width:min(var(--pane-vpop,440px),calc(100vw - 480px));max-width:none;border-radius:0;border-width:0 0 0 1px;overflow-y:auto;max-height:none;margin-top:56px;padding-bottom:84px;animation:sr .22s ease;box-shadow:-10px 0 30px rgba(0,0,0,.35)}
   @keyframes sr{from{transform:translateX(40px);opacity:0}}
-  #nb-panel{left:auto;width:min(48vw,680px);border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
-  #wm-overlay:not(.jr){left:auto;width:50vw;border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
-  #wm-overlay.jr.on{display:grid;grid-template-columns:1fr 420px;grid-template-rows:auto auto 1fr;column-gap:14px}
+  #nb-panel{left:auto;width:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px));border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+  #wm-overlay:not(.jr){left:auto;width:min(var(--pane-wm,50vw),calc(100vw - 480px));border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+  #wm-overlay.jr.on{display:grid;grid-template-columns:1fr min(var(--pane-jr,420px),calc(100vw - 480px));grid-template-rows:auto auto 1fr;column-gap:14px}
   #wm-overlay.jr #wm-head,#wm-overlay.jr #wm-sub{grid-column:1/-1}
   #wm-overlay.jr #wm-map{grid-column:1;grid-row:3;min-height:0}
   #wm-overlay.jr #wm-list{grid-column:2;grid-row:3;max-height:none;overflow-y:auto;padding-top:0}
   #wm-overlay.jr .jr-v{font-size:17px}
   #wm-overlay.jr .jr-nav{flex-wrap:wrap}
   /* the chapter stays in view beside an open panel */
-  body:has(#vpop.on) #screen-reader{padding-right:440px}
-  body:has(#nb-panel.on) #screen-reader{padding-right:min(48vw,680px)}
-  body:has(#wm-overlay.on:not(.jr)) #screen-reader{padding-right:50vw}
+  body:has(#vpop.on) #screen-reader{padding-right:min(var(--pane-vpop,440px),calc(100vw - 480px))}
+  body:has(#nb-panel.on) #screen-reader{padding-right:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px))}
+  body:has(#wm-overlay.on:not(.jr)) #screen-reader{padding-right:min(var(--pane-wm,50vw),calc(100vw - 480px))}
   #mx-map{height:62vh;max-height:760px}
+  /* drag the panel's edge to resize it; double-tap to reset */
+  .pane-grip{display:block;position:absolute;top:0;bottom:0;width:16px;cursor:col-resize;z-index:5;pointer-events:auto;touch-action:none}
+  .pane-grip::after{content:'';position:absolute;left:6px;top:50%;width:4px;height:56px;margin-top:-28px;border-radius:3px;background:var(--gold-d);opacity:.7}
+  .pane-grip:hover::after,.pane-grip.drag::after{background:var(--gold);opacity:1}
+  #vpop .pane-grip{right:min(var(--pane-vpop,440px),calc(100vw - 480px));margin-right:-8px;top:56px}
+  body:has(#nb-panel.on) #vpop .pane-grip{display:none}
+  #nb-panel .pane-grip,#wm-overlay:not(.jr) .pane-grip{left:-8px}
+  #wm-overlay.jr .pane-grip{right:calc(12px + min(var(--pane-jr,420px),calc(100vw - 480px)) + 7px);margin-right:-8px;top:90px}
   /* notebook open: the verse card rises over the chapter, the notebook stays in view */
-  body:has(#nb-panel.on) #vpop{right:min(48vw,680px);justify-content:center;align-items:flex-end}
+  body:has(#nb-panel.on) #vpop{right:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px));justify-content:center;align-items:flex-end}
   body:has(#nb-panel.on) #vpop-inner{width:100%;max-width:620px;margin-top:0;border-radius:18px 18px 0 0;border-width:1px 1px 0;max-height:72vh;padding-bottom:84px;animation:su .22s ease}
-  body:has(#nb-panel.on):has(#vpop.on) #screen-reader{padding-right:min(48vw,680px)}
+  body:has(#nb-panel.on):has(#vpop.on) #screen-reader{padding-right:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px))}
 }
 /* Big touch screens: larger targets for a finger at a board */
 @media (min-width:1100px) and (pointer:coarse){
@@ -2196,7 +2216,9 @@ body.light #home-watermark{
     <button onclick="presFont(-1)" aria-label="Smaller text">A−</button>
     <button onclick="presFont(1)" aria-label="Larger text">A+</button>
     <button id="pres-count" onclick="presCount()">1 verse</button>
-    <button onclick="presTheme()" aria-label="Light or dark">◐</button>
+    <button id="pres-class" onclick="presClassroom()" title="One verse, never smaller than a back row can read; long verses run onto a second screen">📽 Classroom</button>
+    <button id="pres-theme" onclick="presTheme()" aria-label="Colours">◐ Dark</button>
+    <button id="pres-click" onclick="presClicker()" title="Hide the buttons — step with a clicker, keyboard or tap; touch the bottom edge to bring them back">🖱 Clicker only</button>
     <button onclick="presFull()" aria-label="Full screen">⛶</button>
     <button onclick="closePopover('pres-overlay')" aria-label="Close">✕</button>
     <button onclick="presStep(1)" aria-label="Next">›</button>
@@ -2205,6 +2227,7 @@ body.light #home-watermark{
 
 <!-- WHERE IS THIS? map overlay -->
 <div id="wm-overlay" role="dialog" aria-label="Map">
+  <div class="pane-grip" data-pane="wm" title="Drag to resize · double-tap to reset"></div>
   <div id="wm-head"><div id="wm-title"></div><button class="nb-tb" onclick="closePopover('wm-overlay')" aria-label="Close">✕</button></div>
   <div id="wm-sub"></div>
   <div id="wm-map" class="wm"></div>
@@ -2213,6 +2236,7 @@ body.light #home-watermark{
 
 <!-- STUDY NOTEBOOK -->
 <div id="nb-panel" role="dialog" aria-label="Study notebook">
+  <div class="pane-grip" data-pane="nb" title="Drag to resize · double-tap to reset"></div>
   <div id="nb-top">
     <button class="nb-tb" onclick="closePopover('nb-panel')" aria-label="Close">✕</button>
     <input id="nb-title" maxlength="80" placeholder="Name this study" aria-label="Study name" oninput="nbTitleInput(this.value)">
@@ -2333,6 +2357,7 @@ body.light #home-watermark{
 
 <!-- SINGLE VERSE POPUP -->
 <div id="vpop" onclick="closePop(event)">
+  <div class="pane-grip" data-pane="vpop" title="Drag to resize · double-tap to reset"></div>
   <div id="vpop-inner">
     <div id="vpop-ref"></div>
     <div id="vpop-txt"></div>
@@ -7206,13 +7231,25 @@ async function mxEra(div, limit=10){
    on-screen arrows, a tap on the right or left of the screen, a swipe, the
    keyboard (→ ← space, Page Up/Down — what a presentation clicker sends)
    and on through chapters and books. Opened from 🎦 Present under a
-   chapter or in the verse card. */
-const PRES = {book:null, ch:0, v:0, count:1, scale:1, idle:null};
+   chapter or in the verse card.
+   📽 Classroom: one verse, never smaller than a back row can read
+   (6.5% of the screen height); a verse too long for that runs onto a second
+   screen rather than shrinking. Colours: dark, light, and two high-contrast
+   themes for projectors that wash colour out. 🖱 Clicker only hides the
+   buttons. Settings travel with the restore code (kjv_pres). */
+const PRES = {book:null, ch:0, v:0, count:1, scale:1, theme:'dark', classroom:false, clicker:false, parts:null, part:0, idle:null};
+const PRES_THEMES = [['dark','◐ Dark'], ['light','◐ Light'], ['hc','◑ High contrast'], ['hcl','◑ High contrast light']];
 function presOpen(ref){
   const r = ref && parseReference(ref);
   if(r && r.book){ PRES.book = r.book; PRES.ch = r.chIdx; PRES.v = Math.max(0, (r.verse || 1) - 1); }
   else { PRES.book = S.book; PRES.ch = S.ch; PRES.v = 0; }
-  try{ const o = LS.get('kjv_pres', {}); PRES.count = o.count || 1; PRES.scale = o.scale || 1; document.getElementById('pres-overlay').classList.toggle('light', !!o.light); }catch(e){}
+  PRES.part = 0;
+  const o = LS.get('kjv_pres', {}) || {};
+  PRES.count = o.count || 1; PRES.scale = o.scale || 1;
+  PRES.theme = o.theme || (o.light ? 'light' : 'dark');
+  PRES.classroom = !!o.classroom; PRES.clicker = !!o.clicker;
+  presApplyLook();
+  document.getElementById('pres-overlay').classList.remove('peek', 'idle');
   openPopover('pres-overlay');
   presFull(true);
   presRender();
@@ -7223,54 +7260,107 @@ function presFromReader(){
   presOpen(sel.length ? sel[0].ref : `${S.book} ${S.ch + 1}:1`);
 }
 function presEnd(){ try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} clearTimeout(PRES.idle); }
-function presSave(){ LS.set('kjv_pres', {count: PRES.count, scale: PRES.scale, light: document.getElementById('pres-overlay').classList.contains('light')}); }
+function presSave(){
+  LS.set('kjv_pres', {count: PRES.count, scale: PRES.scale, theme: PRES.theme, classroom: PRES.classroom, clicker: PRES.clicker});
+  if(typeof fbSyncSoon === 'function') fbSyncSoon();
+}
+function presApplyLook(){
+  const ov = document.getElementById('pres-overlay');
+  ['light','hc','hcl'].forEach(c => ov.classList.toggle(c, PRES.theme === c));
+  ov.classList.toggle('clicker', PRES.clicker);
+  const t = PRES_THEMES.find(x => x[0] === PRES.theme) || PRES_THEMES[0];
+  document.getElementById('pres-theme').textContent = t[1];
+  document.getElementById('pres-class').classList.toggle('on', PRES.classroom);
+  document.getElementById('pres-click').classList.toggle('on', PRES.clicker);
+  document.getElementById('pres-count').style.display = PRES.classroom ? 'none' : '';
+}
+const presPer = () => PRES.classroom ? 1 : PRES.count;
+const presMinFont = () => PRES.classroom ? Math.max(28, window.innerHeight * 0.065) : 16;
+function presRoom(){
+  const stage = document.getElementById('pres-stage'), ref = document.getElementById('pres-ref'), cs = getComputedStyle(stage);
+  return stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - ref.offsetHeight - parseFloat(getComputedStyle(ref).marginBottom) - 8;
+}
 async function presRender(){
   const d = await fetchBook(PRES.book).catch(() => null);
   if(!d) return;
-  const ch = d.chapters[PRES.ch], vs = ch.verses.slice(PRES.v, PRES.v + PRES.count);
+  const ch = d.chapters[PRES.ch], vs = ch.verses.slice(PRES.v, PRES.v + presPer());
   const a = vs[0].verse, z = vs[vs.length - 1].verse;
-  document.getElementById('pres-ref').textContent = `${PRES.book} ${PRES.ch + 1}:${a}${z !== a ? '–' + z : ''}`;
-  const txt = document.getElementById('pres-txt');
-  txt.innerHTML = vs.map(v => (vs.length > 1 ? `<sup>${v.verse}</sup>` : '') + escapeHtml(v.text)).join(' ');
+  const refEl = document.getElementById('pres-ref'), txt = document.getElementById('pres-txt');
+  refEl.textContent = `${PRES.book} ${PRES.ch + 1}:${a}${z !== a ? '–' + z : ''}`;
+  PRES.parts = null;
+  if(PRES.classroom){
+    // Split a long verse into screens that each fit at the classroom minimum
+    const words = vs[0].text.split(' '), room = presRoom(), parts = [];
+    txt.style.fontSize = presMinFont() + 'px';
+    let cur = [];
+    for(const w of words){
+      txt.textContent = cur.concat(w).join(' ') + ' …';
+      if(cur.length && txt.scrollHeight > room){ parts.push(cur.join(' ')); cur = [w]; }
+      else cur.push(w);
+    }
+    parts.push(cur.join(' '));
+    if(parts.length > 1){
+      PRES.parts = parts;
+      if(PRES.part < 0 || PRES.part >= parts.length) PRES.part = PRES.part < 0 ? parts.length - 1 : 0;
+      refEl.textContent += ` (${PRES.part + 1} of ${parts.length})`;
+      txt.textContent = (PRES.part ? '… ' : '') + parts[PRES.part] + (PRES.part < parts.length - 1 ? ' …' : '');
+    } else { PRES.part = 0; txt.textContent = vs[0].text; }
+  } else {
+    PRES.part = 0;
+    txt.innerHTML = vs.map(v => (vs.length > 1 ? `<sup>${v.verse}</sup>` : '') + escapeHtml(v.text)).join(' ');
+  }
   document.getElementById('pres-pos').textContent = `${PRES.book} ${PRES.ch + 1} · ${a} of ${ch.verses.length}`;
   document.getElementById('pres-count').textContent = PRES.count === 1 ? '1 verse' : PRES.count + ' verses';
   presFit();
 }
 // The largest text that fits the stage, times the reader's A− / A+ choice
 function presFit(){
-  const stage = document.getElementById('pres-stage'), txt = document.getElementById('pres-txt'), ref = document.getElementById('pres-ref');
-  const cs = getComputedStyle(stage);
-  const room = stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - ref.offsetHeight - parseFloat(getComputedStyle(ref).marginBottom) - 8;
+  const stage = document.getElementById('pres-stage'), txt = document.getElementById('pres-txt');
+  const room = presRoom(), min = presMinFont();
+  if(PRES.parts){ // a split verse: every screen at the same classroom size
+    txt.style.fontSize = Math.max(16, min * PRES.scale) + 'px';
+    stage.style.overflowY = txt.scrollHeight > room ? 'auto' : 'hidden';
+    return;
+  }
   let lo = 16, hi = Math.min(150, window.innerWidth / 9);
   for(let i = 0; i < 14; i++){
     const mid = (lo + hi) / 2;
     txt.style.fontSize = mid + 'px';
     if(txt.scrollHeight <= room) lo = mid; else hi = mid;
   }
-  txt.style.fontSize = Math.max(16, lo * Math.min(1, PRES.scale)) + 'px';
-  if(PRES.scale > 1){ // larger than fits: allow it, the stage scrolls
-    txt.style.fontSize = lo * PRES.scale + 'px';
-  }
+  txt.style.fontSize = Math.max(min, lo * PRES.scale) + 'px';
   stage.style.overflowY = txt.scrollHeight > room ? 'auto' : 'hidden';
 }
 async function presStep(dir){
+  // A long verse in Classroom: its next / previous screen first
+  if(PRES.parts){
+    const np = PRES.part + dir;
+    if(np >= 0 && np < PRES.parts.length){ PRES.part = np; return presRender(); }
+  }
   const d = await fetchBook(PRES.book).catch(() => null);
   if(!d) return;
-  let v = PRES.v + dir * PRES.count, ch = PRES.ch, book = PRES.book;
+  const per = presPer();
+  let v = PRES.v + dir * per, ch = PRES.ch, book = PRES.book;
   if(v >= d.chapters[ch].verses.length){
     if(ch + 1 < d.chapters.length){ ch++; v = 0; }
     else { const bi = BOOKS.indexOf(book); if(bi >= BOOKS.length - 1) return; book = BOOKS[bi + 1]; ch = 0; v = 0; }
   } else if(v < 0){
     if(PRES.v > 0) v = 0;
-    else if(ch > 0){ ch--; v = Math.max(0, d.chapters[ch].verses.length - PRES.count); }
-    else { const bi = BOOKS.indexOf(book); if(bi <= 0) return; book = BOOKS[bi - 1]; const pd = await fetchBook(book); ch = pd.chapters.length - 1; v = Math.max(0, pd.chapters[ch].verses.length - PRES.count); }
+    else if(ch > 0){ ch--; v = Math.max(0, d.chapters[ch].verses.length - per); }
+    else { const bi = BOOKS.indexOf(book); if(bi <= 0) return; book = BOOKS[bi - 1]; const pd = await fetchBook(book); ch = pd.chapters.length - 1; v = Math.max(0, pd.chapters[ch].verses.length - per); }
   }
-  PRES.book = book; PRES.ch = ch; PRES.v = v;
+  PRES.book = book; PRES.ch = ch; PRES.v = v; PRES.part = dir < 0 ? -1 : 0; // going back lands on a long verse's last screen
   presRender();
 }
 function presFont(dir){ PRES.scale = Math.min(1.6, Math.max(0.5, +(PRES.scale + dir * 0.1).toFixed(2))); presSave(); presFit(); }
 function presCount(){ PRES.count = PRES.count % 3 + 1; presSave(); presRender(); }
-function presTheme(){ document.getElementById('pres-overlay').classList.toggle('light'); presSave(); }
+function presClassroom(){ PRES.classroom = !PRES.classroom; PRES.part = 0; presApplyLook(); presSave(); presRender(); }
+function presTheme(){
+  const i = PRES_THEMES.findIndex(x => x[0] === PRES.theme);
+  PRES.theme = PRES_THEMES[(i + 1) % PRES_THEMES.length][0];
+  presApplyLook(); presSave();
+}
+function presClicker(){ PRES.clicker = !PRES.clicker; presApplyLook(); presSave(); if(PRES.clicker) document.getElementById('pres-overlay').classList.remove('peek'); }
 function presFull(auto){
   try{
     if(document.fullscreenElement){ if(!auto) document.exitFullscreen(); }
@@ -7278,8 +7368,13 @@ function presFull(auto){
   }catch(e){}
 }
 // The controls fade after a few seconds still, and come back on any touch or move
-function presWake(){
+// (in Clicker only, just a touch or move near the bottom edge)
+function presWake(e){
   const ov = document.getElementById('pres-overlay');
+  if(PRES.clicker){
+    if(e && e.clientY != null && e.clientY > window.innerHeight - 120){ ov.classList.add('peek'); clearTimeout(PRES.idle); PRES.idle = setTimeout(() => ov.classList.remove('peek'), 3500); }
+    return;
+  }
   ov.classList.remove('idle'); clearTimeout(PRES.idle);
   PRES.idle = setTimeout(() => { if(ov.classList.contains('on')) ov.classList.add('idle'); }, 3500);
 }
@@ -7288,7 +7383,8 @@ function presWake(){
   if(!ov) return;
   let sx = null, sy = null;
   ov.addEventListener('pointermove', presWake);
-  stage.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; presWake(); });
+  ov.addEventListener('pointerdown', presWake);
+  stage.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; });
   stage.addEventListener('pointerup', e => {
     if(sx == null) return;
     const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
@@ -7305,7 +7401,50 @@ function presWake(){
     else if(k === 'Escape') closePopover('pres-overlay');
     else if(k === '+' || k === '='){ presFont(1); } else if(k === '-'){ presFont(-1); }
   });
-  window.addEventListener('resize', () => { if(ov.classList.contains('on')) presFit(); });
+  window.addEventListener('resize', () => { if(ov.classList.contains('on')) presRender(); });
+})();
+
+/* ════ RESIZABLE PANELS (wide screens) ════
+   Drag a side panel's edge — the verse card, notebook, map or a journey's
+   stop column — to make it wider or narrower; double-tap the edge to reset.
+   Widths are remembered on this device only (kjv_panes, not synced): a width
+   that suits a large monitor would not suit a tablet. */
+const PANE_KEYS = {vpop:'--pane-vpop', nb:'--pane-nb', wm:'--pane-wm', jr:'--pane-jr'};
+function paneApply(){
+  const w = LS.get('kjv_panes', {}) || {};
+  for(const [k, v] of Object.entries(PANE_KEYS)){
+    if(w[k]) document.documentElement.style.setProperty(v, w[k] + 'px');
+    else document.documentElement.style.removeProperty(v);
+  }
+}
+(function paneWire(){
+  paneApply();
+  document.querySelectorAll('.pane-grip').forEach(g => {
+    const key = () => g.dataset.pane === 'wm' && document.getElementById('wm-overlay').classList.contains('jr') ? 'jr' : g.dataset.pane;
+    let drag = false, last = 0;
+    g.addEventListener('click', e => e.stopPropagation());
+    g.addEventListener('pointerdown', e => {
+      e.stopPropagation(); e.preventDefault();
+      const now = Date.now();
+      if(now - last < 350){ // double-tap: back to the standard width
+        const w = LS.get('kjv_panes', {}) || {}; delete w[key()]; LS.set('kjv_panes', w); paneApply(); last = 0; return;
+      }
+      last = now; drag = true; g.classList.add('drag'); g.setPointerCapture(e.pointerId);
+    });
+    g.addEventListener('pointermove', e => {
+      if(!drag) return;
+      const k = key(), pad = k === 'jr' ? 12 + 7 : 0;
+      const w = Math.round(Math.min(window.innerWidth - 480, Math.max(320, window.innerWidth - e.clientX - pad)));
+      document.documentElement.style.setProperty(PANE_KEYS[k], w + 'px');
+    });
+    const end = () => {
+      if(!drag) return;
+      drag = false; g.classList.remove('drag');
+      const k = key(), v = getComputedStyle(document.documentElement).getPropertyValue(PANE_KEYS[k]).trim();
+      if(v){ const w = LS.get('kjv_panes', {}) || {}; w[k] = parseInt(v); LS.set('kjv_panes', w); }
+    };
+    g.addEventListener('pointerup', end); g.addEventListener('pointercancel', end);
+  });
 })();
 
 /* ════ JOURNEYS ════
@@ -11558,7 +11697,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v43';
+const WHATS_NEW_VERSION = 'v44';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -11666,7 +11805,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies'
+  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies'
 ];
 
 let _db = null;
@@ -12069,6 +12208,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v44" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📽</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Classroom Present &amp; Resizable Panels</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Present mode adds <strong>📽 Classroom</strong> &mdash; one verse, never smaller than a back row can read, with long verses running onto a second screen &mdash; two <strong>high-contrast</strong> themes for projectors, and <strong>🖱 Clicker only</strong> to hide the buttons. Your Present settings now travel with your restore code. On a tablet or computer, drag the edge of a side panel to resize it; double-tap the edge to reset.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v43" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🖥️</div>
       <div>
