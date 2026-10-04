@@ -6,6 +6,19 @@
 
 ## New Features
 
+### 📝 Sermon & Study Notebook (v35)
+- **📝 in the top bar** opens the active study over whatever screen you're on (Back or ✕ closes it and leaves you where you were)
+- **Simple editing in one fixed font**: heading, bold, italic, bullet list, numbered outline with indent/outdent levels (Tab / Shift+Tab on a keyboard), quote box, plain text, undo/redo. Pasted text comes in as plain text so every study stays in the note font
+- **📝＋ everywhere** adds to the end of the active study, with a toast to confirm:
+  - the verse card ("📝 Add to Study") and **selected verses** as one passage ("Hebrews 9:12–14", verse numbers kept)
+  - every verse card in Search — search results, topics, doctrines, Compare Scripture, Concordance, people and places
+  - timeline events (date, title and key verse), hymns (title, author, first stanza and refrain), dictionary words (church note + Webster's first sense), people, places, Nave's topics, doctrines, the Compare Scripture verse, and maps
+- **Verse quotes keep a tappable reference** — tap it to read the verse in the reader
+- **☰ Studies**: keep many studies; switch, start a new one, delete (with confirmation); **share as text** (outline numbers, bullets and quotes kept, with references), **copy**, or **print / save as PDF** on a clean page with the church name and date
+- Studies save on the device as you type and are included in the backup/sync (`kjv_studies`); everything is cleaned to the allowed formatting on save
+- On narrow phones the reader's Select and All buttons show as icons so the header fits
+- Tips sheet explains the notebook
+
 ### 🎵 The Hymnal, ⭐ First Mention, 🔗 Follow the Thread (v34)
 - **Hymnal** — a new **Search → Hymns** tab with 98 hymns whose words are public domain (written before 1928), in nine sections from *Praise and Worship* to *Christmas and Easter*. Each hymn page shows the author and year, the Scriptures behind it (tappable), every stanza numbered, and the refrain
 - Find a hymn by title, author, or any line of the words ("sinking sand" → *The Solid Rock*)
