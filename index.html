@@ -363,6 +363,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .jr-d{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);margin:2px 0 6px}
 .jr-v{font-family:'Crimson Pro',serif;font-size:15px;line-height:1.5;color:var(--text);border-left:3px solid var(--gold);padding:2px 0 2px 10px;margin:4px 0}
 .jr-v b{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;display:block}
+.jr-views{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text-m)}
+.jr-views button{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer}
+.jr-views button.on{color:var(--gold);border-color:var(--gold-d);background:var(--surface)}
+.jr-why{font-size:12.5px;color:var(--text-d);margin:0 0 8px;line-height:1.45}
+.jr-why summary{cursor:pointer;color:var(--gold-d);font-family:'Inter',sans-serif;font-size:12px}
+#wm-overlay.jr.jpres .jr-views,#wm-overlay.jr.jpres .jr-why{display:none}
 .jr-site{font-size:12.5px;color:var(--text-m);font-style:italic;margin:4px 0}
 .jr-nav{display:flex;gap:8px;margin-top:9px}
 .jr-nav button{flex:1;padding:9px 6px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:13.5px;cursor:pointer;font-family:'Inter',sans-serif}
@@ -400,7 +406,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-panel{position:fixed;inset:0;z-index:295;background:var(--bg);display:none;flex-direction:column}
 #nb-panel.on{display:flex}
 #nb-top{display:flex;align-items:center;gap:6px;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg2);padding-top:calc(10px + env(safe-area-inset-top,0px))}
-#nb-title{flex:1;min-width:0;background:none;border:none;border-bottom:1px dashed transparent;color:var(--gold);font-family:'IM Fell English',serif;font-size:19px;padding:2px 0;outline:none}
+#nb-title-wrap{flex:1;min-width:0;display:flex;align-items:center;gap:4px;cursor:text}
+#nb-title-wrap span{color:var(--gold-d);font-size:14px;flex:0 0 auto}
+#nb-title-wrap:focus-within span{display:none}
+#nb-title{flex:1;min-width:0;background:none;border:none;border-bottom:1px dashed var(--border);color:var(--gold);font-family:'IM Fell English',serif;font-size:19px;padding:2px 0;outline:none}
 #nb-title:focus{border-bottom-color:var(--gold-d)}
 .nb-tb{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:5px 9px;font-size:12px;cursor:pointer;white-space:nowrap}
 .nb-tb:hover,.nb-tb.on{color:var(--gold);border-color:var(--gold-d)}
@@ -2346,7 +2355,7 @@ body.light #home-watermark{
   <div class="pane-grip" data-pane="nb" title="Drag to resize · double-tap to reset"></div>
   <div id="nb-top">
     <button class="nb-tb" onclick="closePopover('nb-panel')" aria-label="Close">✕</button>
-    <input id="nb-title" maxlength="80" placeholder="Name this study" aria-label="Study name" oninput="nbTitleInput(this.value)">
+    <label id="nb-title-wrap" title="Tap to rename this study"><input id="nb-title" maxlength="80" placeholder="Name this study" aria-label="Study name — tap to rename" enterkeyhint="done" oninput="nbTitleInput(this.value)" onblur="if(!this.value.trim())this.value=nbActive().t" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"><span aria-hidden="true">✎</span></label>
     <button class="nb-tb" onclick="presOpenStudy()" title="Present this study as slides">🎦 Present</button>
     <button class="nb-tb" id="nb-menu-btn" onclick="nbToggleMenu()">☰ Studies</button>
   </div>
@@ -6615,15 +6624,23 @@ let _nbTimer = null;
 function nbStore(){
   // Only save the editor over the study it was loaded with
   const st = nbActive(), ed = document.getElementById('nb-ed');
-  if(S._nbLoaded !== st.id) return;
-  st.h = nbClean(ed.innerHTML); st.u = Date.now();
+  if(S._nbLoaded === st.id){ st.h = nbClean(ed.innerHTML); st.u = Date.now(); }
   nbSave();
   document.getElementById('nb-status').textContent = 'Saved on this device';
 }
 function nbTitleInput(v){
   const st = nbActive();
   st.t = v.trim() || 'Untitled study'; st.u = Date.now();
-  clearTimeout(_nbTimer); _nbTimer = setTimeout(nbSave, 400);
+  // nbStore saves the title too, so a pending save of the text is not lost
+  clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 400);
+  const row = document.querySelector('#nb-menu .nb-row.cur .nb-row-t');
+  if(row) row.textContent = st.t;
+}
+// Rename: the name in the top bar is the box to type in
+function nbRename(id){
+  if(id && id !== nbActive().id) nbSwitch(id);
+  document.getElementById('nb-menu').classList.remove('on');
+  const t = document.getElementById('nb-title'); t.focus(); t.select();
 }
 function nbCmd(c){
   const ed = document.getElementById('nb-ed');
@@ -6687,6 +6704,7 @@ function nbRenderMenu(){
   const when = t => new Date(t).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'});
   document.getElementById('nb-menu').innerHTML = d.list.map(x => `<div class="nb-row${x.id === cur.id ? ' cur' : ''}" onclick="nbSwitch('${x.id}')">
       <span class="nb-row-t">${escapeHtml(x.t)}</span><span class="nb-row-d">${when(x.u)}</span>
+      <button class="nb-row-x" title="Rename" aria-label="Rename" onclick="event.stopPropagation();nbRename('${x.id}')">✏️</button>
       <button class="nb-row-x" title="Delete" onclick="event.stopPropagation();nbDelete('${x.id}')">🗑</button></div>`).join('')
     + `<div class="nb-menu-acts">
       <button class="nb-tb" onclick="nbNew()">＋ New study</button>
@@ -7719,7 +7737,7 @@ function paneApply(){
    date and timeline entry, so the text, the timeline and the map lead to
    one another: the reader's 🧭 button, the timeline's 🧭 and 📍, and each
    stop's Read › and 📅 About ›. */
-const JOURNEYS_VERSION = '2026-10-04';
+const JOURNEYS_VERSION = '2026-10-05';
 function loadJourneys(){ return S._journeys ? Promise.resolve(S._journeys) : loadCachedJSON(`journeys.json?v=${JOURNEYS_VERSION}`).then(d => S._journeys = d.j); }
 const jrDates = j => !j.y ? '' : j.y[0] === j.y[1] ? 'about ' + tlYearText(j.y[0]) : `about ${tlYearText(j.y[0])} – ${tlYearText(j.y[1])}`;
 // The pin(s) for a stop: a place pin, or dashed rings for each suggested site
@@ -7728,10 +7746,17 @@ function wmStopPins(st){
   const p = st.p && S._places[st.p];
   return [{id: st.p || 'stop', name: st.n, today: p && !st.ov ? wmToday(p) : '', ll: st.ll, sure: !st.u, main: true}];
 }
-async function openJourney(id, i=0){
+// A journey with other views (where the sites are disputed, e.g. the Red Sea
+// crossing and mount Sinai, or Ur) — the same stops, drawn where that view
+// places them. 0 is the usual view; the reader's choice is kept per device.
+const JR_VIEW_KEY = 'kjv_jr_view';
+function jrViewOf(j, k){ return k && j.v && j.v[k - 1] ? {...j, s: j.v[k - 1].s, base: j, view: k} : {...j, base: j, view: 0}; }
+async function openJourney(id, i=0, view){
   const [list] = await Promise.all([loadJourneys(), loadLands(), loadPlaces()]);
-  const j = list.find(x => x.id === id);
-  if(!j) return;
+  const base = list.find(x => x.id === id);
+  if(!base) return;
+  if(view == null) view = (LS.get(JR_VIEW_KEY, {}) || {})[id] || 0;
+  const j = jrViewOf(base, view);
   S._jr = {j, i};
   const ov = document.getElementById('wm-overlay');
   ov.classList.add('jr'); ov.classList.remove('jpres');
@@ -7745,6 +7770,11 @@ async function openJourney(id, i=0){
     jrCard();
   });
 }
+function jrView(k){
+  const J = S._jr; if(!J || J.j.view === k) return;
+  const views = LS.get(JR_VIEW_KEY, {}) || {}; views[J.j.id] = k; LS.set(JR_VIEW_KEY, views);
+  openJourney(J.j.id, J.i, k);
+}
 function jrGo(i){
   const J = S._jr; if(!J || i < 0 || i >= J.j.s.length) return;
   J.i = i;
@@ -7754,7 +7784,9 @@ function jrGo(i){
 async function jrCard(){
   const {j, i} = S._jr, st = j.s[i], box = document.getElementById('wm-list');
   const p = st.p && !st.ov && S._places[st.p], today = p && wmToday(p) ? ` <span>· today ${escapeHtml(p.s)}</span>` : '';
-  box.innerHTML = `<div class="jr-card">
+  const views = j.base && j.base.v ? `<div class="jr-views"><span>View:</span>${[j.base.vt, ...j.base.v.map(v => v.t)].map((t, k) => `<button class="${k === j.view ? 'on' : ''}" onclick="jrView(${k})">${escapeHtml(t)}</button>`).join('')}</div>`
+    + (j.view ? `<details class="jr-why"><summary>Why this view?</summary>${escapeHtml(j.base.v[j.view - 1].d)}</details>` : '') : '';
+  box.innerHTML = `<div class="jr-card">${views}
     <div class="jr-top"><span>Stop ${i + 1} of ${j.s.length}</span>${st.y != null ? `<button onclick="jrTimeline()">📅 About ${tlYearText(st.y)} ›</button>` : ''}<button onclick="jrPresent()" style="margin-left:6px">${document.getElementById('wm-overlay').classList.contains('jpres') ? '✕ Exit' : '🎦 Present'}</button></div>
     <div class="jr-place">📍 ${escapeHtml(st.n)}${today}</div>
     <div class="jr-d">${escapeHtml(st.d)}</div>
@@ -7792,7 +7824,7 @@ async function renderJourneyList(){
   const list = await loadJourneys().catch(() => null);
   if(!list){ el.innerHTML = '<div style="font-size:13px;color:var(--text-m)">Journeys unavailable offline until they have loaded once.</div>'; return; }
   const nt = j => BOOKS.indexOf(j.s[0].r.slice(0, j.s[0].r.lastIndexOf(' '))) >= 39;
-  const item = j => `<button class="jr-item" onclick="openJourney('${j.id}')"><span><b>${escapeHtml(j.t)}</b><small>${escapeHtml(j.r)} · ${jrDates(j)} · ${j.s.length} stops</small></span><i>›</i></button>`;
+  const item = j => `<button class="jr-item" onclick="openJourney('${j.id}')"><span><b>${escapeHtml(j.t)}</b><small>${escapeHtml(j.r)} · ${jrDates(j)} · ${j.s.length} stops${j.v ? ` · ${j.v.length + 1} views` : ''}</small></span><i>›</i></button>`;
   el.innerHTML = `<div class="jr-sub">Old Testament</div><div class="jr-list">${list.filter(j => !nt(j)).map(item).join('')}</div>`
     + `<div class="jr-sub">New Testament</div><div class="jr-list">${list.filter(nt).map(item).join('')}</div>`;
   el.dataset.done = '1';
@@ -12163,6 +12195,8 @@ function fbSyncSoon(){
 // even if the 150ms debounce hasn't fired yet.
 document.addEventListener('visibilitychange', ()=>{
   if(document.visibilityState === 'hidden'){
+    // A study typed in the last moment is saved before the push
+    if(document.getElementById('nb-panel').classList.contains('on')){ clearTimeout(_nbTimer); nbStore(); }
     clearTimeout(_syncTimer);
     fbSync();
   }

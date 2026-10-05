@@ -10,11 +10,12 @@ Emits ../journeys.json:
   {j:[{id,t,r,y:[from,to],s:[{n,r,d,ll,p?,u?,site?,alts?,via?,to?,y,e}]}]}
   n name as the verse spells it, r verse, d what happened, p place id, u uncertain (dashed),
   via route points into this stop, ov drawn at the traditional site, to dotted arrow off the route, y year, e timeline entry id
+  vt label of the usual view; v other views [{t label, d why, s stops}] (from VIEWS in draft.py)
 """
 import json, os, sys
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.dirname(os.path.dirname(here))
 sys.path.insert(0, here); os.chdir(root)
-from draft import J
+from draft import J, VIEWS
 from check import P, resolve
 T = json.load(open('timeline.json'))['eras']
 START = {'abraham': -1921}   # Genesis 11 sits under the Tower of Babel on the timeline
@@ -28,8 +29,7 @@ def event_at(year=None, title=None):
     for ei, era in enumerate(T):
         for i, e in enumerate(era['e']):
             if e[0] == year or e[1] == title: return (e, f'tl-{ei}-{i}')
-out = []
-for k, (t, rng, stops) in J.items():
+def build(k, t, stops):
     S, via = [], []
     for st in stops:
         if st[0] == '~': via.append([st[1], st[2]]); continue
@@ -60,7 +60,18 @@ for k, (t, rng, stops) in J.items():
         if 'y' not in s:
             nb = next((S[j] for j in list(range(i-1, -1, -1)) + list(range(i+1, len(S))) if 'y' in S[j]), None)
             if nb: s['y'], s['e'] = nb['y'], nb['e']
+    return S
+out = []
+for k, (t, rng, stops) in J.items():
+    S = build(k, t, stops)
     ys = [s['y'] for s in S if 'y' in s]
-    out.append({'id': k, 't': t, 'r': rng, 'y': [min(ys), max(ys)] if ys else None, 's': S})
+    j = {'id': k, 't': t, 'r': rng, 'y': [min(ys), max(ys)] if ys else None, 's': S}
+    if k in VIEWS:
+        j['vt'] = VIEWS[k][0]; j['v'] = []
+        for vt, vd, vs in VIEWS[k][1]:
+            V = build(k, t, vs)
+            if [x['r'] for x in V] != [x['r'] for x in S]: sys.exit(f'{t}: the view “{vt}” must keep the same stops')
+            j['v'].append({'t': vt, 'd': vd, 's': V})
+    out.append(j)
 json.dump({'j': out}, open('journeys.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 print(f"{len(out)} journeys, {sum(len(j['s']) for j in out)} stops → journeys.json ({os.path.getsize('journeys.json')//1024} KB)")
