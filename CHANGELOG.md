@@ -6,6 +6,16 @@
 
 ## New Features
 
+### 📅 Reading Plans, Your Way (v47)
+- **More than one plan at a time** — run Proverbs in a Month, the New Testament in 30 Days and Bible in a Year side by side, each keeping its own place. Each running plan is a card with a progress ring, its next reading (“Day 4 — Proverbs 4”), **📖 Read** for the next chapter and **✓ Mark read** for a day read from a printed Bible or listened to. **All days** opens a grid of the plan's days (read days filled, part-read days half filled, the next one ringed); tap a day for its reading, the date it was read, Read and Mark read
+- **A chapter counts when it has been read** — opening a chapter (or tapping past it) no longer checks it off; it counts once you have reached the end of it, after at least 20 seconds on it. Reading straight on into the next day's chapters counts too, but dipping into a chapter far ahead (Proverbs 20 on day 4) does not. A day that was read ahead now checks off as soon as its last chapter is read
+- **The end of each plan chapter** shows the plan, whether the chapter (or the day) is read, and a button for the next chapter — “Next: Matthew 2 ›” or “Day 5: Proverbs 5 ›”
+- **Your reading on Home** — under Continue Reading, a card with each running plan's ring and next reading; tap to read it
+- **⋯ on each plan**: **Pause** (keeps your place, off Home until you resume), **Start over** and **Remove**, asked in the app's own sheet instead of the browser's “fbckjv.app says” box. “Change Plan”, which threw your progress away to choose another, is gone — add a plan instead
+- **Finished plans** are kept under Finished with the dates read and how many days it took, with **Read again**. The plan you had running carries over with its progress
+- **The app's own question sheet** also replaces the browser box for deleting a study, clearing the Reading Journey and removing the downloaded Bible
+- Plans sync item by item like the bookmarks: progress made on two devices is added together
+
 ### 🎞️ Teach From Your Study (v46)
 - **🎦 Present a study as slides** (new button in the Study Notebook's top bar): the study's name is the title slide; each heading starts a slide, with its points, lists and quote boxes beneath it (a long run continues on the next slide); every verse added with 📝＋ gets its own large verse slide with its reference. Step with the space bar, arrows, a tap, a swipe or a clicker; all the Present settings apply (A− / A+, Classroom, the four themes, Clicker only)
 - **✂ Slide break** in the notebook toolbar starts a new slide wherever you put it (shown as a dashed "new slide" line in the study)
