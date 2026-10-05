@@ -1043,8 +1043,11 @@ body.scourby-open #reader-float-nav {
 .xref-tab.on{background:var(--gold-d);color:var(--text);border-color:var(--gold-d)}
 
 /* ── SHARE SITE POPUP ── */
-#share-btn{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:5px 9px;font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
-#share-btn:hover{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
+/* Tips and Share open from Settings, on top of it */
+#tips-sheet.on{z-index:492}
+.set-link{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:11px 12px;margin:0 0 6px;font-size:14px;cursor:pointer;text-align:left}
+.set-link:hover{border-color:var(--gold-d);color:var(--gold)}
+.set-link span{color:var(--text-m)}
 #share-pop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:20px}
 #share-pop.on{display:flex}
 #share-inner{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:380px;width:100%;animation:su .25s ease}
@@ -1136,7 +1139,6 @@ body.light #home-watermark{
 .install-step span{color:var(--gold);font-weight:600}
 
 /* Help button in header */
-#btn-help{font-size:14px;font-weight:600;line-height:1}
 /* ── MEM OVERLAY ── */
 #mem-overlay{position:fixed;inset:0;background:var(--bg);z-index:520;display:none;flex-direction:column}
 #mem-overlay.on{display:flex}
@@ -1657,10 +1659,6 @@ body.light #home-watermark{
   </button>
   <div id="clip-badge" onclick="openClipboard()" title="Verse card clipboard"><span>📋</span><span id="clip-badge-n">0</span></div>
   <button id="nb-btn" class="hbtn" onclick="nbOpen()" title="My study notebook" aria-label="Study notebook">📝</button>
-  <button id="btn-help" class="hbtn" onclick="showTips()" title="Tips & Help">?</button>
-  <button id="share-btn" onclick="showSharePop()" title="Share this app">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-  </button>
   <div id="streak-badge" onclick="showStreakInfo()" title="Reading streak">🔥<span id="streak-num">0</span></div>
   <button class="hbtn" onclick="openSettings()" title="Settings">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -2029,7 +2027,7 @@ body.light #home-watermark{
       <!-- Tips -->
       <div class="tips-section">
         <div class="tips-section-lbl">💡 Tips & Shortcuts</div>
-        <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code</span></div>
+        <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
@@ -2082,6 +2080,10 @@ body.light #home-watermark{
       <button id="settings-close" onclick="closeSettings()">✕</button>
     </div>
     <div id="settings-body">
+      <div class="tips-section">
+        <button class="set-link" onclick="showTips()">❓ Tips &amp; Help<span>›</span></button>
+        <button class="set-link" onclick="showSharePop()">📤 Share this app (QR code)<span>›</span></button>
+      </div>
       <div class="tips-section">
         <div class="tips-section-lbl">🖋️ Display</div>
         <div class="set-row">
@@ -12509,7 +12511,7 @@ function closeSettings(e){
       </div>
       <p style="font-size:12px;color:var(--text-m);text-align:center;line-height:1.5;margin-bottom:16px">
         Your streaks, badges, bookmarks, and progress sync automatically. No account, no email — just your code.
-        You can always find it in <strong>Tips &amp; Help → Backup &amp; Restore</strong>.
+        You can always find it in <strong>⚙ Settings → Backup &amp; Restore</strong>.
       </p>
       <button onclick="obDismiss()"
         style="width:100%;background:linear-gradient(135deg,#6A4510,#A87828);color:#FFE898;
