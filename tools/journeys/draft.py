@@ -256,10 +256,10 @@ J = {
 # Each view keeps the same stops in the same order, so the reader stays on the same stop when switching.
 _ex, _ab = J["exodus"][2], J["abraham"][2]
 VIEWS = {
- "exodus": ("Suez & Jebel Musa", [("Aqaba & Jabal al-Lawz",
+ "exodus": ("Suez / Peninsula Route", [("Aqaba / Arabian Route",
    "Israel crosses the Sinai peninsula and the Gulf of Aqaba at Nuweiba Beach, and mount Sinai is Jabal al-Lawz in Midian. "
    "Moses kept Jethro's flock in Midian when he came to Horeb (Exodus 2:15; 3:1); Paul writes of “mount Sinai in Arabia” (Galatians 4:25); "
-   "and the Sinai peninsula was held by Egypt's garrisons and mines. Jebel Musa was fixed by Byzantine monks in the 300s.", _ex[:3] + [
+   "and the Sinai peninsula was held by Egypt's garrisons and mines. The usual route follows the Byzantine tradition of Jebel Musa, kept since the 300s (the time of Helena, Constantine's mother); this one follows the text placing Sinai in Midian and Arabia.", _ex[:3] + [
   ("~",30.1,33.1), ("~",29.55,34.2), ("~",29.06,34.58),
   ("Pi-hahiroth","Exodus 14:2","Before Pi-hahiroth — the Red Sea is parted",None,dict(ll=[28.97,34.66],sure=False,site="Nuweiba Beach on the Gulf of Aqaba, shut in by mountains with one wadi in (Exodus 14:3) — the crossing in this view")),
   ("~",28.93,34.78),
@@ -272,11 +272,11 @@ VIEWS = {
   ("Hazeroth","Numbers 11:35","Miriam's leprosy",None,dict(ll=[29.25,35.15],sure=False,site="On the way north from the mount — the site is not known")),
   ("~",29.6,35.0),
  ] + _ex[11:])]),
- "abraham": ("Ur in southern Iraq", [("Ur near Haran (Urfa)",
-   "Ur of the Chaldees is Urfa (Şanlıurfa) in southern Turkey, a short way from Haran. Then Haran lies on the road from Ur to Canaan "
+ "abraham": ("Ur of Tell el-Muqayyar", [("Ur of Urfa / Şanlıurfa",
+   "Ur of the Chaldees is Urfa (Şanlıurfa, historically Edessa) in southern Turkey, a short way from Haran. Then Haran lies on the road from Ur to Canaan "
    "rather than 600 miles the wrong way; and when Abraham sends to “my country, and to my kindred” the servant goes to Mesopotamia, "
    "to the city of Nahor by Haran (Genesis 24:4, 10). Southern Ur was dug in 1922 and named Abraham's city after.", [
-  ("Ur","Genesis 11:31","Terah takes Abram out of Ur of the Chaldees",None,dict(ll=[37.159,38.797],sure=False,site="Urfa (Şanlıurfa) in southern Turkey — the northern Ur, a day or two from Haran")),
+  ("Ur","Genesis 11:31","Terah takes Abram out of Ur of the Chaldees",None,dict(ll=[37.159,38.797],sure=False,site="Urfa (Şanlıurfa, historically Edessa) in southern Turkey — the northern Ur, a day or two from Haran")),
  ] + _ab[4:])]),
 }
 
