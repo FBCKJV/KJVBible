@@ -10,12 +10,13 @@ Emits ../journeys.json:
   {j:[{id,t,r,y:[from,to],s:[{n,r,d,ll,p?,u?,site?,alts?,via?,to?,y,e}]}]}
   n name as the verse spells it, r verse, d what happened, p place id, u uncertain (dashed),
   via route points into this stop, ov drawn at the traditional site, to dotted arrow off the route, y year, e timeline entry id
-  vt label of the usual view; v other views [{t label, d why, s stops}] (from VIEWS in draft.py)
+  g disputed sites on this journey [{k group, ch [per view: {stop index: stop}, None for the journey's own]}]
+  and at the top g {group: {t question, def view shown first, v [{t label, d why, pl {place id: [site, ll]}}]}} (GROUPS in draft.py)
 """
 import json, os, sys
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.dirname(os.path.dirname(here))
 sys.path.insert(0, here); os.chdir(root)
-from draft import J, VIEWS
+from draft import J, VIEWS, GROUPS
 from check import P, resolve
 T = json.load(open('timeline.json'))['eras']
 START = {'abraham': -1921}   # Genesis 11 sits under the Tower of Babel on the timeline
@@ -66,12 +67,14 @@ for k, (t, rng, stops) in J.items():
     S = build(k, t, stops)
     ys = [s['y'] for s in S if 'y' in s]
     j = {'id': k, 't': t, 'r': rng, 'y': [min(ys), max(ys)] if ys else None, 's': S}
-    if k in VIEWS:
-        j['vt'] = VIEWS[k][0]; j['v'] = []
-        for vt, vd, vs in VIEWS[k][1]:
+    for g, views in VIEWS.get(k, {}).items():
+        ch = [None] * len(GROUPS[g]['views'])
+        for vi, vs in views.items():
             V = build(k, t, vs)
-            if [x['r'] for x in V] != [x['r'] for x in S]: sys.exit(f'{t}: the view “{vt}” must keep the same stops')
-            j['v'].append({'t': vt, 'd': vd, 's': V})
+            if [x['r'] for x in V] != [x['r'] for x in S]: sys.exit(f'{t}: the view “{GROUPS[g]["views"][vi][0]}” must keep the same stops')
+            ch[vi] = {str(i): V[i] for i in range(len(S)) if V[i] != S[i]}
+        j.setdefault('g', []).append({'k': g, 'ch': ch})
     out.append(j)
-json.dump({'j': out}, open('journeys.json', 'w'), ensure_ascii=False, separators=(',', ':'))
+G = {g: {'t': x['t'], 'def': x['default'], 'v': [{'t': vt, 'd': vd, 'pl': pl} for vt, vd, pl in x['views']]} for g, x in GROUPS.items()}
+json.dump({'j': out, 'g': G}, open('journeys.json', 'w'), ensure_ascii=False, separators=(',', ':'))
 print(f"{len(out)} journeys, {sum(len(j['s']) for j in out)} stops → journeys.json ({os.path.getsize('journeys.json')//1024} KB)")

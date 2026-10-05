@@ -91,7 +91,7 @@ J = {
   ("Kishon","1 Kings 18:40","The prophets of Baal slain"),
   ("Jezreel","1 Kings 18:46","He runs before Ahab to Jezreel"),
   ("Beersheba","1 Kings 19:3","He flees for his life"),
-  ("Horeb","1 Kings 19:8","The still small voice"),
+  ("Horeb","1 Kings 19:8","The still small voice",None,dict(site="Jebel Musa in the south of the Sinai peninsula, the site kept since the 300s")),
   ("Abel-meholah","1 Kings 19:16","Elisha of Abel-meholah called"),
   ("Gilgal","2 Kings 2:1","With Elisha from Gilgal"),
   ("Bethel","2 Kings 2:2","To Bethel"),
@@ -157,7 +157,7 @@ J = {
   ("Bethphage","Matthew 21:1","The colt brought from Bethphage"),
   ("Jerusalem","Matthew 21:10","The triumphal entry"),
   ("Gethsemane","Matthew 26:36","He prays in the garden"),
-  ("Golgotha","John 19:17","Crucified at the place of a skull"),
+  ("Golgotha","John 19:17","Crucified at the place of a skull",None,dict(site="The Church of the Holy Sepulchre, inside today's walls but outside the wall of Jesus' day")),
   ("Emmaus","Luke 24:13","The road to Emmaus"),
   ("Sea of Galilee","John 21:1","He shows himself by the sea"),
   ("Mount of Olives","Acts 1:12","Taken up from the mount called Olivet"),
@@ -242,7 +242,7 @@ J = {
   ("~",34.95,26.1),
   ("The fair havens","Acts 27:8","Near the city of Lasea"),
   ("Clauda","Acts 27:16","Under the island Clauda — the storm"),
-  ("Melita","Acts 28:1","Shipwrecked on Melita",None,dict(ev="Shipwreck on the way to Rome")),
+  ("Melita","Acts 28:1","Shipwrecked on Melita",None,dict(ev="Shipwreck on the way to Rome",ll=[35.951,14.408],site="St Paul's Bay, where St Paul's Islands make “a place where two seas met” (Acts 27:41)")),
   ("Syracuse","Acts 28:12","Three days at Syracuse",None,dict(ev="Shipwreck on the way to Rome")),
   ("Rhegium","Acts 28:13","To Rhegium",None,dict(ev="Shipwreck on the way to Rome")),
   ("Puteoli","Acts 28:13","Brethren found at Puteoli",None,dict(ev="Shipwreck on the way to Rome")),
@@ -251,15 +251,132 @@ J = {
  ]),
 }
 
-# Other views of a journey, shown beside the usual one (the reader switches between them).
-# id: (label of the usual view, [(label, what this view holds and why, stops), …]) — stops as in J.
-# Each view keeps the same stops in the same order, so the reader stays on the same stop when switching.
-_ex, _ab = J["exodus"][2], J["abraham"][2]
-VIEWS = {
- "exodus": ("Suez / Peninsula Route", [("Aqaba / Arabian Route",
+# Disputed sites. Each group is one question ("where is mount Sinai?") with its views, shown as a switch on
+# every journey stop and place page it touches; the choice is shared, so the Exodus and Elijah always agree.
+#   t: the question; default: the view shown first (the literal reading of the text, where the views split
+#   that way, over a site fixed by later church tradition); views: (label, why, {place id: (site, [lat,lon])}).
+GROUPS = {
+ "sinai": dict(t="Red Sea & Sinai", default=1, views=[
+  ("Suez / Peninsula Route",
+   "The crossing at the head of the Gulf of Suez, and mount Sinai at Jebel Musa in the south of the Sinai peninsula. This is the Byzantine tradition, "
+   "kept since the 300s (the time of Helena, Constantine's mother), when monks settled at the mountain; Justinian built St Catherine's monastery at its foot "
+   "in the 500s. It leaves room for the many camps of Numbers 33 between the sea and Sinai.",
+   {"abfba2a": ("Jebel Musa", [28.53972,33.97333]), "a9bb03e": ("Jebel Musa", [28.53972,33.97333]),
+    "ababfd2": ("The head of the Gulf of Suez", [29.97,32.56]), "ac2cef0": ("Ain el-Qudeirat", [30.64833,34.42222])}),
+  ("Aqaba / Arabian Route",
    "Israel crosses the Sinai peninsula and the Gulf of Aqaba at Nuweiba Beach, and mount Sinai is Jabal al-Lawz in Midian. "
    "Moses kept Jethro's flock in Midian when he came to Horeb (Exodus 2:15; 3:1); Paul writes of “mount Sinai in Arabia” (Galatians 4:25); "
-   "and the Sinai peninsula was held by Egypt's garrisons and mines. The usual route follows the Byzantine tradition of Jebel Musa, kept since the 300s (the time of Helena, Constantine's mother); this one follows the text placing Sinai in Midian and Arabia.", _ex[:3] + [
+   "the Sinai peninsula was held by Egypt's garrisons and mines; and Kadesh is Petra, “a city in the uttermost of thy border” of Edom (Numbers 20:16). "
+   "The usual route follows the Byzantine tradition of Jebel Musa; this one follows the text placing Sinai in Midian and Arabia.",
+   {"abfba2a": ("Jabal al-Lawz", [28.654,35.305]), "a9bb03e": ("Jabal al-Lawz", [28.654,35.305]),
+    "ababfd2": ("Nuweiba Beach", [28.97,34.66]), "ac2cef0": ("Petra", [30.3285,35.4444])}),
+ ]),
+ "ur": dict(t="Ur of the Chaldees", default=1, views=[
+  ("Ur of Tell el-Muqayyar",
+   "The great Sumerian city in southern Iraq, dug by Leonard Woolley from 1922 and named Abraham's Ur after; the Chaldeans of later times ruled that region.",
+   {"a6cf75c": ("Tell el-Muqayyar", [30.96222,46.10444])}),
+  ("Ur of Urfa / Şanlıurfa",
+   "Ur of the Chaldees is Urfa (Şanlıurfa, historically Edessa) in southern Turkey, a short way from Haran. Then Haran lies on the road from Ur to Canaan "
+   "rather than 600 miles the wrong way; and when Abraham sends to “my country, and to my kindred” the servant goes to Mesopotamia, "
+   "to the city of Nahor by Haran (Genesis 24:4, 10).",
+   {"a6cf75c": ("Urfa (Şanlıurfa)", [37.159,38.797])}),
+ ]),
+ "golgotha": dict(t="Golgotha & the tomb", default=1, views=[
+  ("Church of the Holy Sepulchre",
+   "The site Constantine's builders uncovered in 326 under a temple of Venus, by the tradition of the Jerusalem church; Helena's visit is tied to it. "
+   "It lies inside today's walls, but outside the wall of Jesus' day, and tombs of that time are cut in the rock there.",
+   {"a631d35": ("Church of the Holy Sepulchre", [31.77844,35.22975])}),
+  ("Garden Tomb (Gordon's Calvary)",
+   "A skull-like rock face north of the Damascus Gate, outside the wall, with a garden and a rock-cut tomb beside it: “without the gate” (Hebrews 13:12), "
+   "“nigh to the city” (John 19:20), and “in the place where he was crucified there was a garden; and in the garden a new sepulchre” (John 19:41). "
+   "Suggested by Otto Thenius in 1842 and made known by General Charles Gordon in 1883.",
+   {"a631d35": ("The Garden Tomb", [31.7839,35.2298])}),
+ ]),
+ "emmaus": dict(t="Emmaus", default=1, views=[
+  ("Motza (Qalunya)",
+   "The Emmaus of Josephus, where Vespasian settled his soldiers, about 4 miles from Jerusalem — held by many scholars, though nearer than threescore furlongs.",
+   {"ae7274b": ("Qalunya (Motza)", [31.79289,35.16419])}),
+  ("Threescore furlongs (el-Qubeibeh)",
+   "Emmaus was “from Jerusalem about threescore furlongs” (Luke 24:13), about seven miles; el-Qubeibeh lies that far northwest of Jerusalem, on the Roman road. "
+   "The Crusaders knew it as Emmaus.",
+   {"ae7274b": ("el-Qubeibeh", [31.83993,35.13685])}),
+  ("Emmaus Nicopolis",
+   "The Byzantine site, about 19 miles away. It needs “an hundred and threescore furlongs”, found in a few old Greek copies; the Greek text of the KJV reads threescore, "
+   "and the two walked there and back the same evening (Luke 24:29, 33).",
+   {"ae7274b": ("Emmaus Nicopolis", [31.8393,34.98946])}),
+ ]),
+ "bethsaida": dict(t="Bethsaida", default=0, views=[
+  ("et-Tell",
+   "A mound about a mile and a half from the shore, east of where the Jordan flows in, dug since 1987; held to be Bethsaida Julias, rebuilt by Philip the tetrarch.",
+   {"a91b732": ("et-Tell", [32.91038,35.63096]), "a9fc13a": ("et-Tell", [32.91038,35.63096])}),
+  ("el-Araj",
+   "On the shore itself, as a fishing town should be — “Bethsaida, the city of Andrew and Peter” (John 1:44). Digs since 2016 have found a town of Roman times "
+   "and a Byzantine church that may be the one pilgrims said stood over the apostles' house.",
+   {"a91b732": ("el-Araj", [32.89353,35.619]), "a9fc13a": ("el-Araj", [32.89353,35.619])}),
+ ]),
+ "melita": dict(t="Paul's shipwreck", default=0, views=[
+  ("St Paul's Bay",
+   "The bay in the north of Malta named for Paul; St Paul's Islands at its mouth make “a place where two seas met” (Acts 27:41). In 1848 James Smith, "
+   "a Scottish yachtsman, checked Luke's soundings of twenty and fifteen fathoms (27:28) and the drift from Clauda against the charts, and found they fit this bay.",
+   {"a57835d": ("St Paul's Bay", [35.951,14.408])}),
+  ("St Thomas Bay",
+   "Robert Cornuke's view (2003): the soundings, a reef and a sandbank between two currents fit St Thomas Bay in the southeast of Malta, "
+   "where he reported Roman anchors brought up by divers.",
+   {"a57835d": ("St Thomas Bay", [35.852,14.567])}),
+ ]),
+ # Places only (not journey stops)
+ "ai": dict(t="Ai", default=1, views=[
+  ("et-Tell",
+   "The usual identification since Edward Robinson (1838): a large mound east of Beitin. But it lay empty from about 2400 to 1200 B.C., "
+   "so those who hold it mostly say the account of Joshua 7–8 is not history.",
+   {"a7e13e1": ("et-Tell", [31.91694,35.26111]), "a63c70b": ("et-Tell", [31.91694,35.26111])}),
+  ("Khirbet el-Maqatir",
+   "Dug from 1995 by Bryant Wood and the Associates for Biblical Research: a small fortress of Joshua's time that was burned, with its gate on the north "
+   "(Joshua 8:11), “beside Bethaven, on the east side of Bethel” (7:2) — fitting the conquest about 1400 B.C.",
+   {"a7e13e1": ("Khirbet el-Maqatir", [31.91476,35.2496]), "a63c70b": ("Khirbet el-Maqatir", [31.91476,35.2496])}),
+ ]),
+ "sodom": dict(t="Sodom & Gomorrah", default=1, views=[
+  ("South of the Dead Sea",
+   "The usual view: the cities lay by the Lisan and the southern basin, near Zoar (Genesis 19:22), where Bab edh-Dhra and Numeira are towns of early times that were burned. "
+   "Bryant Wood and other conservative scholars hold this view.",
+   {"a0aa664": ("Bab edh-Dhra", [31.24873,35.523]), "aa572e2": ("Numeira", [31.12976,35.52937])}),
+  ("North of the Dead Sea (Tall el-Hammam)",
+   "From near Bethel Lot “beheld all the plain of Jordan, that it was well watered every where” (Genesis 13:10) — the plain north of the Dead Sea, in sight of Bethel. "
+   "Steven Collins has dug Tall el-Hammam there since 2005: a great walled city of Abraham's time, destroyed suddenly by fire.",
+   {"a0aa664": ("Tall el-Hammam", [31.8406,35.6739]), "aa572e2": ("North of the Dead Sea", [31.795,35.59528])}),
+ ]),
+ "ararat": dict(t="Where the ark rested", default=0, views=[
+  ("Mount Ararat (Ağrı Dağı)",
+   "The ark rested “upon the mountains of Ararat” (Genesis 8:4) — Urartu, the highlands of eastern Turkey and Armenia. Its highest peak (16,854 ft) "
+   "is where most who search for the ark have looked.",
+   {"ab89be9": ("Mount Ararat", [39.7019,44.2983])}),
+  ("Durupınar site",
+   "A boat-shaped formation about 18 miles south of the peak, made known by Ron Wyatt in the 1980s; most creationist geologists hold it is a natural formation.",
+   {"ab89be9": ("Durupınar", [39.4406,44.2347])}),
+  ("Mount Judi (Cudi Dağı)",
+   "The Syriac and Islamic tradition, in the mountains of southeast Turkey above the Tigris; Josephus, quoting Berossus, tells of remains of the ark in the mountains of the Cordyaeans.",
+   {"ab89be9": ("Cudi Dağı", [37.38,42.45])}),
+ ]),
+ "hor": dict(t="Mount Hor", default=0, views=[
+  ("Jebel Harun",
+   "Above Petra, crowned by a shrine to Aaron — the site Josephus knew, and the usual one. With Kadesh at Petra (the Aqaba / Arabian Route) it is close by.",
+   {"ad8027f": ("Jebel Harun", [30.3172,35.4072])}),
+  ("Near Kadesh, on Edom's edge",
+   "Hor was “by the coast of the land of Edom” and “in the edge of the land of Edom” (Numbers 20:23; 33:37), one march from Kadesh with all the congregation (20:22); "
+   "with Kadesh in the Negev, many look for it northeast of Kadesh (often Jebel Madurah) rather than in the heart of Edom.",
+   {"ad8027f": ("Northeast of Kadesh", [30.83206,35.05687])}),
+ ]),
+}
+# Each journey's other views, per group: {view index: the whole stop list for that view} — stops as in J.
+# A view must keep the same stops in the same order; only the stops it moves differ.
+def swap(stops, name, ref, **o):
+    out = [st for st in stops]
+    i = next(i for i, st in enumerate(out) if st[0] == name and st[1] == ref)
+    out[i] = out[i][:3] + (None, o)
+    return out
+_ex, _ab = J["exodus"][2], J["abraham"][2]
+VIEWS = {
+ "exodus": {"sinai": {1: _ex[:3] + [
   ("~",30.1,33.1), ("~",29.55,34.2), ("~",29.06,34.58),
   ("Pi-hahiroth","Exodus 14:2","Before Pi-hahiroth — the Red Sea is parted",None,dict(ll=[28.97,34.66],sure=False,site="Nuweiba Beach on the Gulf of Aqaba, shut in by mountains with one wadi in (Exodus 14:3) — the crossing in this view")),
   ("~",28.93,34.78),
@@ -270,13 +387,17 @@ VIEWS = {
   ("Mount Sinai","Exodus 19:20","The LORD comes down upon mount Sinai",None,dict(ll=[28.654,35.305],sure=False,site="Jabal al-Lawz in northwest Saudi Arabia — “mount Sinai in Arabia” (Galatians 4:25)")),
   ("Kibroth-hattaavah","Numbers 11:34","The graves of lust",None,dict(ll=[28.95,35.32],sure=False,site="On the way north from the mount — the site is not known")),
   ("Hazeroth","Numbers 11:35","Miriam's leprosy",None,dict(ll=[29.25,35.15],sure=False,site="On the way north from the mount — the site is not known")),
-  ("~",29.6,35.0),
- ] + _ex[11:])]),
- "abraham": ("Ur of Tell el-Muqayyar", [("Ur of Urfa / Şanlıurfa",
-   "Ur of the Chaldees is Urfa (Şanlıurfa, historically Edessa) in southern Turkey, a short way from Haran. Then Haran lies on the road from Ur to Canaan "
-   "rather than 600 miles the wrong way; and when Abraham sends to “my country, and to my kindred” the servant goes to Mesopotamia, "
-   "to the city of Nahor by Haran (Genesis 24:4, 10). Southern Ur was dug in 1922 and named Abraham's city after.", [
+  ("Kadesh","Numbers 13:26","The spies return; forty years decreed",None,dict(ll=[30.3285,35.4444],sure=False,site="Petra, “a city in the uttermost of thy border” of Edom (Numbers 20:16) — Kadesh in this view")),
+ ] + _ex[12:]}},
+ "elijah": {"sinai": {1: swap(J["elijah"][2], "Horeb", "1 Kings 19:8", ll=[28.654,35.305], sure=False,
+   site="Jabal al-Lawz in Midian — the mount of God in the Aqaba / Arabian view (Galatians 4:25)")}},
+ "abraham": {"ur": {1: [
   ("Ur","Genesis 11:31","Terah takes Abram out of Ur of the Chaldees",None,dict(ll=[37.159,38.797],sure=False,site="Urfa (Şanlıurfa, historically Edessa) in southern Turkey — the northern Ur, a day or two from Haran")),
- ] + _ab[4:])]),
+ ] + _ab[4:]}},
+ "passion": {
+  "golgotha": {1: swap(J["passion"][2], "Golgotha", "John 19:17", ll=[31.7839,35.2298], site="The Garden Tomb and Gordon's Calvary, north of the Damascus Gate — outside the wall, with a garden and a new tomb (John 19:41)")},
+  "emmaus": {1: swap(J["passion"][2], "Emmaus", "Luke 24:13", ll=[31.83993,35.13685], sure=False, site="el-Qubeibeh, about threescore furlongs (seven miles) from Jerusalem"),
+             2: swap(J["passion"][2], "Emmaus", "Luke 24:13", ll=[31.8393,34.98946], sure=False, site="Emmaus Nicopolis, the Byzantine site, about 19 miles from Jerusalem")}},
+ "ministry": {"bethsaida": {1: swap(J["ministry"][2], "Bethsaida", "Luke 9:10", ll=[32.89353,35.619], sure=False, ev="Five thousand fed", site="el-Araj, on the shore of the sea")}},
+ "rome": {"melita": {1: swap(J["rome"][2], "Melita", "Acts 28:1", ll=[35.852,14.567], sure=False, ev="Shipwreck on the way to Rome", site="St Thomas Bay in the southeast of Malta")}},
 }
-
