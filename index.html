@@ -3364,7 +3364,7 @@ function multiBookmark(){
     if(!S.bookmarks.find(b=>b.ref===v.ref))
       S.bookmarks.unshift({ref:v.ref,text:v.txt.substring(0,120)+(v.txt.length>120?'…':'')});
   });
-  LS.set('kjv_bm',S.bookmarks);
+  LS.set('kjv_bm',S.bookmarks);fbSyncSoon();
   // Refresh vblocks
   document.querySelectorAll('.vblock.selected').forEach(el=>{
     el.classList.add('bookmarked');
@@ -6681,7 +6681,7 @@ function nbOpen(){
   const st = nbActive();
   document.getElementById('nb-title').value = st.t;
   document.getElementById('nb-ed').innerHTML = nbClean(st.h);
-  S._nbLoaded = st.id;
+  S._nbLoaded = st.id; S._nbShown = nbClean(document.getElementById('nb-ed').innerHTML);
   document.getElementById('nb-menu').classList.remove('on');
   document.getElementById('nb-status').textContent = 'Saved on this device';
   openPopover('nb-panel');
@@ -6690,7 +6690,8 @@ let _nbTimer = null;
 function nbStore(){
   // Only save the editor over the study it was loaded with
   const st = nbActive(), ed = document.getElementById('nb-ed');
-  if(S._nbLoaded === st.id){ st.h = nbClean(ed.innerHTML); st.u = Date.now(); }
+  // Only a real change counts as an edit (sync merges by the time of the last edit)
+  if(S._nbLoaded === st.id){ const h = nbClean(ed.innerHTML); if(h !== st.h){ st.h = h; st.u = Date.now(); } S._nbShown = h; }
   nbSave();
   document.getElementById('nb-status').textContent = 'Saved on this device';
 }
@@ -6802,7 +6803,7 @@ function nbOpenInPlace(){
   const st = nbActive();
   document.getElementById('nb-title').value = st.t;
   document.getElementById('nb-ed').innerHTML = nbClean(st.h);
-  S._nbLoaded = st.id;
+  S._nbLoaded = st.id; S._nbShown = nbClean(document.getElementById('nb-ed').innerHTML);
   nbRenderMenu();
 }
 // Plain-text form for sharing: headings in capitals, outline numbers and
@@ -8662,9 +8663,9 @@ function exportNotesText(){
     navigator.clipboard?.writeText(text).then(()=>showToast('✅ Notes copied to clipboard'));
   }
 }
-function delBM(i){S.bookmarks.splice(i,1);LS.set('kjv_bm',S.bookmarks);renderSaved();}
-function delHL(ref){delete S.highlights[ref];LS.set('kjv_hl',S.highlights);renderSaved();}
-function delNote(ref){delete S.notes[ref];LS.set('kjv_notes',S.notes);renderSaved();}
+function delBM(i){S.bookmarks.splice(i,1);LS.set('kjv_bm',S.bookmarks);fbSyncSoon();renderSaved();}
+function delHL(ref){delete S.highlights[ref];LS.set('kjv_hl',S.highlights);fbSyncSoon();renderSaved();}
+function delNote(ref){delete S.notes[ref];LS.set('kjv_notes',S.notes);fbSyncSoon();renderSaved();}
 
 async function jumpToRef(ref){
   const m=ref.match(/^(.+) (\d+):(\d+)$/);if(!m)return;
@@ -12314,6 +12315,138 @@ function refreshAppVersion(){
   });
 }
 
+/* ── Item-by-item sync ──
+   Bookmarks, highlights, notes and studies used to be pushed as whole blocks,
+   so the last device to sync replaced the others' changes (a bookmark added on
+   the phone could vanish when the laptop synced). Now every item carries the
+   time it was last changed or deleted, in kjv_sync_meta ({tag: {id: [time,
+   deleted]}}), and each sync merges the device and the cloud item by item:
+   the newer change wins, and nothing is lost to an older copy.
+   Changes are found by comparing with the last merged copy (kjv_sync_base,
+   this device only, a short hash per item), so the code that adds a bookmark
+   or edits a note needs nothing new. The stored formats are unchanged, so an
+   older copy of the app still reads them. */
+const MERGE_STORES = {
+  kjv_bm: {tag:'bm',
+    items: v => Object.fromEntries((Array.isArray(v) ? v : []).filter(b => b && b.ref).map(b => [b.ref, b])),
+    build: (m, prev, meta) => syncOrder(m, (Array.isArray(prev) ? prev : []).map(b => b && b.ref), meta)},
+  kjv_hl: {tag:'hl', items: v => (v && typeof v === 'object' && !Array.isArray(v)) ? {...v} : {}, build: m => m},
+  kjv_notes: {tag:'nt', items: v => (v && typeof v === 'object' && !Array.isArray(v)) ? {...v} : {}, build: m => m},
+  kjv_studies: {tag:'st',
+    items: v => Object.fromEntries(((v && v.list) || []).filter(s => s && s.id).map(s => [s.id, s])),
+    build: (m, prev, meta) => {
+      const list = syncOrder(m, ((prev && prev.list) || []).map(s => s && s.id), meta);
+      const active = prev && m[prev.active] ? prev.active : (list[0] ? list[0].id : null);
+      return {active, list};
+    }},
+};
+const SYNC_META = 'kjv_sync_meta', SYNC_BASE = 'kjv_sync_base';
+const SYNC_TOMB_DAYS = 400; // a deletion is remembered this long
+
+// Keep the device's order; items new to it go first, newest first
+function syncOrder(m, prevIds, meta){
+  const seen = new Set(prevIds), t = id => (meta[id] && meta[id][0]) || 0;
+  const fresh = Object.keys(m).filter(id => !seen.has(id)).sort((a, b) => t(b) - t(a));
+  return [...fresh, ...prevIds.filter(id => id in m)].map(id => m[id]);
+}
+function syncHash(s){
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for(let i = 0; i < s.length; i++){ const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h2 >>> 0).toString(36) + (h1 >>> 0).toString(36);
+}
+function syncHashes(items){ return Object.fromEntries(Object.entries(items).map(([id, it]) => [id, syncHash(JSON.stringify(it))])); }
+function syncParse(s){ try{ return typeof s === 'string' ? JSON.parse(s) : (s || null); }catch(e){ return null; } }
+
+// Stamp what changed on this device since the last merge
+function syncStamp(){
+  const meta = LS.get(SYNC_META, {}) || {}, base = LS.get(SYNC_BASE, {}) || {}, now = Date.now();
+  for(const [key, st] of Object.entries(MERGE_STORES)){
+    const items = st.items(LS.get(key, null)), m = meta[st.tag] || (meta[st.tag] = {});
+    const was = base[st.tag], hashes = syncHashes(items);
+    // First run with this version: what is here is older than any change
+    // made since on another device, so it can never undo a newer deletion
+    if(!was){ for(const id in items) if(!m[id]) m[id] = [1, 0]; }
+    else {
+      for(const id in hashes) if(was[id] !== hashes[id]) m[id] = [now, 0];
+      for(const id in was) if(!(id in items)) m[id] = [now, 1];
+    }
+    base[st.tag] = hashes;
+  }
+  LS.set(SYNC_META, meta); LS.set(SYNC_BASE, base);
+  return meta;
+}
+
+// Merge two copies of one store, item by item: the newer change wins; a tie
+// keeps the item (nothing is ever lost on a tie)
+function syncMergeStore(st, aVal, aMeta, bVal, bMeta){
+  const A = st.items(aVal), B = st.items(bVal), out = {}, meta = {};
+  aMeta = aMeta || {}; bMeta = bMeta || {};
+  const side = (items, m, id) => (id in items)
+    ? {has: true, it: items[id], t: (m[id] && !m[id][1]) ? m[id][0] : 1}
+    : {has: false, t: (m[id] && m[id][1]) ? m[id][0] : 0};
+  const cutoff = Date.now() - SYNC_TOMB_DAYS * 864e5;
+  const ids = new Set([...Object.keys(A), ...Object.keys(B), ...Object.keys(aMeta), ...Object.keys(bMeta)]);
+  for(const id of ids){
+    const a = side(A, aMeta, id), b = side(B, bMeta, id);
+    if(!a.t && !b.t) continue;
+    const w = a.t > b.t || (a.t === b.t && a.has) ? a : b, l = w === a ? b : a;
+    if(w.has){
+      out[id] = (l.has && st.combine) ? st.combine(w.it, l.it) : w.it;
+      meta[id] = [w.t, 0];
+    } else if(w.t > cutoff || l.has){
+      meta[id] = [w.t, 1];
+    }
+  }
+  return {value: st.build(out, aVal, meta), meta};
+}
+
+// Take a merged copy (from the cloud or a restore) into this device, keeping
+// anything changed here in the meantime. Returns the keys that changed.
+function syncAdopt(vals, rmeta){
+  const meta = syncStamp(), base = LS.get(SYNC_BASE, {}) || {}, changed = [];
+  for(const [key, st] of Object.entries(MERGE_STORES)){
+    if(vals[key] === undefined && !(rmeta && rmeta[st.tag])) continue;
+    const lv = LS.get(key, null);
+    const r = syncMergeStore(st, lv, meta[st.tag], vals[key], rmeta && rmeta[st.tag]);
+    meta[st.tag] = r.meta;
+    const nv = JSON.stringify(r.value);
+    if(localStorage.getItem(key) !== nv && !(lv === null && !Object.keys(st.items(r.value)).length)){
+      try{ localStorage.setItem(key, nv); changed.push(key); }catch(e){}
+    }
+    base[st.tag] = syncHashes(st.items(r.value));
+  }
+  LS.set(SYNC_META, meta); LS.set(SYNC_BASE, base);
+  if(changed.length) syncRefresh(changed);
+  return changed;
+}
+
+// Show merged changes without a reload
+function syncRefresh(keys){
+  try{
+    if(keys.includes('kjv_bm')) S.bookmarks = LS.get('kjv_bm', []);
+    if(keys.includes('kjv_hl')) S.highlights = LS.get('kjv_hl', {});
+    if(keys.includes('kjv_notes')) S.notes = LS.get('kjv_notes', {});
+    if(keys.includes('kjv_studies')){
+      S._nb = null;
+      // The study open in the notebook: show the synced copy unless something
+      // has been typed here since it was last saved (then that typing wins)
+      if(document.getElementById('nb-panel')?.classList.contains('on')){
+        const d = nbData(), open = d.list.find(x => x.id === S._nbLoaded);
+        const typed = nbClean(document.getElementById('nb-ed').innerHTML) !== S._nbShown;
+        if(!open || (!typed && (open.h !== S._nbShown || open.t !== document.getElementById('nb-title').value))) nbOpenInPlace();
+        else nbRenderMenu();
+      }
+    }
+    if(keys.some(k => k === 'kjv_bm' || k === 'kjv_hl' || k === 'kjv_notes')){
+      document.querySelectorAll('#verses .vblock').forEach(el => refreshVBlock(el.dataset.ref));
+      if(S.screen === 'saved') renderSaved();
+    }
+    if(typeof syncRefreshExtra === 'function') syncRefreshExtra(keys);
+  }catch(e){ console.warn('Sync refresh:', e); }
+}
+
 // Keys to sync (skip audio positions and UI state)
 const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
@@ -12355,12 +12488,27 @@ function fbSync(){
   // yet) would clobber the higher value already in the cloud on every push.
   // This is strictly non-destructive: protected fields can only ever rise,
   // never decrease — on this device or in the cloud.
+  //
+  // Bookmarks, highlights, notes, studies and plans are merged item by item
+  // (MERGE_STORES): the merged copy goes to the cloud and back to this device.
+  const meta = syncStamp();
+  let merged = null;
   return _db.runTransaction(async tx => {
     const snap = await tx.get(ref);
     const cloud = snap.exists ? (snap.data() || {}) : {};
     const data = { lastSync: firebase.firestore.FieldValue.serverTimestamp(), v: 2 };
     const bumps = {}; // higher cloud values to adopt locally after the write
+    const cloudMeta = syncParse(cloud[SYNC_META]) || {}, newMeta = {};
+    merged = {vals: {}, meta: newMeta};
+    for(const [k, st] of Object.entries(MERGE_STORES)){
+      const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
+      const r = syncMergeStore(st, LS.get(k, null), meta[st.tag], syncParse(cloud[fk]), cloudMeta[st.tag]);
+      data[fk] = JSON.stringify(r.value);
+      merged.vals[k] = r.value; newMeta[st.tag] = r.meta;
+    }
+    data[SYNC_META] = JSON.stringify(newMeta);
     SYNC_KEYS.forEach(k=>{
+      if(MERGE_STORES[k]) return;
       const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
       const lv = localStorage.getItem(k);
       if(PROTECTED_MAX_FIELDS.includes(k)){
@@ -12377,6 +12525,7 @@ function fbSync(){
     tx.set(ref, data, {merge:true});
     return bumps;
   }).then(bumps => {
+    if(merged) syncAdopt(merged.vals, merged.meta);
     if(bumps && Object.keys(bumps).length){
       Object.entries(bumps).forEach(([k,v]) => localStorage.setItem(k, v));
       // Refresh in-memory streak state + header badge from the adopted values.
@@ -12415,7 +12564,15 @@ const PROTECTED_MAX_FIELDS = ['kjv_streak','kjv_streak_best','kjv_streak_tokens'
 
 function applySyncData(data, {protect=true} = {}){
   let count = 0;
+  // Merged item by item, so a restore or Sync Now never drops what is here
+  const vals = {};
+  Object.keys(MERGE_STORES).forEach(k => {
+    const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
+    if(data[fk] !== undefined){ vals[k] = syncParse(data[fk]); count++; }
+  });
+  syncAdopt(vals, syncParse(data[SYNC_META]) || {});
   SYNC_KEYS.forEach(k=>{
+    if(MERGE_STORES[k]) return;
     const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
     if(data[fk] === undefined) return;
     let incoming = data[fk];
