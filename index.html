@@ -485,6 +485,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .pl-hi{color:var(--gold);border-color:var(--gold-d)}
 .pl-alt{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:7px 2px;border-bottom:1px solid var(--border);font-family:'Crimson Pro',serif;font-size:15px}
 .pl-alt-d{font-size:12px;color:var(--text-m);margin-left:auto}
+.pl-view{padding:7px 2px;border-bottom:1px solid var(--border);font-family:'Crimson Pro',serif;font-size:15px}
+.pl-view summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.pl-view-on{font-family:'Inter',sans-serif;font-size:11px;color:var(--gold)}
+.pl-view-d{font-size:14px;color:var(--text-d);margin:6px 0;line-height:1.45}
 .s-dym{font-size:14px;color:var(--text-d);padding:0 0 8px}
 .s-dym a{color:var(--gold);font-weight:600;font-style:italic}
 .nm-row{display:block;width:100%;text-align:left;padding:11px 4px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none}
@@ -6202,6 +6206,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
         <div class="pl-coords"><span>${p.ll[0].toFixed(4)}°N, ${p.ll[1].toFixed(4)}°E</span> · <a href="${osm}" target="_blank" rel="noopener">Open in a map ↗</a></div>
       </div>
  <div class="wm wm-embed" id="pl-map"></div><div id="pl-jr"></div>` : `<div class="pl-site"><div class="pl-site-name">Location unknown</div><div class="pl-why">Scholars have not identified where this place was.</div></div>`}
+<div id="pl-views"></div>
     ${p.o ? `<div class="pp-h">Other suggested sites</div>${p.o.map(([s, c, la, lo]) => {
       const [cl] = placeConfidence(c);
       return `<div class="pl-alt"><span>${escapeHtml(s)}</span><span class="pl-conf pl-${placeConfidence(c)[2]}">${cl}</span>${p.ll ? `<span class="pl-alt-d">${fmtMiles(placeDistance(p.ll, [la, lo]).miles)} away</span>` : ''}</div>`; }).join('')}` : ''}
@@ -6215,11 +6220,32 @@ async function openPlace(id, pushHistory=true, scrollY=0){
     <button class="nv-showmore pp-find" onclick="placeSearch('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔍 Find every “${escapeHtml(p.n)}” in Scripture</button>
     <div class="nv-credit">Locations from the OpenBible.info Bible Geocoding Data (CC BY 4.0), which draws on over seventy atlases and reference works. Distances are straight-line. Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain).</div>`;
   S._placeOpen = S._placeOpen || {};
+  plViews(id);
   journeysAt(id).then(list => { const b = document.getElementById('pl-jr'); if(b && list.length) b.innerHTML = `<div class="wm-chips" style="padding:2px 0 6px">${list.map(([j, i]) => `<button class="vl-chip" onclick="openJourney('${j.id}', ${i})">🧭 ${escapeHtml(j.t)} · stop ${i + 1}</button>`).join('')}</div>`; });
   if(p.ll) wmMount(document.getElementById('pl-map'), [wmPin(id, true)], {expand: () => openWhereMap(p.n, placeType(p.t), [wmPin(id, true)])});
   if(!(id in S._placeOpen)) S._placeOpen[id] = openVerses;
   if(S._placeOpen[id]) await fillPlaceVerses();
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+}
+// A disputed site: each view's site, why it is held, and all of them on one map
+async function plViews(id){
+  await loadJourneys().catch(() => null);
+  const box = document.getElementById('pl-views'), gs = Object.keys(S._jrGroups || {}).filter(g => S._jrGroups[g].v.some(v => v.pl[id]));
+  if(!box || !gs.length) return;
+  const p = S._places[id];
+  box.innerHTML = gs.map(g => { const G = S._jrGroups[g], c = jrChoice(g), ks = jrOrder(G).filter(k => G.v[k].pl[id]);
+    return `<div class="pp-h">⚖️ ${escapeHtml(G.t)}: ${ks.length === 2 ? 'two' : ks.length} views</div>`
+      + ks.map(k => { const [site, ll] = G.v[k].pl[id];
+        return `<details class="pl-view"${k === c ? ' open' : ''}><summary><b>${escapeHtml(G.v[k].t)}</b>${k === c ? ' <span class="pl-view-on">shown on the maps</span>' : ''}<span class="pl-alt-d">${escapeHtml(site)}${p.ll ? ' · ' + fmtMiles(placeDistance(p.ll, ll).miles) + ' from the site above' : ''}</span></summary>
+          <div class="pl-view-d">${escapeHtml(G.v[k].d)}</div>
+          ${k !== c ? `<button class="vl-chip" onclick="plSetView('${g}', ${k})">Show this view on the maps</button>` : ''}</details>`; }).join('')
+      + `<button class="vl-chip" style="margin:6px 0 4px" onclick="plViewsMap('${id}', '${g}')">🗺️ All ${ks.length} on the map</button>`; }).join('');
+}
+function plSetView(g, k){ jrSetChoice(g, k); plViews(S._subView && S._subView.key); }
+function plViewsMap(id, g){
+  const G = S._jrGroups[g], p = S._places[id];
+  const pins = jrOrder(G).filter(k => G.v[k].pl[id]).map(k => ({id: 'v' + k, name: G.v[k].t, today: G.v[k].pl[id][0], ll: G.v[k].pl[id][1], sure: false, main: true}));
+  openWhereMap(`${p.n}: ${G.t}`, 'Each view of where it was', pins);
 }
 async function togglePlaceVerses(){
   const id = S._subView && S._subView.key, body = document.getElementById('plv-body');
@@ -7226,7 +7252,8 @@ function wmDraw(el, pins, opts){
     [...gLab.children].forEach((t, k) => { if(labBoxes[k] && hit(labBoxes[k], major)) t.remove(); });
   }
   function showInfo(id, ids){
-    if(ids && ids.length > 1){
+    // (pins that are not places — the views of a disputed site — have no card)
+    if(ids && ids.length > 1 && ids.every(k => S._places[k])){
       info.innerHTML = `<span>📍 ${ids.map(k => `<b>${escapeHtml(S._places[k].n)}</b>`).join(' & ')}<br><span style="font-size:12.5px;color:#6b5434">Same suggested site</span></span>` + ids.map(k => `<button data-k="${k}">${escapeHtml(S._places[k].n)} ›</button>`).join('');
       info.querySelectorAll('button').forEach((b, j) => { b.style.marginLeft = j ? '0' : 'auto'; b.onclick = e => { e.stopPropagation(); wmOpenPlace(b.dataset.k); }; });
       info.classList.add('on'); return;
@@ -7737,8 +7764,8 @@ function paneApply(){
    date and timeline entry, so the text, the timeline and the map lead to
    one another: the reader's 🧭 button, the timeline's 🧭 and 📍, and each
    stop's Read › and 📅 About ›. */
-const JOURNEYS_VERSION = '2026-10-05';
-function loadJourneys(){ return S._journeys ? Promise.resolve(S._journeys) : loadCachedJSON(`journeys.json?v=${JOURNEYS_VERSION}`).then(d => S._journeys = d.j); }
+const JOURNEYS_VERSION = '2026-10-05b';
+function loadJourneys(){ return S._journeys ? Promise.resolve(S._journeys) : loadCachedJSON(`journeys.json?v=${JOURNEYS_VERSION}`).then(d => { S._jrGroups = d.g || {}; return S._journeys = d.j; }); }
 const jrDates = j => !j.y ? '' : j.y[0] === j.y[1] ? 'about ' + tlYearText(j.y[0]) : `about ${tlYearText(j.y[0])} – ${tlYearText(j.y[1])}`;
 // The pin(s) for a stop: a place pin, or dashed rings for each suggested site
 function wmStopPins(st){
@@ -7746,17 +7773,26 @@ function wmStopPins(st){
   const p = st.p && S._places[st.p];
   return [{id: st.p || 'stop', name: st.n, today: p && !st.ov ? wmToday(p) : '', ll: st.ll, sure: !st.u, main: true}];
 }
-// A journey with other views (where the sites are disputed, e.g. the Red Sea
-// crossing and mount Sinai, or Ur) — the same stops, drawn where that view
-// places them. 0 is the usual view; the reader's choice is kept per device.
+// Disputed sites (the Red Sea crossing and mount Sinai, Ur, Golgotha, Emmaus …):
+// each is a group with two or more views, and a journey stop it touches is
+// drawn where the chosen view places it. The choice is per group, so the
+// Exodus and Elijah's Horeb always agree; the view shown first is the
+// literal reading of the text where the views split that way. Per device.
 const JR_VIEW_KEY = 'kjv_jr_view';
-function jrViewOf(j, k){ return k && j.v && j.v[k - 1] ? {...j, s: j.v[k - 1].s, base: j, view: k} : {...j, base: j, view: 0}; }
-async function openJourney(id, i=0, view){
+function jrChoice(g){ const c = (LS.get(JR_VIEW_KEY, {}) || {})[g], G = S._jrGroups && S._jrGroups[g]; return G && c != null && G.v[c] ? c : G ? G.def : 0; }
+function jrSetChoice(g, k){ const c = LS.get(JR_VIEW_KEY, {}) || {}; c[g] = k; LS.set(JR_VIEW_KEY, c); }
+// The views in the order shown: the first-shown view, then the rest
+const jrOrder = G => [G.def, ...G.v.map((_, k) => k).filter(k => k !== G.def)];
+function jrApply(base){
+  const s = base.s.slice();
+  for(const g of base.g || []){ const ch = g.ch[jrChoice(g.k)]; if(ch) for(const i in ch) s[+i] = ch[i]; }
+  return {...base, s, base};
+}
+async function openJourney(id, i=0){
   const [list] = await Promise.all([loadJourneys(), loadLands(), loadPlaces()]);
   const base = list.find(x => x.id === id);
   if(!base) return;
-  if(view == null) view = (LS.get(JR_VIEW_KEY, {}) || {})[id] || 0;
-  const j = jrViewOf(base, view);
+  const j = jrApply(base);
   S._jr = {j, i};
   const ov = document.getElementById('wm-overlay');
   ov.classList.add('jr'); ov.classList.remove('jpres');
@@ -7770,10 +7806,16 @@ async function openJourney(id, i=0, view){
     jrCard();
   });
 }
-function jrView(k){
-  const J = S._jr; if(!J || J.j.view === k) return;
-  const views = LS.get(JR_VIEW_KEY, {}) || {}; views[J.j.id] = k; LS.set(JR_VIEW_KEY, views);
-  openJourney(J.j.id, J.i, k);
+function jrView(g, k){
+  const J = S._jr; if(!J || jrChoice(g) === k) return;
+  jrSetChoice(g, k);
+  openJourney(J.j.id, J.i);
+}
+// The switch for each disputed site, with why the chosen view holds
+function jrViewsHtml(groups, onclick){
+  return groups.map(g => { const G = S._jrGroups[g], c = jrChoice(g);
+    return `<div class="jr-views"><span>${escapeHtml(G.t)}:</span>${jrOrder(G).map(k => `<button class="${k === c ? 'on' : ''}" onclick="${onclick(g, k)}">${escapeHtml(G.v[k].t)}</button>`).join('')}</div>
+      <details class="jr-why"><summary>Why this view?</summary>${escapeHtml(G.v[c].d)}</details>`; }).join('');
 }
 function jrGo(i){
   const J = S._jr; if(!J || i < 0 || i >= J.j.s.length) return;
@@ -7784,8 +7826,7 @@ function jrGo(i){
 async function jrCard(){
   const {j, i} = S._jr, st = j.s[i], box = document.getElementById('wm-list');
   const p = st.p && !st.ov && S._places[st.p], today = p && wmToday(p) ? ` <span>· today ${escapeHtml(p.s)}</span>` : '';
-  const views = j.base && j.base.v ? `<div class="jr-views"><span>View:</span>${[j.base.vt, ...j.base.v.map(v => v.t)].map((t, k) => `<button class="${k === j.view ? 'on' : ''}" onclick="jrView(${k})">${escapeHtml(t)}</button>`).join('')}</div>`
-    + (j.view ? `<details class="jr-why"><summary>Why this view?</summary>${escapeHtml(j.base.v[j.view - 1].d)}</details>` : '') : '';
+  const views = jrViewsHtml((j.g || []).map(g => g.k), (g, k) => `jrView('${g}', ${k})`);
   box.innerHTML = `<div class="jr-card">${views}
     <div class="jr-top"><span>Stop ${i + 1} of ${j.s.length}</span>${st.y != null ? `<button onclick="jrTimeline()">📅 About ${tlYearText(st.y)} ›</button>` : ''}<button onclick="jrPresent()" style="margin-left:6px">${document.getElementById('wm-overlay').classList.contains('jpres') ? '✕ Exit' : '🎦 Present'}</button></div>
     <div class="jr-place">📍 ${escapeHtml(st.n)}${today}</div>
@@ -7824,7 +7865,7 @@ async function renderJourneyList(){
   const list = await loadJourneys().catch(() => null);
   if(!list){ el.innerHTML = '<div style="font-size:13px;color:var(--text-m)">Journeys unavailable offline until they have loaded once.</div>'; return; }
   const nt = j => BOOKS.indexOf(j.s[0].r.slice(0, j.s[0].r.lastIndexOf(' '))) >= 39;
-  const item = j => `<button class="jr-item" onclick="openJourney('${j.id}')"><span><b>${escapeHtml(j.t)}</b><small>${escapeHtml(j.r)} · ${jrDates(j)} · ${j.s.length} stops${j.v ? ` · ${j.v.length + 1} views` : ''}</small></span><i>›</i></button>`;
+  const item = j => `<button class="jr-item" onclick="openJourney('${j.id}')"><span><b>${escapeHtml(j.t)}</b><small>${escapeHtml(j.r)} · ${jrDates(j)} · ${j.s.length} stops${j.g ? ` · ${j.g.length > 1 ? j.g.length + ' disputed sites' : 'two views of a disputed site'}` : ''}</small></span><i>›</i></button>`;
   el.innerHTML = `<div class="jr-sub">Old Testament</div><div class="jr-list">${list.filter(j => !nt(j)).map(item).join('')}</div>`
     + `<div class="jr-sub">New Testament</div><div class="jr-list">${list.filter(nt).map(item).join('')}</div>`;
   el.dataset.done = '1';
