@@ -6,6 +6,15 @@
 
 ## New Features
 
+### 🔖 My Verses (v49)
+- **Bookmarks become lists you name.** Tap a verse, then **🔖 Save** (it was Bookmark): a sheet lists your lists with a tick by each one the verse is in; tap to add or take it out, or type a name for a new list. A verse can be in any number of lists, and the button shows how many (“In 2 lists”)
+- **Passages**: long-press to select verses, then **Save** — verses next to each other are kept as one passage (John 10:27–29) with each verse's number
+- **Notes → My Verses** (the first list, where Bookmarks was): every list with its count and first references, ＋ New list, and search across names and verses. Open a list to read its verses in full; **↑ ↓** put them in your order, **⇅ Bible order** sorts them; **✏️** renames; **📤 Share** sends the list as text; **🎦 Present** shows it as slides (its name, then each verse); **📝＋ Study** adds it to the open study; **🗑 Delete this list**. Back returns to the lists
+- **From a doctrine page**: **🔖 Save to My Verses** saves its verses as a list with the doctrine's name, ready for your own verses to be added
+- Your **bookmarks move into a list called “Bookmarks”** — nothing is lost. Lists sync between devices like the other notes, and Home's Notes card counts them
+- **Highlights now show their verse.** The Highlights list showed “…” for a verse that was not also bookmarked; it now looks the verse up
+- Sword Drill's own list of verses to memorize is renamed **Custom Verses** (it was My Verses), so the two are not confused
+
 ### 🏠 A Tidier Home & a Notes Tab (v48)
 - **One card style on Home**: Continue Reading, Verse of the Day, the Romans Road, the Old and New Testament, and the new cards below them all match. An arrow that turns folds a card open; **›** goes to its page. The Old and New Testament are one lean line each (the name and the number of books) that fold open to the books, as before
 - **Search & Study Tools on Home**: the search box is always showing — type and search without leaving Home. Open the card for all eight tools (Doctrines, Topics, Dictionary, Concordance, Names, Timeline, Maps, Hymns), each one tap away, and **Open Search ›**
