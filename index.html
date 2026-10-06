@@ -589,15 +589,15 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .col-title input{width:100%;font-family:'IM Fell English',serif;font-size:21px;color:var(--text);background:var(--surface);border:1px solid var(--gold-d);border-radius:8px;padding:4px 8px}
 .col-ic{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px}
 .col-sub{font-size:12px;color:var(--text-m);margin:2px 0 10px}
-.col-acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.col-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
 .col-sort{background:none;border:none;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;padding:0}
 .mb-emo{font-size:15px;line-height:16px}
 .col-acts button{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:9px;padding:8px 2px;font-size:11.5px;font-weight:600;cursor:pointer}
-.col-item{display:flex;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 10px 10px 12px;margin-bottom:8px}
+.col-item{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
 .col-it-main{flex:1;min-width:0;cursor:pointer}
 .col-it-t{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);line-height:1.45;margin-top:2px}
-.col-it-ctl{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
-.col-it-ctl button{width:32px;height:28px;background:none;border:1px solid var(--border);border-radius:7px;color:var(--text-m);cursor:pointer;font-size:13px}
+.col-it-ctl{display:flex;gap:6px;justify-content:flex-end;padding-top:8px;border-top:1px dashed var(--border)}
+.col-it-ctl button{min-width:34px;height:30px;padding:0 9px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--text-m);cursor:pointer;font-size:12.5px;font-weight:600;white-space:nowrap}
 .col-it-ctl button:disabled{opacity:.3;cursor:default}
 .col-del{display:block;margin:14px auto 4px;background:none;border:none;color:var(--red);font-size:12.5px;font-weight:600;cursor:pointer}
 #pa-bm.on{color:var(--gold);border-color:var(--gold-d)}
@@ -1220,6 +1220,30 @@ body.light #home-watermark{
 #tips-sheet,#settings-sheet,#memadd-sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:490;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
 #tips-sheet.on,#settings-sheet.on,#memadd-sheet.on{display:flex}
 /* Helpful hints and the welcome tour (v50): large, plain and never in the way */
+/* Make your own plan (v54) */
+#mk-sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:690;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+#mk-sheet.on{display:flex}
+#mk-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;padding:18px 16px calc(14px + env(safe-area-inset-bottom));animation:su .22s ease;display:flex;flex-direction:column;gap:10px}
+@media (min-width:700px){#mk-sheet{align-items:center}#mk-inner{border-radius:18px}}
+.mk-lbl{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-top:4px}
+.mk-picks,.mk-bk{display:flex;flex-wrap:wrap;gap:6px}
+.mk-picks button,.mk-bk button{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:7px 12px;font-size:13.5px;color:var(--text-d);cursor:pointer;font-family:'Crimson Pro',serif}
+.mk-bk button{padding:5px 9px;font-size:13px}
+.mk-picks button.on,.mk-bk button.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.mk-more summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--gold);padding:4px 0}
+.mk-more[open] #mk-books{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.mk-per{display:flex;gap:6px}
+.mk-per button{flex:1;min-height:42px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:16px;font-weight:700;color:var(--text-d);cursor:pointer}
+.mk-per button.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.mk-sum{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);text-align:center;padding:4px 0}
+#mk-name{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 12px;font-size:15px;font-family:'Inter',sans-serif}
+#mk-go:disabled{opacity:.5;cursor:default}
+.pl-mk{border-style:dashed}
+/* Undo after a delete (v54) */
+#undo-toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);display:flex;align-items:center;gap:14px;background:var(--text);color:var(--bg);border-radius:14px;padding:10px 10px 10px 16px;font-size:14px;z-index:650;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100% - 24px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+#undo-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#undo-msg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#undo-btn{background:none;border:1.5px solid var(--gold-l);color:var(--gold-l);border-radius:9px;padding:6px 14px;font-weight:700;font-size:14px;cursor:pointer;flex-shrink:0}
 #hint-card{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);width:min(440px,calc(100% - 24px));background:var(--bg2);border:1.5px solid var(--gold-d);border-radius:16px;padding:16px 16px 10px;z-index:661;box-shadow:0 14px 40px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
 #hint-card.top{bottom:auto;top:calc(70px + env(safe-area-inset-top,0px))}
 #hint-card.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
@@ -2266,9 +2290,11 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
-        <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), send them to ⚔ Sword Drill, or add them to a study</span></div>
+        <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
         <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
+        <div class="tip-row"><span class="tip-ico">🧭</span><span class="tip-txt"><strong>Make your own plan</strong> at the bottom of the Plans page: pick the Gospels, Psalms, Paul’s letters, a Testament — or any books — and how many chapters a day. It works like the other plans: read at your own pace, chapters count when you reach the end</span></div>
+        <div class="tip-row"><span class="tip-ico">↩️</span><span class="tip-txt"><strong>Undo</strong> — removing a highlight, note, list verse, list or study shows <strong>Undo</strong> for a few seconds</span></div>
         <div class="tip-row"><span class="tip-ico">🔔</span><span class="tip-txt"><strong>A daily reading reminder</strong> — on the Plans page, tap 🔔 and choose morning, midday or evening. Each day a short note on this device names your next reading; tap it to open your plans. Turn it off the same way</span></div>
         <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The flame badge</strong> in the header tracks your daily reading streak — tap it to see your progress and milestone badges</span></div>
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
@@ -2542,6 +2568,22 @@ body.light #home-watermark{
     <div id="tour-nav"><button id="tour-back" onclick="tourStep(-1)">‹ Back</button><button id="tour-next" onclick="tourStep(1)">Next ›</button></div>
   </div>
 </div>
+<!-- Make your own reading plan (mkOpen) -->
+<div id="mk-sheet" onclick="if(event.target===this)closePopover('mk-sheet')" role="dialog" aria-modal="true" aria-labelledby="mk-t">
+  <div id="mk-inner">
+    <div class="hln-t" id="mk-t">🧭 Make your own plan</div>
+    <div class="mk-lbl">What would you like to read?</div>
+    <div class="mk-picks" id="mk-picks"></div>
+    <details class="mk-more"><summary>Or choose books one by one</summary><div id="mk-books"></div></details>
+    <div class="mk-lbl">Chapters a day</div>
+    <div class="mk-per" id="mk-per"><button data-n="1" onclick="mkPer(1)">1</button><button data-n="2" onclick="mkPer(2)">2</button><button data-n="3" onclick="mkPer(3)">3</button><button data-n="4" onclick="mkPer(4)">4</button><button data-n="5" onclick="mkPer(5)">5</button></div>
+    <div class="mk-sum" id="mk-sum"></div>
+    <input id="mk-name" maxlength="40" aria-label="Name of your plan">
+    <div class="hln-acts"><button class="hln-cancel" onclick="closePopover('mk-sheet')">Cancel</button><button class="hln-save" id="mk-go" onclick="mkCreate()">Start this plan</button></div>
+  </div>
+</div>
+<!-- Undo after a delete (showUndo) -->
+<div id="undo-toast" role="status" aria-live="polite"><span id="undo-msg"></span><button id="undo-btn" onclick="undoNow()">Undo</button></div>
 <!-- Name the highlight colours (hlNameSheet) -->
 <div id="hln-sheet" onclick="if(event.target===this)closePopover('hln-sheet')" role="dialog" aria-modal="true" aria-labelledby="hln-t">
   <div id="hln-inner">
@@ -2794,6 +2836,10 @@ body.light #home-watermark{
     <button class="mb" onclick="multiBookmark()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       Save
+    </button>
+    <button class="mb" onclick="multiHighlight()">
+      <span class="mb-emo">🖍</span>
+      Highlight
     </button>
     <button class="mb" onclick="multiDrill()">
       <span class="mb-emo">⚔️</span>
@@ -3085,7 +3131,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initCardGestures();
   try{ plansMigrate(); }catch(e){ console.warn('Plans migrate:', e); }
   try{ colMigrate(); }catch(e){ console.warn('My Verses migrate:', e); }
-  try{ readLogBackfill(); }catch(e){ console.warn('Reading log:', e); }
+  try{ readLogBackfill(); badgesRedate(); }catch(e){ console.warn('Reading log:', e); }
   // A reminder opens the app at ?open=plans
   try{
     if(new URLSearchParams(location.search).get('open') === 'plans'){
@@ -4409,7 +4455,7 @@ function goBack(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
+const POPOVER_IDS = ['mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
 // Order the cards were opened in: on a wide screen several can be open side
 // by side (the verse card beside the notebook), and Back closes the newest
 let LAYER_SEQ = 0;
@@ -7204,6 +7250,8 @@ async function nbDelete(id){
   if(!st0 || !(await appConfirm(`Delete “${st0.t}”? This cannot be undone.`, 'Delete', true))) return;
   const d = nbData(), st = d.list.find(x => x.id === id);
   if(!st) return;
+  const gone = {...st};
+  setTimeout(() => showUndo(`Study deleted · ${gone.t}`, () => { const d2 = nbData(); gone.u = Date.now(); d2.list.unshift(gone); nbSave(); if(S.screen === 'saved') renderSaved(); updateHomeNotes(); }), 50);
   d.list = d.list.filter(x => x.id !== id);
   if(d.active === id) d.active = d.list[0] ? d.list[0].id : null;
   nbSave();
@@ -9227,9 +9275,24 @@ function selRuns(){
 // ── ⚔ Sword Drill from anywhere: verses go into Custom Verses ──
 // refs in Sword Drill's form ("John 3:16" or "John 10:27-29"); a passage
 // longer than 6 verses is too long to drill and is left out
-const MEM_MAX_SPAN = 6;
+const MEM_MAX_SPAN = 6, MEM_LONG_WORDS = 50;
 function memRefOf(it){ return it.e ? `${it.a}-${it.e}` : it.a; }
-function drillAdd(items, open = true){
+const wordCount = t => (String(t || '').replace(/\b\d+\b/g, ' ').match(/[A-Za-z’']+/g) || []).length;
+// One verse or passage from a list into Sword Drill
+function colDrillItem(id, i){
+  const c = colLists().find(x => x.id === id), it = c && c.items[i];
+  if(it) drillAdd([it]);
+}
+async function drillAdd(items, open = true){
+  // A long verse is hard to memorize: say so, and let them choose
+  const longs = items.filter(it => wordCount(it.t) > MEM_LONG_WORDS);
+  if(longs.length){
+    const n = wordCount(longs[0].t);
+    const ok = await appConfirm(longs.length === 1
+      ? `${longs[0].r || longs[0].a} is a long one — ${n} words. Memorize it anyway?`
+      : `${longs.length} of these are long (over ${MEM_LONG_WORDS} words each). Add them anyway?`, 'Add to Sword Drill', false, '⚔️ Sword Drill');
+    if(!ok) return 0;
+  }
   const list = memGetCustom(), have = new Set(list);
   let added = 0, long = 0;
   items.forEach(it => {
@@ -9245,6 +9308,25 @@ function drillAdd(items, open = true){
   showToast(msg + extra);
   if(open && added){ setTimeout(() => { openMemorize(); try{ renderMemSelect(); }catch(e){} }, 400); }
   return added;
+}
+// 🖍 Highlight every selected verse in one colour (or take highlights off)
+async function multiHighlight(){
+  const sel = getSelectedSorted();
+  if(!sel.length) return;
+  const dot = {y: '🟡', g: '🟢', b: '🔵', p: '🟣'};
+  const c = await appSheet({title: '🖍 Highlight ' + (sel.length === 1 ? sel[0].ref : `${sel.length} verses`), actions: [
+    ...HL_KEYS.map(k => ({label: `${dot[k]}  ${hlName(k)}`, v: k})),
+    {label: 'Remove highlight', v: 'x'}, {label: 'Cancel', v: null, ghost: true}]});
+  if(!c) return;
+  const before = {};
+  sel.forEach(v => { before[v.ref] = S.highlights[v.ref]; if(c === 'x') delete S.highlights[v.ref]; else S.highlights[v.ref] = c; });
+  LS.set('kjv_hl', S.highlights); fbSyncSoon();
+  exitSelectMode();
+  sel.forEach(v => refreshVBlock(v.ref));
+  showUndo(c === 'x' ? `Highlights removed · ${sel.length}` : `🖍 ${sel.length} highlighted · ${hlName(c)}`, () => {
+    Object.entries(before).forEach(([r, x]) => { if(x) S.highlights[r] = x; else delete S.highlights[r]; refreshVBlock(r); });
+    LS.set('kjv_hl', S.highlights); fbSyncSoon();
+  });
 }
 function multiDrill(){
   const items = selRuns();
@@ -9319,7 +9401,6 @@ function renderColList(el, c){
       <button onclick="colShare('${c.id}')">📤 Share</button>
       <button onclick="colPresent('${c.id}')">🎦 Present</button>
       <button onclick="colToStudy('${c.id}')">📝＋ Study</button>
-      <button onclick="drillAdd(colLists().find(x => x.id === '${c.id}').items)">⚔️ Drill</button>
     </div>` : `<div class="empty-msg" style="padding:24px 0">Empty for now.<br>While reading, tap a verse → 🔖 Save → ${escapeHtml(c.n)}.</div>`}
     ${c.items.map((it, i) => `<div class="col-item">
       <div class="col-it-main" onclick="jumpToRef('${it.a.replace(/'/g, "\\'")}')">
@@ -9329,7 +9410,8 @@ function renderColList(el, c){
       <div class="col-it-ctl">
         <button onclick="colMove('${c.id}',${i},-1)" ${i ? '' : 'disabled'} aria-label="Move up">↑</button>
         <button onclick="colMove('${c.id}',${i},1)" ${i < n - 1 ? '' : 'disabled'} aria-label="Move down">↓</button>
-        <button onclick="colCard('${c.id}',${i})" aria-label="Make a verse card" title="Verse card">📸</button>
+        <button onclick="colCard('${c.id}',${i})" aria-label="Make a verse card" title="Verse card">📸 Card</button>
+        <button onclick="colDrillItem('${c.id}',${i})" aria-label="Add to Sword Drill" title="Add to Sword Drill">⚔️ Drill</button>
         <button onclick="colRemoveItem('${c.id}',${i})" aria-label="Remove from list">✕</button>
       </div></div>`).join('')}
     <button class="col-del" onclick="colDelete('${c.id}')">🗑 Delete this list</button>`;
@@ -9344,7 +9426,7 @@ function colMove(id, i, dir){ colEdit(id, c => { const j = i + dir; if(j < 0 || 
 function colRemoveItem(id, i){
   let gone = null;
   colEdit(id, c => { gone = c.items.splice(i, 1)[0]; });
-  if(gone) showToast(`Removed ${gone.r}`);
+  if(gone) showUndo(`Removed ${gone.r}`, () => colEdit(id, c => { c.items.splice(Math.min(i, c.items.length), 0, gone); }));
 }
 function colSortBible(id){ colEdit(id, c => { c.items.sort((a, b) => colCanon(a) - colCanon(b)); }); showToast('⇅ In Bible order'); }
 function colRename(id){
@@ -9364,11 +9446,12 @@ function colRenameSave(id){
 async function colDelete(id){
   const c = colLists().find(x => x.id === id);
   if(!c || !(await appConfirm(`Delete the list “${c.n}”? The verses stay in your Bible; only the list goes.`, 'Delete', true))) return;
-  const d = colData();
+  const d = colData(), gone = d.list.find(x => x.id === id);
   d.list = d.list.filter(x => x.id !== id);
   colSave(d);
   if(S._colOpen === id && history.state && history.state.col === id) history.back();
   else { S._colOpen = null; colAfterChange(); }
+  showUndo(`List deleted · ${gone.n}`, () => { const d2 = colData(); gone.u = Date.now(); d2.list.unshift(gone); colSave(d2); colAfterChange(); });
 }
 // 📸 A verse card (the screenshot designer) for one verse or passage of a list
 async function colCard(id, i){
@@ -9541,8 +9624,24 @@ function exportNotesText(){
     navigator.clipboard?.writeText(text).then(()=>showToast('✅ Notes copied to clipboard'));
   }
 }
-function delHL(ref){delete S.highlights[ref];LS.set('kjv_hl',S.highlights);fbSyncSoon();renderSaved();}
-function delNote(ref){delete S.notes[ref];LS.set('kjv_notes',S.notes);fbSyncSoon();renderSaved();}
+/* Undo: a delete shows "Removed · Undo" for a few seconds */
+let _undo = null;
+function showUndo(msg, fn){
+  clearTimeout(_undo && _undo.t);
+  _undo = {fn, t: setTimeout(() => { document.getElementById('undo-toast').classList.remove('on'); _undo = null; }, 6000)};
+  document.getElementById('undo-msg').textContent = msg;
+  document.getElementById('undo-toast').classList.add('on');
+}
+function undoNow(){
+  const u = _undo; if(!u) return;
+  clearTimeout(u.t); _undo = null;
+  document.getElementById('undo-toast').classList.remove('on');
+  u.fn();
+}
+function delHL(ref){const c=S.highlights[ref];delete S.highlights[ref];LS.set('kjv_hl',S.highlights);fbSyncSoon();renderSaved();refreshVBlock(ref);
+  showUndo(`Highlight removed · ${ref}`,()=>{S.highlights[ref]=c;LS.set('kjv_hl',S.highlights);fbSyncSoon();renderSaved();refreshVBlock(ref);});}
+function delNote(ref){const t=S.notes[ref];delete S.notes[ref];LS.set('kjv_notes',S.notes);fbSyncSoon();renderSaved();refreshVBlock(ref);
+  showUndo(`Note removed · ${ref}`,()=>{S.notes[ref]=t;LS.set('kjv_notes',S.notes);fbSyncSoon();renderSaved();refreshVBlock(ref);});}
 
 async function jumpToRef(ref){
   const m=ref.match(/^(.+) (\d+):(\d+)$/);if(!m)return;
@@ -9791,7 +9890,80 @@ function getPlanDayReadings(planId, dayIdx){
   if(planId === 'prov') return [[19, dayIdx]];
   if(planId === 'nt30') return NT30_DAYS[dayIdx] || [];
   if(planId === 'biy')  return getBIYDays()[dayIdx] || [];
+  const def = PLAN_DEFS[planId];
+  if(def && def.custom) return customPlanDays(def)[dayIdx] || [];
   return [];
+}
+/* ── Plans you make yourself (v54) ──
+   A made plan carries its own definition (p.def = {id, name, icon, desc,
+   days, custom: {books: [bookIdx…], per: chapters a day}}) so it syncs and
+   restarts like the others; plansData() registers it in PLAN_DEFS. Its days
+   are the chosen books' chapters in Bible order, so many a day. */
+const _customDays = {};
+function customPlanDays(def){
+  if(_customDays[def.id]) return _customDays[def.id];
+  const all = [];
+  [...def.custom.books].sort((a, b) => a - b).forEach(bi => { for(let c = 0; c < CH_COUNTS[bi]; c++) all.push([bi, c]); });
+  const per = Math.max(1, def.custom.per | 0), days = [];
+  for(let i = 0; i < all.length; i += per) days.push(all.slice(i, i + per));
+  return _customDays[def.id] = days;
+}
+const MK_PICKS = [
+  ['The Gospels', [39, 40, 41, 42]],
+  ['Psalms', [18]],
+  ['Proverbs', [19]],
+  ['Paul’s letters', [44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56]],
+  ['The Law', [0, 1, 2, 3, 4]],
+  ['The Prophets', [22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]],
+  ['New Testament', Array.from({length: 27}, (_, i) => 39 + i)],
+  ['Old Testament', Array.from({length: 39}, (_, i) => i)],
+  ['The whole Bible', Array.from({length: 66}, (_, i) => i)],
+];
+function mkOpen(){
+  S._mk = {books: new Set(), per: 1};
+  document.getElementById('mk-name').value = '';
+  mkRender();
+  openPopover('mk-sheet');
+}
+function mkPick(i){
+  const set = new Set(MK_PICKS[i][1]), same = set.size === S._mk.books.size && [...set].every(b => S._mk.books.has(b));
+  S._mk.books = same ? new Set() : set;
+  mkRender();
+}
+function mkBook(bi){ S._mk.books.has(bi) ? S._mk.books.delete(bi) : S._mk.books.add(bi); mkRender(); }
+function mkPer(n){ S._mk.per = n; mkRender(); }
+function mkAutoName(){
+  const b = [...S._mk.books].sort((x, y) => x - y);
+  if(!b.length) return '';
+  const pick = MK_PICKS.find(([, bs]) => bs.length === b.length && bs.every(x => S._mk.books.has(x)));
+  if(pick) return pick[0];
+  if(b.length === 1) return BOOKS[b[0]];
+  if(b.length === 2) return `${BOOKS[b[0]]} & ${BOOKS[b[1]]}`;
+  return `${BOOKS[b[0]]} – ${BOOKS[b[b.length - 1]]} (${b.length} books)`;
+}
+function mkRender(){
+  const m = S._mk, b = [...m.books], ch = b.reduce((t, bi) => t + CH_COUNTS[bi], 0), days = Math.ceil(ch / m.per);
+  const same = bs => bs.length === m.books.size && bs.every(x => m.books.has(x));
+  document.getElementById('mk-picks').innerHTML = MK_PICKS.map(([n, bs], i) => `<button class="${same(bs) ? 'on' : ''}" onclick="mkPick(${i})">${n}</button>`).join('');
+  const chip = bi => `<button class="${m.books.has(bi) ? 'on' : ''}" onclick="mkBook(${bi})">${BOOKS[bi]}</button>`;
+  document.getElementById('mk-books').innerHTML = `<div class="mk-lbl">Old Testament</div><div class="mk-bk">${BOOKS.slice(0, 39).map((_, i) => chip(i)).join('')}</div><div class="mk-lbl">New Testament</div><div class="mk-bk">${BOOKS.slice(39).map((_, i) => chip(39 + i)).join('')}</div>`;
+  document.querySelectorAll('#mk-per button').forEach(x => x.classList.toggle('on', +x.dataset.n === m.per));
+  document.getElementById('mk-name').placeholder = mkAutoName() || 'Name your plan';
+  document.getElementById('mk-sum').textContent = ch ? `${ch} chapter${ch === 1 ? '' : 's'} · ${days} day${days === 1 ? '' : 's'} at ${m.per} a day` : 'Choose what to read — a group above, or any books below';
+  document.getElementById('mk-go').disabled = !ch;
+}
+function mkCreate(){
+  const m = S._mk, books = [...m.books].sort((a, b) => a - b);
+  if(!books.length) return;
+  const ch = books.reduce((t, bi) => t + CH_COUNTS[bi], 0), days = Math.ceil(ch / m.per);
+  const name = document.getElementById('mk-name').value.trim() || mkAutoName();
+  const def = {id: 'u' + planNewId().slice(1), name, icon: '🧭', desc: `${days} days · ${m.per} chapter${m.per === 1 ? '' : 's'} a day`, days, custom: {books, per: m.per}};
+  PLAN_DEFS[def.id] = def;
+  const d = plansData();
+  d.list.unshift({id: planNewId(), plan: def.id, def, start: todayStr(), st: 'active', days: {}, chs: {}, fin: null});
+  plansSave(d);
+  closePopover('mk-sheet');
+  setTimeout(() => { showScreen('plans'); plansAfterChange(); nudgeOffer(); showToast(`🧭 ${name} — ${days} days. Read at your own pace`); }, 200);
 }
 
 // Human-readable label for a day's reading
@@ -9818,7 +9990,12 @@ function planDayLabel(planId, dayIdx){
    item with the bookmarks (MERGE_STORES). */
 const PLANS_KEY = 'kjv_plans';
 const PLAN_READ_MS = 20000; // a chapter counts once its end is reached after this long on it
-function plansData(){ const d = LS.get(PLANS_KEY, null); return d && Array.isArray(d.list) ? d : {list: []}; }
+function plansData(){
+  const d = LS.get(PLANS_KEY, null);
+  if(!d || !Array.isArray(d.list)) return {list: []};
+  d.list.forEach(p => { if(p && p.def && p.def.custom && p.plan === p.def.id && !PLAN_DEFS[p.plan]) PLAN_DEFS[p.plan] = p.def; });
+  return d;
+}
 function plansSave(d){ LS.set(PLANS_KEY, d); fbSyncSoon(); }
 function planCombine(a, b){
   return {...a, days: {...(b.days || {}), ...(a.days || {})}, chs: {...(b.chs || {}), ...(a.chs || {})}, fin: a.fin || b.fin || null};
@@ -9872,7 +10049,7 @@ function startPlan(planId){
   const d = plansData();
   const cur = d.list.find(p => planOk(p) && p.plan === planId && !p.fin && p.st !== 'removed');
   if(cur){ cur.st = 'active'; }
-  else d.list.unshift({id: planNewId(), plan: planId, start: todayStr(), st: 'active', days: {}, chs: {}, fin: null});
+  else { const def = PLAN_DEFS[planId]; d.list.unshift({id: planNewId(), plan: planId, ...(def && def.custom ? {def} : {}), start: todayStr(), st: 'active', days: {}, chs: {}, fin: null}); }
   plansSave(d);
   showScreen('plans');
   plansAfterChange();
@@ -10117,7 +10294,7 @@ function renderPlansScreen(){
   const paused = all.filter(p => p.st === 'paused' && !p.fin);
   const finished = all.filter(p => p.fin && p.st !== 'removed').sort((a, b) => (b.fin || '').localeCompare(a.fin || ''));
   const running = new Set([...active, ...paused].map(p => p.plan));
-  const avail = Object.values(PLAN_DEFS).filter(d => !running.has(d.id));
+  const avail = Object.values(PLAN_DEFS).filter(d => !d.custom && !running.has(d.id));
 
   let h = `<div class="pl-h1">Reading Plans</div><button class="pl-cal-link" onclick="showStreakInfo()">🔥 Your reading calendar &amp; badges ›</button>`;
   if(!active.length && !paused.length)
@@ -10136,12 +10313,16 @@ function renderPlansScreen(){
         <button class="pl-btn" onclick="planSetStatus('${p.id}','active')">▶ Resume</button></div>`;
     }).join('');
   }
-  if(avail.length){
+  {
     h += `<div class="pl-sec">${active.length || paused.length ? 'Add a plan' : 'Choose a plan'}</div><div class="pl-avail">` + avail.map(d => `
       <div class="pl-card pl-new">
         <div class="pl-top"><span class="pl-ico">${d.icon}</span><div class="pl-tt"><div class="pl-name">${d.name}</div><div class="pl-sub">${d.desc}</div></div></div>
         <button class="pl-btn" onclick="startPlan('${d.id}')">Start</button>
-      </div>`).join('') + `</div>`;
+      </div>`).join('') + `
+      <div class="pl-card pl-new pl-mk">
+        <div class="pl-top"><span class="pl-ico">🧭</span><div class="pl-tt"><div class="pl-name">Make your own plan</div><div class="pl-sub">Choose the books — the Gospels, Psalms, Paul’s letters, any you like — and how many chapters a day</div></div></div>
+        <button class="pl-btn" onclick="mkOpen()">Make a plan</button>
+      </div></div>`;
   }
   if(finished.length){
     h += `<div class="pl-sec">Finished</div>` + finished.map(p => {
@@ -10224,7 +10405,7 @@ async function planMenu(id){
     if(await appConfirm(`Start ${def.name} again from Day 1? Your ${n} day${n === 1 ? '' : 's'} read so far will be cleared.`, 'Start over', true)){
       const d = plansData(), old = d.list.find(x => x.id === id);
       old.st = 'removed';
-      d.list.unshift({id: planNewId(), plan: old.plan, start: todayStr(), st: 'active', days: {}, chs: {}, fin: null});
+      d.list.unshift({id: planNewId(), plan: old.plan, ...(old.def ? {def: old.def} : {}), start: todayStr(), st: 'active', days: {}, chs: {}, fin: null});
       plansSave(d); plansAfterChange();
     }
   }
@@ -10292,7 +10473,8 @@ function readStats(log = readLog()){
   const books = BOOKS.map((_, bi) => bookDone(bi));
   return {ch: all.size, nt, ot: all.size - nt, days: Object.keys(log).filter(d => (log[d] || []).length).length,
     books, booksDone: books.filter(Boolean).length,
-    plans: new Set(plansData().list.filter(p => p.fin && PLAN_DEFS[p.plan]).map(p => p.plan))};
+    plans: new Set(plansData().list.filter(p => p.fin && PLAN_DEFS[p.plan]).map(p => p.plan)),
+    own: plansData().list.some(p => p.fin && p.def && p.def.custom)};
 }
 // Called when a chapter has been read (its end reached)
 function logChapterRead(bi, ci){
@@ -10349,13 +10531,45 @@ const READ_BADGES = [
   {id:'d30',   ico:'🗓️', n:'30 Days in the Word', d:'Thirty days with a chapter read',     p: s => [s.days, 30]},
   {id:'d100',  ico:'🌿', n:'100 Days in the Word', d:'A hundred days with a chapter read', p: s => [s.days, 100]},
   {id:'d365',  ico:'🌳', n:'A Year in the Word', d:'365 days with a chapter read',         p: s => [s.days, 365]},
-  ...Object.values(PLAN_DEFS).map(d => ({id:'plan-' + d.id, ico:'🏆', n:d.name, d:'Finish the plan', p: s => [s.plans.has(d.id) ? 1 : 0, 1]})),
+  ...Object.values(PLAN_DEFS).filter(d => !d.custom).map(d => ({id:'plan-' + d.id, ico:'🏆', n:d.name, d:'Finish the plan', p: s => [s.plans.has(d.id) ? 1 : 0, 1]})),
+  {id:'plan-own', ico:'🧭', n:'Your Own Plan', d:'Finish a plan you made', p: s => [s.own ? 1 : 0, 1]},
 ];
 function badgesEarned(){ const b = LS.get(BADGE_KEY, null); return b && typeof b === 'object' && !Array.isArray(b) ? b : {}; }
-// Award what has been reached; quiet = no celebration (catching up old progress)
+// The day each badge was first reached, replaying the reading log day by day
+// (a plan badge: the day the plan was finished)
+function badgeReplay(){
+  const log = readLog(), part = {}, when = {};
+  Object.keys(log).filter(d => /^\d{4}-\d\d-\d\d$/.test(d)).sort().forEach(d => {
+    part[d] = log[d];
+    const s = readStats(part);
+    READ_BADGES.forEach(b => { if(when[b.id] || b.id.startsWith('plan-')) return; const [n, of] = b.p(s); if(n >= of) when[b.id] = d; });
+  });
+  plansData().list.forEach(p => {
+    if(!p || !p.fin || !/^\d{4}/.test(p.fin)) return;
+    const id = p.def && p.def.custom ? 'plan-own' : 'plan-' + p.plan;
+    if(!when[id] || p.fin < when[id]) when[id] = p.fin;
+  });
+  return when;
+}
+// Badges earned before v54 were dated the day they were first counted;
+// give them the day they were really reached (once per device)
+function badgesRedate(){
+  if(LS.get('kjv_badges_redated', false)) return;
+  const got = badgesEarned();
+  if(Object.keys(got).length){
+    const when = badgeReplay();
+    let changed = false;
+    for(const id in got) if(when[id] && when[id] < got[id]){ got[id] = when[id]; changed = true; }
+    if(changed){ LS.set(BADGE_KEY, got); fbSyncSoon(); }
+  }
+  LS.set('kjv_badges_redated', true);
+}
+// Award what has been reached; quiet = no celebration (catching up old
+// progress), dated the day it was really reached
 function badgesCheck(quiet){
   const s = readStats(), got = badgesEarned(), fresh = [];
-  READ_BADGES.forEach(b => { const [n, of] = b.p(s); if(n >= of && !got[b.id]){ got[b.id] = todayStr(); fresh.push(b); } });
+  const when = quiet ? badgeReplay() : {};
+  READ_BADGES.forEach(b => { const [n, of] = b.p(s); if(n >= of && !got[b.id]){ got[b.id] = when[b.id] || todayStr(); fresh.push(b); } });
   if(!fresh.length) return;
   LS.set(BADGE_KEY, got); fbSyncSoon();
   if(quiet) return;
@@ -13689,7 +13903,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v53';
+const WHATS_NEW_VERSION = 'v54';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -14385,6 +14599,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v54" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🧭</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Make Your Own Plan</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          On the Plans page, <strong>🧭 Make your own plan</strong>: the Gospels, Psalms, Paul’s letters or any books you choose, and how many chapters a day. Select several verses and <strong>🖍 Highlight</strong> them at once. Each verse in a My Verses list can go to <strong>⚔️ Sword Drill</strong> on its own (a long one asks first). And if you delete something by mistake — a highlight, a note, a list, a study — tap <strong>Undo</strong>.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v53" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🖍</div>
       <div>

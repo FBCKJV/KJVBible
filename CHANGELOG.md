@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🧭 Make Your Own Plan (v54)
+- **🧭 Make your own plan** (Plans page, under Add a plan): choose what to read — The Gospels, Psalms, Proverbs, Paul's letters, The Law, The Prophets, the New or Old Testament, the whole Bible, or any books one by one — and 1 to 5 chapters a day. It shows the size as you choose (“89 chapters · 45 days at 2 a day”), names itself (or give it your own name), and then works like every plan: your own pace, chapters count when read to the end, Mark read, the end-of-chapter bar, Home, the reminder, Start over, Read again. It syncs with the plan it belongs to. Finishing one earns the **🧭 Your Own Plan** badge
+- **🖍 Highlight several verses at once**: on the long-press bar (Select All · Screenshot · Copy All · Share / Save · Highlight · Sword Drill · Study), pick a colour by its name — or take highlights off — with Undo
+- **⚔️ Sword Drill one verse at a time from a list**: each verse or passage in a My Verses list has **⚔️ Drill** (beside **📸 Card**); the whole-list Drill button is gone. A verse over 50 words asks first (“Esther 8:9 is a long one — 90 words. Memorize it anyway?”) — selected verses too
+- **Undo**: removing a highlight, a note, a verse from a list, a whole list or a study shows “Removed … · Undo” for a few seconds
+- **Badges keep their real dates**: badges earned before v54 now show the day they were really reached (from your reading days, or the day a plan was finished), not the day they were first counted
+- A list's verses show their buttons in a row under the verse (↑ ↓ · 📸 Card · ⚔️ Drill · ✕)
+
 ### 🖍 Colours with Meaning & a Daily Reminder (v53)
 - **Name your highlight colours**: ✏️ beside the colours in the verse card opens a sheet to give each a meaning — your own words, or a tap on an idea (Promises · Commands · Salvation · Prayer, or Father · Christ · Spirit · Grace). The names show under the colours, a highlight in a named colour says so (“Psalms 23:1 · Promises”), and the names travel with the restore code
 - **Notes → Highlights by colour**: a chip for each colour with its name and count — pick one to see only those verses, each card showing its colour's name. **🔖 Save Promises as a list** puts that colour's verses into My Verses (in Bible order), ready to share, present, drill or put in a study. **✏️ Name / Rename colours** is there too
