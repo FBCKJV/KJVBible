@@ -29,8 +29,8 @@ jobs:
               filters: [{field: "tag", key: "plan_nudge", relation: "=", value: $slot}],
               headings: {en: "📖 Time in the Word"},
               contents: {en: "Next in your reading plan: {{ next_reading | default: \"your reading for today\" }}"},
-              url: "https://fbckjv.app/?open=plans",
-              chrome_web_icon: "https://fbckjv.app/apple-touch-icon.png",
+              url: "https://fbckjv.app/KJVBible/?open=plans",
+              chrome_web_icon: "https://fbckjv.app/KJVBible/apple-touch-icon.png",
               delayed_option: "timezone",
               delivery_time_of_day: $time,
               ttl: 43200
