@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🔊 Hear It Said (v56)
+- **🔊 Hear it** on every name page, person, place and dictionary word: the phone's own voice says it aloud — nothing to download or pay for, and it works offline where the phone has a voice. Tap it again within a few seconds to hear it slowly
+- **How to say the hard names**: about 660 names (Mephibosheth, Zerubbabel, Maher-shalal-hash-baz, Thyatira…) and 107 old words (shew, divers, victuals, Selah, cherubim…) are written the way they sound under the word, with the strong part in capitals — **meh-FIB-oh-sheth** — and the voice is given that spelling so it does not guess. Where a phone has no voice, the spelling still shows
+- **On the verse card**, tap a word in *Words in this verse* or a name in *Names in this verse* and 🔊 Hear it is there with its meaning
+- Names and words are kept apart, so the man Job is said “jobe” while the word job is not touched
+- The spellings are in `tools/pronounce/` (one per line, easy to correct) and built into `pronounce.json` by `tools/build-pronounce.js`
+- A first-use hint, Tips & Help, and the Dictionary and Names tool tips tell of it
+
 ### 🎤 Say It Aloud (v55)
 - **🎤 in Sword Drill**: in First Letters and Full Recall, tap 🎤 beside the box and say the verse — the phone's speech recognition keeps listening (it restarts itself when it pauses), and each word you say that matches the next word fills in. It is forgiving: the recognizer's modern English counts (“has” for hath, “you” for ye, “in treat” for Intreat, a word a letter or two off, numbers), a small word it drops is filled in, and a word it mishears is passed over — never a mistake. It stops at the end, on 🎤, Back, or when the app is put away. Works where the browser supports speech (Chrome on Android; Safari on iPhone with dictation on)
 - **No more false mistakes from the space bar** in Full Recall: a phone keyboard that hands back the word just accepted when you press space (or its space alone) is ignored; a real wrong word followed by space still counts
