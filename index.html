@@ -485,6 +485,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-foot{font-size:11px;color:var(--text-m);padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
 .rc-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
 .nb-share{margin-left:6px}
+/* Recent searches under a box */
+.rs-drop{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-2px 0 12px}
+.rs-drop[hidden]{display:none}
+.rs-l{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-right:2px}
+.rs-drop .vl-chip{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rs-clear{background:none;border:none;color:var(--text-m);font-size:12px;cursor:pointer;padding:6px 4px;font-family:'Inter',sans-serif}
+.hw-sbox + .rs-drop{margin:0 14px 12px}
 .nb-add{display:inline-flex;align-items:center;gap:4px;background:none;border:1px solid var(--border);color:var(--gold);border-radius:14px;font-size:12px;padding:3px 10px;cursor:pointer;margin:0 0 10px}
 .tl-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;cursor:pointer}
 /* Concordance: verses shown in place under a word */
@@ -2344,6 +2351,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
+        <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
@@ -3466,6 +3474,7 @@ function homeSearchWidget(){
 function homeSearchGo(){
   const inp = document.getElementById('home-q'), q = (inp.value || '').trim();
   if(!q){ openSearchTab(); return; }
+  rememberRecent('search', q);
   inp.value = ''; inp.blur();
   openSearchTab();
   searchFor(q);
@@ -3491,7 +3500,7 @@ const TRY_STEPS = [
   {id:'sword', i:'⚔️', t:'Hide a verse in your heart', d:'Sword Drill helps you learn verses by heart, a little at a time',
     done: () => Object.keys(memGetMastery().refs || {}).length > 0, go: () => openMemorize()},
   {id:'look', i:'🔎', t:'Look something up', d:'A word, a name, a doctrine or a place — every answer leads to the verses',
-    done: () => (LS.get(RECENT_KEY, []) || []).length > 0 || hintSeen('search'), go: () => showScreen('search')},
+    done: () => Object.values(recentData().lists).some(l => l.length) || hintSeen('search'), go: () => showScreen('search')},
   {id:'listen', i:'🔊', t:'Hear the Bible read', d:'Tap 🔊 beside a chapter’s title to listen as you read along',
     done: () => Object.keys(LS.get('kjv_spos', {}) || {}).length > 0 || Object.keys(LS.get('kjv_cpos', {}) || {}).length > 0,
     go: () => { jumpToRef('John 1:1'); setTimeout(() => showToast('Tap 🔊 beside the chapter title to listen'), 1000); }},
@@ -8636,16 +8645,125 @@ function updateChapterMapButton(){
    Remembered when a search is put to use — a result tapped or Enter
    pressed — so half-typed queries never pile up. Shown under the empty
    search box; per device. */
-const RECENT_KEY = 'kjv_recent_searches';
-function recentSearches(){ return LS.get(RECENT_KEY, []); }
-function rememberSearch(q){
+const RECENT_KEY = 'kjv_recent';
+/* Recent searches for the main search and each tool's box (kjv_recent =
+   {lists: {search: [[text, time], …], dict: […], …}, cleared: {tool: time}}),
+   newest first, eight each. They go with the restore code (SYNC_KEYS) and two
+   devices' lists are merged (recentMerge): the newest uses win, and Clear on
+   one device clears what was there before on the others. The old main-search
+   list (kjv_recent_searches, this device only) is carried over once. */
+const RECENT_MAX = 8;
+function recentData(){
+  let d = LS.get(RECENT_KEY, null);
+  if(!d || typeof d !== 'object' || !d.lists){
+    d = {lists: {}, cleared: {}};
+    const old = LS.get('kjv_recent_searches', []), now = Date.now();
+    if(Array.isArray(old) && old.length) d.lists.search = old.filter(q => typeof q === 'string').map((q, i) => [q, now - i * 1000]);
+  }
+  d.cleared = d.cleared || {};
+  return d;
+}
+function recentList(tool){ return (recentData().lists[tool] || []).map(x => x[0]); }
+function rememberRecent(tool, q){
   q = (q || '').trim();
   if(q.length < 2) return;
-  const list = recentSearches().filter(x => x.toLowerCase() !== q.toLowerCase());
-  list.unshift(q);
-  LS.set(RECENT_KEY, list.slice(0, 8));
+  const d = recentData();
+  d.lists[tool] = [[q, Date.now()], ...(d.lists[tool] || []).filter(x => x[0].toLowerCase() !== q.toLowerCase())].slice(0, RECENT_MAX);
+  LS.set(RECENT_KEY, d); fbSyncSoon();
 }
-function forgetRecentSearches(){ LS.set(RECENT_KEY, []); renderSearchHome(); }
+function forgetRecent(tool){
+  const d = recentData(); d.lists[tool] = []; d.cleared[tool] = Date.now();
+  LS.set(RECENT_KEY, d); fbSyncSoon();
+}
+function recentMerge(a, b){
+  const ok = x => x && typeof x === 'object' && x.lists ? x : {lists: {}, cleared: {}};
+  a = ok(a); b = ok(b);
+  const out = {lists: {}, cleared: {}};
+  const tools = new Set([...Object.keys(a.lists), ...Object.keys(b.lists), ...Object.keys(a.cleared || {}), ...Object.keys(b.cleared || {})]);
+  for(const t of tools){
+    const cl = Math.max((a.cleared || {})[t] || 0, (b.cleared || {})[t] || 0);
+    if(cl) out.cleared[t] = cl;
+    const m = new Map();
+    for(const it of [...(a.lists[t] || []), ...(b.lists[t] || [])]){
+      if(!Array.isArray(it) || typeof it[0] !== 'string' || !(it[1] > cl)) continue;
+      const k = it[0].toLowerCase();
+      if(!m.has(k) || m.get(k)[1] < it[1]) m.set(k, [it[0], it[1]]);
+    }
+    out.lists[t] = [...m.values()].sort((x, y) => y[1] - x[1]).slice(0, RECENT_MAX);
+  }
+  return out;
+}
+// The main search box keeps its list on the search page itself
+function recentSearches(){ return recentList('search'); }
+function rememberSearch(q){ rememberRecent('search', q); }
+function forgetRecentSearches(){ forgetRecent('search'); renderSearchHome(); }
+
+/* ── Recent searches under a tool's box ──
+   Tapping into an empty box shows its last few searches as chips just under
+   it; they go when you type or leave the box. A search is remembered when it
+   is put to use — Enter, or a result tapped — never while half-typed. */
+// pick: what a tapped result is called ("Abigail", not the "abig" typed);
+// hymns keep what was typed — a line of the words or an author finds them again
+const firstText = el => el ? (el.childNodes[0] || {}).textContent || '' : '';
+const RECENT_BOXES = [
+  {tool:'dict',    input:'dict-input',     results:'dict-results', pick: r => firstText(r.querySelector('.wd-row-w'))},
+  {tool:'topics',  input:'topics-filter',  results:'topics-list',  pick: r => (r.querySelector('.nv-name') || {}).textContent},
+  {tool:'concord', input:'concord-filter', results:'concord-list', pick: r => r.dataset.w},
+  {tool:'names',   input:'names-filter',   results:'names-list',   pick: r => firstText(r.querySelector('.nm-name'))},
+  {tool:'places',  input:'mx-filter',      results:'mx-sugg',      pick: r => firstText(r).replace(/^📍\s*/, '')},
+  {tool:'hymns',   input:'hymns-filter',   results:'hymns-list'},
+  {tool:'search',  input:'home-q', max:3, go: q => { document.getElementById('home-q').value = q; homeSearchGo(); }},
+];
+function recentDrop(box, show){
+  const inp = document.getElementById(box.input);
+  if(!inp) return;
+  let el = inp._recent;
+  const list = recentList(box.tool).slice(0, box.max || 5);
+  if(!show || inp.value.trim() || !list.length){ if(el) el.hidden = true; return; }
+  if(!el){
+    el = inp._recent = document.createElement('div');
+    el.className = 'rs-drop';
+    // keep the box focused while a chip is pressed
+    el.addEventListener('mousedown', e => e.preventDefault());
+    (inp.closest('.s-wrap, .hw-sbox') || inp).after(el);
+  }
+  el.innerHTML = `<span class="rs-l">Recent</span>${list.map((q, i) => `<button class="vl-chip" data-i="${i}">${escapeHtml(q)}</button>`).join('')}<button class="rs-clear" data-clear="1" aria-label="Clear recent searches">Clear</button>`;
+  el.onclick = e => {
+    const b = e.target.closest('button');
+    if(!b) return;
+    e.stopPropagation();
+    if(b.dataset.clear){ forgetRecent(box.tool); el.hidden = true; if(box.tool === 'search') renderSearchHome(); return; }
+    const q = list[+b.dataset.i];
+    el.hidden = true;
+    rememberRecent(box.tool, q);
+    if(box.go) return box.go(q);
+    inp.value = q;
+    inp.dispatchEvent(new Event('input', {bubbles: true}));
+    inp.blur();
+  };
+  el.hidden = false;
+}
+function recentWire(box){
+  const inp = document.getElementById(box.input);
+  if(!inp || inp._recentWired) return;
+  inp._recentWired = true;
+  inp.addEventListener('focus', () => recentDrop(box, true));
+  inp.addEventListener('input', () => recentDrop(box, document.activeElement === inp));
+  inp.addEventListener('blur', () => setTimeout(() => recentDrop(box, false), 150));
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ rememberRecent(box.tool, inp.value); recentDrop(box, false); } });
+  const res = box.results && document.getElementById(box.results);
+  if(res) res.addEventListener('click', e => {
+    const row = e.target.closest('button, .rc, a');
+    if(!row || !inp.value.trim()) return;
+    let name = '';
+    try{ name = box.pick ? (box.pick(row) || '').trim() : ''; }catch(err){}
+    rememberRecent(box.tool, name || inp.value);
+  }, true);
+}
+// The Home search box is drawn later, with Home
+function recentWireAll(){ RECENT_BOXES.forEach(recentWire); }
+document.addEventListener('DOMContentLoaded', () => setTimeout(recentWireAll, 0));
+
 function renderSearchHome(){
   const el = document.getElementById('s-results');
   if(!el) return;
@@ -14641,7 +14759,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies','kjv_hints_seen','kjv_hints_off','kjv_hl_names'
+  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies','kjv_hints_seen','kjv_hints_off','kjv_hl_names','kjv_recent'
 ];
 
 let _db = null;
@@ -14707,6 +14825,10 @@ function fbSync(){
         data[fk] = String(best);
         // Cloud was ahead of us — adopt it so this device's badge catches up.
         if(cloudNum > localNum) bumps[k] = String(best);
+      } else if(k === RECENT_KEY){
+        // recent searches: both devices' lists, newest uses first
+        data[fk] = JSON.stringify(recentMerge(syncParse(lv), syncParse(cloud[fk])));
+        if(data[fk] !== lv) bumps[k] = data[fk];
       } else if(lv !== null){
         data[fk] = lv;
       }
@@ -14765,6 +14887,7 @@ function applySyncData(data, {protect=true} = {}){
     const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
     if(data[fk] === undefined) return;
     let incoming = data[fk];
+    if(k === RECENT_KEY) incoming = JSON.stringify(recentMerge(LS.get(k, null), syncParse(incoming)));
     if(protect && PROTECTED_MAX_FIELDS.includes(k)){
       const current = parseInt(localStorage.getItem(k) || '0') || 0;
       const incomingNum = parseInt(incoming || '0') || 0;
