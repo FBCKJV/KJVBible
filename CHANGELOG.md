@@ -6,8 +6,16 @@
 
 ## New Features
 
+### 🏅 Days in the Word (v52)
+- **A calendar of the days you read** in the 🔥 streak panel: each day is shaded by how many chapters you read (one, two or three, four or more), today is ringed, ‹ › step through the months, and a month's total is underneath. **Tap a day** to see the chapters you read and tap one to open it
+- **Every chapter counts** once you have read to the end of it (at least 20 seconds on it) — the rule the plans use — whether or not it is in a plan. ✓ Mark read on a plan counts its chapters too. Your plans' dated progress fills in the calendar's past
+- **16 badges**: First Chapter, 10 / 50 / 100 / 500 chapters, A Whole Book, The Four Gospels, Paul's Epistles, the New Testament, the Whole Bible, 30 / 100 / 365 days in the Word, and one for each plan finished. Each shows its progress (“36 / 50”) or the date it was earned, and a new one is celebrated when you earn it. Badges already reached by past reading are awarded quietly
+- **A book you read right through is ticked off in your Reading Journey** for you (books already read through are ticked when you update)
+- The streak panel shows **chapters read** beside current, longest and books; the Plans page opens it with **🔥 Your reading calendar & badges**
+- The reading log and badges sync between devices, day by day
+- **The Verse of the Day is clean again**: the Save / Drill / Card buttons from v51 are removed — tap the verse to open it, where every tool is
+
 ### 🔁 Everything Leads Somewhere (v51)
-- **Verse of the Day** has three buttons under it: **🔖 Save** (to a My Verses list), **⚔️ Drill** (into Sword Drill's Custom Verses) and **📸 Card** (the verse card designer). Tapping the verse still opens its chapter
 - **Selected verses → ⚔️ Sword Drill**: long-press, pick verses, tap **Sword Drill** — they go into Custom Verses (verses side by side as one passage, up to 6 verses) and Sword Drill opens
 - **The long-press bar is back in its old order**: Select All · Screenshot · **Copy All** · Share across the top, then Save · Sword Drill · **Study** (moved to the end)
 - **A My Verses list → ⚔️ Drill** puts its verses in Custom Verses (a passage longer than 6 verses is left out, and the toast says so), and **📸** on each verse or passage opens the verse card designer with it
