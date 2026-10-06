@@ -3,13 +3,13 @@ Abaddon: uh-BAD-un
 Abba: AB-uh
 Abednego: uh-BED-nee-goh
 Abiathar: uh-BYE-uh-thar
-Abigail: AB-ih-gayl
+Abigail: AB-uh-gayl
 Abihu: uh-BYE-hyoo
 Abijah: uh-BYE-juh
 Abimelech: uh-BIM-uh-lek
 Abinadab: uh-BIN-uh-dab
 Abiram: uh-BYE-rum
-Abishag: AB-ih-shag
+Abishag: AB-uh-shag
 Abishai: uh-BISH-ay-eye
 Abner: AB-ner
 Abraham: AY-bruh-ham
@@ -17,7 +17,7 @@ Abram: AY-brum
 Absalom: AB-suh-lum
 Aceldama: uh-SEL-duh-muh
 Achaia: uh-KAY-yuh
-Achaicus: uh-KAY-ih-kus
+Achaicus: uh-KAY-uh-kus
 Achan: AY-kan
 Achish: AY-kish
 Achor: AY-kor
@@ -60,8 +60,8 @@ Ararat: AIR-uh-rat
 Araunah: uh-RAW-nuh
 Archippus: ar-KIP-us
 Areopagus: air-ee-OP-uh-gus
-Aretas: AIR-eh-tus
-Arimathaea: air-ih-muh-THEE-uh
+Aretas: AIR-uh-tus
+Arimathaea: air-uh-muh-THEE-uh
 Aristarchus: air-iss-TAR-kus
 Armageddon: ar-muh-GED-un
 Arphaxad: ar-FAX-ad
@@ -70,7 +70,7 @@ Artemas: AR-teh-mus
 Asa: AY-suh
 Asahel: AS-uh-hel
 Asaph: AY-saf
-Asenath: AS-eh-nath
+Asenath: AS-uh-nath
 Ashdod: ASH-dod
 Asher: ASH-er
 Ashtaroth: ASH-tuh-roth
@@ -86,7 +86,7 @@ Baalim: BAY-uh-lim
 Baalzebub: bay-ul-ZEE-bub
 Baasha: BAY-uh-shuh
 Babel: BAY-bul
-Babylon: BAB-ih-lon
+Babylon: BAB-uh-lon
 Balaam: BAY-lum
 Balak: BAY-lak
 Barabbas: buh-RAB-us
@@ -113,7 +113,7 @@ Bethel: BETH-el
 Bethesda: beh-THEZ-duh
 Bethlehem: BETH-leh-hem
 Bethphage: BETH-fuh-jee
-Bethsaida: beth-SAY-ih-duh
+Bethsaida: beth-SAY-uh-duh
 Bethshemesh: beth-SHEE-mesh
 Bethuel: beh-THOO-el
 Beulah: BYOO-luh
@@ -198,13 +198,13 @@ Eliashib: ee-LYE-uh-shib
 Eliezer: el-ee-EE-zer
 Elihu: ee-LYE-hyoo
 Elijah: ee-LYE-juh
-Elimelech: ee-LIM-eh-lek
-Eliphaz: EL-ih-faz
+Elimelech: ee-LIM-uh-lek
+Eliphaz: EL-uh-faz
 Elisabeth: ee-LIZ-uh-beth
 Elisha: ee-LYE-shuh
 Elkanah: el-KAY-nuh
 Eloi: ee-LOH-eye
-Elymas: EL-ih-mas
+Elymas: EL-uh-mas
 Emmanuel: ee-MAN-yoo-el
 Emmaus: em-MAY-us
 Endor: EN-dor
@@ -213,7 +213,7 @@ Enos: EE-nos
 Epaenetus: ee-PEE-neh-tus
 Epaphras: EP-uh-fras
 Epaphroditus: ee-paf-roh-DYE-tus
-Ephesus: EF-eh-sus
+Ephesus: EF-uh-sus
 Ephraim: EE-free-um
 Ephratah: EF-ruh-tuh
 Ephron: EE-fron
@@ -237,7 +237,7 @@ Gadara: GAD-uh-ruh
 Gadarenes: GAD-uh-reenz
 Gaius: GAY-us
 Galatia: guh-LAY-shuh
-Galilee: GAL-ih-lee
+Galilee: GAL-uh-lee
 Gallio: GAL-ee-oh
 Gamaliel: guh-MAY-lee-el
 Gaza: GAY-zuh
@@ -245,7 +245,7 @@ Gehazi: geh-HAY-zye
 Gennesaret: geh-NES-uh-ret
 Gerar: GEER-ar
 Gergesenes: GER-geh-seenz
-Gerizim: GAIR-ih-zim
+Gerizim: GAIR-uh-zim
 Gershom: GER-shum
 Geshur: GEE-shur
 Gethsemane: geth-SEM-uh-nee
@@ -278,7 +278,7 @@ Hermon: HER-mun
 Herod: HAIR-ud
 Herodias: heh-ROH-dee-us
 Herodion: heh-ROH-dee-on
-Hezekiah: hez-eh-KYE-uh
+Hezekiah: hez-uh-KYE-uh
 Hierapolis: hye-er-AP-oh-lis
 Hilkiah: hil-KYE-uh
 Hiram: HYE-rum
@@ -292,8 +292,8 @@ Hymenaeus: hye-meh-NEE-us
 Ichabod: IK-uh-bod
 Iconium: eye-KOH-nee-um
 Idumea: id-yoo-MEE-uh
-Illyricum: ih-LEER-ih-kum
-Immanuel: ih-MAN-yoo-el
+Illyricum: uh-LEER-uh-kum
+Immanuel: uh-MAN-yoo-el
 Isaac: EYE-zuk
 Isaiah: eye-ZAY-uh
 Iscariot: is-KAIR-ee-ut
@@ -325,8 +325,8 @@ Jehoshaphat: jeh-HOSH-uh-fat
 Jehovah: jeh-HOH-vuh
 Jehu: JEE-hyoo
 Jephthah: JEF-thuh
-Jeremiah: jair-eh-MYE-uh
-Jericho: JAIR-ih-koh
+Jeremiah: jair-uh-MYE-uh
+Jericho: JAIR-uh-koh
 Jeroboam: jair-oh-BOH-um
 Jerubbaal: jair-ub-BAY-ul
 Jesse: JES-ee
@@ -336,7 +336,7 @@ Jezreel: JEZ-ree-el
 Joab: JOH-ab
 Joash: JOH-ash
 Job: JOHB | jobe
-Jochebed: JOK-eh-bed
+Jochebed: JOK-uh-bed
 Joel: JOH-el
 Joktan: JOK-tan
 Jonathan: JON-uh-thun
@@ -363,7 +363,7 @@ Korah: KOR-uh
 Laban: LAY-bun
 Lachish: LAY-kish
 Lamech: LAY-mek
-Laodicea: lay-od-ih-SEE-uh
+Laodicea: lay-od-uh-SEE-uh
 Lasea: luh-SEE-uh
 Lazarus: LAZ-uh-rus
 Leah: LEE-uh
@@ -380,7 +380,7 @@ Lydia: LID-ee-uh
 Lysias: LISS-ee-us
 Lystra: LIS-truh
 Maachah: MAY-uh-kuh
-Macedonia: mas-eh-DOH-nee-uh
+Macedonia: mas-uh-DOH-nee-uh
 Machpelah: mak-PEE-luh
 Magdala: MAG-duh-luh
 Magdalene: MAG-duh-leen
@@ -396,18 +396,18 @@ Manasseh: muh-NAS-uh
 Manoah: muh-NOH-uh
 Martha: MAR-thuh
 Matthias: muh-THYE-us
-Medeba: MED-eh-buh
+Medeba: MED-uh-buh
 Medes: MEEDZ | meeds
 Megiddo: meh-GID-oh
 Melchi: MEL-kye
-Melchisedec: mel-KIZ-eh-dek
-Melchizedek: mel-KIZ-eh-dek
-Melita: MEL-ih-tuh
+Melchisedec: mel-KIZ-uh-dek
+Melchizedek: mel-KIZ-uh-dek
+Melita: MEL-uh-tuh
 Menahem: MEN-uh-hem
 Mene: MEE-nee
 Mephibosheth: meh-FIB-oh-sheth
 Merab: MEER-ab
-Meribah: MAIR-ih-buh
+Meribah: MAIR-uh-buh
 Merodach: MAIR-oh-dak
 Meshach: MEE-shak
 Mesopotamia: mes-oh-poh-TAY-mee-uh
@@ -421,7 +421,7 @@ Midian: MID-ee-un
 Miletus: mye-LEE-tus
 Miriam: MEER-ee-um
 Mishael: MISH-ay-el
-Mitylene: mit-ih-LEE-nee
+Mitylene: mit-uh-LEE-nee
 Mizpah: MIZ-puh
 Mizpeh: MIZ-peh
 Mizraim: miz-RAY-im
@@ -454,11 +454,11 @@ Nehemiah: nee-heh-MYE-uh
 Nereus: NEE-ree-us
 Nicanor: nye-KAY-nor
 Nicodemus: nik-oh-DEE-mus
-Nicolaitanes: nik-oh-LAY-ih-taynz
+Nicolaitanes: nik-oh-LAY-uh-taynz
 Nicolas: NIK-oh-las
 Nicopolis: nih-KOP-oh-lis
 Nimrod: NIM-rod
-Nineveh: NIN-eh-vuh
+Nineveh: NIN-uh-vuh
 Noah: NOH-uh
 Nymphas: NIM-fus
 Obadiah: oh-buh-DYE-uh
@@ -466,8 +466,8 @@ Obed: OH-bed
 Obededom: oh-bed-EE-dum
 Olympas: oh-LIM-pus
 Omri: OM-rye
-Onesimus: oh-NES-ih-mus
-Onesiphorus: on-eh-SIF-oh-rus
+Onesimus: oh-NES-uh-mus
+Onesiphorus: on-uh-SIF-oh-rus
 Ophir: OH-fer
 Ophrah: OF-ruh
 Orpah: OR-puh
@@ -491,8 +491,8 @@ Persia: PER-zhuh
 Persis: PER-sis
 Phanuel: fuh-NYOO-el
 Pharaoh: FAIR-oh
-Pharisee: FAIR-ih-see
-Pharisees: FAIR-ih-seez
+Pharisee: FAIR-uh-see
+Pharisees: FAIR-uh-seez
 Pharpar: FAR-par
 Phenice: fih-NYE-see
 Philadelphia: fil-uh-DEL-fee-uh
@@ -500,8 +500,8 @@ Philemon: fye-LEE-mun
 Philetus: fye-LEE-tus
 Philippi: fih-LIP-eye
 Philistia: fih-LIS-tee-uh
-Philistine: FIL-ih-steen
-Philistines: FIL-ih-steenz
+Philistine: FIL-uh-steen
+Philistines: FIL-uh-steenz
 Philologus: fih-LOL-oh-gus
 Phinehas: FIN-ee-us
 Phlegon: FLEG-on
@@ -512,11 +512,11 @@ Phygellus: fye-JEL-us
 Pilate: PYE-lut
 Pisgah: PIZ-guh
 Pisidia: pih-SID-ee-uh
-Potiphar: POT-ih-fer
+Potiphar: POT-uh-fer
 Potipherah: poh-TIF-er-uh
 Priscilla: prih-SIL-uh
 Prochorus: PROK-oh-rus
-Ptolemais: tol-eh-MAY-is
+Ptolemais: tol-uh-MAY-is
 Publius: PUB-lee-us
 Pudens: PYOO-denz
 Puteoli: pyoo-TEE-oh-lye
@@ -534,7 +534,7 @@ Rechab: REE-kab
 Rechabite: REK-uh-bite
 Rehoboam: ree-hoh-BOH-um
 Rehoboth: reh-HOH-both
-Rephidim: REF-ih-dim
+Rephidim: REF-uh-dim
 Reu: ROO
 Reuben: ROO-ben
 Reuel: ROO-el
@@ -593,7 +593,7 @@ Susanna: soo-ZAN-uh
 Sychar: SYE-kar
 Syria: SEER-ee-uh
 Syrophenician: sye-roh-feh-NISH-un
-Tabitha: TAB-ih-thuh
+Tabitha: TAB-uh-thuh
 Tabor: TAY-ber
 Tamar: TAY-mar
 Tarshish: TAR-shish
@@ -604,7 +604,7 @@ Terah: TEER-uh
 Tertius: TER-shee-us
 Tertullus: ter-TUL-us
 Thaddaeus: THAD-ee-us
-Theophilus: thee-OF-ih-lus
+Theophilus: thee-OF-uh-lus
 Thessalonica: thes-uh-loh-NYE-kuh
 Thyatira: thye-uh-TYE-ruh
 Tiberias: tye-BEER-ee-us
@@ -616,11 +616,11 @@ Titus: TYE-tus
 Tobiah: toh-BYE-uh
 Troas: TROH-as
 Trogyllium: troh-JIL-ee-um
-Trophimus: TROF-ih-mus
+Trophimus: TROF-uh-mus
 Tryphena: trye-FEE-nuh
 Tryphosa: trye-FOH-suh
 Tubalcain: too-bul-KAYN
-Tychicus: TIK-ih-kus
+Tychicus: TIK-uh-kus
 Tyrannus: tye-RAN-us
 Tyre: TIRE | tire
 Upharsin: yoo-FAR-sin
@@ -636,12 +636,12 @@ Zacharias: zak-uh-RYE-us
 Zadok: ZAY-dok
 Zalmunna: zal-MUN-uh
 Zaphnathpaaneah: zaf-nath-pay-uh-NEE-uh
-Zarephath: ZAIR-eh-fath
+Zarephath: ZAIR-uh-fath
 Zebah: ZEE-buh
 Zebedee: ZEB-uh-dee
 Zebulun: ZEB-yoo-lun
 Zechariah: zek-uh-RYE-uh
-Zedekiah: zed-eh-KYE-uh
+Zedekiah: zed-uh-KYE-uh
 Zelophehad: zeh-LOH-feh-had
 Zenas: ZEE-nus
 Zephaniah: zef-uh-NYE-uh
