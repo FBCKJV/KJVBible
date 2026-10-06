@@ -61,7 +61,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .t-label.t-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:rgba(201,148,58,.15)}
 .t-label.t-toggle:active{opacity:.65}
 .t-count{color:var(--text-m);font-weight:600}
-.t-chevron{font-size:11px;color:var(--text-m);transition:transform .2s;flex-shrink:0}
 .t-section.open .t-chevron{transform:rotate(90deg)}
 .t-section:not(.open) .books-grid{display:none}
 .book-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:2px}
@@ -555,6 +554,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .tab.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 .tab-panel{display:none}
 .tab-panel.on{display:block}
+.st-new{width:100%;margin-bottom:10px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer}
+#screen-saved .tab{padding:8px 2px;font-size:11.5px}
+.st-t{font-family:'IM Fell English',serif;font-size:17px;color:var(--text);line-height:1.2}
+.st-d{font-size:10.5px;color:var(--text-m);margin:2px 0 4px}
 .sv-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all .15s;margin-bottom:8px}
 .sv-book-hd{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);margin:16px 2px 8px;padding-bottom:5px;border-bottom:1px solid var(--border);letter-spacing:.02em}
 .sv-book-hd:first-child{margin-top:2px}
@@ -738,7 +741,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #vod-lbl{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 #vod-txt{font-family:'Crimson Pro',serif;font-style:italic;font-size:15px;color:var(--text);line-height:1.6;margin-bottom:4px}
 #vod-ref{font-size:11px;color:var(--text-m);text-align:right}
-#cont-banner{background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;transition:all .15s;overflow:hidden}
+#cont-banner{transition:all .15s}
 #cont-banner.hidden{display:none}
 .cont-top{display:flex;align-items:center;gap:6px;padding:12px 14px}
 .cont-main{display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer}
@@ -748,7 +751,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .cont-lbl{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px}
 .cont-toggle{background:none;border:none;color:var(--text-m);cursor:pointer;font-size:13px;padding:8px 10px;border-radius:6px;flex-shrink:0;transition:transform .2s;line-height:1;-webkit-tap-highlight-color:rgba(201,148,58,.15)}
 .cont-toggle:active{opacity:.6}
-#cont-banner.open .cont-toggle{transform:rotate(180deg)}
 .cont-history{display:none;border-top:1px solid var(--border)}
 #cont-banner.open .cont-history{display:block}
 .cont-hrow{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;font-family:'Crimson Pro',serif;font-size:14px;color:var(--text)}
@@ -856,14 +858,11 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 }
 .light #rr-sub { color: #a06060; }
 #rr-toggle {
-  font-size: 18px;
   color: #c06060;
-  transition: transform .25s;
-  padding-top: 2px;
-  flex-shrink: 0;
+  padding-top: 4px;
   user-select: none;
 }
-#rr-toggle.open { transform: rotate(180deg); }
+#rr-toggle.open { transform: rotate(90deg); }
 .light #rr-toggle { color: #a03030; }
 
 #rr-steps {
@@ -1604,18 +1603,48 @@ body.light #home-watermark{
 .peb-name{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
 .peb-st{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text-d);margin-top:2px}
 .peb-go{background:var(--gold);color:var(--bg);border:none;border-radius:9px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'Inter',sans-serif}
-/* Home: the next reading of each plan */
-#home-plans{background:var(--bg3);border:1px solid var(--gold-d);border-radius:10px;margin-bottom:10px;padding:10px 12px 4px}
-#home-plans.hidden{display:none}
-.hp-hd{display:flex;align-items:center;justify-content:space-between;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
-.hp-hd button{background:none;border:none;color:var(--text-m);font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;cursor:pointer;padding:2px 0}
-.hp-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border);cursor:pointer}
-.hp-hd + .hp-row{border-top:none}
-.hp-row:active{opacity:.7}
-.hp-name{font-size:11px;font-weight:600;color:var(--text-m)}
-.hp-day{font-family:'IM Fell English',serif;font-size:16px;color:var(--text);line-height:1.25}
-.hp-part{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-m)}
-.hp-go{color:var(--text-m);font-size:20px}
+/* ── Home widgets (v48): one card style. An arrow that turns folds a card
+   open; a › goes to its page. ── */
+.hw,#cont-banner,.t-section{background:linear-gradient(135deg,var(--bg3),var(--surface));border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden}
+.hw-hd{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;background:none;border:none;cursor:pointer;text-align:left;color:var(--text);font-family:inherit;-webkit-tap-highlight-color:rgba(201,148,58,.15)}
+.hw-hd:active{opacity:.7}
+.hw-name{flex:1;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.hw-ico{color:var(--gold);flex-shrink:0;width:24px;display:grid;place-items:center}
+.hw-sword{font-size:22px;width:30px}
+.hw-tt{flex:1;min-width:0;display:flex;flex-direction:column}
+.hw-lbl{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px}
+.hw-peek{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hw-big{font-family:'IM Fell English',serif;font-size:16px;color:var(--text);line-height:1.25}
+.hw-big.gold{font-size:17px;color:var(--gold)}
+.hw-sm{font-size:11px;color:var(--text-m)}
+.hw-go{color:var(--text-m);font-size:18px;flex-shrink:0;line-height:1}
+.hw-chev,.t-chevron,.cont-toggle,#rr-toggle{color:var(--text-m);flex-shrink:0;display:grid;place-items:center;transition:transform .2s}
+.hw.open .hw-chev{transform:rotate(90deg)}
+.hw-body{display:none;border-top:1px solid var(--border)}
+.hw.open .hw-body{display:block}
+.hw-row{display:flex;align-items:center;gap:11px;padding:10px 14px;width:100%;background:none;border:none;cursor:pointer;text-align:left;font-family:inherit;color:var(--text)}
+.hw-row + .hw-row{border-top:1px solid var(--border)}
+.hw-read{background:var(--gold);color:var(--bg);border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0}
+.hw-more{display:block;width:100%;background:none;border:none;border-top:1px solid var(--border);padding:9px;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;text-align:center}
+.hw-sbox{display:flex;align-items:center;gap:8px;margin:0 12px 12px;padding:8px 11px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text-m)}
+.hw-sbox input{flex:1;min-width:0;border:none;background:none;font-size:14px;color:var(--text);outline:none;font-family:'Inter',sans-serif}
+#home-search .hw-hd{padding-bottom:9px}
+.hw-tools{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;padding:8px 6px 4px}
+.hw-tool{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 2px;border-radius:10px;background:none;border:none;cursor:pointer;font-size:10.5px;font-weight:600;color:var(--text-d);text-align:center;font-family:inherit}
+.hw-tool:active{background:var(--bg2)}
+.hw-ti{width:38px;height:38px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;font-size:18px}
+.hw-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 12px}
+.hw-stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;font-family:inherit}
+.hw-stat b{font-size:16px;color:var(--text);font-variant-numeric:tabular-nums}
+.hw-stat span{font-size:10px;font-weight:600;color:var(--text-m)}
+.hw-stats + .hw-row{border-top:1px solid var(--border)}
+/* Continue Reading and the Testaments in the same card */
+#cont-banner .cont-toggle{padding:8px 6px}
+#cont-banner.open .cont-toggle{transform:rotate(90deg)}
+.t-section .t-label{display:flex;align-items:center;gap:10px;padding:13px 14px!important;margin:0;border:none;font-size:10.5px;font-weight:700}
+.t-section .t-label > span:first-child{flex:1}
+.t-section .books-grid{padding:10px;border-top:1px solid var(--border)}
+.t-section .book-card{padding:8px 10px}
 /* Wide screens: Search tools in two columns — the list on the left, the page on the right */
 .split-ph{display:none}
 @media (min-width:1100px){
@@ -2005,15 +2034,17 @@ body.light #home-watermark{
   <!-- SAVED -->
   <div class="screen" id="screen-saved">
     <div style="padding:12px">
-      <input id="saved-search" type="search" inputmode="search" autocomplete="off" placeholder="Search your saved verses…" oninput="renderSaved()">
+      <input id="saved-search" type="search" inputmode="search" autocomplete="off" placeholder="Search your notes…" oninput="renderSaved()">
       <div class="tab-bar">
         <div class="tab on" id="tab-bm" onclick="switchTab('bm')">🔖 Bookmarks</div>
         <div class="tab" id="tab-hl" onclick="switchTab('hl')">🎨 Highlights</div>
         <div class="tab" id="tab-nt" onclick="switchTab('nt')">📝 Notes</div>
+        <div class="tab" id="tab-st" onclick="switchTab('st')">📚 Studies</div>
       </div>
       <div class="tab-panel on" id="panel-bm"></div>
       <div class="tab-panel" id="panel-hl"></div>
       <div class="tab-panel" id="panel-nt"></div>
+      <div class="tab-panel" id="panel-st"></div>
     </div>
   </div>
 </div>
@@ -2110,6 +2141,8 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> shows every Bible place on one map — tap a place to see what happened there. The classic atlas maps are below it. All of it works offline. In the reader, <strong>📍 Where</strong> maps the places in the chapter</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — run Bible in a Year, NT in 30 Days and Proverbs in a Month, one or several at once, each at your own pace. A chapter checks off once you have read to the end of it; <strong>✓ Mark read</strong> is for a day read from a printed Bible. Your next reading of each plan is on Home; <strong>⋯</strong> pauses, starts over or removes a plan</span></div>
+        <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>Notes tab</strong> — everything you have marked or written: <strong>Bookmarks</strong>, <strong>Highlights</strong>, verse <strong>Notes</strong> and your <strong>Studies</strong> from the 📝 notebook (tap one to open it, or ＋ New study). The search box looks through all of them</span></div>
+        <div class="tip-row"><span class="tip-ico">🏠</span><span class="tip-txt"><strong>Home</strong> — a card for each bottom tab under the books: Search &amp; Study Tools (type in the box, or open the arrow for every tool), Reading Plans and Notes. An arrow that turns folds a card open; <strong>›</strong> goes to its page. Home remembers which cards you left open</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
         <div class="tip-row"><span class="tip-ico">⚔️</span><span class="tip-txt"><strong>Sword Drill</strong> (home screen) hides verses in your heart with fill-in-the-blank memory, spaced review and badges — add any verse you like under <strong>My Verses</strong></span></div>
       </div>
@@ -2531,8 +2564,8 @@ body.light #home-watermark{
     Plans
   </button>
   <button class="bn" id="bn-saved" onclick="showScreen('saved')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-    Saved
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
+    Notes
   </button>
 </div>
 
@@ -2902,8 +2935,6 @@ function buildBooks(){
   // Placeholder — populated by updateContinueBanner() so it stays current as
   // reading history grows (buildBooks only runs once, at init).
   h+=`<div id="cont-banner" class="hidden"></div>`;
-  // Next reading of each plan (updateHomePlans)
-  h+=`<div id="home-plans" class="hidden"></div>`;
 
   // Verse of the Day
   h+=`<div id="vod" onclick="jumpVOD()"><div id="vod-lbl">✦ Verse of the Day</div><div id="vod-txt">Loading…</div><div id="vod-ref"></div></div>`;
@@ -2916,7 +2947,7 @@ function buildBooks(){
         <div id="rr-title">The Romans Road</div>
         <div id="rr-sub">Seven verses that lead to salvation — tap any to read in full</div>
       </div>
-      <div id="rr-toggle">⌄</div>
+      <div id="rr-toggle">${HW_CHEV}</div>
     </div>
     <div id="rr-steps">
       <div id="rr-divider"></div>`;
@@ -2941,30 +2972,26 @@ function buildBooks(){
   const otOpen = !collapsed.has('ot'), ntOpen = !collapsed.has('nt');
 
   h+=`<div class="t-section${otOpen?' open':''}" id="tsec-ot">`;
-  h+=`<div class="t-label t-toggle" onclick="toggleTestament('ot')" role="button" tabindex="0" aria-expanded="${otOpen}"><span>Old Testament <span class="t-count">· 39</span></span><span class="t-chevron">&#9654;</span></div>`;
+  h+=`<div class="t-label t-toggle" onclick="toggleTestament('ot')" role="button" tabindex="0" aria-expanded="${otOpen}"><span>Old Testament</span><span class="t-count">39</span><span class="t-chevron">${HW_CHEV}</span></div>`;
   h+=`<div class="books-grid">`;
   BOOKS.slice(0,39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[i]} ch.</div></div>`);
   h+=`</div></div>`;
 
   h+=`<div class="t-section${ntOpen?' open':''}" id="tsec-nt">`;
-  h+=`<div class="t-label t-toggle" onclick="toggleTestament('nt')" role="button" tabindex="0" aria-expanded="${ntOpen}"><span>New Testament <span class="t-count">· 27</span></span><span class="t-chevron">&#9654;</span></div>`;
+  h+=`<div class="t-label t-toggle" onclick="toggleTestament('nt')" role="button" tabindex="0" aria-expanded="${ntOpen}"><span>New Testament</span><span class="t-count">27</span><span class="t-chevron">${HW_CHEV}</span></div>`;
   h+=`<div class="books-grid">`;
   BOOKS.slice(39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[39+i]} ch.</div></div>`);
   h+=`</div></div>`;
+  // A widget for each bottom tab, in the bar's order (Search, Plans, Notes),
+  // then Sword Drill. Their contents are filled by the update functions.
+  h+=homeSearchWidget();
+  h+=`<div id="home-plans" class="hw"></div>`;
+  h+=`<div id="home-notes" class="hw"></div>`;
+  h+=`<div id="mem-home-card" class="hw"></div>`;
   h+='</div>';
-  const memDue = memDueReviews().length;
-  h += `<div id="mem-home-card" onclick="openMemorize()" style="background:linear-gradient(135deg,var(--bg3),var(--surface));border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0 0;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s">
-    <div style="font-size:28px;flex-shrink:0">${memDue?'🔁':'✏️'}</div>
-    <div style="flex:1">
-      <div style="font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px">✦ Scripture Memory</div>
-      <div style="font-family:'IM Fell English',serif;font-size:17px;color:var(--gold)">${memDue ? memDue+' verse'+(memDue!==1?'s':'')+' due for review' : 'Memorize a Verse'}</div>
-      <div style="font-size:11px;color:var(--text-m);margin-top:2px">${memDue ? 'keep them hidden in thine heart' : 'key verses · fill-in-the-blank'}</div>
-    </div>
-    <div style="color:var(--text-m);font-size:18px">›</div>
-  </div>`;
   el.innerHTML=h;
 
-  updateContinueBanner(); // fill the Continue Reading placeholder
+  updateContinueBanner(); // fill the Continue Reading placeholder (and the widgets)
 
   // Restore RR open state
   if(LS.get('rr_open', false)) openRRPanel();
@@ -3065,7 +3092,7 @@ function contBannerInner(){
   const prior = hist.slice(1, 6); // up to 5 previously-read chapters
   const svg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
   let html = `<div class="cont-top"><div class="cont-main" onclick="continueReading()" role="button" tabindex="0"><div class="cont-ico">${svg}</div><div style="flex:1;min-width:0"><div class="cont-lbl">Continue Reading</div><div class="cont-ref">${cur.book} — Chapter ${cur.ch+1}</div></div></div>`;
-  if(prior.length) html += `<button class="cont-toggle" onclick="toggleContHistory(event)" aria-label="Recently read" aria-expanded="false">&#9662;</button>`;
+  if(prior.length) html += `<button class="cont-toggle" onclick="toggleContHistory(event)" aria-label="Recently read" aria-expanded="false">${HW_CHEV}</button>`;
   html += `</div>`;
   if(prior.length){
     html += `<div class="cont-history">` + prior.map(e =>
@@ -3074,6 +3101,85 @@ function contBannerInner(){
   }
   return html;
 }
+/* ════ HOME WIDGETS ════
+   Every card on Home is one style (.hw). A card whose arrow turns folds open
+   in place; a › goes to its page. Below the Bible itself (Continue Reading,
+   Verse of the Day, Romans Road, the two Testaments) comes one widget for
+   each bottom tab, in the bar's order — Search, Plans, Notes — then Sword
+   Drill. Which widgets are open is remembered on this device (kjv_home_open). */
+const HW_CHEV = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+function hwIsOpen(k){ return (LS.get('kjv_home_open', []) || []).includes(k); }
+function hwFold(k){
+  const el = document.getElementById('home-' + k);
+  if(!el) return;
+  const open = el.classList.toggle('open');
+  el.querySelector('.hw-hd')?.setAttribute('aria-expanded', open);
+  const o = new Set(LS.get('kjv_home_open', []) || []);
+  open ? o.add(k) : o.delete(k);
+  LS.set('kjv_home_open', [...o]);
+}
+// Search & Study Tools: the box is always there; the tools fold open
+function homeSearchWidget(){
+  const open = hwIsOpen('search');
+  return `<div id="home-search" class="hw${open ? ' open' : ''}">
+    <button class="hw-hd" onclick="hwFold('search')" aria-expanded="${open}"><span class="hw-name">Search &amp; Study Tools</span><span class="hw-chev">${HW_CHEV}</span></button>
+    <form class="hw-sbox" onsubmit="event.preventDefault();homeSearchGo()" role="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="search" id="home-q" placeholder="Verse ref, keywords, or phrase…" autocomplete="off" enterkeyhint="search" aria-label="Search the Bible">
+    </form>
+    <div class="hw-body">
+      <div class="hw-tools">${SEARCH_TOOLS.map(t => `<button class="hw-tool" onclick="homeTool('${t.m}')"><span class="hw-ti">${t.i}</span>${t.n}</button>`).join('')}</div>
+      <button class="hw-more" onclick="openSearchTab()">Open Search ›</button>
+    </div>
+  </div>`;
+}
+function homeSearchGo(){
+  const inp = document.getElementById('home-q'), q = (inp.value || '').trim();
+  if(!q){ openSearchTab(); return; }
+  inp.value = ''; inp.blur();
+  openSearchTab();
+  searchFor(q);
+}
+function homeTool(m){ openSearchTab(); switchSearchMode(m); }
+
+// Notes: the latest thing folded; open, a count for each kind and recent studies
+function updateHomeNotes(){
+  const el = document.getElementById('home-notes');
+  if(!el) return;
+  const nb = (S.bookmarks || []).length, nh = Object.keys(S.highlights || {}).length, nn = Object.keys(S.notes || {}).length;
+  const studies = nbData().list.filter(x => x && x.id).slice().sort((a, b) => (b.u || 0) - (a.u || 0));
+  const ns = studies.filter(x => (x.h || '').replace(/<[^>]+>/g, '').trim() || (x.t && x.t !== 'My Study')).length;
+  const when = t => { const d = new Date(t), days = Math.floor((Date.now() - t) / 864e5); return days < 1 ? 'today' : days < 2 ? 'yesterday' : days < 7 ? d.toLocaleDateString(undefined, {weekday: 'long'}) : d.toLocaleDateString(undefined, {month: 'short', day: 'numeric'}); };
+  const icon = `<span class="hw-ico"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span>`;
+  if(!nb && !nh && !nn && !ns){
+    el.classList.remove('open');
+    el.innerHTML = `<button class="hw-hd" onclick="showScreen('saved')">${icon}<span class="hw-tt"><span class="hw-lbl">Notes</span><span class="hw-peek">Bookmarks, highlights, notes and studies</span></span><span class="hw-go">›</span></button>`;
+    return;
+  }
+  const latest = studies[0] && ns ? `Latest: ${escapeHtml(studies[0].t)} · ${when(studies[0].u)}`
+    : [nb && `${nb} bookmark${nb === 1 ? '' : 's'}`, nh && `${nh} highlight${nh === 1 ? '' : 's'}`, nn && `${nn} note${nn === 1 ? '' : 's'}`].filter(Boolean).join(' · ');
+  const open = hwIsOpen('notes');
+  el.classList.toggle('open', open);
+  const stat = (t, n, l) => `<button class="hw-stat" onclick="openNotesTab('${t}')"><b>${n}</b><span>${l}</span></button>`;
+  el.innerHTML = `<button class="hw-hd" onclick="hwFold('notes')" aria-expanded="${open}">${icon}<span class="hw-tt"><span class="hw-lbl">Notes</span><span class="hw-peek">${latest}</span></span><span class="hw-chev">${HW_CHEV}</span></button>
+    <div class="hw-body">
+      <div class="hw-stats">${stat('bm', nb, 'Bookmarks')}${stat('hl', nh, 'Highlights')}${stat('nt', nn, 'Notes')}${stat('st', ns, 'Studies')}</div>
+      ${studies.slice(0, 2).filter(() => ns).map(x => `<button class="hw-row" onclick="nbOpenStudy('${x.id}')"><span class="hw-tt"><span class="hw-sm">Study · ${when(x.u)}</span><span class="hw-big">${escapeHtml(x.t)}</span></span><span class="hw-go">›</span></button>`).join('')}
+      <button class="hw-more" onclick="showScreen('saved')">Open Notes ›</button>
+    </div>`;
+}
+function openNotesTab(t){ showScreen('saved'); switchTab(t); }
+
+// Sword Drill
+function updateHomeMem(){
+  const el = document.getElementById('mem-home-card');
+  if(!el) return;
+  const due = memDueReviews().length;
+  el.innerHTML = `<button class="hw-hd" onclick="openMemorize()"><span class="hw-ico hw-sword">⚔️</span>
+    <span class="hw-tt"><span class="hw-lbl">⚔ Sword Drill</span><span class="hw-big gold">${due ? due + ' verse' + (due !== 1 ? 's' : '') + ' due for review' : 'Memorize a Verse'}</span>
+    <span class="hw-sm">${due ? 'keep them hidden in thine heart' : 'key verses · fill-in-the-blank'}</span></span><span class="hw-go">›</span></button>`;
+}
+
 function toggleContHistory(e){
   if(e) e.stopPropagation();
   const b = document.getElementById('cont-banner');
@@ -4077,7 +4183,7 @@ function showScreen(name, pushHistory=true){
 }
 
 function updateContinueBanner(){
-  updateHomePlans();
+  updateHomePlans(); updateHomeNotes(); updateHomeMem();
   const el = document.getElementById('cont-banner');
   if(!el) return;
   const inner = contBannerInner();
@@ -6733,7 +6839,7 @@ async function openHymn(i, pushHistory=true, scrollY=0){
    appended to the end of the active study. */
 const NB_KEY = 'kjv_studies';
 function nbData(){ return S._nb || (S._nb = LS.get(NB_KEY, null) || {active: null, list: []}); }
-function nbSave(){ LS.set(NB_KEY, nbData()); fbSyncSoon(); }
+function nbSave(){ LS.set(NB_KEY, nbData()); fbSyncSoon(); if(S.screen === 'saved') renderSTPanel(); }
 function nbActive(){
   const d = nbData();
   return d.list.find(x => x.id === d.active) || d.list[0] || nbCreate('My Study');
@@ -8681,7 +8787,29 @@ function getVerseNames(text){
 
 /* ════ SAVED ════ */
 function switchTab(n){S.activeTab=n;document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));document.getElementById('tab-'+n).classList.add('on');document.getElementById('panel-'+n).classList.add('on');renderSaved();}
-function renderSaved(){renderBMPanel();renderHLPanel();renderNTPanel();}
+function renderSaved(){renderBMPanel();renderHLPanel();renderNTPanel();renderSTPanel();}
+// Studies from the 📝 notebook, newest first; tap to open one in the notebook
+function renderSTPanel(){
+  const el = document.getElementById('panel-st');
+  if(!el) return;
+  const q = savedQuery();
+  const plain = h => (h || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+  const list = nbData().list.filter(x => x && x.id && (plain(x.h) || (x.t && x.t !== 'My Study'))).slice().sort((a, b) => (b.u || 0) - (a.u || 0));
+  const newBtn = `<button class="st-new" onclick="nbOpenStudy(null)">＋ New study</button>`;
+  if(!list.length){ el.innerHTML = newBtn + '<div class="empty-msg">No studies yet.<br>Tap 📝 at the top to write one — add verses to it from anywhere in the app.</div>'; return; }
+  const shown = q ? list.filter(x => (x.t + ' ' + plain(x.h)).toLowerCase().includes(q)) : list;
+  el.innerHTML = newBtn + (shown.length ? shown.map(x => {
+    const txt = plain(x.h), refs = (x.h.match(/class="nb-ref"/g) || []).length;
+    const date = new Date(x.u || Date.now()).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'});
+    return `<div class="sv-card"><div class="sv-dot" style="background:var(--text-m)"></div><div class="sv-info" onclick="nbOpenStudy('${x.id}')"><div class="st-t">${escapeHtml(x.t)}</div><div class="st-d">${date}${refs ? ' · ' + refs + ' verse' + (refs === 1 ? '' : 's') : ''}</div><div class="sv-prev">${escapeHtml(txt.slice(0, 140))}${txt.length > 140 ? '…' : ''}</div></div><button class="sv-del" onclick="nbDelete('${x.id}').then(renderSaved)" aria-label="Delete study">✕</button></div>`;
+  }).join('') : `<div class="empty-msg">No studies match &ldquo;${escapeHtml(q)}&rdquo;.</div>`);
+}
+// Open a study (or a new one, id null) in the notebook
+function nbOpenStudy(id){
+  if(id === null) nbCreate('New study');
+  else { const d = nbData(); if(!d.list.some(x => x.id === id)) return; d.active = id; nbSave(); }
+  nbOpen();
+}
 const HL_COL={y:'rgba(255,220,60,.6)',g:'rgba(80,200,120,.6)',b:'rgba(80,160,255,.6)',p:'rgba(200,100,200,.6)'};
 const HL_NM={y:'Yellow',g:'Green',b:'Blue',p:'Purple'};
 // Saved-screen ordering: put entries in Bible order (book → chapter → verse)
@@ -9148,7 +9276,7 @@ function plansAfterChange(){
   if(S.screen === 'reader') planEndBar();
 }
 // A sync brought in plan changes
-function syncRefreshExtra(keys){ if(keys.includes(PLANS_KEY)) plansAfterChange(); }
+function syncRefreshExtra(keys){ if(keys.includes(PLANS_KEY)) plansAfterChange(); updateHomeNotes(); }
 
 // ── Counting a chapter only when it has been read ──
 // Opening a chapter no longer counts it: it counts once the last verse has
@@ -9364,21 +9492,30 @@ function openPlanChapter(bi, ci){
   });
 }
 
-// ── Home: the next reading of each plan ──
+// ── Home: the Reading Plans widget ──
+// Folded, what is next in each running plan; open, each plan with its ring
+// and Read. With no plan running it is one line that goes to Plans.
 function updateHomePlans(){
   const el = document.getElementById('home-plans');
   if(!el) return;
   const act = plansActive();
-  if(!act.length){ el.innerHTML = ''; el.classList.add('hidden'); return; }
-  el.classList.remove('hidden');
-  el.innerHTML = `<div class="hp-hd"><span>✦ Your Reading</span><button onclick="showScreen('plans')">Plans ›</button></div>` + act.map(p => {
+  const icon = `<span class="hw-ico"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8.5 15.5l2.5 2.5 4.5-4.5"/></svg></span>`;
+  if(!act.length){
+    el.classList.remove('open');
+    el.innerHTML = `<button class="hw-hd" onclick="showScreen('plans')">${icon}<span class="hw-tt"><span class="hw-lbl">Reading Plans</span><span class="hw-peek">Choose a plan to read at your own pace</span></span><span class="hw-go">›</span></button>`;
+    return;
+  }
+  const nexts = act.map(p => { const nx = planNextChapter(p); return nx ? `${BOOKS[nx.bi]} ${nx.ci + 1}` : null; }).filter(Boolean);
+  const open = hwIsOpen('plans');
+  el.classList.toggle('open', open);
+  el.innerHTML = `<button class="hw-hd" onclick="hwFold('plans')" aria-expanded="${open}">${icon}<span class="hw-tt"><span class="hw-lbl">Reading Plans · ${act.length}</span><span class="hw-peek">${nexts.length ? 'Next: ' + nexts.join(' · ') : 'All read for now'}</span></span><span class="hw-chev">${HW_CHEV}</span></button>
+    <div class="hw-body">` + act.map(p => {
     const def = PLAN_DEFS[p.plan], cur = planCurDay(p), nx = planNextChapter(p);
     const reads = getPlanDayReadings(p.plan, cur), nRead = reads.filter(([b, c]) => planChKey(b, c) in p.chs).length;
-    const go = nx ? `openPlanChapter(${nx.bi},${nx.ci})` : `showScreen('plans')`;
-    return `<div class="hp-row" onclick="${go}" role="button" tabindex="0">${planRing(planDaysDone(p) / def.days * 100, 38)}
-      <div class="pl-tt"><div class="hp-name">${def.name}</div><div class="hp-day">Day ${cur + 1} — ${planDayLabel(p.plan, cur)}${reads.length > 1 && nRead ? ` <span class="hp-part">· ${nRead}/${reads.length}</span>` : ''}</div></div>
-      <span class="hp-go">›</span></div>`;
-  }).join('');
+    return `<div class="hw-row">${planRing(planDaysDone(p) / def.days * 100, 40)}
+      <span class="hw-tt"><span class="hw-sm">${def.name} · ${planDaysDone(p)} of ${def.days} days</span><span class="hw-big">Day ${cur + 1} — ${planDayLabel(p.plan, cur)}${reads.length > 1 && nRead ? ` <span class="hw-sm" style="display:inline">· ${nRead} of ${reads.length}</span>` : ''}</span></span>
+      ${nx ? `<button class="hw-read" onclick="openPlanChapter(${nx.bi},${nx.ci})">Read</button>` : ''}</div>`;
+  }).join('') + `<button class="hw-more" onclick="showScreen('plans')">All plans ›</button></div>`;
 }
 
 /* ════════════════════════════════
@@ -12510,7 +12647,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v47';
+const WHATS_NEW_VERSION = 'v48';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -13188,6 +13325,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v48" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🏠</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">A Tidier Home &amp; a Notes Tab</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Home is now one set of matching cards. Under the books are a card for <strong>Search &amp; Study Tools</strong> (search right from Home, or open it for every tool), your <strong>Reading Plans</strong> and your <strong>Notes</strong>, then Sword Drill. The <strong>Saved</strong> tab is now <strong>Notes</strong>: bookmarks, highlights, verse notes and now your <strong>Studies</strong>, all in one place.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v47" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📅</div>
       <div>

@@ -6,6 +6,15 @@
 
 ## New Features
 
+### 🏠 A Tidier Home & a Notes Tab (v48)
+- **One card style on Home**: Continue Reading, Verse of the Day, the Romans Road, the Old and New Testament, and the new cards below them all match. An arrow that turns folds a card open; **›** goes to its page. The Old and New Testament are one lean line each (the name and the number of books) that fold open to the books, as before
+- **Search & Study Tools on Home**: the search box is always showing — type and search without leaving Home. Open the card for all eight tools (Doctrines, Topics, Dictionary, Concordance, Names, Timeline, Maps, Hymns), each one tap away, and **Open Search ›**
+- **Reading Plans on Home**: folded, it shows what is next in each running plan (“Next: Proverbs 5 · Matthew 23”); open, each plan with its progress ring, its next reading and **Read**. With no plan running it is one line that goes to Plans. (It replaces the “Your Reading” card from v47 and now sits below the search card)
+- **Notes on Home**: folded, your latest study; open, how many bookmarks, highlights, notes and studies you have (each goes straight to that list) and your two most recent studies
+- **Sword Drill** keeps its card at the bottom, now with the ⚔ name, and its count of verses due stays current
+- **The Saved tab is now Notes**, with a fourth list, **Studies**: every study from the 📝 notebook, newest first, with its date and how many verses it quotes — tap to open it, ＋ New study, ✕ to delete. The search box looks through studies too
+- Home remembers which of its cards you left open (on this device)
+
 ### 📅 Reading Plans, Your Way (v47)
 - **More than one plan at a time** — run Proverbs in a Month, the New Testament in 30 Days and Bible in a Year side by side, each keeping its own place. Each running plan is a card with a progress ring, its next reading (“Day 4 — Proverbs 4”), **📖 Read** for the next chapter and **✓ Mark read** for a day read from a printed Bible or listened to. **All days** opens a grid of the plan's days (read days filled, part-read days half filled, the next one ringed); tap a day for its reading, the date it was read, Read and Mark read
 - **A chapter counts when it has been read** — opening a chapter (or tapping past it) no longer checks it off; it counts once you have reached the end of it, after at least 20 seconds on it. Reading straight on into the next day's chapters counts too, but dipping into a chapter far ahead (Proverbs 20 on day 4) does not. A day that was read ahead now checks off as soon as its last chapter is read
