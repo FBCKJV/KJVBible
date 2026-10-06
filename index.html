@@ -749,6 +749,32 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #vpop-ref{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 #vpop-txt{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);line-height:1.7}
 .hl-row{display:flex;gap:8px;align-items:center}
+/* Named highlight colours (v53) */
+.hl-opt{background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:30px;font-family:inherit}
+.hl-nm{font-size:9.5px;font-weight:600;color:var(--text-m);max-width:62px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1}
+.hl-row:not(.named) .hl-nm{display:none}
+.hl-name-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:3px 7px;font-size:12px;cursor:pointer;margin-left:auto;align-self:center}
+#hln-sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:690;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+#hln-sheet.on{display:flex}
+#hln-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:520px;padding:18px 16px calc(14px + env(safe-area-inset-bottom));animation:su .22s ease;display:flex;flex-direction:column;gap:10px}
+@media (min-width:700px){#hln-sheet{align-items:center}#hln-inner{border-radius:18px}}
+.hln-t{font-family:'IM Fell English',serif;font-size:20px;color:var(--gold)}
+.hln-d{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text-d);line-height:1.4}
+.hln-row{display:flex;align-items:center;gap:10px}
+.hln-row .hl-dot{width:30px;height:30px}
+.hln-row input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 12px;font-size:15px;font-family:'Inter',sans-serif}
+.hln-sugs{display:flex;flex-wrap:wrap;gap:6px}
+.hln-sugs button{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:5px 11px;font-size:12.5px;color:var(--text-d);cursor:pointer}
+.hln-acts{display:flex;gap:8px;margin-top:4px}
+.hln-acts button{flex:1;min-height:46px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer}
+.hln-save{background:var(--gold);border:1px solid var(--gold);color:var(--bg)}
+.hln-cancel{background:none;border:1px solid var(--border);color:var(--text-d)}
+.hlf{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;scrollbar-width:none}
+.hlf button{flex-shrink:0;display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:6px 11px;font-size:12.5px;font-weight:600;color:var(--text-d);cursor:pointer;white-space:nowrap}
+.hlf button.on{border-color:var(--gold);color:var(--gold);background:var(--bg3)}
+.hlf i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.hlf-acts{display:flex;gap:6px;margin-bottom:10px}
+.hlf-acts button{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:9px;padding:8px 6px;font-size:12px;font-weight:600;cursor:pointer}
 .hl-label{font-size:10px;color:var(--text-m);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0}
 .hl-dot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
 .hl-dot.active{border-color:var(--text);transform:scale(1.15)}
@@ -1668,6 +1694,8 @@ body.light #home-watermark{
 /* Plans screen (v47): a card per running plan with a progress ring, its next
    reading and a grid of its days; paused, add-a-plan and finished below */
 .pl-h1{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold);margin:2px 0 12px}
+.pl-nudge{display:flex;justify-content:space-between;width:100%;text-align:left;background:none;border:1px dashed var(--border);border-radius:10px;padding:10px 12px;margin:-2px 0 12px;font-size:13px;font-weight:600;color:var(--text-d);cursor:pointer}
+.pl-nudge span{color:var(--text-m)}
 .pl-cal-link{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin:-4px 0 14px;font-size:13px;font-weight:600;color:var(--gold);cursor:pointer}
 .pl-empty{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text-d);line-height:1.45;margin:-4px 0 14px}
 .pl-sec{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
@@ -2240,6 +2268,8 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), send them to ⚔ Sword Drill, or add them to a study</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
+        <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
+        <div class="tip-row"><span class="tip-ico">🔔</span><span class="tip-txt"><strong>A daily reading reminder</strong> — on the Plans page, tap 🔔 and choose morning, midday or evening. Each day a short note on this device names your next reading; tap it to open your plans. Turn it off the same way</span></div>
         <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The flame badge</strong> in the header tracks your daily reading streak — tap it to see your progress and milestone badges</span></div>
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
         <div class="tip-row"><span class="tip-ico">❝</span><span class="tip-txt"><strong>Search for an exact phrase</strong> — put it in quotes, like <em>"god so loved"</em>. Put a minus before a word to leave it out: <em>love -god</em>. Switch between <em>Best match</em> and <em>Bible order</em> above the results</span></div>
@@ -2512,6 +2542,22 @@ body.light #home-watermark{
     <div id="tour-nav"><button id="tour-back" onclick="tourStep(-1)">‹ Back</button><button id="tour-next" onclick="tourStep(1)">Next ›</button></div>
   </div>
 </div>
+<!-- Name the highlight colours (hlNameSheet) -->
+<div id="hln-sheet" onclick="if(event.target===this)closePopover('hln-sheet')" role="dialog" aria-modal="true" aria-labelledby="hln-t">
+  <div id="hln-inner">
+    <div class="hln-t" id="hln-t">🖍 Name your colours</div>
+    <div class="hln-d">Give each colour a meaning, and your highlights sort themselves — every promise in yellow, every command in green.</div>
+    <div class="hln-row"><span class="hl-dot" data-c="y"></span><input id="hln-y" maxlength="24" placeholder="Yellow" aria-label="Name for yellow"></div>
+    <div class="hln-row"><span class="hl-dot" data-c="g"></span><input id="hln-g" maxlength="24" placeholder="Green" aria-label="Name for green"></div>
+    <div class="hln-row"><span class="hl-dot" data-c="b"></span><input id="hln-b" maxlength="24" placeholder="Blue" aria-label="Name for blue"></div>
+    <div class="hln-row"><span class="hl-dot" data-c="p"></span><input id="hln-p" maxlength="24" placeholder="Purple" aria-label="Name for purple"></div>
+    <div class="hln-sugs"><span class="hln-d" style="font-size:13px;align-self:center">Ideas:</span>
+      <button onclick="hlSuggest(['Promises','Commands','Salvation','Prayer'])">Promises · Commands · Salvation · Prayer</button>
+      <button onclick="hlSuggest(['God the Father','Jesus Christ','Holy Spirit','Sin & grace'])">Father · Christ · Spirit · Grace</button>
+    </div>
+    <div class="hln-acts"><button class="hln-cancel" onclick="closePopover('hln-sheet')">Cancel</button><button class="hln-save" onclick="hlNameSave()">Save</button></div>
+  </div>
+</div>
 <!-- Save verses to My Verses lists (colSheet) -->
 <div id="col-sheet" onclick="if(event.target===this)closePopover('col-sheet')" role="dialog" aria-modal="true" aria-labelledby="col-hd-t">
   <div id="col-inner">
@@ -2782,13 +2828,14 @@ body.light #home-watermark{
     </div>
     <div id="vpop-links" style="display:none"></div>
     <div id="vpop-tsk" style="display:none"></div>
-    <div class="hl-row">
+    <div class="hl-row" id="hl-row">
       <span class="hl-label">Highlight</span>
-      <div class="hl-dot" data-c="y" onclick="setHL('y')"></div>
-      <div class="hl-dot" data-c="g" onclick="setHL('g')"></div>
-      <div class="hl-dot" data-c="b" onclick="setHL('b')"></div>
-      <div class="hl-dot" data-c="p" onclick="setHL('p')"></div>
-      <div class="hl-dot clear" onclick="setHL(null)">✕</div>
+      <button class="hl-opt" onclick="setHL('y')"><span class="hl-dot" data-c="y"></span><span class="hl-nm" data-c="y"></span></button>
+      <button class="hl-opt" onclick="setHL('g')"><span class="hl-dot" data-c="g"></span><span class="hl-nm" data-c="g"></span></button>
+      <button class="hl-opt" onclick="setHL('b')"><span class="hl-dot" data-c="b"></span><span class="hl-nm" data-c="b"></span></button>
+      <button class="hl-opt" onclick="setHL('p')"><span class="hl-dot" data-c="p"></span><span class="hl-nm" data-c="p"></span></button>
+      <button class="hl-opt" onclick="setHL(null)" aria-label="Remove highlight"><span class="hl-dot clear">✕</span><span class="hl-nm"></span></button>
+      <button class="hl-name-btn" onclick="hlNameSheet()" title="Name your colours" aria-label="Name your highlight colours">✏️</button>
     </div>
     <div id="note-area-wrap">
       <textarea id="note-area" placeholder="Write a note for this verse…" rows="3"></textarea>
@@ -3039,6 +3086,13 @@ document.addEventListener('DOMContentLoaded',()=>{
   try{ plansMigrate(); }catch(e){ console.warn('Plans migrate:', e); }
   try{ colMigrate(); }catch(e){ console.warn('My Verses migrate:', e); }
   try{ readLogBackfill(); }catch(e){ console.warn('Reading log:', e); }
+  // A reminder opens the app at ?open=plans
+  try{
+    if(new URLSearchParams(location.search).get('open') === 'plans'){
+      history.replaceState(history.state, '', location.pathname);
+      setTimeout(() => showScreen('plans'), 700);
+    }
+  }catch(e){}
   buildBooks();
   loadStreak();
   fbInit();
@@ -3775,8 +3829,8 @@ function closePop(e){
   if(history.state && history.state.modal==='vpop') history.back();
   else vp.classList.remove('on');
 }
-function setHL(c){if(c)S.highlights[S.popRef]=c;else delete S.highlights[S.popRef];LS.set('kjv_hl',S.highlights);fbSyncSoon();updateHLPicker();refreshVBlock(S.popRef);}
-function updateHLPicker(){const cur=S.highlights[S.popRef];document.querySelectorAll('.hl-dot').forEach(d=>d.classList.toggle('active',d.dataset.c===cur));}
+function setHL(c){if(c)S.highlights[S.popRef]=c;else delete S.highlights[S.popRef];LS.set('kjv_hl',S.highlights);fbSyncSoon();updateHLPicker();refreshVBlock(S.popRef);if(c&&hlNames()[c])showToast(`🖍 ${S.popRef} · ${hlName(c)}`);}
+function updateHLPicker(){hlNamesShow();const cur=S.highlights[S.popRef];document.querySelectorAll('.hl-dot').forEach(d=>d.classList.toggle('active',d.dataset.c===cur));}
 function openNote(){document.getElementById('note-area').value=S.notes[S.popRef]||'';document.getElementById('note-area-wrap').classList.add('on');document.getElementById('note-area').focus();}
 function cancelNote(){document.getElementById('note-area-wrap').classList.remove('on');}
 function saveNote(){const t=document.getElementById('note-area').value.trim();if(t)S.notes[S.popRef]=t;else delete S.notes[S.popRef];LS.set('kjv_notes',S.notes);fbSyncSoon();cancelNote();refreshVBlock(S.popRef);}
@@ -4355,7 +4409,7 @@ function goBack(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
+const POPOVER_IDS = ['hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
 // Order the cards were opened in: on a wide screen several can be open side
 // by side (the verse card beside the notebook), and Back closes the newest
 let LAYER_SEQ = 0;
@@ -9353,6 +9407,32 @@ function colToStudy(id){
 
 const HL_COL={y:'rgba(255,220,60,.6)',g:'rgba(80,200,120,.6)',b:'rgba(80,160,255,.6)',p:'rgba(200,100,200,.6)'};
 const HL_NM={y:'Yellow',g:'Green',b:'Blue',p:'Purple'};
+const HL_KEYS=['y','g','b','p'];
+// Your own name for each colour (kjv_hl_names, travels with the restore code)
+function hlNames(){ const n = LS.get('kjv_hl_names', null); return n && typeof n === 'object' ? n : {}; }
+function hlName(c){ return (hlNames()[c] || '').trim() || HL_NM[c] || ''; }
+function hlNameSheet(){
+  const n = hlNames();
+  HL_KEYS.forEach(c => { document.getElementById('hln-' + c).value = n[c] || ''; });
+  openPopover('hln-sheet');
+}
+function hlSuggest(names){ HL_KEYS.forEach((c, i) => { document.getElementById('hln-' + c).value = names[i]; }); }
+function hlNameSave(){
+  const n = {};
+  HL_KEYS.forEach(c => { const v = document.getElementById('hln-' + c).value.trim(); if(v) n[c] = v; });
+  LS.set('kjv_hl_names', n); fbSyncSoon();
+  closePopover('hln-sheet');
+  hlNamesShow();
+  if(S.screen === 'saved') renderHLPanel();
+  showToast(Object.keys(n).length ? '🖍 Colours named' : 'Colour names cleared');
+}
+// The names under the dots in the verse card (only once something is named)
+function hlNamesShow(){
+  const n = hlNames(), row = document.getElementById('hl-row');
+  if(!row) return;
+  row.classList.toggle('named', Object.keys(n).length > 0);
+  row.querySelectorAll('.hl-nm[data-c]').forEach(el => { el.textContent = n[el.dataset.c] || ''; });
+}
 // Saved-screen ordering: put entries in Bible order (book → chapter → verse)
 // and break them into per-book sections. An optional search filters by ref/text.
 function canonKey(ref){
@@ -9400,13 +9480,34 @@ function renderHLPanel(){
   const el=document.getElementById('panel-hl');
   const entries0=Object.entries(S.highlights);
   if(!entries0.length){el.innerHTML='<div class="empty-msg">No highlighted verses yet.<br>Tap a verse → choose a highlight color.</div>';return;}
-  const entries=entries0.map(([ref,c])=>{
+  const f = HL_KEYS.includes(S._hlF) ? S._hlF : null, named = Object.keys(hlNames()).length > 0;
+  const count = c => entries0.filter(([, x]) => x === c).length;
+  // Filter by colour, each with its name and count
+  const chips = `<div class="hlf"><button class="${f ? '' : 'on'}" onclick="hlFilter(null)">All · ${entries0.length}</button>`
+    + HL_KEYS.filter(c => count(c)).map(c => `<button class="${f === c ? 'on' : ''}" onclick="hlFilter('${c}')"><i style="background:${HL_COL[c]}"></i>${escapeHtml(hlName(c))} · ${count(c)}</button>`).join('') + `</div>`;
+  const acts = `<div class="hlf-acts">${f ? `<button onclick="hlToList('${f}')">🔖 Save ${escapeHtml(hlName(f))} as a list</button>` : ''}<button onclick="hlNameSheet()">✏️ ${named ? 'Rename colours' : 'Name your colours'}</button></div>`;
+  const entries=entries0.filter(([, c]) => !f || c === f).map(([ref,c])=>{
     const prev=hlPreview(ref);
-    return {ref,text:prev+' '+HL_NM[c],
-      card:`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref} <span style="opacity:.6;font-size:9px">${HL_NM[c]}</span></div><div class="sv-prev">${prev}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`};
+    return {ref,text:prev+' '+hlName(c),
+      card:`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref} <span style="opacity:.6;font-size:9px">${escapeHtml(hlName(c))}</span></div><div class="sv-prev">${prev}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`};
   });
-  const {html,count}=groupByBook(entries);
-  el.innerHTML = count ? html : `<div class="empty-msg">No highlights match &ldquo;${escapeHtml(savedQuery())}&rdquo;.</div>`;
+  const {html,count:n}=groupByBook(entries);
+  el.innerHTML = chips + acts + (n ? html : `<div class="empty-msg">No highlights match &ldquo;${escapeHtml(savedQuery())}&rdquo;.</div>`);
+}
+function hlFilter(c){ S._hlF = c; renderHLPanel(); }
+// A colour's highlights become a My Verses list, in Bible order
+function hlToList(c){
+  const refs = Object.entries(S.highlights).filter(([, x]) => x === c).map(([r]) => r)
+    .sort((a, b) => { const x = canonKey(a), y = canonKey(b); return x[0] - y[0] || x[1] - y[1] || x[2] - y[2]; });
+  if(!refs.length) return;
+  const name = hlName(c), d = colData();
+  let col = d.list.find(x => x.n === name);
+  if(!col) d.list.unshift(col = {id: colNewId(), n: name, items: [], u: Date.now()});
+  const have = new Set(col.items.map(colItemKey));
+  refs.forEach(r => { if(!have.has(r + '-')) col.items.push({a: r, r, t: hlPreview(r).replace(/^…$/, '')}); });
+  col.u = Date.now();
+  colSave(d); colAfterChange();
+  showToast(`🔖 ${refs.length} verse${refs.length === 1 ? '' : 's'} in My Verses · ${name}`);
 }
 function renderNTPanel(){
   const el=document.getElementById('panel-nt');
@@ -9775,6 +9876,7 @@ function startPlan(planId){
   plansSave(d);
   showScreen('plans');
   plansAfterChange();
+  nudgeOffer();
 }
 
 // Record a chapter as read in every active plan it belongs to
@@ -9830,10 +9932,72 @@ function planMarkDay(id, day){
   showToast(msgs[msgs.length - 1]);
 }
 function plansAfterChange(){
+  nudgeSync();
   if(S.screen === 'plans') renderPlansScreen();
   updateHomePlans();
   if(S.screen === 'reader') planEndBar();
 }
+/* ── 🔔 The daily reading reminder (v53) ──
+   Only for those who ask for it. Choosing a time tags this device's push
+   subscription with OneSignal (plan_nudge = morning | midday | evening, and
+   next_reading = "Proverbs 5 · Matthew 23"); the plan-nudge workflow sends
+   one note a day at that local time, with the next reading in it. The tag is
+   kept current as plans move on. Per device, like notifications themselves. */
+const NUDGE_LBL = {morning: '☀️ Morning · 7 am', midday: '🌤 Midday · noon', evening: '🌙 Evening · 7 pm'};
+function nudgeSlot(){ const v = LS.get('kjv_nudge', 'off'); return NUDGE_LBL[v] ? v : 'off'; }
+function nudgeNext(){ return plansActive().map(p => planNextChapter(p)).filter(Boolean).map(n => `${BOOKS[n.bi]} ${n.ci + 1}`).join(' · ').slice(0, 120); }
+async function nudgeChoose(offer){
+  const cur = nudgeSlot();
+  const v = await appSheet({
+    title: offer ? '🔔 Would you like a reminder?' : '🔔 Daily reading reminder',
+    msg: 'A gentle note on this device each day with your next reading. Change it or turn it off here any time.',
+    actions: [...Object.entries(NUDGE_LBL).map(([k, l]) => ({label: l + (k === cur ? '  ✓' : ''), v: k})),
+      ...(cur !== 'off' ? [{label: 'Turn reminders off', v: 'off', danger: true}] : []),
+      {label: offer ? 'No thanks' : 'Cancel', v: null, ghost: true}]});
+  if(v) nudgeSet(v);
+}
+function nudgeSet(slot){
+  const done = msg => { if(msg) showToast(msg); if(S.screen === 'plans') renderPlansScreen(); };
+  if(slot === 'off'){
+    LS.set('kjv_nudge', 'off');
+    (window.OneSignalDeferred = window.OneSignalDeferred || []).push(async OS => { try{ await OS.User.removeTags(['plan_nudge', 'next_reading']); }catch(e){} });
+    return done('🔕 Reminders off');
+  }
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isPWA = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if(isIOS && !isPWA) return done('On iPhone: add the app to your Home Screen first, then open it from that icon to set a reminder');
+  if(!('Notification' in window)) return done('Reminders are not supported in this browser');
+  showToast('Setting your reminder…');
+  (window.OneSignalDeferred = window.OneSignalDeferred || []).push(async OS => {
+    try{
+      if(!OS.Notifications.permission) await OS.Notifications.requestPermission();
+      if(OS.Notifications.permission) await OS.User.PushSubscription.optIn();
+      if(!OS.Notifications.permission){ done('Notifications are blocked — allow them for this site in your browser settings'); return; }
+      await OS.User.addTags({plan_nudge: slot, next_reading: nudgeNext()});
+      S._nudgeSent = nudgeNext();
+      LS.set('kjv_nudge', slot);
+      done(`🔔 Reminder set — ${NUDGE_LBL[slot].replace(/^\S+ /, '')}`);
+      updateNotifStatus && updateNotifStatus();
+    }catch(e){ done('Could not set the reminder — try again'); }
+  });
+}
+// Keep the reminder's "next reading" current as plans move on
+function nudgeSync(){
+  if(nudgeSlot() === 'off') return;
+  const next = nudgeNext();
+  if(next === S._nudgeSent) return;
+  clearTimeout(S._nudgeTimer);
+  S._nudgeTimer = setTimeout(() => (window.OneSignalDeferred = window.OneSignalDeferred || []).push(async OS => {
+    try{ await OS.User.addTags({next_reading: next}); S._nudgeSent = next; }catch(e){}
+  }), 2000);
+}
+// Offered once, the first time someone starts a plan
+function nudgeOffer(){
+  if(LS.get('kjv_nudge_asked', false) || nudgeSlot() !== 'off' || !('Notification' in window)) return;
+  LS.set('kjv_nudge_asked', true);
+  setTimeout(() => nudgeChoose(true), 900);
+}
+
 // A sync brought in plan changes
 function syncRefreshExtra(keys){ if(keys.includes(PLANS_KEY)) plansAfterChange(); updateHomeNotes(); }
 
@@ -9959,6 +10123,10 @@ function renderPlansScreen(){
   if(!active.length && !paused.length)
     h += `<div class="pl-empty">Read at your own pace — a plan waits for you. Run more than one at once; each keeps its own place. A chapter counts once you have read to the end of it.</div>`;
   h += active.map(planCard).join('');
+  if(active.length){
+    const ns = nudgeSlot();
+    h += `<button class="pl-nudge" onclick="nudgeChoose()">${ns === 'off' ? '🔔 Remind me to read each day' : `🔔 Daily reminder: ${NUDGE_LBL[ns].replace(/^\S+ /, '')}`}<span>›</span></button>`;
+  }
   if(paused.length){
     h += `<div class="pl-sec">Paused</div>` + paused.map(p => {
       const def = PLAN_DEFS[p.plan], n = planDaysDone(p);
@@ -13521,7 +13689,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v52';
+const WHATS_NEW_VERSION = 'v53';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -13787,7 +13955,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies','kjv_hints_seen','kjv_hints_off'
+  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies','kjv_hints_seen','kjv_hints_off','kjv_hl_names'
 ];
 
 let _db = null;
@@ -14217,6 +14385,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v53" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🖍</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Colours with Meaning &amp; a Daily Reminder</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Tap <strong>✏️</strong> beside the highlight colours to <strong>name them</strong> — Promises, Commands, Salvation, Prayer, or your own. Under <strong>Notes → Highlights</strong>, pick a colour to see just those verses, and save them as a My Verses list. Reading a plan? <strong>🔔 Remind me to read each day</strong> on the Plans page sends a gentle note with your next reading — morning, midday or evening, only if you ask for it.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v52" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🏅</div>
       <div>
