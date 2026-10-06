@@ -485,6 +485,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .wd-entry{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:12px}
 .wd-head{margin-bottom:8px}
 .wd-word{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold)}
+/* 🔊 Hear it — a name or word said aloud, with how to say it */
+.say-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;margin:4px 0 10px}
+.say-btn{background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:18px;padding:7px 14px;min-height:38px;font:600 13px 'Inter',sans-serif;cursor:pointer;white-space:nowrap}
+.say-btn.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.say-guide{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text-d);letter-spacing:.02em}
+.say-guide b{color:var(--text);font-weight:700}
+.say-l{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-m);letter-spacing:0}
+#vpop-def-say .say-row,#vpop-nm-say .say-row{margin:2px 0 8px}
 .wd-pos{font-style:italic;color:var(--text-m);font-size:13px;margin-left:4px;font-family:'Crimson Pro',serif}
 .wd-kjv{border-left:3px solid var(--gold);background:var(--bg3);border-radius:0 8px 8px 0;padding:8px 12px;margin:0 0 10px;font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);line-height:1.5}
 .wd-kjv-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:2px;font-family:Inter,sans-serif}
@@ -2306,6 +2314,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
+        <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
@@ -2883,6 +2892,7 @@ body.light #home-watermark{
     <div id="vpop-dict-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
       <button onclick="event.stopPropagation();showVpopDictList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">← All words</button>
       <div id="vpop-def-word" style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
+      <div id="vpop-def-say"></div>
       <div id="vpop-def-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
       <div id="vpop-def-webster"></div>
     </div>
@@ -2890,6 +2900,7 @@ body.light #home-watermark{
     <div id="vpop-name-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
       <button onclick="event.stopPropagation();showVpopNameList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">← All names</button>
       <div id="vpop-nm-word" style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
+      <div id="vpop-nm-say"></div>
       <div id="vpop-nm-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
       <div id="vpop-nm-mean" style="font-size:11px;color:var(--text-m);margin-top:6px;font-style:italic">Meaning from Hitchcock's Bible Names Dictionary (1869)</div>
     </div>
@@ -3840,6 +3851,7 @@ function openVPop(ref,txt){
       document.getElementById('vpop-def-word').textContent = w.word.charAt(0).toUpperCase()+w.word.slice(1);
       document.getElementById('vpop-def-text').textContent = w.def;
       vpopWebster(w.word);
+      vpopSay('vpop-def-say', w.word, 'word');
       dRow.style.display = 'none';
       document.getElementById('vpop-dict-def').style.display = 'block';
     };
@@ -3863,6 +3875,7 @@ function openVPop(ref,txt){
       const n = nWrap._names[parseInt(sp.dataset.idx)];
       document.getElementById('vpop-nm-word').textContent = n.name;
       document.getElementById('vpop-nm-text').textContent = n.meaning;
+      vpopSay('vpop-nm-say', n.name, 'name');
       nRow.style.display = 'none';
       document.getElementById('vpop-name-def').style.display = 'block';
     };
@@ -6492,7 +6505,7 @@ function findPeopleCard(q){
 /* ── Name page: everyone who bore a name ── */
 SUBVIEWS.name = { mode:'names', browse:'names-browse', view:'name-view', open:(k, push, y) => openNamePage(k, push, y) };
 async function openNamePage(key, pushHistory=true, scrollY=0){
-  const idx = await ensureNameIndex();
+  const [idx] = await Promise.all([ensureNameIndex(), loadSay()]);
   const e = idx && idx.get(key);
   if(!e) return;
   enterSubView('name', key, pushHistory);
@@ -6501,6 +6514,7 @@ async function openNamePage(key, pushHistory=true, scrollY=0){
   view.innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
     <div class="dv-title">${escapeHtml(e.name)}</div>
+    ${sayRow(e.name, 'name')}
     ${e.meaning ? `<div class="dv-desc">“${escapeHtml(e.meaning)}”</div>` : ''}
     ${jesus ? `<div tabindex="0" class="rc ref-jump" onclick="openNaveTopic('JESUS, THE CHRIST')"><div class="rc-ref">✝ Jesus Christ</div><div class="rc-txt" style="opacity:.75">The Lord Jesus Christ — see the topic “Jesus, the Christ” for His life, ministry and titles</div></div>` : ''}
     ${e.people.length ? `<div class="pp-h">${e.people.length} ${jesus ? 'other ' : ''}${e.people.length === 1 ? 'person' : 'people'} named ${escapeHtml(e.name)}</div>` : ''}
@@ -6522,6 +6536,7 @@ async function openNamePage(key, pushHistory=true, scrollY=0){
     <button class="nv-showmore pp-find" onclick="placeSearch('${escapeHtml(e.name).replace(/'/g, "\\'")}')">🔍 Find “${escapeHtml(e.name)}” in Scripture</button>
     <div class="nv-credit">Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain). People from BibleData (Brady Stephenson, CC BY 4.0). Places from the OpenBible.info Bible Geocoding Data (CC BY 4.0).</div>`;
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+  sayHint();
 }
 
 /* ── Person page ── */
@@ -6544,7 +6559,7 @@ function relLabel(type, n){
   return L ? L[n > 1 ? 1 : 0] : type.charAt(0).toUpperCase() + type.slice(1);
 }
 async function openPerson(id, pushHistory=true, scrollY=0){
-  await ensureNameIndex();
+  await Promise.all([ensureNameIndex(), loadSay()]);
   const p = S._people && S._people[id];
   if(!p) return;
   enterSubView('person', id, pushHistory);
@@ -6568,6 +6583,7 @@ async function openPerson(id, pushHistory=true, scrollY=0){
   view.innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
     <div class="dv-title">${escapeHtml(p.n)}${p.n2 ? ' ' + escapeHtml(p.n2) : ''}</div>
+    ${sayRow(p.n, 'name')}
     ${p.a ? `<div class="pp-aka-line">Also called ${p.a.map(escapeHtml).join(', ')}</div>` : ''}
     <div class="pp-desc">${linkRefs(p.d)}</div>
     <button class="nb-add" onclick="nbAddPerson()">📝＋ Add to Study</button>
@@ -6594,6 +6610,7 @@ async function openPerson(id, pushHistory=true, scrollY=0){
   if(!(id in S._personOpen)) S._personOpen[id] = openVerses;
   if(S._personOpen[id]) await fillPersonVerses();
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+  sayHint();
 }
 async function togglePersonVerses(){
   const id = S._subView && S._subView.key;
@@ -6692,7 +6709,7 @@ function placeSearch(name){
 /* ── Place page ── */
 SUBVIEWS.place = { mode:'names', browse:'names-browse', view:'place-view', open:(k, push, y) => openPlace(k, push, y) };
 async function openPlace(id, pushHistory=true, scrollY=0){
-  await ensureNameIndex();
+  await Promise.all([ensureNameIndex(), loadSay()]);
   const p = S._places && S._places[id];
   if(!p) return;
   enterSubView('place', id, pushHistory);
@@ -6711,6 +6728,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
   view.innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
     <div class="dv-title">${escapeHtml(p.n)}</div>
+    ${sayRow(p.n, 'name')}
     ${p.a ? `<div class="pp-aka-line">Also spelled ${p.a.map(escapeHtml).join(', ')}</div>` : ''}
     <div class="pp-meta">${escapeHtml(placeType(p.t))}${n ? ` · Named in ${n} verse${n !== 1 ? 's' : ''}` : ''}</div>
     <button class="nb-add" onclick="nbAddPlace()">📝＋ Add to Study</button>
@@ -6744,6 +6762,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
   if(!(id in S._placeOpen)) S._placeOpen[id] = openVerses;
   if(S._placeOpen[id]) await fillPlaceVerses();
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+  sayHint();
 }
 // A disputed site: each view's site, why it is held, and all of them on one map
 async function plViews(id){
@@ -8623,7 +8642,7 @@ function dictRow(word, pos, text, isNote){
 /* ── Entry page ── */
 SUBVIEWS.word = { mode:'dict', browse:'dict-browse', view:'word-view', open:(k, push, y) => openWord(k, push, y) };
 async function openWord(key, pushHistory=true, scrollY=0){
-  const r = await lookupWord(key);
+  const [r] = await Promise.all([lookupWord(key), loadSay()]);
   if(!r) return;
   enterSubView('word', key, pushHistory);
   const view = document.getElementById('word-view');
@@ -8636,6 +8655,7 @@ async function openWord(key, pushHistory=true, scrollY=0){
         const paras = html.match(/<p\b[\s\S]*?<\/p>/g) || [];
         const long = paras.length > LONG + 1;
         return `<div class="wd-head"><span class="wd-word">${escapeHtml(wdTitle(head))}</span>${pos ? ` <span class="wd-pos">${escapeHtml(pos)}</span>` : ''}</div>
+          ${i === 0 ? sayRow(wdTitle(head), 'word') : ''}
           ${i === 0 && r.note ? `<div class="wd-kjv"><div class="wd-kjv-l">In the King James Bible</div>${noteLinks(r.note)}</div>` : ''}
           ${html ? `<div class="wd-def${long ? ' wd-short' : ''}" id="wd-def-${i}">${long ? paras.slice(0, LONG).join('') : html}</div>
             ${long ? `<button class="wd-more" onclick="wdShowAll(${i})">Show the full entry</button>` : ''}` : ''}`;
@@ -8648,6 +8668,7 @@ async function openWord(key, pushHistory=true, scrollY=0){
     <div class="nv-credit">Noah Webster, An American Dictionary of the English Language (1828 — public domain); transcription by akaitsurugi/webster1828, CC BY-SA 4.0. Scripture references checked against the KJV.</div>`;
   S._wordShown = r;
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+  sayHint();
   wordFirstMention(r);
 }
 // "⭐ First mention in Scripture: Genesis 6:8" — the law of first mention
@@ -8910,6 +8931,74 @@ function concordSearch(word){
   if(inp) inp.value = word;
   S._exactNext = true;
   doSearch(word);
+}
+
+/* ════ HEAR IT — a name or word said aloud ════
+   The phone's own voice (speechSynthesis): nothing to download or pay for,
+   and it works offline where the phone has a voice installed. Hard names
+   and old words have a sound-it-out spelling in pronounce.json (built by
+   tools/build-pronounce.js) that is shown under the word and given to the
+   voice, so it says Mephibosheth as meh-FIB-oh-sheth rather than guessing.
+   Names and words are looked up apart (the man Job, the word job). */
+const SAY_URL = 'pronounce.json?v=2026-10-06'; // bump v= whenever tools/build-pronounce.js is re-run
+const sayOK = () => 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function';
+function loadSay(){
+  if(S._say) return Promise.resolve(S._say);
+  return loadCachedJSON(SAY_URL).then(d => S._say = d).catch(() => ({names: {}, words: {}}));
+}
+// [shown, spoken] for a name or word, or null; kind 'name' looks at names first
+function sayGuide(text, kind){
+  const d = S._say, k = namesNorm(text);
+  if(!d || !k) return null;
+  const order = kind === 'word' ? [d.words, d.names] : [d.names, d.words];
+  const g = order[0][k] || (k.length > 3 ? order[1][k] : null);
+  if(!g) return null;
+  const shown = Array.isArray(g) ? g[0] : g;
+  // The voice gets the syllables in small letters; a lone "ay" or "ee" as letters
+  const spoken = Array.isArray(g) ? g[1] : shown.toLowerCase().split('-').map(s => s === 'ay' ? 'A' : s === 'ee' ? 'E' : s === 'oo' ? 'ooh' : s).join('-');
+  return [shown, spoken];
+}
+// An English voice on the phone itself, if there is one
+function sayVoice(){
+  const vs = speechSynthesis.getVoices().filter(v => /^en(-|_|$)/i.test(v.lang));
+  return vs.find(v => /en[-_]US/i.test(v.lang) && v.localService) || vs.find(v => v.localService) || vs.find(v => /en[-_]US/i.test(v.lang)) || vs[0] || null;
+}
+if(sayOK()) speechSynthesis.getVoices(); // some phones load their voices on first ask
+// Tap again soon after and it says it more slowly
+function sayIt(btn){
+  if(!sayOK() || !btn) return;
+  const text = btn.dataset.w, kind = btn.dataset.k;
+  const g = sayGuide(text, kind);
+  const again = S._sayLast === text && Date.now() - (S._sayAt || 0) < 6000;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(g ? g[1] : text.replace(/-/g, ' '));
+  const v = sayVoice();
+  if(v) u.voice = v;
+  u.lang = v ? v.lang : 'en-US';
+  u.rate = again ? 0.55 : 0.85;
+  document.querySelectorAll('.say-btn.on').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  u.onend = u.onerror = () => btn.classList.remove('on');
+  S._sayLast = text; S._sayAt = Date.now();
+  speechSynthesis.speak(u);
+}
+// "🔊 Hear it · meh-FIB-oh-sheth" under a name or word (the spelling alone
+// where the phone has no voice; nothing at all if neither)
+function sayRow(text, kind){
+  if(!text) return '';
+  const g = sayGuide(text, kind), can = sayOK();
+  if(!g && !can) return '';
+  return `<div class="say-row">${can ? `<button class="say-btn" data-w="${escapeHtml(text)}" data-k="${kind}" onclick="event.stopPropagation();sayIt(this)" aria-label="Hear ${escapeHtml(text)} said aloud">🔊 Hear it</button>` : ''}`
+    + (g ? `<span class="say-guide">${can ? '' : '<span class="say-l">Say it:</span> '}${g[0].split('-').map(s => s === s.toUpperCase() ? `<b>${s}</b>` : s).join('-')}</span>` : '')
+    + `</div>`;
+}
+function sayHint(){ if(sayOK()) hintMaybe('say', 900); }
+// On the verse card, under a word or name tapped in "Words / Names in this verse"
+function vpopSay(id, text, kind){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = sayRow(text, kind); el.dataset.w = text;
+  if(!S._say) loadSay().then(() => { if(el.dataset.w === text) el.innerHTML = sayRow(text, kind); });
 }
 
 /* ════ BIBLE NAMES — browsable A–Z index ════
@@ -11925,6 +12014,7 @@ const TOOL_TIPS = {
     ['📖', '<strong>Webster’s 1828</strong> with our church’s KJV notes on top — type any word, or browse the KJV word list'],
     ['⭐', 'A word shows its <strong>first mention in Scripture</strong> and how many verses use it; the references in an entry are links'],
     ['📝', 'While reading, <strong>tap a verse</strong> — its hard words are listed with their meaning, and “Full dictionary entry →” opens them here'],
+    ['🔊', '<strong>🔊 Hear it</strong> says the word aloud (tap again for slowly); old words like <em>shew</em>, <em>divers</em> and <em>victuals</em> show how to say them'],
   ]},
   topics: {i:'📚', t:'Topics', tips:[
     ['📚', '<strong>Nave’s Topical Bible</strong> — about 5,300 subjects A–Z, each with its passages arranged by sub-topic'],
@@ -11942,6 +12032,7 @@ const TOOL_TIPS = {
     ['📍', '<strong>About 1,200 places</strong> — where each was today, how far from Jerusalem, what was nearby, the journeys through it and every verse that names it'],
     ['⚖️', 'A <strong>disputed site</strong> shows each view, why it is held, and all of them on one map'],
     ['📖', 'While reading, <strong>tap a verse</strong> to see the people and places in it'],
+    ['🔊', '<strong>🔊 Hear it</strong> on a name, person or place says it aloud — tap again to hear it slowly. About 660 hard names are written the way they sound, the strong part in capitals (<strong>meh-FIB-oh-sheth</strong>)'],
   ]},
   hymns: {i:'🎵', t:'Hymns', tips:[
     ['🎵', '<strong>98 hymns of the faith</strong> whose words are in the public domain, each with the Scriptures behind it — tap a 📖 reference to read it'],
@@ -11996,6 +12087,7 @@ const HINTS = {
   notes:    {i:'📝', t:'Your Notes', b:'Everything you have kept is here: <b>My Verses</b> (lists you name), your <b>Highlights</b>, verse <b>Notes</b> and your <b>Studies</b>. The box at the top searches all of it.', at:'#tab-bm'},
   notebook: {i:'✍️', t:'Your Study Notebook', b:'Write a lesson or sermon here. <b>🔖</b> brings in verses from your lists, <b>📝＋</b> anywhere in the app adds to it, and <b>🎦 Present</b> turns it into slides.', at:'#nb-tools button', tt:'notebook'},
   search:   {i:'🔎', t:'Look anything up', b:'Type a verse (“John 3:16”), a word or a phrase. Or open a tool below — <b>Doctrines</b>, the <b>Dictionary</b>, <b>Topics</b>, <b>Maps</b>, the <b>Timeline</b> and more.', at:'#s-input'},
+  say:      {i:'🔊', t:'Hear it said', b:'Tap <b>🔊 Hear it</b> to hear a name or word said aloud — tap it again to hear it slowly. Hard names are written the way they sound, with the strong part in capitals: <b>meh-FIB-oh-sheth</b>.', at:'.say-btn'},
   sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and come back when it is due for review — badges mark your progress. In First Letters and Full Recall you can tap <b>🎤</b> and say the verse aloud.', at:null},
 };
 const HINT_GAP = 8000; // at least this long between two hints
@@ -14785,6 +14877,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v55" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔊</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Hear It Said</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Not sure how to say <strong>Mephibosheth</strong> or <strong>Zerubbabel</strong>? Tap <strong>🔊 Hear it</strong> on any name, person, place or dictionary word — tap again to hear it slowly. Hard names are written the way they sound (<strong>meh-FIB-oh-sheth</strong>), and on a verse card, tap a word or name in the verse to hear it too.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v55" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎤</div>
       <div>
