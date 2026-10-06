@@ -6,6 +6,12 @@
 
 ## New Features
 
+### 🖍 Colours with Meaning & a Daily Reminder (v53)
+- **Name your highlight colours**: ✏️ beside the colours in the verse card opens a sheet to give each a meaning — your own words, or a tap on an idea (Promises · Commands · Salvation · Prayer, or Father · Christ · Spirit · Grace). The names show under the colours, a highlight in a named colour says so (“Psalms 23:1 · Promises”), and the names travel with the restore code
+- **Notes → Highlights by colour**: a chip for each colour with its name and count — pick one to see only those verses, each card showing its colour's name. **🔖 Save Promises as a list** puts that colour's verses into My Verses (in Bible order), ready to share, present, drill or put in a study. **✏️ Name / Rename colours** is there too
+- **🔔 A daily reading reminder — only if you ask for it.** Starting a plan offers it once (“Would you like a reminder?” · Morning 7 am · Midday noon · Evening 7 pm · No thanks); after that it is on the Plans page under your plans (“🔔 Remind me to read each day” / “Daily reminder: Evening · 7 pm”), where it can be changed or turned off. The note names your next reading (“Next in your reading plan: Proverbs 5 · Matthew 23”) and opens the Plans page. It is per device, uses the same notifications as the Verse of the Day (on iPhone, the app must be added to the Home Screen), and keeps up as you read
+- New workflow **plan-nudge.yml** sends the reminders each day through OneSignal to just the devices that chose a time, delivered at that hour in each person's own timezone
+
 ### 🏅 Days in the Word (v52)
 - **A calendar of the days you read** in the 🔥 streak panel: each day is shaded by how many chapters you read (one, two or three, four or more), today is ringed, ‹ › step through the months, and a month's total is underneath. **Tap a day** to see the chapters you read and tap one to open it
 - **Every chapter counts** once you have read to the end of it (at least 20 seconds on it) — the rule the plans use — whether or not it is in a plan. ✓ Mark read on a plan counts its chapters too. Your plans' dated progress fills in the calendar's past
