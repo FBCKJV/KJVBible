@@ -6,6 +6,12 @@
 
 ## New Features
 
+### 💡 Help as You Go (v50)
+- **Hints the first time you reach a feature** — one short, friendly card in large, plain type, shown once and never again: Home, reading a chapter (tap a verse; press and hold to pick several), the verse card (highlight, 🔖 Save to a list, Note), Reading Plans, Notes, the Study Notebook, Search and Sword Drill. **👉 Show me** dims the screen and rings the button it means; **Got it**, or a tap anywhere, puts it away (and the tap still does what you tapped)
+- Never in the way: one hint at a time, at least a few seconds apart, and never over the welcome screen, What's New, the tour or a question. Seeing a hint also counts as opening that tool's **?**, so its gold dot goes
+- **A welcome tour for new people** — four swipeable cards straight after the welcome screen (Read God's Word · Look things up · Read every day · Keep what you find), with **Skip** always there. Anyone updating sees What's New instead, then the hints
+- **⚙ Settings → Help as you go**: Helpful hints **On / Off**, **Show the welcome tour**, **Show all hints again** — handy when helping someone set up their phone. **Tips & Help** opens with **Take the welcome tour**. Hints seen and the on/off choice travel with the restore code
+
 ### 🔖 My Verses (v49)
 - **Bookmarks become lists you name.** Tap a verse, then **🔖 Save** (it was Bookmark): a sheet lists your lists with a tick by each one the verse is in; tap to add or take it out, or type a name for a new list. A verse can be in any number of lists, and the button shows how many (“In 2 lists”)
 - **Passages**: long-press to select verses, then **Save** — verses next to each other are kept as one passage (John 10:27–29) with each verse's number

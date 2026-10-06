@@ -1163,6 +1163,39 @@ body.light #home-watermark{
 /* ── TIPS SHEET ── */
 #tips-sheet,#settings-sheet,#memadd-sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:490;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
 #tips-sheet.on,#settings-sheet.on,#memadd-sheet.on{display:flex}
+/* Helpful hints and the welcome tour (v50): large, plain and never in the way */
+#hint-card{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);width:min(440px,calc(100% - 24px));background:var(--bg2);border:1.5px solid var(--gold-d);border-radius:16px;padding:16px 16px 10px;z-index:661;box-shadow:0 14px 40px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+#hint-card.top{bottom:auto;top:calc(70px + env(safe-area-inset-top,0px))}
+#hint-card.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.hint-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.hint-ico{font-size:26px;line-height:1}
+.hint-t{font-family:'IM Fell English',serif;font-size:21px;color:var(--gold);line-height:1.15}
+.hint-b{font-family:'Crimson Pro',serif;font-size:18px;line-height:1.45;color:var(--text)}
+.hint-b b{color:var(--gold)}
+.hint-acts{display:flex;gap:8px;margin-top:12px}
+.hint-acts button{flex:1;min-height:46px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+.hint-ok{background:var(--gold);color:var(--bg);border:1px solid var(--gold)}
+.hint-show{background:var(--surface);color:var(--gold);border:1px solid var(--gold-d)}
+.hint-off{display:block;margin:8px auto 0;background:none;border:none;color:var(--text-m);font-size:12px;cursor:pointer;text-decoration:underline;padding:4px}
+#hint-ring{position:fixed;z-index:660;border-radius:12px;box-shadow:0 0 0 3px var(--gold-l),0 0 0 9999px rgba(0,0,0,.55);pointer-events:none;display:none;animation:hintPulse 1.6s ease-in-out infinite}
+#hint-ring.on{display:block}
+@keyframes hintPulse{0%,100%{box-shadow:0 0 0 3px var(--gold-l),0 0 0 9999px rgba(0,0,0,.55)}50%{box-shadow:0 0 0 7px var(--gold-l),0 0 0 9999px rgba(0,0,0,.55)}}
+@media (prefers-reduced-motion:reduce){#hint-ring{animation:none}#hint-card{transition:none}}
+#tour{position:fixed;inset:0;z-index:680;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(6px)}
+#tour.on{display:flex}
+#tour-inner{position:relative;width:min(440px,100%);background:linear-gradient(160deg,var(--bg3),var(--bg2));border:1px solid var(--gold-d);border-radius:22px;padding:34px 22px 20px;text-align:center;animation:su .25s ease}
+#tour-skip{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text-m);font-size:15px;font-weight:600;cursor:pointer;padding:6px}
+.tour-ico{font-size:58px;line-height:1;margin-bottom:12px}
+.tour-t{font-family:'IM Fell English',serif;font-size:27px;color:var(--gold);margin-bottom:10px}
+.tour-b{font-family:'Crimson Pro',serif;font-size:19px;line-height:1.5;color:var(--text);min-height:7.5em}
+.tour-b b{color:var(--gold)}
+#tour-dots{display:flex;justify-content:center;gap:8px;margin:14px 0}
+#tour-dots span{width:9px;height:9px;border-radius:50%;background:var(--border)}
+#tour-dots span.on{background:var(--gold);width:22px;border-radius:5px}
+#tour-nav{display:flex;gap:10px}
+#tour-nav button{flex:1;min-height:50px;border-radius:13px;font-size:17px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif}
+#tour-back{background:none;border:1px solid var(--border);color:var(--text-d)}
+#tour-next{background:var(--gold);border:1px solid var(--gold);color:var(--bg);flex:2!important}
 #ask-sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:700;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 #ask-sheet.on{display:flex}
 #ask-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:520px;padding:20px 18px calc(16px + env(safe-area-inset-bottom));animation:su .22s ease;display:flex;flex-direction:column;gap:10px}
@@ -2154,6 +2187,7 @@ body.light #home-watermark{
       <button id="tips-close" onclick="closeTips()">✕</button>
     </div>
     <div id="tips-body">
+      <button class="set-link" onclick="closeTips();setTimeout(tourStart,250)">👋 Take the welcome tour<span>›</span></button>
 
       <!-- Add to Home Screen -->
       <div class="tips-section">
@@ -2232,6 +2266,18 @@ body.light #home-watermark{
       <div class="tips-section">
         <button class="set-link" onclick="showTips()">❓ Tips &amp; Help<span>›</span></button>
         <button class="set-link" onclick="showSharePop()">📤 Share this app (QR code)<span>›</span></button>
+      </div>
+      <div class="tips-section">
+        <div class="tips-section-lbl">💡 Help as you go</div>
+        <div class="set-row">
+          <div class="set-lbl">Helpful hints</div>
+          <div class="set-ctrl" id="set-hints">
+            <button class="set-seg" data-v="on" onclick="hintsSet(true)">On</button>
+            <button class="set-seg" data-v="off" onclick="hintsSet(false)">Off</button>
+          </div>
+        </div>
+        <button class="set-link" onclick="closeSettings();setTimeout(tourStart,250)">👋 Show the welcome tour<span>›</span></button>
+        <button class="set-link" onclick="hintsReset()">💡 Show all hints again<span>›</span></button>
       </div>
       <div class="tips-section">
         <div class="tips-section-lbl">🖋️ Display</div>
@@ -2421,6 +2467,17 @@ body.light #home-watermark{
 <div id="mem-toast"></div>
 
 <!-- ADD-YOUR-OWN MEMORY VERSE -->
+<!-- Helpful hints (hintShow) and the welcome tour (tourStart) -->
+<div id="hint-ring" aria-hidden="true"></div>
+<div id="hint-card" role="status" aria-live="polite"></div>
+<div id="tour" role="dialog" aria-modal="true" aria-label="Welcome tour">
+  <div id="tour-inner">
+    <button id="tour-skip" onclick="tourEnd()">Skip</button>
+    <div id="tour-card"></div>
+    <div id="tour-dots"></div>
+    <div id="tour-nav"><button id="tour-back" onclick="tourStep(-1)">‹ Back</button><button id="tour-next" onclick="tourStep(1)">Next ›</button></div>
+  </div>
+</div>
 <!-- Save verses to My Verses lists (colSheet) -->
 <div id="col-sheet" onclick="if(event.target===this)closePopover('col-sheet')" role="dialog" aria-modal="true" aria-labelledby="col-hd-t">
   <div id="col-inner">
@@ -3213,7 +3270,7 @@ function updateHomeNotes(){
   const icon = `<span class="hw-ico"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></span>`;
   if(!nb && !nh && !nn && !ns){
     el.classList.remove('open');
-    el.innerHTML = `<button class="hw-hd" onclick="showScreen('saved')">${icon}<span class="hw-tt"><span class="hw-lbl">Notes</span><span class="hw-peek">Bookmarks, highlights, notes and studies</span></span><span class="hw-go">›</span></button>`;
+    el.innerHTML = `<button class="hw-hd" onclick="showScreen('saved')">${icon}<span class="hw-tt"><span class="hw-lbl">Notes</span><span class="hw-peek">My Verses, highlights, notes and studies</span></span><span class="hw-go">›</span></button>`;
     return;
   }
   const latest = studies[0] && ns ? `Latest: ${escapeHtml(studies[0].t)} · ${when(studies[0].u)}`
@@ -3376,6 +3433,7 @@ function renderReader(){
   updateHeaderState();
   addXRefMarkers();
   planReadWatch();
+  hintMaybe('reader', 1500);
 }
 
 /* ════ MULTI-SELECT ════ */
@@ -3590,6 +3648,7 @@ function multiScreenshot(){
 
 /* ════ SINGLE VERSE POPUP ════ */
 function openVPop(ref,txt){
+  hintMaybe('verse', 650);
   S.popRef=ref;S.popTxt=txt;
   document.getElementById('vpop-ref').textContent=ref;
   document.getElementById('vpop-txt').textContent=txt;
@@ -4219,8 +4278,9 @@ function showScreen(name, pushHistory=true){
   if(name!=='reader' && SA.chMode){
     scourbyStopChapter();
   }
-  if(name==='saved')  renderSaved();
-  if(name==='plans')  renderPlansScreen();
+  if(name==='saved')  { renderSaved(); hintMaybe('notes'); }
+  if(name==='plans')  { renderPlansScreen(); hintMaybe('plans'); }
+  if(name==='books')  hintMaybe('home', 1200);
   if(name==='reader') setTimeout(()=>{showParallelBar();addXRefMarkers();}, 80);
   if(name==='books')  updateContinueBanner();
   if(name!=='reader') exitSelectMode();
@@ -4251,7 +4311,7 @@ function goBack(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
+const POPOVER_IDS = ['tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
 // Order the cards were opened in: on a wide screen several can be open side
 // by side (the verse card beside the notebook), and Back closes the newest
 let LAYER_SEQ = 0;
@@ -6934,6 +6994,7 @@ function nbOpen(){
   document.getElementById('nb-menu').classList.remove('on');
   document.getElementById('nb-status').textContent = 'Saved on this device';
   openPopover('nb-panel');
+  hintMaybe('notebook', 800);
 }
 let _nbTimer = null;
 function nbStore(){
@@ -7350,6 +7411,7 @@ function openSearchTab(){
   }
   showScreen('search');   // pushes the Search entry
   clearToHub();
+  hintMaybe('search', 900);
 }
 
 /* ════ WHERE IS THIS? — the Bible lands map ════
@@ -11181,6 +11243,149 @@ function ttCat(){
 }
 document.addEventListener('DOMContentLoaded', ttRefresh);
 
+/* ════ HELPFUL HINTS & THE WELCOME TOUR (v50) ════
+   A hint is one short, friendly card shown the first time someone reaches a
+   feature — never again after that. "Show me" dims the screen and rings the
+   button it is talking about; "Got it", or a tap anywhere, puts it away.
+   Only one hint at a time, a few seconds apart, and never over the welcome
+   screen, What's New or the tour. Seen hints (kjv_hints_seen) and the on/off
+   switch (kjv_hints_off) travel with the restore code. Seeing a hint also
+   counts as opening that tool's ?, so its gold dot goes.
+   The tour is four cards for brand-new people only, straight after the
+   welcome screen; Skip is always there, and Tips & Help shows it again. */
+const HINTS = {
+  home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
+  reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share or save them together.', at:'#verses .vblock'},
+  verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it. <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it.', at:'#pa-bm'},
+  plans:    {i:'📅', t:'Reading Plans', b:'Pick a plan and read <b>at your own pace</b> — you can run more than one. A chapter checks off when you reach the end of it, and your 🔥 streak grows each day you read.', at:'#plans-inner .pl-btn'},
+  notes:    {i:'📝', t:'Your Notes', b:'Everything you have kept is here: <b>My Verses</b> (lists you name), your <b>Highlights</b>, verse <b>Notes</b> and your <b>Studies</b>. The box at the top searches all of it.', at:'#tab-bm'},
+  notebook: {i:'✍️', t:'Your Study Notebook', b:'Write a lesson or sermon here. <b>🔖</b> brings in verses from your lists, <b>📝＋</b> anywhere in the app adds to it, and <b>🎦 Present</b> turns it into slides.', at:'#nb-tools button', tt:'notebook'},
+  search:   {i:'🔎', t:'Look anything up', b:'Type a verse (“John 3:16”), a word or a phrase. Or open a tool below — <b>Doctrines</b>, the <b>Dictionary</b>, <b>Topics</b>, <b>Maps</b>, the <b>Timeline</b> and more.', at:'#s-input'},
+  sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and come back when it is due for review — badges mark your progress.', at:null},
+};
+const HINT_GAP = 8000; // at least this long between two hints
+function hintsOn(){ return !LS.get('kjv_hints_off', false); }
+function hintSeen(k){ return (LS.get('kjv_hints_seen', []) || []).includes(k); }
+function hintBlocked(){
+  const vis = id => { const el = document.getElementById(id); return el && (el.classList.contains('on') || el.style.display === 'flex'); };
+  // What's New is still to come for this update: wait for it
+  const wnDue = localStorage.getItem('kjv_rc') && localStorage.getItem('kjv_whatsnew') !== WHATS_NEW_VERSION;
+  return wnDue || vis('onboard-modal') || vis('whatsnew-modal') || vis('tour') || vis('ask-sheet') || vis('col-sheet') || vis('settings-sheet') || vis('tips-sheet') || vis('tt-pop');
+}
+// Ask for a hint; it shows only if it is new, hints are on and nothing else is up
+function hintMaybe(k, delay = 700){
+  const h = HINTS[k];
+  if(!h || !hintsOn() || hintSeen(k)) return;
+  if(S._hintOpen || Date.now() - (S._hintAt || 0) < HINT_GAP) return;
+  clearTimeout(S._hintTimer);
+  S._hintTimer = setTimeout(() => {
+    if(!hintsOn() || hintSeen(k) || S._hintOpen || hintBlocked()) return;
+    hintShow(k);
+  }, delay);
+}
+function hintTarget(h){
+  if(!h.at) return null;
+  const el = [...document.querySelectorAll(h.at)].find(e => e.offsetParent !== null || e.getClientRects().length);
+  return el || null;
+}
+function hintShow(k){
+  const h = HINTS[k], card = document.getElementById('hint-card');
+  const seen = LS.get('kjv_hints_seen', []) || [];
+  if(!seen.includes(k)){ seen.push(k); LS.set('kjv_hints_seen', seen); fbSyncSoon(); }
+  if(h.tt){ const t = ttSeen(); if(!t.includes(h.tt)){ t.push(h.tt); LS.set(TT_SEEN, t); ttRefresh(); } }
+  S._hintOpen = k; S._hintAt = Date.now();
+  const target = hintTarget(h);
+  card.innerHTML = `<div class="hint-top"><span class="hint-ico">${h.i}</span><span class="hint-t">${h.t}</span></div>
+    <div class="hint-b">${h.b}</div>
+    <div class="hint-acts">${target ? `<button class="hint-show" onclick="hintSpot()">👉 Show me</button>` : ''}<button class="hint-ok" onclick="hintClose()">Got it</button></div>
+    <button class="hint-off" onclick="hintsSet(false);hintClose()">Turn off hints</button>`;
+  card.classList.remove('top');
+  if(target){
+    const r = target.getBoundingClientRect();
+    if(r.top > window.innerHeight * .55) card.classList.add('top'); // keep clear of what it points at
+  }
+  card.classList.add('on');
+}
+// Dim the screen and ring the button the hint is about
+function hintSpot(){
+  const h = HINTS[S._hintOpen], el = h && hintTarget(h), ring = document.getElementById('hint-ring');
+  if(!el){ hintClose(); return; }
+  el.scrollIntoView({block: 'center', behavior: 'auto'});
+  setTimeout(() => {
+    const r = el.getBoundingClientRect(), pad = 6;
+    Object.assign(ring.style, {left: (r.left - pad) + 'px', top: (r.top - pad) + 'px', width: (r.width + pad * 2) + 'px', height: (r.height + pad * 2) + 'px'});
+    ring.classList.add('on');
+    const card = document.getElementById('hint-card');
+    card.classList.toggle('top', r.top > window.innerHeight * .5);
+    card.querySelector('.hint-show')?.remove();
+  }, 120);
+}
+function hintClose(){
+  document.getElementById('hint-card').classList.remove('on');
+  document.getElementById('hint-ring').classList.remove('on');
+  S._hintOpen = null; S._hintAt = Date.now();
+}
+// A tap anywhere outside the card puts the hint away (and still does what was tapped)
+document.addEventListener('pointerdown', e => {
+  if(S._hintOpen && !e.target.closest('#hint-card')) hintClose();
+}, true);
+function hintsSet(on){
+  LS.set('kjv_hints_off', !on); fbSyncSoon();
+  hintsSettingShow();
+  if(!on) showToast('Hints are off — turn them back on in ⚙ Settings');
+}
+function hintsReset(){
+  LS.set('kjv_hints_seen', []); LS.set('kjv_hints_off', false); fbSyncSoon();
+  hintsSettingShow();
+  showToast('💡 Hints will show again as you use the app');
+}
+function hintsSettingShow(){
+  document.querySelectorAll('#set-hints .set-seg').forEach(b => b.classList.toggle('on', (b.dataset.v === 'on') === hintsOn()));
+}
+
+// ── The welcome tour ──
+const TOUR = [
+  {i:'📖', t:'Read God’s Word', b:'Choose a book and chapter from Home. <b>Continue Reading</b> brings you back to where you stopped. Tap any verse to highlight it, save it or write a note.'},
+  {i:'🔎', t:'Look things up', b:'Search any verse, word or phrase. Open <b>Doctrines</b>, the <b>Dictionary</b>, <b>Topics</b>, <b>Names</b>, <b>Maps</b>, the <b>Timeline</b> and <b>Hymns</b> — each leads back to the verses.'},
+  {i:'📅', t:'Read every day', b:'A <b>Reading Plan</b> takes you through Proverbs, the New Testament or the whole Bible at your own pace. Your <b>🔥 streak</b> counts the days you read.'},
+  {i:'📝', t:'Keep what you find', b:'Save verses to <b>lists you name</b>, write notes and whole <b>studies</b>, present them as slides, and hide verses in your heart with <b>⚔ Sword Drill</b>.'},
+];
+function tourStart(){
+  S._tour = 0;
+  tourRender();
+  openPopover('tour');
+}
+function tourRender(){
+  const i = S._tour, c = TOUR[i], last = i === TOUR.length - 1;
+  document.getElementById('tour-card').innerHTML = `<div class="tour-ico">${c.i}</div><div class="tour-t">${c.t}</div><div class="tour-b">${c.b}</div>`;
+  document.getElementById('tour-dots').innerHTML = TOUR.map((_, k) => `<span class="${k === i ? 'on' : ''}"></span>`).join('');
+  document.getElementById('tour-next').textContent = last ? 'Start reading ⚔️' : 'Next ›';
+  document.getElementById('tour-back').style.visibility = i ? 'visible' : 'hidden';
+  document.getElementById('tour-skip').style.visibility = last ? 'hidden' : 'visible';
+}
+function tourStep(d){
+  const n = S._tour + d;
+  if(n >= TOUR.length) return tourEnd();
+  if(n < 0) return;
+  S._tour = n; tourRender();
+}
+function tourEnd(){
+  closePopover('tour');
+  S._hintAt = 0;
+  if(S.screen === 'books') hintMaybe('home', 900);
+}
+(function tourSwipe(){
+  const el = document.getElementById('tour');
+  if(!el) return;
+  let x0 = null;
+  el.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, {passive: true});
+  el.addEventListener('touchend', e => {
+    if(x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0; x0 = null;
+    if(Math.abs(dx) > 50) tourStep(dx < 0 ? 1 : -1);
+  });
+})();
+
 function showTips(){
   const tt = document.getElementById('tt-all-tools');
   if(tt && !tt.children.length) tt.innerHTML = Object.values(TOOL_TIPS).map(t => `<details class="tt-tool"><summary>${t.i} ${escapeHtml(t.t)}</summary>${ttRows(t)}</details>`).join('');
@@ -11579,6 +11784,7 @@ function showToast(msg){
 
 /* ── OPEN / CLOSE / BACK ── */
 function openMemorize(){
+  hintMaybe('sword', 900);
   document.getElementById('mem-overlay').classList.add('on');
   document.getElementById('mem-close-btn').style.visibility='';
   history.pushState({screen:'mem-overlay'},'','');
@@ -13049,7 +13255,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v49';
+const WHATS_NEW_VERSION = 'v50';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -13072,12 +13278,16 @@ function showWhatsNewIfNeeded(){
   const shown = items.filter(el => !el.hidden);
   if(!shown.length) items.forEach(el => el.hidden = false); // never an empty pop-up
   (shown.length ? shown : items).slice(-1)[0].classList.add('wn-last');
+  // a hint caught under What's New has not really been seen
+  if(S._hintOpen){ LS.set('kjv_hints_seen', (LS.get('kjv_hints_seen', []) || []).filter(k => k !== S._hintOpen)); hintClose(); }
+  clearTimeout(S._hintTimer);
   modal.style.display = 'flex';
 }
 function dismissWhatsNew(){
   localStorage.setItem('kjv_whatsnew', WHATS_NEW_VERSION);
   const modal = document.getElementById('whatsnew-modal');
   if(modal) modal.style.display = 'none';
+  if(S.screen === 'books') hintMaybe('home', 900);
 }
 
 function obChooseNew(){
@@ -13113,6 +13323,7 @@ function obDismiss(){
   }
   const modal = document.getElementById('onboard-modal');
   if(modal) modal.style.display = 'none';
+  setTimeout(tourStart, 350);
 }
 
 async function obRestoreCode(){
@@ -13302,7 +13513,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies'
+  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies','kjv_hints_seen','kjv_hints_off'
 ];
 
 let _db = null;
@@ -13589,6 +13800,7 @@ function openSettings(){
   applyMargin(S.margin);
   applyFontFamily(S.fontFamily);
   document.querySelectorAll('#set-theme .set-seg').forEach(b=>b.classList.toggle('on', b.dataset.v===S.theme));
+  hintsSettingShow();
   const aa=document.getElementById('set-autoadv'); if(aa){ aa.textContent = SA.autoAdvance?'On':'Off'; aa.classList.toggle('on', SA.autoAdvance); }
   refreshAppVersion();
   setTimeout(checkOfflineStatus, 100);
@@ -13731,6 +13943,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v50" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">💡</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Help as You Go</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          The first time you reach a feature, a short friendly hint explains it — tap <strong>👉 Show me</strong> to see the button it means, or <strong>Got it</strong>. Each one shows only once. Turn them off (or show them all again) in <strong>⚙ Settings → Help as you go</strong>, where you will also find a short <strong>welcome tour</strong> — handy when helping someone new get started.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v49" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔖</div>
       <div>
