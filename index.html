@@ -3202,6 +3202,28 @@ const VOD=[
   {b:'John',c:8,v:31},{b:'John',c:8,v:36},{b:'John',c:10,v:9},{b:'John',c:10,v:27},{b:'John',c:11,v:25}
 ];
 
+/* ── How far back the Search page is ──
+   Each history entry made inside Search carries _hd, the number of steps
+   back to the Search page (the hub or its results), so "‹ Search" can step
+   back to it rather than add a new one on top — which made Back loop back
+   into the page just left. Undefined when the Search page is not below. */
+(function(){
+  const isHub = st => st && st.screen === 'search' && !st.sub && !st.modal && (!st.searchMode || st.searchMode === 'search');
+  const depth = st => {
+    if(!st || typeof st !== 'object' || '_hd' in st) return st;
+    const cur = history.state || {};
+    if(isHub(st)) return {...st, _hd: 0};
+    if(st.screen === 'search' && typeof cur._hd === 'number') return {...st, _hd: cur._hd + 1};
+    return st;
+  };
+  const push = history.pushState.bind(history), repl = history.replaceState.bind(history);
+  history.pushState = (st, t, u) => push(depth(st), t, u);
+  history.replaceState = (st, t, u) => {
+    if(st && typeof st === 'object' && !('_hd' in st) && !isHub(st) && st.screen === 'search' && typeof (history.state || {})._hd === 'number') st = {...st, _hd: history.state._hd};
+    return repl(depth(st), t, u);
+  };
+})();
+
 /* ════ INIT ════ */
 document.addEventListener('DOMContentLoaded',()=>{
   applyTheme(S.theme);
@@ -4794,6 +4816,7 @@ window.addEventListener('popstate', e => {
       // from (e.g. search results) → where that was scrolled
       else if(leaving && scroller) scroller.scrollTop = (S._listScroll || {})[state.searchMode] || 0;
     }
+    if(S._toHub){ S._toHub = false; clearToHub(); } // arrived here by the Search button in a tool's bar
   } else if(state.screen === 'reader' && state.book && (state.book !== S.book || state.ch !== S.ch)){
     // Restore the reader to the book/chapter this history entry describes —
     // needed when returning from a cross-reference jump into another book.
@@ -5247,7 +5270,7 @@ function renderDoctrines(){
       </div>
       <div class="doc-topics${open.has(ci)?' open':''}" id="dct-${ci}">
         ${cat.topics.map((t,ti)=>`
-          <div class="doc-topic" onclick="showDoctrineVerses(${ci},${ti})">
+          <div class="doc-topic" onclick="showDoctrineVerses(${ci},${ti},true,0,true)">
             <div class="doc-topic-name">${t.name}</div>
             <div class="doc-topic-desc">${t.desc}</div>
             <div class="doc-topic-refs">${t.refs.slice(0,4).join(' · ')}${t.refs.length>4?' · …':''}</div>
@@ -5256,6 +5279,14 @@ function renderDoctrines(){
     </div>`).join('');
 }
 
+// "All Doctrines": back to the list it came from, or open the list when the
+// topic was reached another way (Back still returns to where that was)
+function docBackToList(){
+  if((history.state || {}).fromList){ history.back(); return; }
+  // the list takes this topic's place, so Back goes to where the topic came from
+  history.replaceState({screen:'search', searchMode:'doctrine'}, '', '');
+  switchSearchMode('doctrine', false);
+}
 function toggleDocCat(ci){
   const topics = document.getElementById('dct-'+ci);
   const arr    = document.getElementById('dca-'+ci);
@@ -5268,7 +5299,8 @@ function toggleDocCat(ci){
 
 // pushHistory is false when Back returns to a topic (the history entry
 // already exists); scrollY then restores where the reader was in it.
-async function showDoctrineVerses(ci, ti, pushHistory=true, scrollY=0){
+// fromList: tapped in the list of doctrines (not a search, a verse or Continue)
+async function showDoctrineVerses(ci, ti, pushHistory=true, scrollY=0, fromList=false){
   const topic = DOCTRINES[ci].topics[ti];
   S._docTopic = [ci, ti]; S._docGroups = null;
   const panel = document.getElementById('doctrine-panel');
@@ -5277,12 +5309,12 @@ async function showDoctrineVerses(ci, ti, pushHistory=true, scrollY=0){
   if(pushHistory){
     // Remember the list position so Back from the topic lands where it was
     S._docListScroll = scroller ? scroller.scrollTop : 0;
-    history.pushState({screen:'search', searchMode:'doctrine', sub:'verses', ci, ti}, '', '');
+    history.pushState({screen:'search', searchMode:'doctrine', sub:'verses', ci, ti, fromList}, '', '');
     recordActivity();
   }
 
   panel.innerHTML = `
-    <button class="dv-back" onclick="history.back()">
+    <button class="dv-back" onclick="docBackToList()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       All Doctrines
     </button>
@@ -7809,6 +7841,9 @@ function clearToHub(){
 // "‹ Search" in a tool's bar, or the Search tab tapped while in Search
 function goSearchHome(){
   captureSearchSpot();
+  // The Search page is a few steps back: go back to it (popstate clears it to the hub)
+  const d = (history.state || {})._hd;
+  if(d > 0){ S._toHub = true; history.go(-d); return; }
   history.pushState({screen:'search'}, '', '');
   clearToHub();
 }
