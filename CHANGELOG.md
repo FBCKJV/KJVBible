@@ -6,6 +6,14 @@
 
 ## New Features
 
+### 🔁 Everything Leads Somewhere (v51)
+- **Verse of the Day** has three buttons under it: **🔖 Save** (to a My Verses list), **⚔️ Drill** (into Sword Drill's Custom Verses) and **📸 Card** (the verse card designer). Tapping the verse still opens its chapter
+- **Selected verses → ⚔️ Sword Drill**: long-press, pick verses, tap **Sword Drill** — they go into Custom Verses (verses side by side as one passage, up to 6 verses) and Sword Drill opens
+- **The long-press bar is back in its old order**: Select All · Screenshot · **Copy All** · Share across the top, then Save · Sword Drill · **Study** (moved to the end)
+- **A My Verses list → ⚔️ Drill** puts its verses in Custom Verses (a passage longer than 6 verses is left out, and the toast says so), and **📸** on each verse or passage opens the verse card designer with it
+- **✍️ Reading Journal**: at the end of every chapter, “Write about Proverbs 5 in your Reading Journal” opens a study called Reading Journal with today's date and the chapter (tap it to read it again), the cursor ready for your thoughts. Present it, share it or print it like any study
+- **CLAUDE.md**: the app's vision — everything leads back to the Word, and every way of using it (reading, plans, Sword Drill, studies and sermons) gets the same care — and the test every new feature must pass
+
 ### 💡 Help as You Go (v50)
 - **Hints the first time you reach a feature** — one short, friendly card in large, plain type, shown once and never again: Home, reading a chapter (tap a verse; press and hold to pick several), the verse card (highlight, 🔖 Save to a list, Note), Reading Plans, Notes, the Study Notebook, Search and Sword Drill. **👉 Show me** dims the screen and rings the button it means; **Got it**, or a tap anywhere, puts it away (and the tap still does what you tapped)
 - Never in the way: one hint at a time, at least a few seconds apart, and never over the welcome screen, What's New, the tour or a question. Seeing a hint also counts as opening that tool's **?**, so its gold dot goes
