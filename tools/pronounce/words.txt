@@ -24,7 +24,7 @@ cubit: KYOO-bit
 cummin: KUM-in
 daysman: DAYZ-mun
 divers: DYE-verz | die-verz
-emerods: EM-uh-rodz
+emerods: EM-uh-rodz | emma-rods
 ephah: EE-fuh
 ephod: EE-fod
 ephphatha: EF-fuh-thuh
