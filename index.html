@@ -76,6 +76,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .ch-btn:active{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 .ch-btn.has-note{border-color:var(--accent)}
 .ch-btn.has-hl{box-shadow:inset 0 0 0 2px var(--gold-d)}
+/* Chapters read (v55) */
+.ch-btn{position:relative}
+.ch-btn.read::after{content:'✓';position:absolute;top:2px;right:5px;font-size:11px;font-weight:700;color:var(--gold);font-family:'Inter',sans-serif}
+.chs-grid.marking .ch-btn{border-style:dashed}
+.chs-grid.marking .ch-btn.read{background:color-mix(in srgb,var(--gold) 22%,var(--surface));border-style:solid}
+.chs-read-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-4px 0 10px;font-size:12px;color:var(--text-m)}
+#chs-mark{background:none;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text-d);cursor:pointer;margin-left:auto}
+#chs-mark-tip{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text-d);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;margin-bottom:10px}
 
 /* READER */
 #screen-reader{padding:0}
@@ -1501,6 +1509,13 @@ body.light #home-watermark{
 .mg-btn.primary{background:var(--gold);border-color:var(--gold);color:var(--bg);font-weight:600}
 #mg-type{gap:8px;align-items:center}
 .mg-hint{flex-shrink:0;width:46px;height:46px;border-radius:12px;background:var(--surface);border:1px solid var(--border);font-size:20px;cursor:pointer}
+/* Say it aloud (v55) */
+#mg-mic.on{background:var(--red);border-color:var(--red);animation:micPulse 1.4s ease-in-out infinite}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(192,80,64,.5)}50%{box-shadow:0 0 0 8px rgba(192,80,64,0)}}
+#mg-voice-lbl{display:none;text-align:center;font-family:'Crimson Pro',serif;font-size:15px;color:var(--text-m);padding:4px 0 0;min-height:22px}
+#mg-voice-lbl.on{display:block}
+#mg-voice-lbl b{color:var(--gold)}
+@media (prefers-reduced-motion:reduce){#mg-mic.on{animation:none}}
 #mem-input{flex:1;min-width:0;height:46px;border-radius:12px;border:1.5px solid var(--gold-d);background:var(--surface);color:var(--text);font-family:'Crimson Pro',serif;font-size:19px;padding:0 14px;outline:none}
 #mem-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,148,58,.15)}
 #mem-input.bad{animation:mw-shake .35s ease;border-color:#d9534f}
@@ -1958,6 +1973,8 @@ body.light #home-watermark{
   <div class="screen" id="screen-chapters">
     <div style="padding:12px">
       <div class="ch-book-title" id="ch-book-title"></div>
+      <div class="chs-read-row"><span id="chs-read"></span><button id="chs-mark" onclick="chMarkMode()">✓ Mark chapters I read before</button></div>
+      <div id="chs-mark-tip" style="display:none">Tap each chapter you have already read. They count toward your Reading Journey and badges, but not your calendar.</div>
       <div class="chs-grid" id="chs-grid"></div>
       <div id="chs-audio-row" style="display:none;margin-top:16px">
         <button onclick="scourbyToggleFromChapters()"
@@ -2293,6 +2310,8 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
         <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
+        <div class="tip-row"><span class="tip-ico">🎤</span><span class="tip-txt"><strong>Say it aloud in Sword Drill</strong> — in First Letters or Full Recall, tap 🎤 beside the box and say the verse at your own pace; each word fills in as you say it. A word the phone mishears is simply passed over, and 💡 still helps. Tap 🎤 again to stop</span></div>
+        <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Chapters you have read</strong> show a ✓ in a book's chapter list. Read a book before the app counted? Tap <strong>✓ Mark chapters I read before</strong>, then the chapters — finish a book and it is celebrated and ticked off in your Reading Journey</span></div>
         <div class="tip-row"><span class="tip-ico">🧭</span><span class="tip-txt"><strong>Make your own plan</strong> at the bottom of the Plans page: pick the Gospels, Psalms, Paul’s letters, a Testament — or any books — and how many chapters a day. It works like the other plans: read at your own pace, chapters count when you reach the end</span></div>
         <div class="tip-row"><span class="tip-ico">↩️</span><span class="tip-txt"><strong>Undo</strong> — removing a highlight, note, list verse, list or study shows <strong>Undo</strong> for a few seconds</span></div>
         <div class="tip-row"><span class="tip-ico">🔔</span><span class="tip-txt"><strong>A daily reading reminder</strong> — on the Plans page, tap 🔔 and choose morning, midday or evening. Each day a short note on this device names your next reading; tap it to open your plans. Turn it off the same way</span></div>
@@ -2540,7 +2559,9 @@ body.light #home-watermark{
       <div id="mg-type">
         <button class="mg-hint" onclick="memHint()" title="Hint">💡</button>
         <input id="mem-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next" aria-label="Type here">
+        <button class="mg-hint" id="mg-mic" onclick="memVoice()" title="Say it aloud" aria-label="Say the verse aloud" style="display:none">🎤</button>
       </div>
+      <div id="mg-voice-lbl"></div>
       <div id="mg-order"></div>
     </div>
   </div>
@@ -3461,9 +3482,13 @@ async function selectBook(name){
     const pfx=`${name} ${i+1}:`;
     const d=document.createElement('div');
     d.className='ch-btn'+(Object.keys(S.notes).some(r=>r.startsWith(pfx))?' has-note':'')+(Object.keys(S.highlights).some(r=>r.startsWith(pfx))?' has-hl':'');
-    d.textContent=i+1;d.onclick=()=>selectCh(i);
+    d.textContent=i+1;d.onclick=()=>{ if(S._chMark) chMarkToggle(BOOKS.indexOf(name), i); else selectCh(i); };
     grid.appendChild(d);
   });
+  S._chMark = false; grid.classList.remove('marking');
+  const mb = document.getElementById('chs-mark'); if(mb) mb.textContent = '✓ Mark chapters I read before';
+  const mt = document.getElementById('chs-mark-tip'); if(mt) mt.style.display = 'none';
+  chGridMarks();
   // Show Scourby listen button if audio available
   const audioRow = document.getElementById('chs-audio-row');
   const audioLbl = document.getElementById('chs-scourby-label');
@@ -10471,7 +10496,7 @@ function readStats(log = readLog()){
   let nt = 0; all.forEach(k => { if(+k.split(':')[0] >= 39) nt++; });
   const bookDone = bi => { for(let c = 0; c < CH_COUNTS[bi]; c++) if(!all.has(bi + ':' + c)) return false; return true; };
   const books = BOOKS.map((_, bi) => bookDone(bi));
-  return {ch: all.size, nt, ot: all.size - nt, days: Object.keys(log).filter(d => (log[d] || []).length).length,
+  return {ch: all.size, nt, ot: all.size - nt, days: Object.keys(log).filter(d => /^\d{4}-/.test(d) && (log[d] || []).length).length,
     books, booksDone: books.filter(Boolean).length,
     plans: new Set(plansData().list.filter(p => p.fin && PLAN_DEFS[p.plan]).map(p => p.plan)),
     own: plansData().list.some(p => p.fin && p.def && p.def.custom)};
@@ -10490,11 +10515,72 @@ function logChapterRead(bi, ci){
     let full = true; for(let c = 0; c < CH_COUNTS[bi]; c++) if(!all.has(bi + ':' + c)){ full = false; break; }
     if(full){
       S.booksRead.add(BOOKS[bi]); LS.set('kjv_books_read', [...S.booksRead]); fbSyncSoon();
-      setTimeout(() => showToast(`📚 You have read all of ${BOOKS[bi]} — ticked off in your Reading Journey`), 900);
+      bookCelebrate(bi);
     }
   }
   badgesCheck();
 }
+// A book read right through, the first time: the milestone card and confetti
+function bookCelebrate(bi){
+  S._celebUntil = Date.now() + 700 + 4700; // badges earned with it wait their turn
+  setTimeout(() => {
+    const n = S.booksRead.size, toast = document.getElementById('milestone-toast');
+    document.getElementById('mt-icon').textContent = '📚';
+    document.getElementById('mt-text').innerHTML = `<div class="mt-title">${escapeHtml(BOOKS[bi])} — read through!</div><div class="mt-sub">${n} of 66 books in your Reading Journey</div>`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4500);
+    confettiBurst();
+  }, 700);
+}
+// Confetti over the whole screen (the Sword Drill kind)
+function confettiBurst(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv = document.createElement('canvas');
+  cv.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:640';
+  document.body.appendChild(cv);
+  cv.width = innerWidth; cv.height = innerHeight;
+  const ctx = cv.getContext('2d'), COLORS = ['#c9943a','#f5e6c8','#4CAF50','#ffffff','#e8c56a'];
+  const ps = Array.from({length: 90}, () => ({x: Math.random() * cv.width, y: -10 - Math.random() * cv.height * .4, r: 4 + Math.random() * 5,
+    c: COLORS[Math.random() * COLORS.length | 0], vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 3, rot: Math.random() * 360, vr: (Math.random() - .5) * 8}));
+  let f = 0;
+  (function draw(){
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    ps.forEach(p => { p.x += p.vx; p.y += p.vy; p.rot += p.vr; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180); ctx.fillStyle = p.c; ctx.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * .6); ctx.restore(); });
+    if(++f < 160) requestAnimationFrame(draw); else cv.remove();
+  })();
+}
+// Chapters read before v52 (or outside the app) can be marked, so a book
+// can be finished: kept under 'earlier' in the log, outside the calendar
+function chMarkToggle(bi, ci){
+  const log = readLog(), k = bi + ':' + ci, all = readAll(log);
+  if(all.has(k)){
+    // only an 'earlier' mark can be taken back; a dated reading stays
+    if((log.earlier || []).includes(k)){ log.earlier = log.earlier.filter(x => x !== k); LS.set(READ_KEY, log); fbSyncSoon(); }
+    else showToast('Read on ' + Object.keys(log).find(d => (log[d] || []).includes(k)));
+  } else {
+    (log.earlier || (log.earlier = [])).push(k);
+    LS.set(READ_KEY, log); fbSyncSoon();
+    const after = readAll(log);
+    let full = true; for(let c = 0; c < CH_COUNTS[bi]; c++) if(!after.has(bi + ':' + c)){ full = false; break; }
+    if(full && S.booksRead && !S.booksRead.has(BOOKS[bi])){ S.booksRead.add(BOOKS[bi]); LS.set('kjv_books_read', [...S.booksRead]); fbSyncSoon(); bookCelebrate(bi); }
+    badgesCheck();
+  }
+  chGridMarks();
+}
+function chMarkMode(){
+  S._chMark = !S._chMark;
+  document.getElementById('chs-grid').classList.toggle('marking', !!S._chMark);
+  const b = document.getElementById('chs-mark'); if(b) b.textContent = S._chMark ? '✓ Done marking' : '✓ Mark chapters I read before';
+  const tip = document.getElementById('chs-mark-tip'); if(tip) tip.style.display = S._chMark ? '' : 'none';
+}
+// ✓ on every chapter of this book you have read
+function chGridMarks(){
+  const bi = BOOKS.indexOf(S.book), all = readAll();
+  document.querySelectorAll('#chs-grid .ch-btn').forEach((el, ci) => el.classList.toggle('read', all.has(bi + ':' + ci)));
+  const n = [...document.querySelectorAll('#chs-grid .ch-btn.read')].length, t = CH_COUNTS[bi] || 0;
+  const lbl = document.getElementById('chs-read'); if(lbl) lbl.textContent = n ? `${n} of ${t} chapters read${n === t ? ' ✓' : ''}` : '';
+}
+
 // The plans' own dated progress fills in the calendar's past, once per device
 function readLogBackfill(){
   if(LS.get('kjv_read_bf', false)) return;
@@ -10538,7 +10624,7 @@ function badgesEarned(){ const b = LS.get(BADGE_KEY, null); return b && typeof b
 // The day each badge was first reached, replaying the reading log day by day
 // (a plan badge: the day the plan was finished)
 function badgeReplay(){
-  const log = readLog(), part = {}, when = {};
+  const log = readLog(), part = log.earlier ? {earlier: log.earlier} : {}, when = {};
   Object.keys(log).filter(d => /^\d{4}-\d\d-\d\d$/.test(d)).sort().forEach(d => {
     part[d] = log[d];
     const s = readStats(part);
@@ -10573,13 +10659,14 @@ function badgesCheck(quiet){
   if(!fresh.length) return;
   LS.set(BADGE_KEY, got); fbSyncSoon();
   if(quiet) return;
+  const start = Math.max(1200, (S._celebUntil || 0) - Date.now() + 300);
   fresh.forEach((b, i) => setTimeout(() => {
     const toast = document.getElementById('milestone-toast');
     document.getElementById('mt-icon').textContent = b.ico;
     document.getElementById('mt-text').innerHTML = `<div class="mt-title">${escapeHtml(b.n)}</div><div class="mt-sub">Badge earned — ${escapeHtml(b.d.toLowerCase())}</div>`;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3800);
-  }, 1200 + i * 4300));
+  }, start + i * 4300));
 }
 
 // ── The streak panel: calendar and badges ──
@@ -11909,7 +11996,7 @@ const HINTS = {
   notes:    {i:'📝', t:'Your Notes', b:'Everything you have kept is here: <b>My Verses</b> (lists you name), your <b>Highlights</b>, verse <b>Notes</b> and your <b>Studies</b>. The box at the top searches all of it.', at:'#tab-bm'},
   notebook: {i:'✍️', t:'Your Study Notebook', b:'Write a lesson or sermon here. <b>🔖</b> brings in verses from your lists, <b>📝＋</b> anywhere in the app adds to it, and <b>🎦 Present</b> turns it into slides.', at:'#nb-tools button', tt:'notebook'},
   search:   {i:'🔎', t:'Look anything up', b:'Type a verse (“John 3:16”), a word or a phrase. Or open a tool below — <b>Doctrines</b>, the <b>Dictionary</b>, <b>Topics</b>, <b>Maps</b>, the <b>Timeline</b> and more.', at:'#s-input'},
-  sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and come back when it is due for review — badges mark your progress.', at:null},
+  sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and come back when it is due for review — badges mark your progress. In First Letters and Full Recall you can tap <b>🎤</b> and say the verse aloud.', at:null},
 };
 const HINT_GAP = 8000; // at least this long between two hints
 function hintsOn(){ return !LS.get('kjv_hints_off', false); }
@@ -12441,11 +12528,13 @@ function openMemorize(){
   renderMemSelect();
 }
 function closeMemorize(){
+  memVoiceStop();
   document.getElementById('mem-overlay').classList.remove('on');
   M.active=null; M.done=true;
   document.getElementById('mem-input').blur();
 }
 function memBack(){
+  memVoiceStop();
   document.getElementById('mem-game').style.display='none';
   document.getElementById('mem-select').style.display='block';
   document.getElementById('mem-hdr-title').textContent='⚔ Sword Drill';
@@ -12770,6 +12859,7 @@ async function startMem(refStr){
   memRestart();
 }
 function memRestart(){
+  memVoiceStop();
   Object.assign(M, {revealed:new Set(), hidden:new Set(), peek:null, cur:0, mistakes:0, hints:0, hintLv:0, startTime:Date.now(), done:false, active:null});
   const g=document.getElementById('mem-game');
   g.dataset.mode=M.mode; g.classList.remove('done');
@@ -12783,6 +12873,7 @@ function memRestart(){
   inp.placeholder = M.mode==='letters' ? 'Type the first letter…' : 'Type the next word…';
   inp.setAttribute('autocapitalize','none');
   memRender();
+  memVoiceShow();
   if(M.mode==='letters'||M.mode==='full') memFocusInput();
 }
 function setMemMode(mode){
@@ -12791,7 +12882,7 @@ function setMemMode(mode){
   if(M.tokens && M.tokens.length) memRestart();
 }
 function memFocusInput(){
-  if(M.done || !(M.mode==='letters'||M.mode==='full')) return;
+  if(M.done || M.voice || !(M.mode==='letters'||M.mode==='full')) return;
   const inp=document.getElementById('mem-input');
   if(document.activeElement!==inp) inp.focus({preventScroll:true});
 }
@@ -12834,6 +12925,7 @@ function memWrong(){
 }
 function memAccept(){
   const i=M.cur;
+  M.lastOk = memNorm(M.tokens[i].word); M.lastOkAt = Date.now(); // see the keyboard echo below
   M.revealed.add(i); M.hintLv=0;
   while(M.cur<M.tokens.length && M.revealed.has(M.cur)) M.cur++;
   memRender(i);
@@ -12852,9 +12944,16 @@ document.addEventListener('DOMContentLoaded', () => {
       if(!ch) return;
       if(ch.toLowerCase()===target[0].toLowerCase()) memAccept(); else memWrong();
     } else if(M.mode==='full'){
-      const v=inp.value;
-      if(memNorm(v)===memNorm(target) && memNorm(target)){ inp.value=''; memAccept(); }
-      else if(/\s$/.test(v) && memNorm(v)){ inp.value=''; memWrong(); }
+      const v=inp.value, nv=memNorm(v);
+      if(nv===memNorm(target) && nv){ inp.value=''; memAccept(); return; }
+      // A phone keyboard can hand back the word just accepted when the space
+      // is pressed ("and" + space), or its space alone: that is not a mistake
+      if(M.lastOk && Date.now()-M.lastOkAt<6000){
+        if(nv===M.lastOk){ if(/\s$/.test(v)) inp.value=''; return; }
+        const m=v.match(/^\s*(\S+)\s+(.*)$/);
+        if(m && memNorm(m[1])===M.lastOk){ inp.value=m[2]; if(memNorm(m[2])===memNorm(target) && memNorm(target)){ inp.value=''; memAccept(); } return; }
+      }
+      if(/\s$/.test(v) && nv){ inp.value=''; memWrong(); }
       else if(/\s$/.test(v)) inp.value='';
     }
   });
@@ -12864,6 +12963,92 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+/* ── 🎤 Say it aloud (v55) ──
+   Full Recall and First Letters can be spoken instead of typed: tap 🎤 and
+   say the verse. The phone's own speech recognition listens without
+   stopping (it is restarted whenever it pauses), and each word heard that
+   matches the next word is accepted, so the verse fills in as you speak.
+   Matching is forgiving, because the recognizer writes modern English: “has”
+   for hath, “you” for ye, a word one letter off. A word it gets wrong is
+   simply passed over (never counted as a mistake); 💡 still helps. */
+const MEM_SAY = {hath:['has','half','had'], doth:['does','dust','that'], saith:['says','said','set','sayeth'], thou:['you','now','though','thou'],
+  thee:['the','me','he','three','tea'], thy:['the','thigh','by','your','thai'], thine:['your','line','fine','time'], ye:['you','yeah','yay','yee','the'],
+  unto:['onto','into','to','under'], shalt:['shall','shelled','shout'], art:['are','r','heart'], hast:['has','haste','hassed','passed'], wilt:['will','wealth'],
+  spake:['spoke','speak','spike'], begat:['begot','beget'], lo:['low','load'], nay:['nay','neigh','no'], yea:['yeah','yay','ya','yes'],
+  shew:['show','shoe'], cometh:['comes','come','comet'], goeth:['goes','go'], giveth:['gives','give'], loveth:['loves','love'], believeth:['believes','believe']};
+const MEM_NUM = {one:'1',two:'2',three:'3',four:'4',five:'5',six:'6',seven:'7',eight:'8',nine:'9',ten:'10',twelve:'12',twenty:'20',hundred:'100',thousand:'1000'};
+function memLev(a, b){
+  if(Math.abs(a.length - b.length) > 2) return 9;
+  const d = Array.from({length: b.length + 1}, (_, i) => i);
+  for(let i = 1; i <= a.length; i++){
+    let prev = d[0]; d[0] = i;
+    for(let j = 1; j <= b.length; j++){ const t = d[j]; d[j] = Math.min(d[j] + 1, d[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1)); prev = t; }
+  }
+  return d[b.length];
+}
+function memHeardMatch(heard, want){
+  const h = memNorm(heard), w = memNorm(want);
+  if(!h || !w) return false;
+  if(h === w) return true;
+  if(MEM_NUM[w] === h || MEM_NUM[h] === w) return true;
+  if((MEM_SAY[w] || []).includes(h)) return true;
+  if(w.endsWith('eth') && (h === w.slice(0, -3) || h === w.slice(0, -3) + 's' || h === w.slice(0, -2) + 's')) return true;
+  if(w.endsWith('est') && h === w.slice(0, -3)) return true;
+  if(w.length >= 4) return memLev(h, w) <= (w.length >= 7 ? 2 : 1);
+  return false;
+}
+const MEM_SMALL = new Set(['a','an','the','and','of','to','in','i','is','it','he','that','for','be','as','at','by','on','or','but','so','unto','which','his','him','them','they','ye','thy','thee']);
+function memHear(word){
+  if(M.done || M.cur >= M.tokens.length) return;
+  const want = M.tokens[M.cur].word;
+  if(memHeardMatch(word, want)){ memAccept(); return; }
+  // The recognizer often drops a small word: "...the Lord" heard as "Lord"
+  const next = M.tokens[M.cur + 1];
+  if(next && MEM_SMALL.has(memNorm(want)) && memHeardMatch(word, next.word)){ memAccept(); if(!M.done) memAccept(); }
+}
+function memVoiceOK(){ return !!(window.SpeechRecognition || window.webkitSpeechRecognition); }
+function memVoiceShow(){
+  const b = document.getElementById('mg-mic');
+  if(b) b.style.display = memVoiceOK() && (M.mode === 'full' || M.mode === 'letters') ? '' : 'none';
+}
+function memVoice(){
+  if(M.voice){ memVoiceStop(); return; }
+  if(!memVoiceOK()){ showToast('Speaking is not supported in this browser — try Chrome'); return; }
+  if(M.done || !M.tokens || !M.tokens.length) return;
+  const R = window.SpeechRecognition || window.webkitSpeechRecognition, rec = new R();
+  rec.lang = 'en-US'; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1;
+  const v = M.voice = {rec, used: {}, on: true};
+  rec.onresult = e => {
+    for(let i = e.resultIndex; i < e.results.length; i++){
+      const words = (e.results[i][0].transcript || '').trim().split(/\s+/).filter(Boolean);
+      // An unfinished phrase may still change its last word: wait for it
+      const upto = e.results[i].isFinal ? words.length : Math.max(0, words.length - 1);
+      for(let k = v.used[i] || 0; k < upto; k++) memHear(words[k]);
+      v.used[i] = Math.max(v.used[i] || 0, upto);
+    }
+    if(M.done) memVoiceStop();
+  };
+  rec.onerror = e => {
+    if(e.error === 'not-allowed' || e.error === 'service-not-allowed'){ showToast('Allow the microphone for this site to say verses aloud'); memVoiceStop(); }
+  };
+  // Phones stop listening after a pause: start again while the game goes on
+  rec.onend = () => { if(M.voice === v && v.on && !M.done){ v.used = {}; try{ rec.start(); }catch(err){ memVoiceStop(); } } };
+  try{ rec.start(); }catch(err){ memVoiceStop(); return; }
+  document.getElementById('mem-input').blur();
+  document.getElementById('mg-mic').classList.add('on');
+  const lbl = document.getElementById('mg-voice-lbl');
+  lbl.innerHTML = '🎤 <b>Listening</b> — say the verse at your own pace · tap 🎤 to stop';
+  lbl.classList.add('on');
+}
+document.addEventListener('visibilitychange', () => { if(document.hidden && M.voice) memVoiceStop(); });
+function memVoiceStop(){
+  const v = M.voice;
+  M.voice = null;
+  if(v){ v.on = false; try{ v.rec.stop(); }catch(e){} }
+  document.getElementById('mg-mic')?.classList.remove('on');
+  document.getElementById('mg-voice-lbl')?.classList.remove('on');
+}
+
 function memHint(){
   if(M.done || M.cur>=M.tokens.length) return;
   const w=M.tokens[M.cur].word;
@@ -12915,6 +13100,7 @@ function fmtTime(s){const m=Math.floor(s/60);return m>0?`${m}m ${s%60}s`:`${s}s`
 
 function showMemCongrats(){
   M.done=true;
+  memVoiceStop();
   document.getElementById('mem-game').classList.add('done');
   document.getElementById('mem-input').blur();
   const elapsed = Math.round((Date.now()-M.startTime)/1000);
@@ -13903,7 +14089,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v54';
+const WHATS_NEW_VERSION = 'v55';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -14599,6 +14785,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v55" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎤</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Say It Aloud</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          In <strong>Sword Drill</strong>, tap <strong>🎤</strong> and say the verse — each word fills in as you speak. Typing in Full Recall no longer counts the space after a word as a mistake. Finish a book and it is <strong>celebrated</strong> and ticked off in your Reading Journey; a book's chapter list shows ✓ on what you have read, and <strong>✓ Mark chapters I read before</strong> lets you count earlier reading.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v54" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🧭</div>
       <div>

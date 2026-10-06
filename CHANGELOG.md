@@ -6,6 +6,13 @@
 
 ## New Features
 
+### 🎤 Say It Aloud (v55)
+- **🎤 in Sword Drill**: in First Letters and Full Recall, tap 🎤 beside the box and say the verse — the phone's speech recognition keeps listening (it restarts itself when it pauses), and each word you say that matches the next word fills in. It is forgiving: the recognizer's modern English counts (“has” for hath, “you” for ye, “in treat” for Intreat, a word a letter or two off, numbers), a small word it drops is filled in, and a word it mishears is passed over — never a mistake. It stops at the end, on 🎤, Back, or when the app is put away. Works where the browser supports speech (Chrome on Android; Safari on iPhone with dictation on)
+- **No more false mistakes from the space bar** in Full Recall: a phone keyboard that hands back the word just accepted when you press space (or its space alone) is ignored; a real wrong word followed by space still counts
+- **Finishing a book is celebrated**: when the last unread chapter of a book is read to the end, a “Ruth — read through! · 12 of 66 books” card and confetti, and it is ticked off in your Reading Journey (the first time only); any badge earned with it follows after
+- **✓ on chapters you have read** in each book's chapter list, with “3 of 4 chapters read”
+- **✓ Mark chapters I read before**: for reading done before the app counted it (or in a printed Bible) — tap the chapters to mark them. They count toward books, the Reading Journey and badges, but not the calendar's days; finishing a book this way is celebrated too
+
 ### 🧭 Make Your Own Plan (v54)
 - **🧭 Make your own plan** (Plans page, under Add a plan): choose what to read — The Gospels, Psalms, Proverbs, Paul's letters, The Law, The Prophets, the New or Old Testament, the whole Bible, or any books one by one — and 1 to 5 chapters a day. It shows the size as you choose (“89 chapters · 45 days at 2 a day”), names itself (or give it your own name), and then works like every plan: your own pace, chapters count when read to the end, Mark read, the end-of-chapter bar, Home, the reminder, Start over, Read again. It syncs with the plan it belongs to. Finishing one earns the **🧭 Your Own Plan** badge
 - **🖍 Highlight several verses at once**: on the long-press bar (Select All · Screenshot · Copy All · Share / Save · Highlight · Sword Drill · Study), pick a colour by its name — or take highlights off — with Undo
