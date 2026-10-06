@@ -575,6 +575,10 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 .col-row.on .col-box{background:var(--gold);border-color:var(--gold)}
 .col-nm{flex:1;min-width:0;font-family:'Crimson Pro',serif;font-size:16px}
 .col-ct{font-size:11px;color:var(--text-m);font-variant-numeric:tabular-nums}
+.col-back{background:none;border:1px solid var(--border);border-radius:8px;padding:3px 9px;color:var(--text-m);font-size:12px;cursor:pointer;margin-right:6px}
+.col-all .col-nm{font-weight:600;color:var(--gold);font-family:'Inter',sans-serif;font-size:14px}
+.col-pr{display:block;font-family:'Inter',sans-serif;font-size:12px;color:var(--gold);letter-spacing:.04em}
+.col-pt{display:block;font-size:14px;color:var(--text-d);line-height:1.35}
 .col-empty{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text-m);text-align:center;padding:14px 6px}
 .col-newrow{margin-bottom:10px}
 .col-card{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;background:linear-gradient(135deg,var(--bg3),var(--surface));border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;color:var(--text);font-family:inherit}
@@ -2542,6 +2546,8 @@ body.light #home-watermark{
   </div>
   <div id="nb-menu"></div>
   <div id="nb-tools" onmousedown="if(event.target.closest('button'))event.preventDefault()">
+    <button onclick="nbInsertFromLists()" title="Insert from My Verses" aria-label="Insert from My Verses">🔖</button>
+    <span class="sep"></span>
     <button onclick="nbCmd('h')" title="Heading"><b>H</b></button>
     <button onclick="nbCmd('bold')" title="Bold"><b>B</b></button>
     <button onclick="nbCmd('italic')" title="Italic"><i>I</i></button>
@@ -8909,6 +8915,9 @@ function colMigrate(){
 // run of selected verses as one passage
 function colSheet(items){
   if(!items || !items.length) return;
+  S._colPick = null;
+  document.getElementById('col-hd-t').textContent = '🔖 Save to My Verses';
+  document.getElementById('col-new').style.display = '';
   S._colPending = items;
   document.getElementById('col-ref').textContent = items.map(i => i.r).join(' · ');
   document.getElementById('col-new-in').value = '';
@@ -8916,6 +8925,7 @@ function colSheet(items){
   openPopover('col-sheet');
 }
 function colSheetRender(){
+  if(S._colPick) return colPickRender();
   const items = S._colPending || [], lists = colLists().slice().sort((a, b) => (b.u || 0) - (a.u || 0));
   const keys = items.map(colItemKey);
   document.getElementById('col-list').innerHTML = lists.length ? lists.map(c => {
@@ -8948,6 +8958,72 @@ function colNewFromSheet(){
   inp.value = '';
   colToggle(id);
 }
+// ── From the notebook: 🔖 Insert from My Verses ──
+// The same sheet, picking instead of saving: a list, then a verse or passage
+// (or all of it) goes into the study where the cursor was.
+function nbInsertFromLists(){
+  const ed = document.getElementById('nb-ed'), sel = window.getSelection();
+  S._nbRange = sel.rangeCount && ed.contains(sel.getRangeAt(0).startContainer) ? sel.getRangeAt(0).cloneRange() : null;
+  S._colPick = {list: null, done: new Set()};
+  document.getElementById('col-hd-t').textContent = '🔖 Insert from My Verses';
+  document.getElementById('col-new').style.display = 'none';
+  colPickRender();
+  openPopover('col-sheet');
+}
+function colPickRender(){
+  const pk = S._colPick, ref = document.getElementById('col-ref'), box = document.getElementById('col-list');
+  const lists = colLists().slice().sort((a, b) => (b.u || 0) - (a.u || 0));
+  const c = pk.list && lists.find(x => x.id === pk.list);
+  if(!c){
+    pk.list = null;
+    ref.textContent = lists.length ? 'Choose a list, then tap a verse to put it in your study.' : '';
+    box.innerHTML = lists.length ? lists.map(x => `<button class="col-row" onclick="colPickList('${x.id}')"><span class="col-nm">${escapeHtml(x.n)}</span><span class="col-ct">${x.items.length}</span><span class="col-ct" style="font-size:16px">›</span></button>`).join('')
+      : `<div class="col-empty">No lists yet. While reading, tap a verse → 🔖 Save to start one.</div>`;
+    return;
+  }
+  ref.innerHTML = `<button class="col-back" onclick="colPickList(null)">‹ All lists</button> <b>${escapeHtml(c.n)}</b>`;
+  box.innerHTML = (c.items.length > 1 ? `<button class="col-row col-all" onclick="colPickItem(-1)"><span class="col-nm">Insert all ${c.items.length}</span><span class="col-ct" style="font-size:15px">⤵</span></button>` : '')
+    + (c.items.length ? c.items.map((it, i) => `<button class="col-row ${pk.done.has(i) ? 'on' : ''}" onclick="colPickItem(${i})"><span class="col-box">${pk.done.has(i) ? '✓' : ''}</span><span class="col-nm"><b class="col-pr">${escapeHtml(it.r)}</b><span class="col-pt">${escapeHtml((it.t || '').slice(0, 90))}${(it.t || '').length > 90 ? '…' : ''}</span></span></button>`).join('')
+      : `<div class="col-empty">This list is empty.</div>`);
+}
+function colPickList(id){ S._colPick.list = id; S._colPick.done = new Set(); colPickRender(); document.getElementById('col-list').scrollTop = 0; }
+function colPickItem(i){
+  const pk = S._colPick, c = colLists().find(x => x.id === pk.list);
+  if(!c) return;
+  const its = i < 0 ? c.items : [c.items[i]];
+  nbInsertHtml((i < 0 ? `<h3>🔖 ${nbEsc(c.n)}</h3>` : '') + its.map(it => `<blockquote class="nb-v">${nbRefSpan(it.a, it.r)}${nbEsc(it.t || '')}</blockquote>`).join(''));
+  if(i < 0) c.items.forEach((_, k) => pk.done.add(k)); else pk.done.add(i);
+  colPickRender();
+  showToast(i < 0 ? `📝 ${c.n} put in your study` : `📝 ${its[0].r} put in your study`);
+}
+// Put blocks into the study at the cursor: after the paragraph the cursor is
+// in (never inside it), or at the end. The editor is not focused, so a phone
+// keyboard does not open under the sheet.
+function nbInsertHtml(html){
+  const ed = document.getElementById('nb-ed');
+  if(S._nbLoaded !== nbActive().id) nbOpenInPlace();
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  const nodes = [...tpl.content.childNodes];
+  if(!nodes.length) return;
+  let at = null, r = S._nbRange;
+  if(r && ed.contains(r.startContainer) && r.startContainer !== ed){
+    at = r.startContainer;
+    while(at && at.parentNode !== ed) at = at.parentNode;
+  } else if(r && r.startContainer === ed) at = ed.childNodes[r.startOffset - 1] || null;
+  const last = nodes[nodes.length - 1];
+  if(at && at.parentNode === ed){
+    // an empty line the cursor sits on is used up by the insert
+    if(at.nodeType === 1 && /^(P|DIV)$/.test(at.tagName) && !at.textContent.trim()){ at.replaceWith(...nodes); }
+    else at.after(...nodes);
+  } else ed.append(...nodes);
+  const p = document.createElement('p'); p.innerHTML = '<br>';
+  if(!last.nextSibling) last.after(p);
+  const nr = document.createRange(); nr.setStartAfter(last); nr.collapse(true);
+  S._nbRange = nr;
+  ed.dispatchEvent(new Event('input'));
+}
+
 // After any change: the reader's marks, the verse card, the Notes tab, Home
 function colAfterChange(){
   document.querySelectorAll('#verses .vblock').forEach(el => refreshVBlock(el.dataset.ref));
@@ -10997,6 +11073,7 @@ _logoImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccq
 const TOOL_TIPS = {
   notebook: {i:'📝', t:'Study Notebook', tips:[
     ['📝＋', '<strong>Add from anywhere</strong> — tap 📝＋ on a verse card, search result, hymn, word, person, place, map or timeline event, and it goes at the end of the study you have open. Select several verses to add a whole passage'],
+    ['🔖', '<strong>🔖 Insert from My Verses</strong> — pick one of your lists, then tap a verse or passage and it goes in where your cursor is (or <strong>Insert all</strong>). Each one becomes a verse slide when you present'],
     ['✎', '<strong>Rename a study</strong> by tapping its name at the top, or ✏️ beside it in ☰ Studies'],
     ['H', '<strong>H B I •≡ 1.</strong> make headings, bold, italic, bullets and a numbered outline; <strong>⇤ ⇥</strong> (or Tab / Shift+Tab on a keyboard) move a point up or down a level'],
     ['❝', '<strong>❝</strong> puts a paragraph in a quote box, <strong>¶</strong> makes it plain text again, and <strong>✂</strong> starts a new slide there when you present'],
@@ -13659,7 +13736,7 @@ function closeSettings(e){
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">My Verses</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          Bookmarks are now lists you name. Tap a verse, then <strong>🔖 Save</strong>, and keep it in a list for a doctrine you often explain, for comfort, or for a lesson — select several verses to save a whole passage. Open a list under <strong>Notes → My Verses</strong> to order it, share it, present it as slides or add it to a study, and save any doctrine page as a list. Your bookmarks are waiting in a list called Bookmarks. Sword Drill's own list is now <strong>Custom Verses</strong>.
+          Bookmarks are now lists you name. Tap a verse, then <strong>🔖 Save</strong>, and keep it in a list for a doctrine you often explain, for comfort, or for a lesson — select several verses to save a whole passage. Open a list under <strong>Notes → My Verses</strong> to order it, share it, present it as slides or add it to a study, and save any doctrine page as a list. Writing a study? <strong>🔖</strong> in the notebook puts any verse from your lists right where you are typing. Your bookmarks are waiting in a list called Bookmarks. Sword Drill's own list is now <strong>Custom Verses</strong>.
         </div>
       </div>
     </div>
