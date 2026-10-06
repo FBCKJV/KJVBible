@@ -1,0 +1,38 @@
+/* The chapter pages (kjv/) — copied there by tools/build-chapters.js.
+   The app's colours: night by default and when the phone is dark, day or
+   sepia when chosen in the app (html.light / html.sepia) or by the phone. */
+:root{--bg:#0e0800;--bg2:#1a1005;--surface:#1e1206;--border:#3d2a10;--gold:#c9943a;--gold-d:#7a5520;--text:#f5ede0;--text-m:#9a7e60}
+@media (prefers-color-scheme: light){:root:not(.dark){--bg:#f7f2e8;--bg2:#ede5d5;--surface:#fffdf8;--border:#d4c4a0;--gold:#8a5c20;--gold-d:#c4a870;--text:#1a0e04;--text-m:#6f5838}}
+html.light{--bg:#f7f2e8;--bg2:#ede5d5;--surface:#fffdf8;--border:#d4c4a0;--gold:#8a5c20;--gold-d:#c4a870;--text:#1a0e04;--text-m:#6f5838}
+html.sepia{--bg:#efe4cf;--bg2:#e7d9be;--surface:#f5ecd8;--border:#cdb890;--gold:#8a5a1c;--gold-d:#b89a68;--text:#3a2a17;--text-m:#7a5f3a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-text-size-adjust:100%}
+a{color:var(--gold)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--border)}
+.brand{font-family:'IM Fell English',Georgia,serif;font-size:18px;text-decoration:none}
+.top .app{font-size:13px;font-weight:600;text-decoration:none;border:1px solid var(--border);border-radius:18px;padding:7px 14px;white-space:nowrap}
+main{max-width:720px;margin:0 auto;padding:12px 16px 24px}
+.crumbs{font-size:13px;color:var(--text-m);margin:4px 0 14px}
+.crumbs a{text-decoration:none}
+h1{font-family:'IM Fell English',Georgia,serif;font-weight:400;color:var(--gold);font-size:32px;margin:0}
+h2{font-family:'IM Fell English',Georgia,serif;font-weight:400;color:var(--gold);font-size:22px;margin:26px 0 10px}
+.lead{color:var(--text-m);margin:4px 0 16px;line-height:1.5}
+.open{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 20px}
+.open span{font-size:13px;color:var(--text-m)}
+.open.end{margin-top:24px}
+.btn{display:inline-block;background:var(--gold);color:var(--bg);font-weight:600;text-decoration:none;border-radius:22px;padding:11px 18px;font-size:15px}
+.text p{font-family:'Crimson Pro',Georgia,serif;font-size:19px;line-height:1.75;margin:0 0 8px}
+.text sup{color:var(--gold);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;margin-right:2px}
+.text p:target{background:rgba(201,148,58,.18);border-radius:6px}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:22px;padding-top:14px;border-top:1px solid var(--border);font-size:14px}
+.pager a{text-decoration:none}
+.pager .all{color:var(--text-m)}
+.pager .next{text-align:right}
+ul.books,ul.chs{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+ul.books{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+ul.chs{grid-template-columns:repeat(auto-fill,minmax(52px,1fr));margin-bottom:22px}
+ul.books a,ul.chs a{display:flex;justify-content:space-between;align-items:baseline;gap:6px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 12px;text-decoration:none;font-family:'Crimson Pro',Georgia,serif;font-size:17px;color:var(--text)}
+ul.chs a{justify-content:center;font-family:'Inter',sans-serif;font-size:15px;color:var(--gold);min-height:46px;align-items:center}
+ul.books span{font-family:'Inter',sans-serif;font-size:12px;color:var(--text-m)}
+footer{max-width:720px;margin:0 auto;padding:18px 16px 40px;border-top:1px solid var(--border);font-size:13px;color:var(--text-m);line-height:1.6}
+footer .pd{font-size:12px}
