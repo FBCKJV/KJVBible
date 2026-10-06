@@ -485,6 +485,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-foot{font-size:11px;color:var(--text-m);padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
 .rc-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
 .nb-share{margin-left:6px}
+/* In the study tools — the top of search results */
+.th-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:0 0 12px;overflow:hidden}
+.th-h{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:10px 14px 4px}
+.th-row{display:flex;align-items:center;gap:10px;width:100%;padding:9px 14px;background:none;border:none;border-top:1px solid var(--border);cursor:pointer;text-align:left;color:var(--text);font-family:inherit;min-height:48px}
+.th-row:first-of-type{border-top:none}
+.th-i{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.th-tt{flex:1;min-width:0;display:flex;flex-direction:column}
+.th-t{font-family:'Crimson Pro',serif;font-size:16px;font-weight:600;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.th-d{font-size:12px;color:var(--text-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.th-more{display:block;width:100%;background:none;border:none;border-top:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:600;padding:10px 14px;cursor:pointer;text-align:left;font-family:'Inter',sans-serif}
 /* Recent searches under a box */
 .rs-drop{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-2px 0 12px}
 .rs-drop[hidden]{display:none}
@@ -2351,6 +2361,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
+        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, our doctrines, Nave's topics, the dictionary, hymns, the timeline, journeys, maps and the concordance's count. Tap one to open it; Back brings you to your results</span></div>
         <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
@@ -5794,6 +5805,85 @@ function renderPersonalCards(hits){
   ).join('');
 }
 
+/* ── In the study tools ──
+   One block at the top of the results gathers what every tool has on the
+   search: a well-known passage, a person or place, our doctrines, Nave's
+   topics, the dictionary, hymns, the timeline, journeys, the classic maps and
+   the concordance's count. The first few show; "Show more" opens the rest.
+   Each row opens that page, and Back returns to these results. Data that has
+   not loaded yet joins when it arrives (see doSearch). */
+const TOOL_HITS_SHOWN = 4;
+function findToolHits(q){
+  const rows = [], js = x => String(x).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+  const words = _naveNorm(q).split(' ').filter(w => w.length >= 3 && !STOP.has(w));
+  const one = words.length === 1 && /^[a-z]+$/i.test(q.trim()) ? words[0] : null;
+  const has = text => words.length > 0 && words.every(w => new RegExp(`(^|[^a-z])${w}`, 'i').test(text || ''));
+  const cap = (list, n) => list.slice(0, n);
+  for(const t of S._topicMatches || []) rows.push({i:'📖', t:t.title, d:`${t.rangeLabel} — read the passage`, go:`jumpToRef('${js(t.ref)}')`});
+  const pr = findPeopleHit(q); if(pr) rows.push(pr);
+  // Our doctrines: by name first, else by what they teach
+  let doc = [];
+  DOCTRINES.forEach((cat, ci) => cat.topics.forEach((tp, ti) => { if(has(tp.name)) doc.push([ci, ti]); }));
+  if(!doc.length) DOCTRINES.forEach((cat, ci) => cat.topics.forEach((tp, ti) => { if(has(tp.desc)) doc.push([ci, ti]); }));
+  for(const [ci, ti] of cap(doc, 3)){ const tp = DOCTRINES[ci].topics[ti]; rows.push({i:'📑', t:`Doctrine — ${tp.name}`, d:clip(tp.desc, 90), go:`openDoctrineFromSearch(${ci},${ti})`}); }
+  if(S._naves) for(const k of S._naveMatches || []) rows.push({i:'📚', t:`Topic — ${naveTitle(k)}`, d:`${naveSummary(k)} · Nave's Topical Bible`, go:`openNaveTopicAt(${S._naves.keys.indexOf(k)})`});
+  // The dictionary: the church's note, or Webster's once its letter is here
+  if(one){
+    const forms = websterForms(one), shard = S._dict && S._dict[forms[0][0]];
+    const note = forms.map(kjvNoteFor).find(Boolean), key = shard && forms.find(f => shard[f]);
+    if(note || key){
+      const w = note ? note.word : key, W = w.charAt(0).toUpperCase() + w.slice(1);
+      rows.push({i:'📖', t:`Dictionary — ${W}`, d:clip(note ? note.note : firstSense(shard[key]), 90), go:`openWord('${js(dictKey(note ? note.word : key))}')`});
+    }
+  }
+  if(S._hymns){
+    let hy = S._hymns.map((h, i) => [h, i]).filter(([h]) => has(h[0]));
+    if(!hy.length) hy = S._hymns.map((h, i) => [h, i]).filter(([h]) => has((h[5][0] || []).join(' ')));
+    for(const [h, i] of cap(hy, 3)) rows.push({i:'🎵', t:`Hymn — ${h[0]}`, d:`${h[1]}, ${h[2]}`, go:`openHymn(${i})`});
+  }
+  if(S._timeline){
+    const ev = [];
+    S._timeline.eras.forEach((era, ei) => era.e.forEach((e, i) => { if(has(e[1])) ev.push([e, ei, i]); }));
+    for(const [e, ei, i] of cap(ev, 3)) rows.push({i:'📅', t:`Timeline — ${e[1]}`, d:`${tlYearText(e[0])} · ${e[5]}`, go:`openTimelineAt('tl-${ei}-${i}')`});
+  }
+  if(S._journeys) for(const j of cap(S._journeys.filter(j => has(j.t)), 2)) rows.push({i:'🧭', t:`Journey — ${j.t}`, d:`${j.r} · stop by stop on the map`, go:`openJourney('${js(j.id)}')`});
+  MAPS.forEach((m, i) => { if(has(m.t + ' ' + m.d)) rows.push({i:'🗺️', t:`Map — ${m.t}`, d:m.d, go:`openMap(${i})`}); });
+  if(one && S._concord){
+    const L = S._concord.letters[one[0].toUpperCase()], hit = L && L.find(x => x[0] === one);
+    if(hit) rows.push({i:'📜', t:`Concordance — “${one}”`, d:`${hit[1]} verse${hit[1] !== 1 ? 's' : ''} in the KJV, book by book`, go:`openConcordWord('${js(one)}')`});
+  }
+  return rows;
+}
+function renderToolHits(){
+  const rows = S._toolHits || [];
+  if(!rows.length) return '';
+  const open = S._toolHitsOpen, shown = open ? rows : rows.slice(0, TOOL_HITS_SHOWN);
+  return `<div class="th-box"><div class="th-h">In the study tools</div>`
+    + shown.map(r => `<button class="th-row" onclick="${escapeHtml(r.go)}"><span class="th-i">${r.i}</span><span class="th-tt"><span class="th-t">${escapeHtml(r.t)}</span><span class="th-d">${escapeHtml(r.d || '')}</span></span><span class="hw-go">›</span></button>`).join('')
+    + (rows.length > shown.length ? `<button class="th-more" onclick="S._toolHitsOpen=true;renderSearchPage(0)">Show ${rows.length - shown.length} more ›</button>` : '')
+    + `</div>`;
+}
+// A person or place named in the search, as a row
+function findPeopleHit(q){
+  if(!S._nameIndex) return null;
+  const k = namesNorm(q.trim()), e = k && S._nameIndex.get(k);
+  if(!e || (!e.people.length && !e.places.length)) return null;
+  if(e.people.length === 1 && !e.places.length){ const id = e.people[0], p = S._people[id]; return {i:'👤', t:p.n + (p.a ? ' · ' + p.a.join(', ') : ''), d:personBrief(p) || 'who this was', go:`openPerson('${id}')`}; }
+  if(e.places.length === 1 && !e.people.length){ const id = e.places[0], p = S._places[id]; return {i:'📍', t:p.n, d:placeType(p.t) + (p.s ? ' · ' + p.s : ''), go:`openPlace('${id}')`}; }
+  const parts = [e.people.length ? `${e.people.length} ${e.people.length === 1 ? 'person' : 'people'}` : '', e.places.length ? `${e.places.length} place${e.places.length !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' and ');
+  return {i:e.people.length ? '👤' : '📍', t:`${parts} named ${e.name}`, d:e.people.slice(0, 2).map(id => personBrief(S._people[id])).join(' · '), go:`openNamePage('${k}')`};
+}
+// From a search row: the doctrine opens over the results, so Back returns to them
+function openDoctrineFromSearch(ci, ti){ switchSearchMode('doctrine', false); showDoctrineVerses(ci, ti); }
+async function openConcordWord(w){
+  switchSearchMode('concord');
+  await renderConcordance();
+  const f = document.getElementById('concord-filter');
+  if(f){ f.value = w; filterConcordance(w); }
+  const row = document.querySelector(`#concord-list .cw-row[data-w="${w}"]`);
+  if(row && !row.classList.contains('open')) toggleConcordWord(row);
+}
+
 function handleSearch(q) {
   clearTimeout(sTimer);
   const raw = q.trim();
@@ -5829,7 +5919,6 @@ async function doSearch(raw) {
   S._topicMatches = findTopicMatches(cleaned);
   S._personalMatches = [];
   S._naveMatches = [];
-  S._peopleCard = '';
   S._didYouMean = null;
   const strip = document.getElementById('s-book-strip');
 
@@ -5900,13 +5989,12 @@ async function doSearch(raw) {
   }
 
   S._naveMatches = findNaveTopics(cleaned);
-  S._peopleCard = findPeopleCard(cleaned) + findDictCard(cleaned);
+  S._toolHitsOpen = false;
+  S._toolHits = findToolHits(cleaned);
   if (!exactMode) S._didYouMean = didYouMean(cleaned, query);
   const render = () => {
     if (!S._searchResults.length) {
-      el.innerHTML = renderTopicCards(S._topicMatches)
-        + S._peopleCard
-        + renderNaveCards(S._naveMatches)
+      el.innerHTML = renderToolHits()
         + renderPersonalCards(S._personalMatches)
         + renderDidYouMean()
         + `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
@@ -5918,15 +6006,22 @@ async function doSearch(raw) {
   };
   render();
 
-  // Late arrivals (first use only): people/topic cards and spelling suggestions
-  if (!S._naves || !S._nameIndex || (!exactMode && !S._concord)) {
-    await Promise.all([navesP, concordP, peopleP]);
+  // Late arrivals: what the tools have on it, and spelling suggestions, as
+  // their data loads (first use only — after that it is all at hand)
+  const one = /^[a-z’']+$/i.test(cleaned) ? websterForms(cleaned)[0][0] : '';
+  const waits = [navesP, concordP, peopleP,
+    S._hymns ? null : loadHymns().catch(() => null),
+    S._timeline ? null : loadTimeline().catch(() => null),
+    S._journeys ? null : loadJourneys().catch(() => null),
+    one && !(S._dict && S._dict[one]) ? loadDictLetter(one) : null].filter(Boolean);
+  if (waits.length) {
+    await Promise.all(waits);
     if (gen !== S._searchGen) return;
-    const naves = findNaveTopics(cleaned);
-    const people = findPeopleCard(cleaned) + findDictCard(cleaned);
+    S._naveMatches = findNaveTopics(cleaned);
+    const hits = findToolHits(cleaned);
     const dym = exactMode ? null : didYouMean(cleaned, query);
-    if (naves.join() !== S._naveMatches.join() || dym !== S._didYouMean || people !== S._peopleCard) {
-      S._naveMatches = naves; S._didYouMean = dym; S._peopleCard = people;
+    if (JSON.stringify(hits) !== JSON.stringify(S._toolHits) || dym !== S._didYouMean) {
+      S._toolHits = hits; S._didYouMean = dym;
       // Only redraw if the reader is still on the first page of results
       if (!S._searchResults.length || (S._searchPage || 0) === 0) render();
     }
@@ -6067,7 +6162,7 @@ function renderSearchPage(startIdx, scroll){
   S._searchPage = curPage - 1;
   // Each page replaces the last one (pages used to pile up underneath)
   el.innerHTML =
-    (curPage === 1 ? renderTopicCards(S._topicMatches) + (S._peopleCard || '') + renderNaveCards(S._naveMatches) + renderPersonalCards(S._personalMatches) + renderDidYouMean() + renderWordFamily() : '')
+    (curPage === 1 ? renderToolHits() + renderPersonalCards(S._personalMatches) + renderDidYouMean() + renderWordFamily() : '')
     + `<div id="s-status" style="text-align:left;padding:0 0 8px">${statusText}</div>`
     + sortBar
     + page.map(r => {
@@ -6170,15 +6265,6 @@ function naveSummary(k){
   const N = S._naves, t = N.topics[k];
   const subs = t.filter(l => l[1] && !l[3]).length, p = N.passages[k];
   return [subs > 1 ? `${subs} sub-topics` : '', p ? `${p} passage${p !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ');
-}
-
-function renderNaveCards(keys){
-  if(!keys || !keys.length || !S._naves) return '';
-  return keys.map(k =>
-    `<div tabindex="0" class="rc ref-jump nv-card" onclick="openNaveTopicAt(${S._naves.keys.indexOf(k)})">
-      <div class="rc-ref">📚 Topic — ${escapeHtml(naveTitle(k))}</div>
-      <div class="rc-txt" style="opacity:.75">${naveSummary(k)} · Nave's Topical Bible — tap to open</div>
-    </div>`).join('');
 }
 
 /* ── Topics tab: A–Z browse + filter ── */
@@ -6632,31 +6718,6 @@ function personBrief(p){
 }
 // Trim to about n characters at a word boundary
 const clip = (t, n) => t.length <= n ? t : t.slice(0, t.lastIndexOf(' ', n) > n / 2 ? t.lastIndexOf(' ', n) : n) + '…';
-
-// Search card when the query is a person's or a place's name
-function findPeopleCard(q){
-  if(!S._nameIndex) return '';
-  const k = namesNorm(q.trim());
-  const e = k && S._nameIndex.get(k);
-  if(!e || (!e.people.length && !e.places.length)) return '';
-  if(e.people.length === 1 && !e.places.length){
-    const id = e.people[0], p = S._people[id];
-    return `<div tabindex="0" class="rc ref-jump" onclick="openPerson('${id}')">
-      <div class="rc-ref">👤 ${escapeHtml(p.n)}${p.a ? ' · ' + escapeHtml(p.a.join(', ')) : ''}</div>
-      <div class="rc-txt" style="opacity:.75">${escapeHtml(personBrief(p))} — tap to see who this is</div></div>`;
-  }
-  if(e.places.length === 1 && !e.people.length){
-    const id = e.places[0], p = S._places[id];
-    return `<div tabindex="0" class="rc ref-jump" onclick="openPlace('${id}')">
-      <div class="rc-ref">📍 ${escapeHtml(p.n)}</div>
-      <div class="rc-txt" style="opacity:.75">${escapeHtml(placeType(p.t))}${p.s ? ' · ' + escapeHtml(p.s) : ''} — tap to see where it was</div></div>`;
-  }
-  const parts = [e.people.length ? `${e.people.length} ${e.people.length === 1 ? 'person' : 'people'}` : '', e.places.length ? `${e.places.length} place${e.places.length !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' and ');
-  const briefs = e.people.slice(0, 2).map(id => personBrief(S._people[id])).concat(e.places.slice(0, 2).map(id => placeType(S._places[id].t) + (S._places[id].s ? ' at ' + S._places[id].s : '')));
-  return `<div tabindex="0" class="rc ref-jump" onclick="openNamePage('${k}')">
-    <div class="rc-ref">${e.people.length ? '👤' : '📍'} ${parts} named ${escapeHtml(e.name)}</div>
-    <div class="rc-txt" style="opacity:.75">${briefs.map(escapeHtml).join(' · ')}${e.people.length + e.places.length > 4 ? ' …' : ''}</div></div>`;
-}
 
 /* ── Name page: everyone who bore a name ── */
 SUBVIEWS.name = { mode:'names', browse:'names-browse', view:'name-view', open:(k, push, y) => openNamePage(k, push, y) };
@@ -8978,17 +9039,6 @@ async function vpopWebster(word){
     + `<button class="vl-chip" onclick="event.stopPropagation();openWordFromVerse('${r.key}')">Full dictionary entry →</button>`;
 }
 function openWordFromVerse(key){ leaveVPopThen(() => openWord(key)); }
-// Search card for a single word that has a church KJV note
-function findDictCard(q){
-  const t = q.trim();
-  if(!/^[A-Za-z’']+$/.test(t)) return '';
-  const hit = kjvNoteFor(websterForms(t)[0]);
-  if(!hit) return '';
-  return `<div tabindex="0" class="rc ref-jump" onclick="openWord('${dictKey(hit.word)}')">
-    <div class="rc-ref">📖 Dictionary — ${escapeHtml(hit.word.charAt(0).toUpperCase() + hit.word.slice(1))}</div>
-    <div class="rc-txt" style="opacity:.75">${escapeHtml(hit.note)}</div></div>`;
-}
-
 /* ════ KJV DICTIONARY ════ */
 
 // render=false only switches panels (a sub-page is about to fill its tab)
