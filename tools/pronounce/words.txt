@@ -1,7 +1,7 @@
 abba: AB-uh
 aceldama: uh-SEL-duh-muh
-alleluia: al-eh-LOO-yuh
-anathema: uh-NATH-eh-muh
+alleluia: al-uh-LOO-yuh
+anathema: uh-NATH-uh-muh
 anise: AN-is
 besom: BEE-zum
 betimes: beh-TYMZ | be-times
@@ -12,7 +12,7 @@ camphire: KAM-fire
 cassia: KASH-uh
 centurion: sen-TYOOR-ee-un
 chamois: SHAM-ee
-chapiter: CHAP-ih-ter
+chapiter: CHAP-uh-ter
 cherub: CHAIR-ub
 cherubim: CHAIR-uh-bim
 cherubims: CHAIR-uh-bimz
@@ -24,7 +24,7 @@ cubit: KYOO-bit
 cummin: KUM-in
 daysman: DAYZ-mun
 divers: DYE-verz | die-verz
-emerods: EM-eh-rodz
+emerods: EM-uh-rodz
 ephah: EE-fuh
 ephod: EE-fod
 ephphatha: EF-fuh-thuh
@@ -48,7 +48,7 @@ mammon: MAM-un
 maranatha: mair-uh-NATH-uh
 nigh: NYE | nye
 omer: OH-mer
-ossifrage: OS-ih-frij
+ossifrage: OS-uh-frij
 ouches: OWCH-ez
 palsy: PAWL-zee
 penury: PEN-yur-ee
@@ -56,7 +56,7 @@ peradventure: per-ad-VEN-cher
 phylacteries: fih-LAK-ter-eez
 phylactery: fih-LAK-ter-ee
 propitiation: proh-pish-ee-AY-shun
-proselyte: PROS-eh-lite
+proselyte: PROS-uh-lite
 psaltery: SAWL-ter-ee
 pygarg: PYE-garg
 rabbi: RAB-eye
@@ -90,7 +90,7 @@ subtilly: SUT-ul-lee | suttle-lee
 succour: SUK-er
 sware: SWAIR
 tabret: TAB-ret
-talitha: TAL-ih-thuh
+talitha: TAL-uh-thuh
 teraphim: TAIR-uh-fim
 tetrarch: TET-rark
 thummim: THUM-im

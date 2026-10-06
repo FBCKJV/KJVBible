@@ -9031,7 +9031,7 @@ function concordSearch(word){
    tools/build-pronounce.js) that is shown under the word and given to the
    voice, so it says Mephibosheth as meh-FIB-oh-sheth rather than guessing.
    Names and words are looked up apart (the man Job, the word job). */
-const SAY_URL = 'pronounce.json?v=2026-10-06'; // bump v= whenever tools/build-pronounce.js is re-run
+const SAY_URL = 'pronounce.json?v=2026-10-07'; // bump v= whenever tools/build-pronounce.js is re-run
 const sayOK = () => 'speechSynthesis' in window && typeof SpeechSynthesisUtterance === 'function';
 function loadSay(){
   if(S._say) return Promise.resolve(S._say);
@@ -9046,8 +9046,20 @@ function sayGuide(text, kind){
   if(!g) return null;
   const shown = Array.isArray(g) ? g[0] : g;
   // The voice gets the syllables in small letters; a lone "ay" or "ee" as letters
-  const spoken = Array.isArray(g) ? g[1] : shown.toLowerCase().split('-').map(s => s === 'ay' ? 'A' : s === 'ee' ? 'E' : s === 'oo' ? 'ooh' : s).join('-');
+  const spoken = Array.isArray(g) ? g[1] : shown.toLowerCase().split('-').map(saySyllable).join('-');
   return [shown, spoken];
+}
+// A two-letter piece a voice would spell out ("ok" as O.K., "id" as I.D.,
+// "em" as M) is written the way it sounds: ock, idd, emm. Real words stay.
+const SAY_WORDS = new Set(['us','in','is','on','at','it','an','up','of','or','as','if','oh','ah','uh','ow','ox','be','we','he','me','no','so','go','do','to','my','by']);
+const SAY_K = {ok:'ock', ek:'eck', ik:'ick', uk:'uck', ak:'ack'};
+function saySyllable(s){
+  if(s === 'ay') return 'A';
+  if(s === 'ee') return 'E';
+  if(s === 'oo') return 'ooh';
+  if(SAY_K[s]) return SAY_K[s];
+  if(/^[aeiou][b-df-hj-np-tv-z]$/.test(s) && !SAY_WORDS.has(s)) return s + s[1];
+  return s;
 }
 // An English voice on the phone itself, if there is one (chosen once)
 let _sayVoice = null;
