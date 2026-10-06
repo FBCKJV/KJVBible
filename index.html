@@ -691,9 +691,37 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
   background:var(--bg2);border:1px solid var(--border);
   border-radius:16px;padding:28px 24px;
   display:flex;flex-direction:column;align-items:center;
-  gap:4px;text-align:center;max-width:300px;width:90%;
+  gap:4px;text-align:center;max-width:400px;width:92%;max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
   animation:su .25s ease;
 }
+/* The reading calendar and badges (v52) */
+#sp-cal{width:100%;margin:10px 0 4px;padding-top:12px;border-top:1px solid var(--border)}
+.cal-hd{display:flex;align-items:center;justify-content:space-between;font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);margin-bottom:6px}
+.cal-hd button{background:none;border:1px solid var(--border);border-radius:8px;width:34px;height:30px;color:var(--text-d);font-size:16px;cursor:pointer}
+.cal-hd button:disabled{opacity:.3;cursor:default}
+.cal-w,.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-w span{font-size:10px;font-weight:700;color:var(--text-m);padding:2px 0}
+.cal-d{aspect-ratio:1;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-m);font-size:12px;font-weight:600;cursor:pointer;padding:0;font-family:'Inter',sans-serif}
+.cal-d.l1{background:color-mix(in srgb,var(--gold) 28%,var(--surface));color:var(--text)}
+.cal-d.l2{background:color-mix(in srgb,var(--gold) 58%,var(--surface));color:var(--text);border-color:transparent}
+.cal-d.l3{background:var(--gold);color:var(--bg);border-color:transparent}
+.cal-d.today{outline:2px solid var(--gold);outline-offset:1px}
+.cal-d.sel{box-shadow:0 0 0 3px var(--accent)}
+.cal-sum{font-size:11.5px;color:var(--text-m);margin-top:8px}
+.cal-day{margin-top:10px;padding:10px;border-radius:10px;background:var(--surface);border:1px solid var(--border);text-align:left}
+.cal-day-t{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);margin-bottom:6px}
+.cal-chs{display:flex;flex-wrap:wrap;gap:6px}
+.cal-chs button{background:var(--bg2);border:1px solid var(--gold-d);color:var(--gold);border-radius:16px;padding:4px 10px;font-size:13px;cursor:pointer;font-family:'Crimson Pro',serif}
+.cal-none{font-size:12px;color:var(--text-m)}
+#sp-rbadges{width:100%;margin:12px 0 4px;padding-top:12px;border-top:1px solid var(--border)}
+.spb-hd{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline}
+.spb-hd span{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-m)}
+.spb-g{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.spb{border:1px solid var(--border);border-radius:10px;padding:8px 4px;background:var(--surface);opacity:.5;filter:grayscale(.8)}
+.spb.on{opacity:1;filter:none;border-color:var(--gold-d);background:linear-gradient(160deg,var(--bg3),var(--surface))}
+.spb-i{font-size:22px;line-height:1.2}
+.spb-n{font-size:10.5px;font-weight:700;color:var(--text);line-height:1.25;margin-top:2px}
+.spb-p{font-size:9.5px;color:var(--text-m);margin-top:2px;line-height:1.25}
 #sp-flame{font-size:52px;line-height:1;margin-bottom:4px}
 #sp-count{font-family:'Inter',system-ui,sans-serif;font-size:56px;font-weight:700;color:var(--gold);line-height:1}
 #sp-label{font-size:14px;color:var(--text-d);margin-bottom:8px}
@@ -787,9 +815,6 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 #vod-lbl{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
 #vod-txt{font-family:'Crimson Pro',serif;font-style:italic;font-size:15px;color:var(--text);line-height:1.6;margin-bottom:4px}
 #vod-ref{font-size:11px;color:var(--text-m);text-align:right}
-#vod-acts{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
-#vod-acts button{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:9px;padding:7px 4px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif}
-#vod-acts button:active{border-color:var(--gold-d);color:var(--gold)}
 #cont-banner{transition:all .15s}
 #cont-banner.hidden{display:none}
 .cont-top{display:flex;align-items:center;gap:6px;padding:12px 14px}
@@ -1643,6 +1668,7 @@ body.light #home-watermark{
 /* Plans screen (v47): a card per running plan with a progress ring, its next
    reading and a grid of its days; paused, add-a-plan and finished below */
 .pl-h1{font-family:'IM Fell English',serif;font-size:22px;color:var(--gold);margin:2px 0 12px}
+.pl-cal-link{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;margin:-4px 0 14px;font-size:13px;font-weight:600;color:var(--gold);cursor:pointer}
 .pl-empty{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text-d);line-height:1.45;margin:-4px 0 14px}
 .pl-sec{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text-m);margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .pl-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px}
@@ -2225,6 +2251,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it</span></div>
         <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> shows every Bible place on one map — tap a place to see what happened there. The classic atlas maps are below it. All of it works offline. In the reader, <strong>📍 Where</strong> maps the places in the chapter</span></div>
+        <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>Tap 🔥</strong> for your streak, a <strong>calendar of the days you read</strong> (tap a day to open the chapters you read) and your <strong>badges</strong>. A chapter counts once you have read to the end of it, and a book read right through is ticked off in your Reading Journey</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — run Bible in a Year, NT in 30 Days and Proverbs in a Month, one or several at once, each at your own pace. A chapter checks off once you have read to the end of it; <strong>✓ Mark read</strong> is for a day read from a printed Bible. Your next reading of each plan is on Home; <strong>⋯</strong> pauses, starts over or removes a plan</span></div>
         <div class="tip-row"><span class="tip-ico">🔖</span><span class="tip-txt"><strong>My Verses</strong> — tap a verse, then <strong>🔖 Save</strong>, and put it in a list you name: a doctrine you often explain, verses for comfort, a lesson. A verse can be in any number of lists. In <strong>Notes → My Verses</strong>, open a list to put its verses in your order (↑ ↓ or ⇅ Bible order), <strong>Share</strong> it, <strong>Present</strong> it as slides or add it to a study. A doctrine page can be saved as a list with <strong>🔖 Save to My Verses</strong>. Your old bookmarks are in a list called Bookmarks</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>Notes tab</strong> — everything you have marked or written: <strong>My Verses</strong> (your own named lists), <strong>Highlights</strong>, verse <strong>Notes</strong> and your <strong>Studies</strong> from the 📝 notebook (tap one to open it, or ＋ New study). The search box looks through all of them</span></div>
@@ -2667,6 +2694,8 @@ body.light #home-watermark{
     <div id="sp-best"></div>
     <div id="sp-stats"></div>
     <div id="sp-milestones"></div>
+    <div id="sp-cal"></div>
+    <div id="sp-rbadges"></div>
     <div id="sp-tip">Read a chapter, doctrine, or Romans Road each day to keep your streak</div>
     <button onclick="closeStreakPanel()" style="margin-top:12px;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px 20px;cursor:pointer;font-size:13px">Close</button>
   </div>
@@ -3009,6 +3038,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   initCardGestures();
   try{ plansMigrate(); }catch(e){ console.warn('Plans migrate:', e); }
   try{ colMigrate(); }catch(e){ console.warn('My Verses migrate:', e); }
+  try{ readLogBackfill(); }catch(e){ console.warn('Reading log:', e); }
   buildBooks();
   loadStreak();
   fbInit();
@@ -3068,8 +3098,7 @@ function buildBooks(){
   h+=`<div id="cont-banner" class="hidden"></div>`;
 
   // Verse of the Day
-  h+=`<div id="vod" onclick="jumpVOD()"><div id="vod-lbl">✦ Verse of the Day</div><div id="vod-txt">Loading…</div><div id="vod-ref"></div>
-    <div id="vod-acts" onclick="event.stopPropagation()"><button onclick="vodSave()">🔖 Save</button><button onclick="vodDrill()">⚔️ Drill</button><button onclick="vodCard()">📸 Card</button></div></div>`;
+  h+=`<div id="vod" onclick="jumpVOD()"><div id="vod-lbl">✦ Verse of the Day</div><div id="vod-txt">Loading…</div><div id="vod-ref"></div></div>`;
 
   // ── Roman's Road Card ──
   h += `<div id="rr-card">
@@ -3186,13 +3215,9 @@ async function loadVOD(){
     const v=data.chapters[r.c-1].verses[r.v-1];
     document.getElementById('vod-txt').textContent=`"${v.text}"`;
     document.getElementById('vod-ref').textContent=`${r.b} ${r.c}:${r.v} (KJV)`;
-    vodMeta={book:r.b,ch:r.c-1,data,ref:`${r.b} ${r.c}:${r.v}`,v:r.v,txt:v.text};
+    vodMeta={book:r.b,ch:r.c-1,data};
   }catch(e){}
 }
-// The Verse of the Day leads on: keep it in a list, drill it, or make a card of it
-function vodSave(){ if(vodMeta) colSheet([{a: vodMeta.ref, r: vodMeta.ref, t: vodMeta.txt}]); }
-function vodDrill(){ if(vodMeta) drillAdd([{a: vodMeta.ref}]); }
-function vodCard(){ if(vodMeta) openScrOverlay([{ref: vodMeta.ref, vnum: String(vodMeta.v), txt: vodMeta.txt}], vodMeta.ref); }
 async function jumpVOD(){if(!vodMeta)return;S.book=vodMeta.book;S.ch=vodMeta.ch;S.bookData=vodMeta.data;renderReader();showScreen('reader');recordActivity();}
 async function openHistoryChapter(book, ch){
   const data=await fetchBook(book);if(!data)return;
@@ -9592,6 +9617,7 @@ function showStreakInfo(){
     statsEl.innerHTML =
       `<div class="sp-stat"><div class="sp-stat-n">${S.streak||0}</div><div class="sp-stat-l">Current</div></div>`
       +`<div class="sp-stat"><div class="sp-stat-n">${S.streakBest||0}</div><div class="sp-stat-l">Longest</div></div>`
+      +`<div class="sp-stat"><div class="sp-stat-n">${readAll().size}</div><div class="sp-stat-l">Chapters</div></div>`
       +`<div class="sp-stat"><div class="sp-stat-n">${booksRead}<span class="sp-stat-sub">/66</span></div><div class="sp-stat-l">Books read</div></div>`;
   }
 
@@ -9601,7 +9627,10 @@ function showStreakInfo(){
       <div class="sp-badge-lbl">${m.label}</div>
     </div>`).join('');
   document.getElementById('sp-milestones').innerHTML = ms;
+  S._calYM = null; S._calDay = null;
+  spCalRender(); spBadgesRender();
   openPopover('streak-panel');
+  document.getElementById('streak-panel-inner').scrollTop = 0;
 }
 
 function closeStreakPanel(e){
@@ -9762,6 +9791,7 @@ function planCountChapter(bi, ci){
   plansSave(d);
   recordActivity();
   plansAfterChange();
+  badgesCheck();
   if(msgs.length) showToast(msgs[msgs.length - 1]);
 }
 // Mark any day whose chapters are all read; returns true if one was marked
@@ -9787,7 +9817,7 @@ function planCompleteDays(p, today, msgs){
 function planMarkDay(id, day){
   const d = plansData(), p = d.list.find(x => x.id === id), today = todayStr();
   if(!planOk(p) || (day in p.days)) return;
-  getPlanDayReadings(p.plan, day).forEach(([b, c]) => { const k = planChKey(b, c); if(!(k in p.chs)) p.chs[k] = today; });
+  getPlanDayReadings(p.plan, day).forEach(([b, c]) => { const k = planChKey(b, c); if(!(k in p.chs)) p.chs[k] = today; logChapterRead(b, c); });
   const msgs = [];
   p.days[day] = today;
   msgs.push(`✓ Day ${day + 1} read · ${planDaysDone(p)} of ${PLAN_DEFS[p.plan].days} — ${PLAN_DEFS[p.plan].name}`);
@@ -9796,6 +9826,7 @@ function planMarkDay(id, day){
   plansSave(d);
   recordActivity();
   plansAfterChange();
+  badgesCheck();
   showToast(msgs[msgs.length - 1]);
 }
 function plansAfterChange(){
@@ -9814,7 +9845,9 @@ function planReadWatch(){
   if(_prw) clearTimeout(_prw.timer);
   _prw = null;
   const bi = BOOKS.indexOf(S.book), ci = S.ch;
-  if(plansActive().some(p => planCovers(p, bi, ci) && !(planChKey(bi, ci) in p.chs))){
+  // Every chapter is watched: the calendar counts it, and so do the plans it is in
+  const logged = (readLog()[todayStr()] || []).includes(planChKey(bi, ci));
+  if(!logged || plansActive().some(p => planCovers(p, bi, ci) && !(planChKey(bi, ci) in p.chs))){
     _prw = {bi, ci, t0: Date.now(), done: false};
     _prw.timer = setTimeout(planReadCheck, PLAN_READ_MS + 100);
   }
@@ -9827,6 +9860,7 @@ function planReadCheck(){
   const blocks = document.querySelectorAll('#verses .vblock'), last = blocks[blocks.length - 1];
   if(!last || last.getBoundingClientRect().top > window.innerHeight - 60) return;
   w.done = true;
+  logChapterRead(w.bi, w.ci);
   planCountChapter(w.bi, w.ci);
 }
 document.getElementById('screen-reader')?.addEventListener('scroll', () => { if(_prw && !_prw.done) planReadCheck(); }, {passive: true});
@@ -9921,7 +9955,7 @@ function renderPlansScreen(){
   const running = new Set([...active, ...paused].map(p => p.plan));
   const avail = Object.values(PLAN_DEFS).filter(d => !running.has(d.id));
 
-  let h = `<div class="pl-h1">Reading Plans</div>`;
+  let h = `<div class="pl-h1">Reading Plans</div><button class="pl-cal-link" onclick="showStreakInfo()">🔥 Your reading calendar &amp; badges ›</button>`;
   if(!active.length && !paused.length)
     h += `<div class="pl-empty">Read at your own pace — a plan waits for you. Run more than one at once; each keeps its own place. A chapter counts once you have read to the end of it.</div>`;
   h += active.map(planCard).join('');
@@ -10071,6 +10105,145 @@ function updateHomePlans(){
       <span class="hw-tt"><span class="hw-sm">${def.name} · ${planDaysDone(p)} of ${def.days} days</span><span class="hw-big">Day ${cur + 1} — ${planDayLabel(p.plan, cur)}${reads.length > 1 && nRead ? ` <span class="hw-sm" style="display:inline">· ${nRead} of ${reads.length}</span>` : ''}</span></span>
       ${nx ? `<button class="hw-read" onclick="openPlanChapter(${nx.bi},${nx.ci})">Read</button>` : ''}</div>`;
   }).join('') + `<button class="hw-more" onclick="showScreen('plans')">All plans ›</button></div>`;
+}
+
+/* ════ DAYS IN THE WORD: the reading calendar & badges (v52) ════
+   kjv_read_log = {'2026-10-06': ['19:4', '39:19', …]} — the chapters read
+   each day, a chapter counting once its end is reached (planReadWatch), the
+   same rule the plans use. Synced item by item; two devices' days are added
+   together. From it come the calendar in the streak panel (tap a day to
+   reopen what you read), the reading badges (kjv_badges = {id: date}) and a
+   book ticked off in the Reading Journey once every chapter of it is read. */
+const READ_KEY = 'kjv_read_log', BADGE_KEY = 'kjv_badges';
+function readLog(){ const d = LS.get(READ_KEY, null); return d && typeof d === 'object' && !Array.isArray(d) ? d : {}; }
+function readAll(log = readLog()){ const s = new Set(); Object.values(log).forEach(a => (a || []).forEach(k => s.add(k))); return s; }
+function readStats(log = readLog()){
+  const all = readAll(log);
+  let nt = 0; all.forEach(k => { if(+k.split(':')[0] >= 39) nt++; });
+  const bookDone = bi => { for(let c = 0; c < CH_COUNTS[bi]; c++) if(!all.has(bi + ':' + c)) return false; return true; };
+  const books = BOOKS.map((_, bi) => bookDone(bi));
+  return {ch: all.size, nt, ot: all.size - nt, days: Object.keys(log).filter(d => (log[d] || []).length).length,
+    books, booksDone: books.filter(Boolean).length,
+    plans: new Set(plansData().list.filter(p => p.fin && PLAN_DEFS[p.plan]).map(p => p.plan))};
+}
+// Called when a chapter has been read (its end reached)
+function logChapterRead(bi, ci){
+  const log = readLog(), t = todayStr(), k = bi + ':' + ci;
+  const had = readAll(log).has(k);
+  const day = log[t] || (log[t] = []);
+  if(day.includes(k)) return;
+  day.push(k);
+  LS.set(READ_KEY, log); fbSyncSoon();
+  // A book read right through goes into the Reading Journey
+  if(!had && S.booksRead && !S.booksRead.has(BOOKS[bi])){
+    const all = readAll(log);
+    let full = true; for(let c = 0; c < CH_COUNTS[bi]; c++) if(!all.has(bi + ':' + c)){ full = false; break; }
+    if(full){
+      S.booksRead.add(BOOKS[bi]); LS.set('kjv_books_read', [...S.booksRead]); fbSyncSoon();
+      setTimeout(() => showToast(`📚 You have read all of ${BOOKS[bi]} — ticked off in your Reading Journey`), 900);
+    }
+  }
+  badgesCheck();
+}
+// The plans' own dated progress fills in the calendar's past, once per device
+function readLogBackfill(){
+  if(LS.get('kjv_read_bf', false)) return;
+  const log = readLog();
+  plansData().list.forEach(p => Object.entries((p && p.chs) || {}).forEach(([k, d]) => {
+    if(!/^\d{4}-\d\d-\d\d$/.test(d)) return;
+    const day = log[d] || (log[d] = []);
+    if(!day.includes(k)) day.push(k);
+  }));
+  LS.set(READ_KEY, log);
+  LS.set('kjv_read_bf', true);
+  // books already read right through go into the Reading Journey
+  const st = readStats(log);
+  let ticked = false;
+  st.books.forEach((done, bi) => { if(done && S.booksRead && !S.booksRead.has(BOOKS[bi])){ S.booksRead.add(BOOKS[bi]); ticked = true; } });
+  if(ticked){ LS.set('kjv_books_read', [...S.booksRead]); fbSyncSoon(); }
+  badgesCheck(true);
+}
+
+// ── Badges ──
+const NT_CH = CH_COUNTS.slice(39).reduce((a, b) => a + b, 0), ALL_CH = CH_COUNTS.reduce((a, b) => a + b, 0);
+const GOSPELS = [39, 40, 41, 42], PAUL = [44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56];
+const READ_BADGES = [
+  {id:'ch1',   ico:'📖', n:'First Chapter',      d:'Read a chapter to its end',            p: s => [s.ch, 1]},
+  {id:'ch10',  ico:'📗', n:'10 Chapters',        d:'Ten different chapters read',          p: s => [s.ch, 10]},
+  {id:'ch50',  ico:'📘', n:'50 Chapters',        d:'Fifty different chapters read',        p: s => [s.ch, 50]},
+  {id:'ch100', ico:'📙', n:'100 Chapters',       d:'A hundred different chapters read',    p: s => [s.ch, 100]},
+  {id:'ch500', ico:'📚', n:'500 Chapters',       d:'Five hundred different chapters read', p: s => [s.ch, 500]},
+  {id:'book1', ico:'🔖', n:'A Whole Book',       d:'Every chapter of one book',            p: s => [s.booksDone, 1]},
+  {id:'gosp',  ico:'✝️', n:'The Four Gospels',   d:'Matthew, Mark, Luke and John',         p: s => [GOSPELS.filter(b => s.books[b]).length, 4]},
+  {id:'paul',  ico:'✉️', n:'Paul’s Epistles',    d:'Romans through Philemon',              p: s => [PAUL.filter(b => s.books[b]).length, PAUL.length]},
+  {id:'nt',    ico:'🕊️', n:'New Testament',      d:'Every chapter, Matthew to Revelation', p: s => [s.nt, NT_CH]},
+  {id:'bible', ico:'👑', n:'The Whole Bible',    d:'All 1,189 chapters',                   p: s => [s.ch, ALL_CH]},
+  {id:'d30',   ico:'🗓️', n:'30 Days in the Word', d:'Thirty days with a chapter read',     p: s => [s.days, 30]},
+  {id:'d100',  ico:'🌿', n:'100 Days in the Word', d:'A hundred days with a chapter read', p: s => [s.days, 100]},
+  {id:'d365',  ico:'🌳', n:'A Year in the Word', d:'365 days with a chapter read',         p: s => [s.days, 365]},
+  ...Object.values(PLAN_DEFS).map(d => ({id:'plan-' + d.id, ico:'🏆', n:d.name, d:'Finish the plan', p: s => [s.plans.has(d.id) ? 1 : 0, 1]})),
+];
+function badgesEarned(){ const b = LS.get(BADGE_KEY, null); return b && typeof b === 'object' && !Array.isArray(b) ? b : {}; }
+// Award what has been reached; quiet = no celebration (catching up old progress)
+function badgesCheck(quiet){
+  const s = readStats(), got = badgesEarned(), fresh = [];
+  READ_BADGES.forEach(b => { const [n, of] = b.p(s); if(n >= of && !got[b.id]){ got[b.id] = todayStr(); fresh.push(b); } });
+  if(!fresh.length) return;
+  LS.set(BADGE_KEY, got); fbSyncSoon();
+  if(quiet) return;
+  fresh.forEach((b, i) => setTimeout(() => {
+    const toast = document.getElementById('milestone-toast');
+    document.getElementById('mt-icon').textContent = b.ico;
+    document.getElementById('mt-text').innerHTML = `<div class="mt-title">${escapeHtml(b.n)}</div><div class="mt-sub">Badge earned — ${escapeHtml(b.d.toLowerCase())}</div>`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3800);
+  }, 1200 + i * 4300));
+}
+
+// ── The streak panel: calendar and badges ──
+function spCalRender(){
+  const el = document.getElementById('sp-cal');
+  if(!el) return;
+  const log = readLog(), now = new Date();
+  const ym = S._calYM || (S._calYM = [now.getFullYear(), now.getMonth()]);
+  const [y, m] = ym, first = new Date(y, m, 1), days = new Date(y, m + 1, 0).getDate();
+  const pad = n => String(n).padStart(2, '0'), key = d => `${y}-${pad(m + 1)}-${pad(d)}`, today = todayStr();
+  let cells = '', nDays = 0, nCh = 0;
+  for(let i = 0; i < first.getDay(); i++) cells += '<span></span>';
+  for(let d = 1; d <= days; d++){
+    const k = key(d), n = (log[k] || []).length;
+    if(n){ nDays++; nCh += n; }
+    const lvl = n >= 4 ? 3 : n >= 2 ? 2 : n ? 1 : 0;
+    cells += `<button class="cal-d l${lvl} ${k === today ? 'today' : ''} ${S._calDay === k ? 'sel' : ''}" onclick="spCalDay('${k}')" aria-label="${k}: ${n} chapter${n === 1 ? '' : 's'}">${d}</button>`;
+  }
+  const isNow = y === now.getFullYear() && m === now.getMonth();
+  const dayK = S._calDay, dayList = dayK ? (log[dayK] || []) : null;
+  el.innerHTML = `<div class="cal-hd"><button onclick="spCalMove(-1)" aria-label="Previous month">‹</button>
+      <span>${first.toLocaleDateString(undefined, {month: 'long', year: 'numeric'})}</span>
+      <button onclick="spCalMove(1)" ${isNow ? 'disabled' : ''} aria-label="Next month">›</button></div>
+    <div class="cal-w">${['S','M','T','W','T','F','S'].map(x => `<span>${x}</span>`).join('')}</div>
+    <div class="cal-g">${cells}</div>
+    <div class="cal-sum">${nDays ? `${nDays} day${nDays === 1 ? '' : 's'} · ${nCh} chapter${nCh === 1 ? '' : 's'} read this month` : 'Chapters you read to the end fill in the days'}</div>
+    ${dayList ? `<div class="cal-day"><div class="cal-day-t">${new Date(dayK + 'T12:00').toLocaleDateString(undefined, {weekday: 'long', month: 'long', day: 'numeric'})}</div>
+      ${dayList.length ? `<div class="cal-chs">${dayList.map(k => { const [b, c] = k.split(':').map(Number); return `<button onclick="spOpenChapter(${b},${c})">${BOOKS[b]} ${c + 1}</button>`; }).join('')}</div>` : '<div class="cal-none">No chapters that day</div>'}</div>` : ''}`;
+}
+function spCalMove(d){
+  let [y, m] = S._calYM; m += d;
+  if(m < 0){ m = 11; y--; } if(m > 11){ m = 0; y++; }
+  S._calYM = [y, m]; S._calDay = null; spCalRender();
+}
+function spCalDay(k){ S._calDay = S._calDay === k ? null : k; spCalRender(); }
+// Back to the Word: a chapter from the calendar opens in the reader
+function spOpenChapter(bi, ci){ leavePopoverThen('streak-panel', () => openPlanChapter(bi, ci)); }
+function spBadgesRender(){
+  const el = document.getElementById('sp-rbadges');
+  if(!el) return;
+  const s = readStats(), got = badgesEarned();
+  const n = READ_BADGES.filter(b => got[b.id]).length;
+  el.innerHTML = `<div class="spb-hd">🏅 Badges <span>${n} of ${READ_BADGES.length}</span></div><div class="spb-g">` + READ_BADGES.map(b => {
+    const [have, of] = b.p(s), on = !!got[b.id];
+    return `<div class="spb ${on ? 'on' : ''}" title="${escapeHtml(b.d)}"><div class="spb-i">${b.ico}</div><div class="spb-n">${escapeHtml(b.n)}</div><div class="spb-p">${on ? '✓ ' + new Date(got[b.id] + 'T12:00').toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'}) : of > 1 ? `${Math.min(have, of)} / ${of}` : escapeHtml(b.d)}</div></div>`;
+  }).join('') + '</div>';
 }
 
 /* ════════════════════════════════
@@ -13348,7 +13521,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v51';
+const WHATS_NEW_VERSION = 'v52';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -13484,6 +13657,14 @@ const MERGE_STORES = {
 MERGE_STORES.kjv_collections = {tag:'cl',
   items: v => Object.fromEntries(((v && v.list) || []).filter(c => c && c.id).map(c => [c.id, c])),
   build: (m, prev, meta) => ({list: syncOrder(m, ((prev && prev.list) || []).map(c => c && c.id), meta)})};
+MERGE_STORES.kjv_read_log = {tag:'rl',
+  items: v => (v && typeof v === 'object' && !Array.isArray(v)) ? {...v} : {},
+  build: m => m,
+  combine: (a, b) => [...new Set([...(a || []), ...(b || [])])]};
+MERGE_STORES.kjv_badges = {tag:'bg',
+  items: v => (v && typeof v === 'object' && !Array.isArray(v)) ? {...v} : {},
+  build: m => m,
+  combine: (a, b) => (a < b ? a : b)};
 MERGE_STORES.kjv_plans = {tag:'pl',
   items: v => Object.fromEntries(((v && v.list) || []).filter(p => p && p.id).map(p => [p.id, p])),
   build: (m, prev, meta) => ({list: syncOrder(m, ((prev && prev.list) || []).map(p => p && p.id), meta)}),
@@ -14036,12 +14217,21 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v52" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🏅</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Days in the Word</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Tap <strong>🔥</strong> for a <strong>calendar of the days you read</strong> — the more chapters, the deeper the gold — and tap a day to open what you read. Every chapter you read to the end counts, on a plan or not. Earn <strong>badges</strong> for chapters read, whole books, the Gospels, Paul’s epistles, the New Testament, the whole Bible, days in the Word and each plan you finish. A book you read right through is ticked off in your Reading Journey for you.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v51" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔁</div>
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Everything Leads Somewhere</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          The <strong>Verse of the Day</strong> can now be saved to a list, sent to ⚔ Sword Drill or made into a 📸 card. Select verses and tap <strong>⚔️ Sword Drill</strong> to memorize them, and <strong>Copy All</strong> is back beside Screenshot. A My Verses list can be drilled or made into cards. And at the end of every chapter, <strong>✍️</strong> opens your <strong>Reading Journal</strong>.
+          Select verses and tap <strong>⚔️ Sword Drill</strong> to memorize them, and <strong>Copy All</strong> is back beside Screenshot. A My Verses list can be drilled or made into cards. And at the end of every chapter, <strong>✍️</strong> opens your <strong>Reading Journal</strong>.
         </div>
       </div>
     </div>
