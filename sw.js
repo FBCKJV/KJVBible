@@ -8,7 +8,7 @@
 // Bump CACHE_NAME on every deploy (either kind) — it invalidates the cache
 // and is read back by the app (refreshAppVersion) for the Settings display.
 
-const CACHE_NAME = 'fbckjv-bible-v55.02';
+const CACHE_NAME = 'fbckjv-bible-v55.03';
 
 // Bible maps + the concordance and Bible-names indexes — bundled static
 // assets, precached so they work offline.
@@ -54,7 +54,8 @@ self.addEventListener('fetch', e => {
   if(e.request.method !== 'GET') return;
   e.respondWith(
     fetch(e.request).then(res => {
-      if(res.ok && e.request.mode === 'navigate'){
+      // the chapter pages (kjv/) are plain web pages, not the app: leave them out
+      if(res.ok && e.request.mode === 'navigate' && !new URL(e.request.url).pathname.includes('/kjv/')){
         const copy = res.clone();
         caches.open(CACHE_NAME).then(c => c.put(e.request, copy));
       }
