@@ -3425,10 +3425,11 @@ async function loadVOD(){
     const v=data.chapters[r.c-1].verses[r.v-1];
     document.getElementById('vod-txt').textContent=`"${v.text}"`;
     document.getElementById('vod-ref').textContent=`${r.b} ${r.c}:${r.v} (KJV)`;
-    vodMeta={book:r.b,ch:r.c-1,data};
+    vodMeta={book:r.b,ch:r.c-1,v:r.v,data};
   }catch(e){}
 }
-async function jumpVOD(){if(!vodMeta)return;S.book=vodMeta.book;S.ch=vodMeta.ch;S.bookData=vodMeta.data;renderReader();showScreen('reader');recordActivity();}
+// Opens the chapter at the verse itself, marked for a moment (as any reference does)
+async function jumpVOD(){if(!vodMeta)return;await jumpToRef(`${vodMeta.book} ${vodMeta.ch+1}:${vodMeta.v}`);recordActivity();}
 async function openHistoryChapter(book, ch){
   const data=await fetchBook(book);if(!data)return;
   S.book=book;S.ch=ch;S.bookData=data;
