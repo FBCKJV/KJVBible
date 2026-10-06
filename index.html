@@ -484,6 +484,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-ed .nb-ref{display:inline-block;font-family:'Inter',sans-serif;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-right:6px;cursor:pointer;border-bottom:1px dotted var(--gold-d)}
 #nb-foot{font-size:11px;color:var(--text-m);padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
 .rc-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
+.nb-share{margin-left:6px}
 .nb-add{display:inline-flex;align-items:center;gap:4px;background:none;border:1px solid var(--border);color:var(--gold);border-radius:14px;font-size:12px;padding:3px 10px;cursor:pointer;margin:0 0 10px}
 .tl-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;cursor:pointer}
 /* Concordance: verses shown in place under a word */
@@ -2232,6 +2233,7 @@ body.light #home-watermark{
     <div id="map-bar">
       <div id="map-title"></div>
       <button class="map-zbtn" onclick="event.stopPropagation();nbAddMap()" aria-label="Add to study" title="Add to study">📝</button>
+      <button class="map-zbtn" onclick="event.stopPropagation();shareMap()" aria-label="Share this map" title="Share">📤</button>
       <button class="map-zbtn" onclick="event.stopPropagation();mapZoom(-1)" aria-label="Zoom out">−</button>
       <button class="map-zbtn" onclick="event.stopPropagation();mapZoom(1)" aria-label="Zoom in">＋</button>
       <button class="map-zbtn" data-tt="maps" onclick="event.stopPropagation();toolTips('maps')" aria-label="Map tips" title="Tips">?</button>
@@ -2341,6 +2343,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — it lists any archaic words (with KJV dictionary definitions) and the <strong>people &amp; places</strong> in that verse with their name meanings</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
+        <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
@@ -4024,10 +4027,67 @@ function copyVerseLink(){
 function openDeepLink(){
   const h = location.hash.slice(1);
   if(!h) return false;
+  // A shared page: #person=Mephibosheth_1, #word=emerods, #map=pauls-journeys …
+  const pg = h.match(/^([a-z]+)=(.+)$/);
+  if(pg){
+    let key; try{ key = decodeURIComponent(pg[2]); }catch(e){ key = pg[2]; }
+    history.replaceState(history.state, '', location.pathname + location.search); // opened once, not on every reload
+    if(pg[1] === 'map'){
+      const i = MAPS.findIndex(m => m.f === key);
+      if(i < 0) return false;
+      showScreen('search', false); switchSearchMode('maps'); openMap(i);
+      return true;
+    }
+    if(!SUBVIEWS[pg[1]] || !SHARE_SUBS.includes(pg[1])) return false;
+    SUBVIEWS[pg[1]].open(key, true);
+    return true;
+  }
   let raw; try{ raw = decodeURIComponent(h); }catch(e){ raw = h; }
   const ref = raw.replace(/\+/g,' ').trim();
   if(/^.+ \d+:\d+$/.test(ref)){ jumpToRef(ref); return true; }
   return false;
+}
+window.addEventListener('hashchange', () => { if(/^#[a-z]+=/.test(location.hash)) openDeepLink(); });
+
+/* ── 📤 Share a page ──
+   A name, person, place, dictionary word, topic, hymn or map is shared as a
+   line or two and a link that opens the app on that page (openDeepLink).
+   The phone's own share sheet, or the link copied where there is none. */
+const SHARE_SUBS = ['word', 'person', 'place', 'name', 'topic', 'hymn'];
+const pageLink = (sub, key) => APP_URL + '#' + sub + '=' + encodeURIComponent(key);
+function sharePage(title, text, url){
+  if(navigator.share){ navigator.share({title, text: text ? text + '\n' : title, url}).catch(() => {}); return; }
+  const all = (text ? text : title) + '\n' + url;
+  if(navigator.clipboard) navigator.clipboard.writeText(all).then(() => showToast('🔗 Link copied — paste it to share'), () => showToast(url));
+  else showToast(url);
+}
+function shareSub(){
+  const v = S._subView;
+  if(!v || !SHARE_SUBS.includes(v.sub)) return;
+  const clip = (t, n = 160) => { t = (t || '').replace(/\s+/g, ' ').trim(); return t.length > n ? t.slice(0, t.lastIndexOf(' ', n - 1)) + '…' : t; };
+  const say = (w, k) => { const g = sayGuide(w, k); return g ? ` (say it: ${g[0]})` : ''; };
+  const plain = h => (h || '').replace(/<[^>]+>/g, ' ');
+  let title = '', text = '';
+  if(v.sub === 'word' && S._wordShown){
+    const r = S._wordShown, w = r.noteWord || r.word, W = w.charAt(0).toUpperCase() + w.slice(1);
+    title = W; text = `📖 ${W}${say(W, 'word')} — ${clip(r.note || firstSense(r.entries))}`;
+  } else if(v.sub === 'person' && S._people && S._people[v.key]){
+    const p = S._people[v.key]; title = p.n; text = `👤 ${p.n}${say(p.n, 'name')} — ${clip(plain(p.d))}`;
+  } else if(v.sub === 'place' && S._places && S._places[v.key]){
+    const p = S._places[v.key]; title = p.n; text = `📍 ${p.n}${say(p.n, 'name')} — ${placeType(p.t)}${p.s ? ', today ' + p.s : ''}`;
+  } else if(v.sub === 'name' && S._nameIndex && S._nameIndex.get(v.key)){
+    const e = S._nameIndex.get(v.key); title = e.name; text = `📛 ${e.name}${say(e.name, 'name')}${e.meaning ? ` — “${e.meaning}”` : ''}`;
+  } else if(v.sub === 'topic'){
+    title = naveTitle(v.key); text = `📚 ${title} — what the Bible says, verse by verse`;
+  } else {
+    const t = document.querySelector('#' + SUBVIEWS[v.sub].view + ' .dv-title');
+    title = t ? t.textContent.trim() : 'FBC KJV Bible'; text = `🎵 ${title}`;
+  }
+  sharePage(title, text + '\nFBC KJV Bible', pageLink(v.sub, v.key));
+}
+function shareMap(){
+  const m = MAPS[S._mapOpen];
+  if(m) sharePage(m.t, `🗺️ ${m.t} — ${m.d}\nFBC KJV Bible`, APP_URL + '#map=' + m.f);
 }
 function singleScreenshot(){S.scrVerses=[{ref:S.popRef,vnum:S.popRef.split(':')[1],txt:S.popTxt}];closePop();openScrOverlay(S.scrVerses,S.popRef);}
 
@@ -6188,7 +6248,7 @@ async function openNaveTopic(key, pushHistory=true, scrollY=0){
     </button>
     <div class="dv-title">${escapeHtml(naveTitle(key))}</div>
     <div class="dv-desc">${[naveSummary(key), "Nave's Topical Bible"].filter(Boolean).join(' · ')}</div>
-    <button class="nb-add" onclick="nbAddTopic()">📝＋ Add to Study</button>
+    <button class="nb-add" onclick="nbAddTopic()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
     ${lines.map((l, i) => {
       const [depth, label, refs, see] = l;
       const pad = `style="margin-left:${depth * 14}px"`;
@@ -6604,6 +6664,7 @@ async function openNamePage(key, pushHistory=true, scrollY=0){
     <div class="dv-title">${escapeHtml(e.name)}</div>
     ${sayRow(e.name, 'name')}
     ${e.meaning ? `<div class="dv-desc">“${escapeHtml(e.meaning)}”</div>` : ''}
+    <button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
     ${jesus ? `<div tabindex="0" class="rc ref-jump" onclick="openNaveTopic('JESUS, THE CHRIST')"><div class="rc-ref">✝ Jesus Christ</div><div class="rc-txt" style="opacity:.75">The Lord Jesus Christ — see the topic “Jesus, the Christ” for His life, ministry and titles</div></div>` : ''}
     ${e.people.length ? `<div class="pp-h">${e.people.length} ${jesus ? 'other ' : ''}${e.people.length === 1 ? 'person' : 'people'} named ${escapeHtml(e.name)}</div>` : ''}
     ${e.people.map(id => {
@@ -6675,7 +6736,7 @@ async function openPerson(id, pushHistory=true, scrollY=0){
     ${sayRow(p.n, 'name')}
     ${p.a ? `<div class="pp-aka-line">Also called ${p.a.map(escapeHtml).join(', ')}</div>` : ''}
     <div class="pp-desc">${linkRefs(p.d)}</div>
-    <button class="nb-add" onclick="nbAddPerson()">📝＋ Add to Study</button>
+    <button class="nb-add" onclick="nbAddPerson()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
     <div class="pp-meta">${[p.s === 'm' ? 'Man' : p.s === 'f' ? 'Woman' : '', p.t ? 'Tribe of ' + escapeHtml(p.t) : '', n ? `Named in ${n} verse${n !== 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ')}</div>
     ${p.x ? `<div class="pp-notes">${linkRefs(p.x)}</div>` : ''}
     ${(p.l && p.l.length) || (hitch && hitch.meaning) ? `<div class="pp-h">The name</div>
@@ -6821,7 +6882,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
     ${sayRow(p.n, 'name')}
     ${p.a ? `<div class="pp-aka-line">Also spelled ${p.a.map(escapeHtml).join(', ')}</div>` : ''}
     <div class="pp-meta">${escapeHtml(placeType(p.t))}${n ? ` · Named in ${n} verse${n !== 1 ? 's' : ''}` : ''}</div>
-    <button class="nb-add" onclick="nbAddPlace()">📝＋ Add to Study</button>
+    <button class="nb-add" onclick="nbAddPlace()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
     ${hitch && hitch.meaning ? `<div class="pp-hitch">Name meaning (Hitchcock, 1869): “${escapeHtml(hitch.meaning)}”</div>` : ''}
     <div class="pp-h">Where it was</div>
     ${p.ll ? `<div class="pl-site">
@@ -7210,7 +7271,7 @@ async function openHymn(i, pushHistory=true, scrollY=0){
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
     <div class="dv-title">${escapeHtml(t)}</div>
     <div class="hy-by">${escapeHtml(a)}, ${y} · ${escapeHtml(sec)}</div>
-    <button class="nb-add" onclick="nbAddHymn()">📝＋ Add to Study</button>
+    <button class="nb-add" onclick="nbAddHymn()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
     <div class="vl-chips hy-refs">${refs.map(([label, r]) => `<button class="vl-chip" onclick="jumpToRef('${r.replace(/'/g, "\\'")}')">📖 ${escapeHtml(label)}</button>`).join('')}</div>
     ${stanzas.map((st, n) => `<div class="hy-st"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div></div>` + (n === 0 ? chorusHTML : '')).join('')}
     <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.</div>`;
@@ -8754,7 +8815,7 @@ async function openWord(key, pushHistory=true, scrollY=0){
       <div class="wd-src">${r.entries.length ? 'Webster’s American Dictionary of the English Language, 1828' : ''}${r.entries.length && r.note ? ' · ' : ''}${r.note ? 'KJV note: Faith Baptist Church' : ''}</div>
     </div>
     <div class="wd-first" id="wd-first"></div>
-    <div style="margin-top:12px"><button class="nb-add" onclick="nbAddWord()">📝＋ Add to Study</button></div>
+    <div style="margin-top:12px"><button class="nb-add" onclick="nbAddWord()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button></div>
     <button class="nv-showmore pp-find" onclick="concordSearch('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔍 Find “${escapeHtml(r.noteWord || r.word)}” in Scripture</button>
     <div class="nv-credit">Noah Webster, An American Dictionary of the English Language (1828 — public domain); transcription by akaitsurugi/webster1828, CC BY-SA 4.0. Scripture references checked against the KJV.</div>`;
   S._wordShown = r;
@@ -12118,7 +12179,7 @@ const TOOL_TIPS = {
     ['🗺️', '<strong>Every Bible place on one map</strong> — tap a place to see what happened there; pinch or use + / − to zoom and drag to look around'],
     ['🧭', '<strong>🧭 Journeys</strong> follow Abraham, the Exodus, Paul and others stop by stop, each stop a verse with its date on the timeline'],
     ['⚖️', '<strong>Disputed sites</strong> such as mount Sinai, Ur, Golgotha, Ai and Sodom show both views, on the journeys and on the place pages'],
-    ['📜', '<strong>📜 Classic maps</strong> are 19th-century atlas plates; open one full screen and tap 📝 to add it to your study'],
+    ['📜', '<strong>📜 Classic maps</strong> are 19th-century atlas plates; open one full screen and tap 📝 to add it to your study, or 📤 to send it to someone'],
     ['📖', 'In the reader, <strong>📍 Where</strong> maps the places in the chapter, and a <strong>🧭</strong> button opens a journey that passes through it'],
     ['📶', 'Maps work offline once they have loaded'],
   ]},
@@ -12138,6 +12199,7 @@ const TOOL_TIPS = {
     ['⭐', 'A word shows its <strong>first mention in Scripture</strong> and how many verses use it; the references in an entry are links'],
     ['📝', 'While reading, <strong>tap a verse</strong> — its hard words are listed with their meaning, and “Full dictionary entry →” opens them here'],
     ['🔊', '<strong>🔊 Hear it</strong> says the word aloud (tap again for slowly); old words like <em>shew</em>, <em>divers</em> and <em>victuals</em> show how to say them'],
+    ['📤', '<strong>📤 Share</strong> sends the word, its meaning and a link that opens this page in the app'],
   ]},
   topics: {i:'📚', t:'Topics', tips:[
     ['📚', '<strong>Nave’s Topical Bible</strong> — about 5,300 subjects A–Z, each with its passages arranged by sub-topic'],
@@ -12156,6 +12218,7 @@ const TOOL_TIPS = {
     ['⚖️', 'A <strong>disputed site</strong> shows each view, why it is held, and all of them on one map'],
     ['📖', 'While reading, <strong>tap a verse</strong> to see the people and places in it'],
     ['🔊', '<strong>🔊 Hear it</strong> on a name, person or place says it aloud — tap again to hear it slowly. About 660 hard names are written the way they sound, the strong part in capitals (<strong>meh-FIB-oh-sheth</strong>)'],
+    ['📤', '<strong>📤 Share</strong> on a name, person or place sends who or what it is, how to say it, and a link that opens that page in the app'],
   ]},
   hymns: {i:'🎵', t:'Hymns', tips:[
     ['🎵', '<strong>98 hymns of the faith</strong> whose words are in the public domain, each with the Scriptures behind it — tap a 📖 reference to read it'],
