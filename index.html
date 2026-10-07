@@ -11201,6 +11201,9 @@ function readStats(log = readLog()){
 }
 // Called when a chapter has been read (its end reached)
 function logChapterRead(bi, ci){
+  // A chapter read to the end keeps the streak, however it was reached
+  // (search, Next, a link, a reference): the calendar and 🔥 always agree
+  recordActivity();
   const log = readLog(), t = todayStr(), k = bi + ':' + ci;
   const had = readAll(log).has(k);
   const day = log[t] || (log[t] = []);
