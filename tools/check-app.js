@@ -218,6 +218,18 @@ check('hymns: 🎧 Listen opens the Hymns app', async p => {
   assert(r.none, 'a hymn without a recording shows 🎧 Listen');
 });
 
+check('psalms: 🎧 Sung opens the Psalm in the Hymns app', async p => {
+  const r = await p.evaluate(async () => {
+    await jumpToRef('Psalms 23:1'); await new Promise(r => setTimeout(r, 1500));
+    const a = document.getElementById('ch-sung-btn');
+    const psalm = {shown: a.style.display !== 'none', href: a.href};
+    await jumpToRef('John 3:16'); await new Promise(r => setTimeout(r, 1500));
+    return {psalm, john: document.getElementById('ch-sung-btn').style.display};
+  });
+  assert(r.psalm.shown && r.psalm.href === 'https://fbckjv.app/Hymns/?psalm=23', `Psalm 23 button: ${JSON.stringify(r.psalm)}`);
+  assert(r.john === 'none', 'John 3 shows 🎧 Sung');
+});
+
 check('hints: Hebrew & Greek, calendar, a My Verses list', async p => {
   const hint = () => p.evaluate(() => document.getElementById('hint-card').classList.contains('on') ? document.getElementById('hint-card').innerText : '');
   await p.evaluate(() => { showScreen('search'); switchSearchMode('strongs'); }); await sleep(2500);

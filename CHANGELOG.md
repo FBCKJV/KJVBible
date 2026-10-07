@@ -6,6 +6,10 @@
 
 ## New Features
 
+### 🎧 Hear Every Psalm Sung (v59)
+- **🎧 Sung on a Psalm**: under the chapter title of any Psalm, **🎧 Sung** opens the FBC Hymns app (fbckjv.app/Hymns/?psalm=23) on that Psalm, sung word for word from the King James Bible with the verses to follow. A long Psalm that is recorded in parts (119) opens at the first part with the others listed beneath. Other books show nothing new
+- Tips & Help and the reader's tips mention it
+
 ### 🎧 Hear the Hymns Sung (v58)
 - **🎧 Listen on a hymn**: in Search → Hymns, 39 of the 98 hymns have a recording in the FBC Hymns app (fbckjv.app/Hymns/) — marked 🎧 in the list. **🎧 Listen** on the hymn's page opens it there, playing, with the words to follow
 - **The Hymns app leads back to the Word**: it now reads this app's hymn words and Scriptures, so its lyrics show **📖** buttons that open the verses behind each hymn here, and every Sung Psalm shows its verses from this app's KJV text
