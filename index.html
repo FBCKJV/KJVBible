@@ -4786,6 +4786,8 @@ function closePopover(id){
 window.addEventListener('popstate', e => {
   const state = e.state;
 
+  // Back to a study that stepped aside for a reference (phone): it comes back
+  if(state && state.modal === 'nb-panel' && S._nbUnder && !document.getElementById('nb-panel').classList.contains('on')){ nbComeBack(); return; }
   // The full-screen map is on top of everything (even an open notebook): it closes first
   const _mapOv = document.getElementById('map-overlay');
   if(_mapOv && _mapOv.classList.contains('on')){ _mapOv.classList.remove('on'); document.getElementById('map-img').src = ''; return; }
@@ -7646,12 +7648,11 @@ function nbAfterEdit(){ clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 3
     const mp = e.target.closest('.nb-map'), pl = e.target.closest('.nb-place'), hy = e.target.closest('.nb-hy-ref');
     if(mp){ const i = MAPS.findIndex(m => m.f === mp.dataset.map); if(i >= 0){ e.preventDefault(); nbStore(); openMap(i); } return; }
     if(pl){ e.preventDefault(); nbStore(); nbShowPlace(pl.dataset.place); return; }
-    if(hy){ const q = hy.closest('.nb-hy'); if(q){ e.preventDefault(); nbStore(); leavePopoverThen('nb-panel', () => openHymn(+q.dataset.hymn)); } return; }
+    if(hy){ const q = hy.closest('.nb-hy'); if(q){ e.preventDefault(); nbStepAside(() => openHymn(+q.dataset.hymn)); } return; }
     const r = e.target.closest('.nb-ref');
     if(!r) return;
     e.preventDefault();
-    nbStore();
-    leavePopoverThen('nb-panel', () => jumpToRef(r.dataset.ref));
+    nbStepAside(() => jumpToRef(r.dataset.ref));
   });
   // Tab / Shift+Tab indent and outdent on a keyboard
   ed.addEventListener('keydown', e => {
@@ -7663,7 +7664,29 @@ async function nbShowPlace(id){
   const p = S._places && S._places[id];
   if(!p) return;
   if(p.ll) openWhereMap(p.n, placeType(p.t) + (p.s ? ' · today ' + p.s : ''), [wmPin(id, true)]);
-  else leavePopoverThen('nb-panel', () => openPlace(id));
+  else nbStepAside(() => openPlace(id));
+}
+/* A reference tapped in the study. Beside the page (wide screens) it simply
+   opens there. On a phone the notebook steps aside — its place in the Back
+   history stays — so Back brings the study back just as it was, over the page
+   that was under it; Back again closes it as usual. */
+function nbStepAside(fn){
+  nbStore();
+  if(isWideScreen()){ fn(); return; }
+  const p = document.getElementById('nb-panel');
+  if((history.state || {}).modal !== 'nb-panel'){ leavePopoverThen('nb-panel', fn); return; }
+  S._nbUnder = {screen: S.screen, book: S.book, ch: S.ch};
+  p.classList.remove('on');
+  fn();
+}
+async function nbComeBack(){
+  const u = S._nbUnder; S._nbUnder = null;
+  if(u && u.screen === 'reader' && (u.book !== S.book || u.ch !== S.ch)){
+    const d = await fetchBook(u.book);
+    if(d){ S.book = u.book; S.ch = u.ch; S.bookData = d; renderReader(); }
+  }
+  if(u && u.screen) showScreen(u.screen, false);
+  const p = document.getElementById('nb-panel'); p.classList.add('on'); p.dataset.t = ++LAYER_SEQ;
 }
 // Closes a pop-over (consuming its history entry), then runs fn
 function leavePopoverThen(id, fn){
@@ -15265,7 +15288,7 @@ function openChPicker(){
       `<div class="ch-num-btn ${i===S.ch?'cur':''}" onclick="jumpToCh(${i})">${i+1}</div>`
     ).join('');
   document.getElementById('ch-picker').classList.add('on');
-  history.pushState({modal:'ch-picker'},'','');
+  history.pushState({screen:S.screen, modal:'ch-picker'},'','');
   // Show Scourby listen row below grid
   const row = document.getElementById('cp-audio-row');
   const lbl = document.getElementById('cp-scourby-label');
@@ -15284,9 +15307,13 @@ function closeChPicker(){
   document.getElementById('ch-picker').classList.remove('on');
 }
 
+// The picker's own history entry becomes the chosen chapter, so one Back
+// returns to the chapter it was opened from
 function jumpToCh(idx){
   closeChPicker();
-  selectCh(idx);
+  S.ch = idx; renderReader(); recordActivity();
+  if((history.state || {}).modal === 'ch-picker'){ showScreen('reader', false); history.replaceState({screen:'reader', book:S.book, ch:S.ch}, '', ''); }
+  else showScreen('reader');
 }
 
 // Handle back button for chapter picker
