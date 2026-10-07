@@ -354,6 +354,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #pres-overlay.light.s-title #pres-txt,#pres-overlay.light.s-head #pres-txt,#pres-overlay.hcl.s-title #pres-txt,#pres-overlay.hcl.s-head #pres-txt{color:#7a4e10}
 #pres-overlay.hc.s-title #pres-txt,#pres-overlay.hc.s-head #pres-txt{color:#ffd54a}
 #pres-overlay.s-text #pres-txt{text-align:left;line-height:1.35}
+#pres-overlay.s-map #pres-txt{font-size:16px !important;line-height:0}
+.pres-map{max-width:100%;max-height:72vh;border-radius:8px;box-shadow:0 6px 30px rgba(0,0,0,.4)}
 #pres-overlay.s-text #pres-txt p,#pres-overlay.s-text #pres-txt div{margin:0 0 .45em}
 #pres-overlay.s-text #pres-txt ul,#pres-overlay.s-text #pres-txt ol{margin:0 0 .45em;padding-left:1.1em}
 #pres-overlay.s-text #pres-txt li{margin:.12em 0}
@@ -488,7 +490,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-ed ul,#nb-ed ol{margin:0 0 8px;padding-left:24px}
 #nb-ed li{margin:2px 0}
 #nb-ed blockquote{margin:8px 0 10px;padding:8px 12px;border-left:3px solid var(--gold-d);background:var(--surface);border-radius:0 8px 8px 0;font-style:italic;color:var(--text-d)}
-#nb-ed blockquote.nb-v{font-style:normal;color:var(--text)}
+#nb-ed blockquote.nb-v,#nb-ed blockquote.nb-hy{font-style:normal;color:var(--text)}
+#nb-ed .nb-hy-ref{display:block;font-family:'Inter',sans-serif;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:3px;cursor:pointer}
+#nb-ed .nb-map{margin:8px 0 12px;max-width:340px;cursor:pointer;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface)}
+#nb-ed .nb-map img{display:block;width:100%;max-height:220px;object-fit:cover}
+#nb-ed .nb-map span{display:block;padding:6px 10px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text-d)}
+#nb-ed .nb-place{margin:8px 0 12px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;color:var(--text)}
+#nb-ed .nb-place::after{content:' · tap to see it on the map';font-family:'Inter',sans-serif;font-size:11px;color:var(--text-m)}
 #nb-ed hr{border:0;border-top:2px dashed var(--gold-d);margin:16px 0;position:relative;overflow:visible}
 #nb-ed hr::after{content:'✂ new slide';position:absolute;right:0;top:-9px;font-size:10px;font-family:'Inter',sans-serif;color:var(--gold-d);background:var(--bg);padding:0 4px}
 #nb-ed .nb-ref{display:inline-block;font-family:'Inter',sans-serif;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-right:6px;cursor:pointer;border-bottom:1px dotted var(--gold-d)}
@@ -4761,6 +4769,9 @@ function closePopover(id){
 window.addEventListener('popstate', e => {
   const state = e.state;
 
+  // The full-screen map is on top of everything (even an open notebook): it closes first
+  const _mapOv = document.getElementById('map-overlay');
+  if(_mapOv && _mapOv.classList.contains('on')){ _mapOv.classList.remove('on'); document.getElementById('map-img').src = ''; return; }
   // Close any open pop-over card first — Back dismisses the card instead of
   // navigating the page beneath it (each pushed a history entry when opened).
   // (and the verse card) — the most recently opened one, when several are open
@@ -7490,7 +7501,22 @@ function nbClean(html){
     if(!ALLOW.has(n.tagName)){ n.replaceWith(...n.childNodes); return; }
     const ref = n.tagName === 'SPAN' && n.classList.contains('nb-ref') ? n.dataset.ref : null;
     const verse = n.tagName === 'BLOCKQUOTE' && n.classList.contains('nb-v');
+    // A classic map (a picture), a place (a card that opens the map), a hymn passage
+    const mapF = n.tagName === 'DIV' && n.classList.contains('nb-map') ? n.dataset.map : null;
+    const placeId = n.tagName === 'DIV' && n.classList.contains('nb-place') && /^[a-z0-9]{3,12}$/.test(n.dataset.place || '') ? n.dataset.place : null;
+    const hymn = n.tagName === 'BLOCKQUOTE' && n.classList.contains('nb-hy') && /^\d{1,4}$/.test(n.dataset.hymn || '') ? n.dataset.hymn : null;
+    const hyLabel = n.tagName === 'SPAN' && n.classList.contains('nb-hy-ref');
     [...n.attributes].forEach(a => n.removeAttribute(a.name));
+    if(mapF !== null){
+      const m = typeof MAPS !== 'undefined' && MAPS.find(x => x.f === mapF);
+      if(!m){ n.replaceWith(...n.childNodes); return; }
+      n.className = 'nb-map'; n.dataset.map = m.f; n.setAttribute('contenteditable', 'false');
+      n.innerHTML = `<img src="maps/${m.f}.jpg" alt="${escapeHtml(m.t)}"><span>🗺️ ${escapeHtml(m.t)} — ${escapeHtml(m.d)}</span>`;
+      return;
+    }
+    if(placeId){ n.className = 'nb-place'; n.dataset.place = placeId; n.setAttribute('contenteditable', 'false'); return; }
+    if(hymn !== null){ n.className = 'nb-hy'; n.dataset.hymn = hymn; return; }
+    if(hyLabel){ n.className = 'nb-hy-ref'; n.setAttribute('contenteditable', 'false'); return; }
     if(n.tagName === 'SPAN'){
       if(!ref || !/^[1-3]?\s?[A-Za-z][A-Za-z ]* \d+:\d+$/.test(ref)){ n.replaceWith(...n.childNodes); return; }
       n.className = 'nb-ref'; n.dataset.ref = ref; n.setAttribute('contenteditable', 'false');
@@ -7564,7 +7590,7 @@ function nbMark(){
   document.execCommand('insertHTML', false, `<mark>${nbClean(box.innerHTML)}</mark>`);
 }
 // Scripture keeps its own spelling: the spell checker looks only at what you write
-function nbNoSpell(){ document.querySelectorAll('#nb-ed .nb-v, #nb-ed .nb-ref').forEach(e => { e.spellcheck = false; }); }
+function nbNoSpell(){ document.querySelectorAll('#nb-ed .nb-v, #nb-ed .nb-ref, #nb-ed .nb-hy, #nb-ed .nb-place, #nb-ed .nb-map').forEach(e => { e.spellcheck = false; }); }
 function nbWords(){
   const t = (document.getElementById('nb-ed').innerText || '').trim();
   const n = t ? t.split(/\s+/).length : 0;
@@ -7590,6 +7616,11 @@ function nbAfterEdit(){ clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 3
   });
   // Tap a verse reference to read it (the study stays as it was)
   ed.addEventListener('click', e => {
+    // a map picture or a place card opens the map; the panel stays, so the study is right there after
+    const mp = e.target.closest('.nb-map'), pl = e.target.closest('.nb-place'), hy = e.target.closest('.nb-hy-ref');
+    if(mp){ const i = MAPS.findIndex(m => m.f === mp.dataset.map); if(i >= 0){ e.preventDefault(); nbStore(); openMap(i); } return; }
+    if(pl){ e.preventDefault(); nbStore(); nbShowPlace(pl.dataset.place); return; }
+    if(hy){ const q = hy.closest('.nb-hy'); if(q){ e.preventDefault(); nbStore(); leavePopoverThen('nb-panel', () => openHymn(+q.dataset.hymn)); } return; }
     const r = e.target.closest('.nb-ref');
     if(!r) return;
     e.preventDefault();
@@ -7601,6 +7632,13 @@ function nbAfterEdit(){ clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 3
     if(e.key === 'Tab'){ e.preventDefault(); nbCmd(e.shiftKey ? 'outdent' : 'indent'); }
   });
 })();
+async function nbShowPlace(id){
+  await loadPlaces().catch(() => null);
+  const p = S._places && S._places[id];
+  if(!p) return;
+  if(p.ll) openWhereMap(p.n, placeType(p.t) + (p.s ? ' · today ' + p.s : ''), [wmPin(id, true)]);
+  else leavePopoverThen('nb-panel', () => openPlace(id));
+}
 // Closes a pop-over (consuming its history entry), then runs fn
 function leavePopoverThen(id, fn){
   const el = document.getElementById(id);
@@ -7681,10 +7719,11 @@ function nbText(st){
     if(tag === 'H3') out.push('', n.textContent.trim().toUpperCase());
     else if(tag === 'UL' || tag === 'OL') list(n, 0);
     else if(tag === 'BLOCKQUOTE'){
-      const q = n.cloneNode(true), r = q.querySelector('.nb-ref');
-      const label = r ? r.textContent.trim() : '';
+      const q = n.cloneNode(true), r = q.querySelector('.nb-ref, .nb-hy-ref');
+      const label = r ? r.textContent.replace(/^🎵\s*/, '').trim() : '';
       if(r) r.remove();
-      out.push('    “' + q.textContent.replace(/\s+/g, ' ').trim() + '”' + (label ? ` (${label})` : ''));
+      q.querySelectorAll('br').forEach(b => b.replaceWith(' / ')); // a hymn's lines
+      out.push('    “' + q.textContent.replace(/\s+/g, ' ').replace(/( \/ )+/g, ' / ').replace(/^ \/ | \/ $/g, '').trim() + '”' + (label ? ` (${label})` : ''));
     }
     else if(/^(P|DIV)$/.test(tag) && n.querySelector('ul,ol,blockquote,h3')) walk(n);
     else if(n.textContent.trim()) out.push(n.textContent.replace(/\s+/g, ' ').trim());
@@ -7702,7 +7741,7 @@ function nbMarkdown(st){
   const out = [`# ${st.t}`, ''];
   const inline = el => [...el.childNodes].map(c => {
     if(c.nodeType === 3) return c.textContent;
-    if(c.nodeType !== 1 || /^(UL|OL)$/.test(c.tagName) || c.classList.contains('nb-ref')) return '';
+    if(c.nodeType !== 1 || /^(UL|OL)$/.test(c.tagName) || c.classList.contains('nb-ref') || c.classList.contains('nb-hy-ref')) return '';
     if(c.tagName === 'BR') return '  \n';
     const t = inline(c), m = t.match(/^(\s*)([\s\S]*?)(\s*)$/);
     if(!m[2]) return t;
@@ -7726,10 +7765,11 @@ function nbMarkdown(st){
     else if(tag === 'HR'){ block(); out.push('---', ''); }
     else if(tag === 'UL' || tag === 'OL'){ block(); list(n, 0); out.push(''); }
     else if(tag === 'BLOCKQUOTE'){
-      const r = n.querySelector('.nb-ref'), label = r ? r.textContent.trim() : '';
+      const r = n.querySelector('.nb-ref'), h = n.querySelector('.nb-hy-ref');
+      const label = r ? `${r.textContent.trim()} (KJV)` : h ? h.textContent.replace(/^🎵\s*/, '').trim() : '';
       block();
       inline(n).trim().split(/\n/).forEach(l => out.push('> ' + l.trim()));
-      if(label) out.push(`> — ${label} (KJV)`);
+      if(label) out.push(`> — ${label}`);
       out.push('');
     }
     else if(/^(P|DIV)$/.test(tag) && n.querySelector('ul,ol,blockquote,h3,hr')) walk(n);
@@ -7770,8 +7810,11 @@ function nbPrint(){
     blockquote{margin:6pt 0 8pt;padding:4pt 10pt;border-left:3px solid #c4a870;background:#f7f2e8;font-style:italic}
     blockquote.nb-v{font-style:normal}
     .nb-ref{font-family:Arial,sans-serif;font-size:8.5pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8a5c20;margin-right:5pt}
-    ul,ol{padding-left:18pt;margin:0 0 6pt} p{margin:0 0 6pt}</style></head>
-    <body><h1>${escapeHtml(st.t)}</h1><div class="by">Faith Baptist Church · King James Bible · ${new Date(st.u).toLocaleDateString()}</div>${nbClean(st.h)}</body></html>`);
+    ul,ol{padding-left:18pt;margin:0 0 6pt} p{margin:0 0 6pt}
+    .nb-map{margin:6pt 0 10pt;break-inside:avoid} .nb-map img{display:block;max-width:100%;max-height:120mm;border:1px solid #d4c4a0} .nb-map span{font-size:10pt;color:#7a6040}
+    .nb-place{margin:4pt 0 8pt;padding:4pt 10pt;border:1px solid #d4c4a0;border-radius:6pt}
+    blockquote.nb-hy{font-style:normal} .nb-hy-ref{display:block;font-family:Arial,sans-serif;font-size:8.5pt;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8a5c20;margin-bottom:2pt}</style></head>
+    <body><h1>${escapeHtml(st.t)}</h1><div class="by">Faith Baptist Church · King James Bible · ${new Date(st.u).toLocaleDateString()}</div>${nbClean(st.h).replace(/src="maps\//g, `src="${new URL('maps/', location.href)}`)}</body></html>`);
   doc.close();
   const go = () => { try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){} setTimeout(() => f.remove(), 2000); };
   (doc.fonts ? doc.fonts.ready.then(() => setTimeout(go, 200)) : setTimeout(go, 600));
@@ -7843,9 +7886,10 @@ function nbAddPerson(){
   const p = S._people && S._subView && S._people[S._subView.key];
   if(p) nbAppend(`<p><b>👤 ${nbEsc(p.n)}</b> — ${nbEsc(p.d || personBrief(p))}</p>`, p.n);
 }
+// A place goes in as a card; tap it to see the place on the map
 function nbAddPlace(){
-  const p = S._places && S._subView && S._places[S._subView.key];
-  if(p) nbAppend(`<p><b>📍 ${nbEsc(p.n)}</b> — ${nbEsc(placeType(p.t))}${p.s ? `; today ${nbEsc(p.s)}` : ''}${p.d && p.d !== p.s ? ` (${nbEsc(p.d)})` : ''}</p>`, p.n);
+  const id = S._subView && S._subView.key, p = S._places && S._places[id];
+  if(p) nbAppend(`<div class="nb-place" data-place="${nbEsc(id)}">📍 <b>${nbEsc(p.n)}</b> — ${nbEsc(placeType(p.t))}${p.s ? `; today ${nbEsc(p.s)}` : ''}${p.d && p.d !== p.s ? ` (${nbEsc(p.d)})` : ''}</div>`, p.n);
 }
 function nbAddWord(){
   const r = S._wordShown;
@@ -7868,17 +7912,20 @@ function nbAddDoctrine(ci, ti){
 function nbAddHymn(n){
   const h = S._hymns && S._subView && S._hymns[+S._subView.key];
   if(!h) return;
-  const head = `<p><b>🎵 ${nbEsc(h[0])}</b> — ${nbEsc(h[1])}, ${h[2]}</p>`, lines = a => a.map(nbEsc).join('<br>');
-  if(n === 'r') return nbAppend(`${head}<blockquote><i>${lines(h[6])}</i></blockquote>`, `${h[0]} (refrain)`);
-  if(typeof n === 'number') return nbAppend(`${head}<blockquote>${lines(h[5][n])}</blockquote>`, `${h[0]} (verse ${n + 1})`);
+  // Like a verse: a gold label (the hymn, its author and which verse) that opens the hymn
+  const hi = +S._subView.key, lines = a => a.map(nbEsc).join('<br>');
+  const block = (label, body) => `<blockquote class="nb-hy" data-hymn="${hi}"><span class="nb-hy-ref" contenteditable="false">🎵 ${nbEsc(h[0])}${label ? ' · ' + label : ''}</span>${body}</blockquote>`;
+  if(n === 'r') return nbAppend(block('refrain', `<i>${lines(h[6])}</i>`), `${h[0]} (refrain)`);
+  if(typeof n === 'number') return nbAppend(block(`verse ${n + 1}`, lines(h[5][n])), `${h[0]} (verse ${n + 1})`);
   const sel = window.getSelection(), view = document.getElementById('hymn-view');
   const picked = sel && !sel.isCollapsed && view.contains(sel.anchorNode) ? sel.toString().split(/\n+/).map(x => x.replace(/^\d+\s*/, '').trim()).filter(x => x && x !== 'Refrain') : [];
-  if(picked.length) return nbAppend(`${head}<blockquote>${lines(picked)}</blockquote>`, `Lines of ${h[0]}`);
-  nbAppend(`${head}<blockquote>${lines(h[5][0])}${h[6].length ? '<br><br><i>' + lines(h[6]) + '</i>' : ''}</blockquote>`, h[0]);
+  if(picked.length) return nbAppend(block('', lines(picked)), `Lines of ${h[0]}`);
+  nbAppend(block('verse 1', lines(h[5][0])) + (h[6].length ? block('refrain', `<i>${lines(h[6])}</i>`) : ''), h[0]);
 }
+// A classic map goes in as a small picture (tap it for the full map; its own slide when presenting)
 function nbAddMap(){
   const m = MAPS[S._mapOpen];
-  if(m) nbAppend(`<p><b>🗺️ Map: ${nbEsc(m.t)}</b> — ${nbEsc(m.d)}</p>`, m.t);
+  if(m) nbAppend(`<div class="nb-map" data-map="${m.f}"></div>`, m.t);
 }
 
 /* ════ SEARCH HUB ════
@@ -8404,6 +8451,7 @@ function presBuildDeck(st){
   let sec = '', buf = [], len = 0;
   const flush = () => {
     if(!buf.length) return;
+    if(!buf.join('').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim()){ buf = []; len = 0; return; } // only blank lines: no slide
     const last = slides[slides.length - 1];
     if(last.k === 'head' && last.t === sec) slides.pop(); // the heading becomes this slide's title
     slides.push({k:'text', t:sec, h:buf.join('')}); buf = []; len = 0;
@@ -8413,6 +8461,19 @@ function presBuildDeck(st){
     if(n.nodeType !== 1) continue;
     if(n.tagName === 'H3'){ flush(); sec = n.textContent.trim(); if(sec) slides.push({k:'head', t:sec}); continue; }
     if(n.tagName === 'HR'){ flush(); continue; }
+    if(n.tagName === 'DIV' && n.classList.contains('nb-map')){
+      flush();
+      const m = MAPS.find(x => x.f === n.dataset.map);
+      if(m) slides.push({k:'map', t:sec, f:m.f, label:m.t});
+      continue;
+    }
+    if(n.tagName === 'BLOCKQUOTE' && n.classList.contains('nb-hy')){
+      flush();
+      const r = n.querySelector('.nb-hy-ref'), label = r ? r.textContent.replace(/^🎵\s*/, '').trim() : '';
+      if(r) r.remove();
+      slides.push({k:'verse', t:sec, label, ref:'', html:n.innerHTML.replace(/^(<br>\s*)+/, '')});
+      continue;
+    }
     if(n.tagName === 'BLOCKQUOTE' && n.classList.contains('nb-v')){
       flush();
       const r = n.querySelector('.nb-ref'), label = r ? r.textContent.trim() : '', ref = r ? r.dataset.ref : '';
@@ -8439,12 +8500,13 @@ function presOpenStudy(){
 function presRenderSlide(){
   const sl = PRES.deck[PRES.di], ov = document.getElementById('pres-overlay');
   const refEl = document.getElementById('pres-ref'), txt = document.getElementById('pres-txt');
-  ov.classList.remove('s-title', 's-head', 's-text', 's-verse'); ov.classList.add('s-' + sl.k);
+  ov.classList.remove('s-title', 's-head', 's-text', 's-verse', 's-map'); ov.classList.add('s-' + sl.k);
   PRES.parts = null;
   if(sl.k === 'title'){ refEl.textContent = 'Faith Baptist Church'; txt.textContent = sl.t; }
   else if(sl.k === 'head'){ refEl.textContent = PRES.deck[0].t; txt.textContent = sl.t; }
   else if(sl.k === 'text'){ refEl.textContent = sl.t || PRES.deck[0].t; txt.innerHTML = sl.h; }
-  else { refEl.textContent = sl.label || sl.ref; txt.textContent = sl.txt; }
+  else if(sl.k === 'map'){ refEl.textContent = sl.label; txt.innerHTML = `<img class="pres-map" src="maps/${sl.f}.jpg" alt="">`; }
+  else { refEl.textContent = sl.label || sl.ref; if(sl.html) txt.innerHTML = sl.html; else txt.textContent = sl.txt; }
   document.getElementById('pres-pos').textContent = `Slide ${PRES.di + 1} of ${PRES.deck.length}`;
   presApplyLook();
   presFit();
@@ -8474,7 +8536,7 @@ function presSave(){
 function presApplyLook(){
   const ov = document.getElementById('pres-overlay');
   document.getElementById('pres-lesson').style.display = PRES.deck && PRES.mode === 'bible' ? '' : 'none';
-  if(PRES.mode !== 'deck') ov.classList.remove('s-title', 's-head', 's-text', 's-verse');
+  if(PRES.mode !== 'deck') ov.classList.remove('s-title', 's-head', 's-text', 's-verse', 's-map');
   ['light','hc','hcl'].forEach(c => ov.classList.toggle(c, PRES.theme === c));
   ov.classList.toggle('clicker', PRES.clicker);
   const t = PRES_THEMES.find(x => x[0] === PRES.theme) || PRES_THEMES[0];
@@ -12456,6 +12518,7 @@ const TOOL_TIPS = {
     ['✍️', '<strong>Reading Journal</strong> — at the end of any chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts; tap the chapter to read it again'],
     ['✎', '<strong>Rename a study</strong> by tapping its name at the top, or ✏️ beside it in ☰ Studies'],
     ['H', '<strong>H B I U •≡ 1.</strong> make headings, bold, italic, underline, bullets and a numbered outline; <strong>⇤ ⇥</strong> (or Tab / Shift+Tab on a keyboard) move a point up or down a level'],
+    ['🗺️', '<strong>Maps, places and hymns</strong> — 📝 on a classic map puts a small picture of it in your study (tap it for the full map; it gets a slide of its own when you present). 📝＋ on a place adds a card that shows the place on the map. A hymn verse comes in like a Bible verse, with a gold label that opens the hymn'],
     ['🖍', '<strong>🖍 Highlight</strong> — select some words, then tap 🖍 to mark them in gold (it shows when you present too); tap inside a highlight and 🖍 again to take it off'],
     ['✓', '<strong>Spelling</strong> — words the phone or computer does not know are underlined in red as you write; tap or right-click one for suggestions. The verses you add keep the King James spelling and are not marked. The word count is at the bottom'],
     ['❝', '<strong>❝</strong> puts a paragraph in a quote box, <strong>¶</strong> makes it plain text again, and <strong>✂</strong> starts a new slide there when you present'],
