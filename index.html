@@ -3700,7 +3700,15 @@ function scourbyToggleFromChapters(){
 function selectCh(i){S.ch=i;renderReader();showScreen('reader');recordActivity();}
 
 /* ════ RENDER READER ════ */
+// The reader's history entry follows the chapter shown, so Back returns to
+// the chapter that was being read, not the last one the reader showed
+function readerStamp(){
+  const st = history.state;
+  if(S.screen === 'reader' && st && st.screen === 'reader' && !st.modal && (st.book !== S.book || st.ch !== S.ch))
+    history.replaceState({...st, book:S.book, ch:S.ch}, '', '');
+}
 function renderReader(){
+  setTimeout(readerStamp, 0);
   if(!S.bookData)return;
   exitSelectMode();
   const ch=S.bookData.chapters[S.ch];
@@ -4684,7 +4692,7 @@ function showScreen(name, pushHistory=true){
   if(name==='reader') setTimeout(()=>{showParallelBar();addXRefMarkers();}, 80);
   if(name==='books')  updateContinueBanner();
   if(name!=='reader') exitSelectMode();
-  if(pushHistory) history.pushState({screen:name}, '', '');
+  if(pushHistory) history.pushState(name === 'reader' ? {screen:name, book:S.book, ch:S.ch} : {screen:name}, '', '');
 }
 
 function updateContinueBanner(){
@@ -4754,7 +4762,16 @@ function openPopover(id){
   const el = document.getElementById(id);
   if(!el || el.classList.contains('on')) return;
   el.classList.add('on'); el.dataset.t = ++LAYER_SEQ;
+  if(isSidePanel(el)) return; // beside the page: not a step in Back's history
   history.pushState({screen:S.screen, modal:id}, '', '');
+}
+/* On a wide screen the notebook, the map panel and the timeline panel sit
+   beside the page like a second window: Back only moves the page, a tap in
+   the panel opens things beside it, and ✕ (or 📝 for the notebook) closes it.
+   A journey fills the screen, so Back closes it as before. */
+function isSidePanel(el){
+  if(!el || !isWideScreen()) return false;
+  return el.id === 'nb-panel' || el.id === 'tl-panel' || (el.id === 'wm-overlay' && !el.classList.contains('jr'));
 }
 function closePopover(id){
   const el = document.getElementById(id);
@@ -4775,7 +4792,7 @@ window.addEventListener('popstate', e => {
   // Close any open pop-over card first — Back dismisses the card instead of
   // navigating the page beneath it (each pushed a history entry when opened).
   // (and the verse card) — the most recently opened one, when several are open
-  const _open = [...POPOVER_IDS, 'vpop', 'tips-sheet'].map(id => document.getElementById(id)).filter(el => el && el.classList.contains('on') && !(el.id === 'nb-panel' && isWideScreen())); // beside the page, the notebook stays
+  const _open = [...POPOVER_IDS, 'vpop', 'tips-sheet'].map(id => document.getElementById(id)).filter(el => el && el.classList.contains('on') && !isSidePanel(el)); // panels beside the page stay
   if(_open.length){
     const _top = _open.reduce((a, b) => (+b.dataset.t || 0) > (+a.dataset.t || 0) ? b : a);
     _top.classList.remove('on'); if(_top.id === 'pres-overlay') presEnd();
@@ -7545,8 +7562,7 @@ function nbOpen(){
   // On a wide screen the notebook is a panel beside the page, switched on and
   // off with 📝 or ✕ — not a step in Back's history, so Back only ever moves
   // the page beside it. On a phone it fills the screen and Back closes it.
-  if(isWideScreen()){ const p = document.getElementById('nb-panel'); if(!p.classList.contains('on')){ p.classList.add('on'); p.dataset.t = ++LAYER_SEQ; } }
-  else openPopover('nb-panel');
+  openPopover('nb-panel');
   hintMaybe('notebook', 800);
 }
 let _nbTimer = null;
@@ -7651,7 +7667,9 @@ async function nbShowPlace(id){
 }
 // Closes a pop-over (consuming its history entry), then runs fn
 function leavePopoverThen(id, fn){
+  const el0 = document.getElementById(id);
   if(id === 'nb-panel' && isWideScreen()){ fn(); return; } // the notebook stays open beside the page
+  if(isSidePanel(el0)){ el0.classList.remove('on'); fn(); return; } // another panel takes its place
   const el = document.getElementById(id);
   if(el && el.classList.contains('on') && history.state && history.state.modal === id){
     const after = () => { window.removeEventListener('popstate', after); setTimeout(fn, 0); };
@@ -8783,6 +8801,7 @@ async function openJourney(id, i=0){
   document.getElementById('wm-title').textContent = '🧭 ' + j.t;
   document.getElementById('wm-sub').textContent = `${j.r} · ${jrDates(j)} · ${j.s.length} stops`;
   if(!ov.classList.contains('on')) openPopover('wm-overlay');
+  else if((history.state || {}).modal !== 'wm-overlay') history.pushState({screen:S.screen, modal:'wm-overlay'}, '', ''); // over the side map: Back closes the journey
   requestAnimationFrame(() => {
     const el = document.getElementById('wm-map');
     el.classList.add('wm');
@@ -12574,7 +12593,7 @@ const TOOL_TIPS = {
     ['📖', '<strong>Tap an event</strong> to read it. Dates follow Archbishop Ussher’s chronology (1650) and are approximate'],
     ['📍', '<strong>📍</strong> maps the places in the event’s chapters, <strong>🧭</strong> (when there is one) follows the journey it belongs to, and <strong>📝＋</strong> adds it to your study'],
     ['🧭', 'From a journey stop, <strong>📅 About …</strong> brings you to its event here'],
-    ['💻', 'On a laptop or a tablet held sideways, a chapter’s <strong>📅 About …</strong> opens the timeline <strong>beside the chapter</strong>, with that chapter’s event marked — tap another event to read it on the left'],
+    ['💻', 'On a laptop or a tablet held sideways, a chapter’s <strong>📅 About …</strong> opens the timeline <strong>beside the chapter</strong>, with that chapter’s event marked — tap another event to read it on the left. Back steps back through what you read; ✕ closes the panel'],
   ]},
   concord: {i:'📜', t:'Concordance', tips:[
     ['🔤', '<strong>Every word of the KJV</strong> A–Z with how many verses it is in — tap a word to see its verses right under it'],
