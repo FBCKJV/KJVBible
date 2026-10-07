@@ -201,6 +201,23 @@ check('dictionary: a word links to Hebrew & Greek', async p => {
   assert(/Hebrew & Greek behind “grace”/.test(b), 'no Hebrew & Greek link on the Dictionary page');
 });
 
+check('hymns: 🎧 Listen opens the Hymns app', async p => {
+  await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
+  const r = await p.evaluate(async () => {
+    const H = await loadHymns();
+    const withSong = H.findIndex(h => h[7]), without = H.findIndex(h => !h[7]);
+    const marked = [...document.querySelectorAll('#hymns-list .hy-row')].filter(b => b.textContent.includes('🎧')).length;
+    await openHymn(withSong);
+    const a = document.querySelector('#hymn-view .hy-listen');
+    const href = a ? a.href : '', song = H[withSong][7];
+    await openHymn(without);
+    return {href, song, marked, count: H.filter(h => h[7]).length, none: !document.querySelector('#hymn-view .hy-listen')};
+  });
+  assert(r.href === 'https://fbckjv.app/Hymns/?song=' + r.song, `Listen link is ${r.href}`);
+  assert(r.marked === r.count && r.count > 30, `${r.marked} rows marked 🎧, ${r.count} hymns have a recording`);
+  assert(r.none, 'a hymn without a recording shows 🎧 Listen');
+});
+
 check('hints: Hebrew & Greek, calendar, a My Verses list', async p => {
   const hint = () => p.evaluate(() => document.getElementById('hint-card').classList.contains('on') ? document.getElementById('hint-card').innerText : '');
   await p.evaluate(() => { showScreen('search'); switchSearchMode('strongs'); }); await sleep(2500);

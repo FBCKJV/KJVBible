@@ -503,6 +503,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-foot{font-size:11px;color:var(--text-m);padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
 .rc-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
 .nb-share{margin-left:6px}
+a.nb-add{text-decoration:none}
+.hy-listen{margin-left:6px;border-color:var(--gold);font-weight:600}
 #nb-ed mark,#pres-txt mark{background:var(--hl-y);color:inherit;border-radius:3px;padding:0 1px}
 /* In the study tools — the top of search results */
 .th-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:0 0 12px;overflow:hidden}
@@ -7524,7 +7526,7 @@ async function openTimelineAt(id){
    Scriptures behind it. Built into hymns.json by tools/build-hymns.js from
    tools/hymns/list.js and texts.json.
    Hymn: [title, author, year, section, [[label, jumpRef], …], stanzas, chorus] */
-const HYMNS_VERSION = '2026-10-04b'; // bump whenever tools/build-hymns.js is re-run
+const HYMNS_VERSION = '2026-10-07'; // bump whenever tools/build-hymns.js is re-run
 SUBVIEWS.hymn = { mode:'hymns', browse:'hymns-browse', view:'hymn-view', open:(k, push, y) => openHymn(+k, push, y) };
 function loadHymns(){ return loadCachedJSON(`hymns.json?v=${HYMNS_VERSION}`).then(d => S._hymns = d.h); }
 async function renderHymns(){
@@ -7539,7 +7541,10 @@ async function renderHymns(){
 }
 const hymnRow = (i, mark) => { const h = S._hymns[i];
   const m = t => mark ? escapeHtml(t).replace(mark, '<mark>$&</mark>') : escapeHtml(t);
-  return `<button class="hy-row" onclick="openHymn(${i})"><div class="hy-t">${m(h[0])}</div><div class="hy-a">${m(h[1])}, ${h[2]}</div></button>`; };
+  return `<button class="hy-row" onclick="openHymn(${i})"><div class="hy-t">${m(h[0])}</div><div class="hy-a">${m(h[1])}, ${h[2]}${h[7] ? ' · 🎧' : ''}</div></button>`; };
+// A hymn's recording in the FBC Hymns app (same site), from hymns.json's 8th field
+const HYMNS_APP = 'https://fbckjv.app/Hymns/';
+const hymnListenURL = song => HYMNS_APP + '?song=' + encodeURIComponent(song);
 // Title, author or any line of the words ("it is well", "crosby", "sinking sand")
 function filterHymns(q){
   if(!S._hymns) return;
@@ -7563,17 +7568,17 @@ async function openHymn(i, pushHistory=true, scrollY=0){
   const h = H && H[i];
   if(!h) return;
   enterSubView('hymn', String(i), pushHistory);
-  const [t, a, y, sec, refs, stanzas, chorus] = h;
+  const [t, a, y, sec, refs, stanzas, chorus, song] = h;
   const addBtn = n => `<button class="hy-add" onclick="nbAddHymn(${n})" onmousedown="event.preventDefault()" title="Add this ${n === "'r'" ? 'refrain' : 'verse'} to your study" aria-label="Add to study">📝＋</button>`;
   const chorusHTML = chorus.length ? `<div class="hy-ch">${addBtn("'r'")}<div class="hy-ch-l">Refrain</div>${chorus.map(escapeHtml).join('<br>')}</div>` : '';
   document.getElementById('hymn-view').innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
     <div class="dv-title">${escapeHtml(t)}</div>
     <div class="hy-by">${escapeHtml(a)}, ${y} · ${escapeHtml(sec)}</div>
-    <button class="nb-add" onclick="nbAddHymn()" onmousedown="event.preventDefault()" title="Adds the lines you have selected, or the first verse and refrain">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
+    <button class="nb-add" onclick="nbAddHymn()" onmousedown="event.preventDefault()" title="Adds the lines you have selected, or the first verse and refrain">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>${song ? `<a class="nb-add hy-listen" href="${hymnListenURL(song)}" target="_blank" rel="noopener" title="Hear it sung in the FBC Hymns app">🎧 Listen</a>` : ''}
     <div class="vl-chips hy-refs">${refs.map(([label, r]) => `<button class="vl-chip" onclick="jumpToRef('${r.replace(/'/g, "\\'")}')">📖 ${escapeHtml(label)}</button>`).join('')}</div>
     ${stanzas.map((st, n) => `<div class="hy-st"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div>${addBtn(n)}</div>` + (n === 0 ? chorusHTML : '')).join('')}
-    <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.</div>`;
+    <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.${song ? ' 🎧 Listen opens a recording in the FBC Hymns app, with these words to follow.' : ''}</div>`;
   document.getElementById('screen-search').scrollTop = scrollY || 0;
 }
 
@@ -13071,6 +13076,7 @@ const TOOL_TIPS = {
   hymns: {i:'🎵', t:'Hymns', tips:[
     ['📝＋', '<strong>📝＋ beside a verse</strong> (or the refrain) adds just that verse to your study. Or select some lines and tap <strong>📝＋ Add to Study</strong> at the top to add only those'],
     ['🎵', '<strong>98 hymns of the faith</strong> whose words are in the public domain, each with the Scriptures behind it — tap a 📖 reference to read it'],
+    ['🎧', '<strong>🎧 Listen</strong> on a hymn (marked 🎧 in the list) opens it sung in the FBC Hymns app, with the words to follow'],
     ['📝＋', '<strong>📝＋ Add to Study</strong> puts a hymn in your notebook'],
   ]},
   doctrine: {i:'📑', t:'Doctrines', tips:[
@@ -15227,7 +15233,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v57';
+const WHATS_NEW_VERSION = 'v58';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -16182,6 +16188,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v58" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎧</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Hear the Hymns Sung</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          In <strong>Search → Hymns</strong>, a hymn marked 🎧 has a recording in the <strong>FBC Hymns</strong> app — tap <strong>🎧 Listen</strong> to hear it sung while you follow the words. And the Hymns app now leads back here: its 📖 buttons open the Scriptures behind each hymn, and every Sung Psalm shows its verses from the King James Bible.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v57" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">💾</div>
       <div>
