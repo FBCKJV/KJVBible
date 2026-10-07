@@ -316,6 +316,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .wm-chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0 0}
 #wm-overlay{position:fixed;inset:0;z-index:330;background:var(--bg);display:none;flex-direction:column;padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px))}
 #wm-overlay.on{display:flex}
+#tl-panel{position:fixed;inset:0;z-index:320;background:var(--bg);display:none;flex-direction:column;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 0}
+#tl-panel.on{display:flex}
+#tlp-head{display:flex;align-items:center;gap:10px}
+#tlp-title{flex:1;font-family:'IM Fell English',serif;font-size:20px;color:var(--gold)}
+#tlp-sub{font-size:12px;color:var(--text-m);margin:2px 0 8px}
+#tlp-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+.tl-ev.here{background:var(--surface);outline:2px solid var(--gold);outline-offset:-2px;border-radius:6px}
 #wm-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 #wm-title{flex:1;font-family:'IM Fell English',serif;font-size:20px;color:var(--gold)}
 #wm-sub{font-size:12px;color:var(--text-m);margin:-4px 0 8px}
@@ -1927,6 +1934,9 @@ body.light #home-watermark{
   body:has(#vpop.on) #screen-reader{padding-right:min(var(--pane-vpop,440px),calc(100vw - 480px))}
   body:has(#nb-panel.on) #screen-reader{padding-right:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px))}
   body:has(#wm-overlay.on:not(.jr)) #screen-reader{padding-right:min(var(--pane-wm,50vw),calc(100vw - 480px))}
+  #tl-panel{left:auto;width:min(var(--pane-tl,42vw),calc(100vw - 480px));border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
+  #tl-panel .pane-grip{left:-8px}
+  body:has(#tl-panel.on) #screen-reader{padding-right:min(var(--pane-tl,42vw),calc(100vw - 480px))}
   #mx-map{height:62vh;max-height:760px}
   /* drag the panel's edge to resize it; double-tap to reset */
   .pane-grip{display:block;position:absolute;top:0;bottom:0;width:16px;cursor:col-resize;z-index:5;pointer-events:auto;touch-action:none}
@@ -2783,6 +2793,14 @@ body.light #home-watermark{
   <div id="wm-sub"></div>
   <div id="wm-map" class="wm"></div>
   <div id="wm-list" class="wm-chips"></div>
+</div>
+
+<!-- TIMELINE beside the chapter (wide screens) -->
+<div id="tl-panel" role="dialog" aria-label="Timeline">
+  <div class="pane-grip" data-pane="tl" title="Drag to resize · double-tap to reset"></div>
+  <div id="tlp-head"><div id="tlp-title">📅 Timeline</div><button class="tt-q" data-tt="timeline" onclick="toolTips('timeline')" aria-label="Timeline tips" title="Tips">?</button><button class="nb-tb" onclick="closePopover('tl-panel')" aria-label="Close">✕</button></div>
+  <div id="tlp-sub">This chapter is marked · tap an event to read it</div>
+  <div id="tlp-body"></div>
 </div>
 
 <!-- TIPS FOR ONE TOOL (the ? in its top bar) -->
@@ -4683,7 +4701,7 @@ function goBack(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay'];
+const POPOVER_IDS = ['mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay','tl-panel'];
 // Order the cards were opened in: on a wide screen several can be open side
 // by side (the verse card beside the notebook), and Back closes the newest
 let LAYER_SEQ = 0;
@@ -7277,20 +7295,25 @@ function loadTimeline(){
 }
 const tlYear = y => y < 0 ? `${-y}<small>B.C.</small>` : `${y}<small>A.D.</small>`;
 const tlYearText = y => y < 0 ? `${-y} B.C.` : `A.D. ${y}`;
+// Every event, era by era. idp prefixes the ids (the tab uses tl-, the
+// side panel tlp-); tap names the function a tapped event's verse goes to.
+function tlEventsHTML(T, idp, tap){
+  return T.eras.map((era, ei) => `<div class="tl-era">${escapeHtml(era.n)}</div>` + era.e.map((e, i) => {
+    const [y, t, b, c1, c2, key, txt] = e;
+    const where = key + (c2 > c1 ? ` · ${b} ${c1}–${c2}` : '');
+    return `<div class="tl-ev" id="${idp}${ei}-${i}" tabindex="0" onclick="${tap}('${key.replace(/'/g, "\\'")}')">
+      <div class="tl-yr">${tlYear(y)}</div>
+      <div class="tl-main"><button class="tl-nb" onclick="event.stopPropagation();nbAddEvent(${ei},${i})" title="Add to study">📝＋</button><span class="tl-btns">${tlJourney(`tl-${ei}-${i}`)}<button onclick="event.stopPropagation();tlMap(${ei},${i})" title="The places on the map" aria-label="Map">📍</button></span><div class="tl-t">${escapeHtml(t)}</div><div class="tl-q">“${escapeHtml(txt)}”</div><div class="tl-r">${escapeHtml(where)}</div></div>
+    </div>`;
+  }).join('')).join('');
+}
 async function renderTimeline(){
   const list = document.getElementById('timeline-list');
   if(list.dataset.done) return;
   const T = await loadTimeline().catch(() => null);
   await loadJourneys().catch(() => null);
   if(!T){ list.innerHTML = '<div id="s-status">Timeline unavailable — check your connection.</div>'; return; }
-  list.innerHTML = T.eras.map((era, ei) => `<div class="tl-era">${escapeHtml(era.n)}</div>` + era.e.map((e, i) => {
-    const [y, t, b, c1, c2, key, txt] = e;
-    const where = key + (c2 > c1 ? ` · ${b} ${c1}–${c2}` : '');
-    return `<div class="tl-ev" id="tl-${ei}-${i}" tabindex="0" onclick="jumpToRef('${key.replace(/'/g, "\\'")}')">
-      <div class="tl-yr">${tlYear(y)}</div>
-      <div class="tl-main"><button class="tl-nb" onclick="event.stopPropagation();nbAddEvent(${ei},${i})" title="Add to study">📝＋</button><span class="tl-btns">${tlJourney(`tl-${ei}-${i}`)}<button onclick="event.stopPropagation();tlMap(${ei},${i})" title="The places on the map" aria-label="Map">📍</button></span><div class="tl-t">${escapeHtml(t)}</div><div class="tl-q">“${escapeHtml(txt)}”</div><div class="tl-r">${escapeHtml(where)}</div></div>
-    </div>`;
-  }).join('')).join('');
+  list.innerHTML = tlEventsHTML(T, 'tl-', 'jumpToRef');
   list.dataset.done = '1';
 }
 // The event told in a chapter (the narrowest chapter range wins)
@@ -7308,10 +7331,35 @@ function updateChapterTimeButton(){
   const show = () => {
     const hit = S.book && chapterEvent(S.book, S.ch + 1);
     btn.style.display = hit ? 'inline-block' : 'none';
-    if(hit){ btn.textContent = '📅 About ' + tlYearText(hit.e[0]); btn.onclick = () => openTimelineAt(hit.id); }
+    if(hit){ btn.textContent = '📅 About ' + tlYearText(hit.e[0]); btn.onclick = () => openTimelinePane(hit.id); }
+    // the side panel follows the chapter being read
+    if(hit && document.getElementById('tl-panel').classList.contains('on')) tlPaneMark(hit.id);
   };
   if(S._timeline) show(); else { btn.style.display = 'none'; loadTimeline().then(show).catch(() => {}); }
 }
+/* ── The timeline beside the chapter (wide screens) ──
+   On a laptop or a tablet held sideways, "📅 About …" opens the timeline as a
+   side panel, like the map and the notebook, with this chapter's event marked;
+   tapping an event opens its chapter on the left and the panel stays. It
+   follows along as you read on. On a phone it opens the Timeline tab. */
+async function openTimelinePane(id){
+  if(!isWideScreen()) return openTimelineAt(id);
+  // the map's panel is on the same side: put it away first
+  if(document.getElementById('wm-overlay').classList.contains('on')) return leavePopoverThen('wm-overlay', () => openTimelinePane(id));
+  const [T] = await Promise.all([loadTimeline().catch(() => null), loadJourneys().catch(() => null)]);
+  if(!T) return openTimelineAt(id);
+  const body = document.getElementById('tlp-body');
+  if(!body.dataset.done){ body.innerHTML = tlEventsHTML(T, 'tlp-', 'tlPaneRead'); body.dataset.done = '1'; }
+  openPopover('tl-panel');
+  tlPaneMark(id);
+}
+function tlPaneMark(id){
+  const body = document.getElementById('tlp-body');
+  body.querySelectorAll('.tl-ev.here').forEach(x => x.classList.remove('here'));
+  const el = document.getElementById(id.replace(/^tl-/, 'tlp-'));
+  if(el){ el.classList.add('here'); el.scrollIntoView({block:'center'}); }
+}
+function tlPaneRead(ref){ jumpToRef(ref); }
 async function openTimelineAt(id){
   history.pushState({screen:'search', searchMode:'timeline'}, '', '');
   showScreen('search', false);
@@ -8522,7 +8570,7 @@ function presWake(e){
    stop column — to make it wider or narrower; double-tap the edge to reset.
    Widths are remembered on this device only (kjv_panes, not synced): a width
    that suits a large monitor would not suit a tablet. */
-const PANE_KEYS = {vpop:'--pane-vpop', nb:'--pane-nb', wm:'--pane-wm', jr:'--pane-jr'};
+const PANE_KEYS = {vpop:'--pane-vpop', nb:'--pane-nb', wm:'--pane-wm', jr:'--pane-jr', tl:'--pane-tl'};
 function paneApply(){
   const w = LS.get('kjv_panes', {}) || {};
   for(const [k, v] of Object.entries(PANE_KEYS)){
@@ -12391,6 +12439,7 @@ const TOOL_TIPS = {
     ['📖', '<strong>Tap an event</strong> to read it. Dates follow Archbishop Ussher’s chronology (1650) and are approximate'],
     ['📍', '<strong>📍</strong> maps the places in the event’s chapters, <strong>🧭</strong> (when there is one) follows the journey it belongs to, and <strong>📝＋</strong> adds it to your study'],
     ['🧭', 'From a journey stop, <strong>📅 About …</strong> brings you to its event here'],
+    ['💻', 'On a laptop or a tablet held sideways, a chapter’s <strong>📅 About …</strong> opens the timeline <strong>beside the chapter</strong>, with that chapter’s event marked — tap another event to read it on the left'],
   ]},
   concord: {i:'📜', t:'Concordance', tips:[
     ['🔤', '<strong>Every word of the KJV</strong> A–Z with how many verses it is in — tap a word to see its verses right under it'],
