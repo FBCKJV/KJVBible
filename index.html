@@ -425,6 +425,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .hy-a mark,.hy-t mark{background:rgba(201,148,58,.3);color:var(--gold-l);border-radius:2px}
 .hy-by{font-family:'Crimson Pro',serif;font-size:13px;color:var(--text-m);font-style:italic;margin:-6px 0 10px}
 .hy-st{display:flex;gap:10px;font-family:'Crimson Pro',serif;font-size:17px;line-height:1.55;color:var(--text);margin:0 0 14px}
+.hy-add{margin-left:auto;align-self:flex-start;flex-shrink:0;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:2px 8px;cursor:pointer;opacity:.75}
+.hy-add:hover{opacity:1}
+.hy-ch .hy-add{float:right;margin-left:8px}
 .hy-n{flex-shrink:0;width:18px;text-align:right;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--gold);padding-top:4px}
 .hy-ch{margin:-4px 0 16px 28px;padding:6px 0 6px 12px;border-left:2px solid var(--gold-d);font-family:'Crimson Pro',serif;font-size:16.5px;line-height:1.55;font-style:italic;color:var(--text-d)}
 .hy-ch-l{font-family:'Inter',sans-serif;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px}
@@ -492,6 +495,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-foot{font-size:11px;color:var(--text-m);padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
 .rc-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
 .nb-share{margin-left:6px}
+#nb-ed mark,#pres-txt mark{background:var(--hl-y);color:inherit;border-radius:3px;padding:0 1px}
 /* In the study tools — the top of search results */
 .th-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:0 0 12px;overflow:hidden}
 .th-h{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:10px 14px 4px}
@@ -1884,37 +1888,37 @@ body.light #home-watermark{
 /* Wide screens: Search tools in two columns — the list on the left, the page on the right */
 .split-ph{display:none}
 @media (min-width:1100px){
-  #screen-search > div{max-width:1500px;margin:0 auto}
-  #s-hub{grid-template-columns:repeat(4,1fr)}
-  :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel)[style*="display: block"]{display:grid !important;grid-template-columns:minmax(320px,36%) minmax(0,1fr);column-gap:22px;align-items:start}
-  :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel) > [id$="-browse"]{grid-column:1;grid-row:1;position:sticky;top:0;max-height:calc(100dvh - 150px);overflow-y:auto;padding-right:8px;overscroll-behavior:contain}
-  :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel) > [id$="-view"],.split-ph{grid-column:2;grid-row:1;min-width:0}
-  .split-ph{display:flex;align-items:center;justify-content:center;min-height:50vh;border:1px dashed var(--border);border-radius:14px;color:var(--text-m);font-family:'Crimson Pro',serif;font-style:italic;font-size:17px;text-align:center;padding:20px}
-  .split-open > .split-ph{display:none}
+  body:not(.side-open) #screen-search > div{max-width:1500px;margin:0 auto}
+  body:not(.side-open) #s-hub{grid-template-columns:repeat(4,1fr)}
+  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel)[style*="display: block"]{display:grid !important;grid-template-columns:minmax(320px,36%) minmax(0,1fr);column-gap:22px;align-items:start}
+  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel) > [id$="-browse"]{grid-column:1;grid-row:1;position:sticky;top:0;max-height:calc(100dvh - 150px);overflow-y:auto;padding-right:8px;overscroll-behavior:contain}
+  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel) > [id$="-view"],body:not(.side-open) .split-ph{grid-column:2;grid-row:1;min-width:0}
+  body:not(.side-open) .split-ph{display:flex;align-items:center;justify-content:center;min-height:50vh;border:1px dashed var(--border);border-radius:14px;color:var(--text-m);font-family:'Crimson Pro',serif;font-style:italic;font-size:17px;text-align:center;padding:20px}
+  body:not(.side-open) .split-open > .split-ph{display:none}
   /* Maps: the place card beside the map */
-  #maps-panel[style*="display: block"]{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(360px,32%);column-gap:16px;align-items:start}
-  #maps-panel > *{grid-column:1/-1}
-  #maps-panel > #mx-map{grid-column:1}
-  #maps-panel > #mx-here{grid-column:2;max-height:min(62vh,760px);overflow-y:auto;margin-top:8px}
-  #mx-here:empty{display:flex;align-items:center;justify-content:center;min-height:min(62vh,760px);border:1px dashed var(--border);border-radius:14px;box-sizing:border-box}
-  #mx-here:empty::before{content:'Tap a place on the map to see what happened there';color:var(--text-m);font-family:'Crimson Pro',serif;font-style:italic;font-size:17px;padding:20px;text-align:center}
-  .jr-list{grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+  body:not(.side-open) #maps-panel[style*="display: block"]{display:grid !important;grid-template-columns:minmax(0,1fr) minmax(360px,32%);column-gap:16px;align-items:start}
+  body:not(.side-open) #maps-panel > *{grid-column:1/-1}
+  body:not(.side-open) #maps-panel > #mx-map{grid-column:1}
+  body:not(.side-open) #maps-panel > #mx-here{grid-column:2;max-height:min(62vh,760px);overflow-y:auto;margin-top:8px}
+  body:not(.side-open) #mx-here:empty{display:flex;align-items:center;justify-content:center;min-height:min(62vh,760px);border:1px dashed var(--border);border-radius:14px;box-sizing:border-box}
+  body:not(.side-open) #mx-here:empty::before{content:'Tap a place on the map to see what happened there';color:var(--text-m);font-family:'Crimson Pro',serif;font-style:italic;font-size:17px;padding:20px;text-align:center}
+  body:not(.side-open) .jr-list{grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
   /* Plans: content to a readable width */
-  #plans-inner{max-width:1100px;margin:0 auto}
+  body:not(.side-open) #plans-inner{max-width:1100px;margin:0 auto}
   /* Saved: bookmarks, highlights and notes in two columns */
-  .tab-panel.on:has(.sv-card){columns:2;column-gap:18px}
-  .tab-panel.on:has(.sv-card) .sv-card{break-inside:avoid}
-  .tab-panel.on:has(.sv-card) .sv-book-hd{break-after:avoid}
+  body:not(.side-open) .tab-panel.on:has(.sv-card){columns:2;column-gap:18px}
+  body:not(.side-open) .tab-panel.on:has(.sv-card) .sv-card{break-inside:avoid}
+  body:not(.side-open) .tab-panel.on:has(.sv-card) .sv-book-hd{break-after:avoid}
   /* Search results: two columns of verse cards */
-  #s-results:has(> .rc + .rc){display:grid;grid-template-columns:1fr 1fr;column-gap:14px;align-items:start}
-  #s-results > :not(.rc),#s-results > .nv-card{grid-column:1/-1}
+  body:not(.side-open) #s-results:has(> .rc + .rc){display:grid;grid-template-columns:1fr 1fr;column-gap:14px;align-items:start}
+  body:not(.side-open) #s-results > :not(.rc),body:not(.side-open) #s-results > .nv-card{grid-column:1/-1}
   /* Concordance words in columns */
-  #concord-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));column-gap:24px}
-  #concord-list > :not(.cw-row){grid-column:1/-1} /* the count line, and a word's verses opening below it */
+  body:not(.side-open) #concord-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));column-gap:24px}
+  body:not(.side-open) #concord-list > :not(.cw-row){grid-column:1/-1} /* the count line, and a word's verses opening below it */
   /* Timeline in two columns */
-  #timeline-list{columns:2;column-gap:28px}
-  #timeline-list .tl-ev{break-inside:avoid}
-  #timeline-list .tl-era{break-after:avoid}
+  body:not(.side-open) #timeline-list{columns:2;column-gap:28px}
+  body:not(.side-open) #timeline-list .tl-ev{break-inside:avoid}
+  body:not(.side-open) #timeline-list .tl-era{break-after:avoid}
 }
 /* Wide screens (tablets in landscape, classroom panels): the verse card,
    notebook and map open beside the text instead of over it */
@@ -1931,12 +1935,9 @@ body.light #home-watermark{
   #wm-overlay.jr .jr-v{font-size:17px}
   #wm-overlay.jr .jr-nav{flex-wrap:wrap}
   /* the chapter stays in view beside an open panel */
-  body:has(#vpop.on) #screen-reader{padding-right:min(var(--pane-vpop,440px),calc(100vw - 480px))}
-  body:has(#nb-panel.on) #screen-reader{padding-right:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px))}
-  body:has(#wm-overlay.on:not(.jr)) #screen-reader{padding-right:min(var(--pane-wm,50vw),calc(100vw - 480px))}
+  body:not(.side-open):has(#vpop.on) #screen-reader{padding-right:min(var(--pane-vpop,440px),calc(100vw - 480px))}
   #tl-panel{left:auto;width:min(var(--pane-tl,42vw),calc(100vw - 480px));border-left:1px solid var(--border);box-shadow:-10px 0 30px rgba(0,0,0,.35)}
   #tl-panel .pane-grip{left:-8px}
-  body:has(#tl-panel.on) #screen-reader{padding-right:min(var(--pane-tl,42vw),calc(100vw - 480px))}
   #mx-map{height:62vh;max-height:760px}
   /* drag the panel's edge to resize it; double-tap to reset */
   .pane-grip{display:block;position:absolute;top:0;bottom:0;width:16px;cursor:col-resize;z-index:5;pointer-events:auto;touch-action:none}
@@ -1949,7 +1950,6 @@ body.light #home-watermark{
   /* notebook open: the verse card rises over the chapter, the notebook stays in view */
   body:has(#nb-panel.on) #vpop{right:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px));justify-content:center;align-items:flex-end}
   body:has(#nb-panel.on) #vpop-inner{width:100%;max-width:620px;margin-top:0;border-radius:18px 18px 0 0;border-width:1px 1px 0;max-height:72vh;padding-bottom:84px;animation:su .22s ease}
-  body:has(#nb-panel.on):has(#vpop.on) #screen-reader{padding-right:min(var(--pane-nb,min(48vw,680px)),calc(100vw - 480px))}
 }
 /* Big touch screens: larger targets for a finger at a board */
 @media (min-width:1100px) and (pointer:coarse){
@@ -2828,6 +2828,8 @@ body.light #home-watermark{
     <button onclick="nbCmd('h')" title="Heading"><b>H</b></button>
     <button onclick="nbCmd('bold')" title="Bold"><b>B</b></button>
     <button onclick="nbCmd('italic')" title="Italic"><i>I</i></button>
+    <button onclick="nbCmd('underline')" title="Underline"><u>U</u></button>
+    <button onclick="nbCmd('mark')" title="Highlight — select words, then tap (tap again to take it off)" aria-label="Highlight">🖍</button>
     <span class="sep"></span>
     <button onclick="nbCmd('ul')" title="Bullet list">•≡</button>
     <button onclick="nbCmd('ol')" title="Numbered outline">1.</button>
@@ -6540,14 +6542,37 @@ const SUBVIEWS = {}; // sub → { mode, browse, view, open(key, push, scrollY) }
 // Tablets in landscape, laptops, classroom panels — the same width the CSS uses
 const WIDE_MQ = window.matchMedia('(min-width:1100px)');
 const isWideScreen = () => WIDE_MQ.matches;
-// Turning a tablet (or resizing a window) across the line: show or hide the
-// list beside an open page to match
-WIDE_MQ.addEventListener && WIDE_MQ.addEventListener('change', () => {
+/* ── A panel open beside the page (wide screens) ──
+   With the notebook, the map or the timeline open on the right, the whole
+   app — header, page and bottom bar — moves over beside it instead of being
+   covered (body.side-open, padded by the panel's width), and the page takes
+   its single-column phone layout: a tool's list and its page one at a time. */
+const SIDE_PANELS = ['nb-panel', 'wm-overlay', 'tl-panel'];
+const isWideLayout = () => isWideScreen() && !document.body.classList.contains('side-open');
+function splitRefresh(){
   for(const o of Object.values(SUBVIEWS)){
     const view = document.getElementById(o.view), b = document.getElementById(o.browse);
-    if(view && b && view.style.display !== 'none') b.style.display = isWideScreen() ? '' : 'none';
+    if(view && b && view.style.display !== 'none') b.style.display = isWideLayout() ? '' : 'none';
   }
+}
+function sideLayout(){
+  let w = 0;
+  if(isWideScreen()) for(const id of SIDE_PANELS){
+    const e = document.getElementById(id);
+    if(e && e.classList.contains('on') && !(id === 'wm-overlay' && e.classList.contains('jr'))) w = Math.max(w, Math.round(e.getBoundingClientRect().width));
+  }
+  const was = document.body.classList.contains('side-open');
+  document.body.style.paddingRight = w ? w + 'px' : '';
+  document.body.classList.toggle('side-open', !!w);
+  if(was !== !!w) splitRefresh();
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const mo = new MutationObserver(sideLayout), ro = window.ResizeObserver ? new ResizeObserver(sideLayout) : null;
+  for(const id of SIDE_PANELS){ const e = document.getElementById(id); if(e){ mo.observe(e, {attributes: true, attributeFilter: ['class']}); if(ro) ro.observe(e); } }
 });
+// Turning a tablet (or resizing a window) across the line: show or hide the
+// list beside an open page to match
+WIDE_MQ.addEventListener && WIDE_MQ.addEventListener('change', () => { sideLayout(); splitRefresh(); });
 SUBVIEWS.topic = { mode:'topics', browse:'topics-browse', view:'topic-view', open:(k, push, y) => openNaveTopic(k, push, y) };
 SUBVIEWS.xref = { mode:'topics', browse:'topics-browse', view:'xref-view', open:(k, push, y) => openTreasury(k, null, push, y) };
 function activeSubView(){
@@ -6574,7 +6599,7 @@ function enterSubView(sub, key, push){
   switchSearchMode(v.mode, false);
   // Wide screens: the list stays on the left, the page opens on the right
   const browse = document.getElementById(v.browse);
-  browse.style.display = isWideScreen() ? '' : 'none';
+  browse.style.display = isWideLayout() ? '' : 'none';
   browse.parentElement.classList.add('split-open');
   for(const o of Object.values(SUBVIEWS)) if(o.mode === v.mode) document.getElementById(o.view).style.display = 'none';
   document.getElementById(v.view).style.display = '';
@@ -7417,14 +7442,15 @@ async function openHymn(i, pushHistory=true, scrollY=0){
   if(!h) return;
   enterSubView('hymn', String(i), pushHistory);
   const [t, a, y, sec, refs, stanzas, chorus] = h;
-  const chorusHTML = chorus.length ? `<div class="hy-ch"><div class="hy-ch-l">Refrain</div>${chorus.map(escapeHtml).join('<br>')}</div>` : '';
+  const addBtn = n => `<button class="hy-add" onclick="nbAddHymn(${n})" onmousedown="event.preventDefault()" title="Add this ${n === "'r'" ? 'refrain' : 'verse'} to your study" aria-label="Add to study">📝＋</button>`;
+  const chorusHTML = chorus.length ? `<div class="hy-ch">${addBtn("'r'")}<div class="hy-ch-l">Refrain</div>${chorus.map(escapeHtml).join('<br>')}</div>` : '';
   document.getElementById('hymn-view').innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
     <div class="dv-title">${escapeHtml(t)}</div>
     <div class="hy-by">${escapeHtml(a)}, ${y} · ${escapeHtml(sec)}</div>
-    <button class="nb-add" onclick="nbAddHymn()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
+    <button class="nb-add" onclick="nbAddHymn()" onmousedown="event.preventDefault()" title="Adds the lines you have selected, or the first verse and refrain">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
     <div class="vl-chips hy-refs">${refs.map(([label, r]) => `<button class="vl-chip" onclick="jumpToRef('${r.replace(/'/g, "\\'")}')">📖 ${escapeHtml(label)}</button>`).join('')}</div>
-    ${stanzas.map((st, n) => `<div class="hy-st"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div></div>` + (n === 0 ? chorusHTML : '')).join('')}
+    ${stanzas.map((st, n) => `<div class="hy-st"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div>${addBtn(n)}</div>` + (n === 0 ? chorusHTML : '')).join('')}
     <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.</div>`;
   document.getElementById('screen-search').scrollTop = scrollY || 0;
 }
@@ -7454,7 +7480,7 @@ function nbCreate(title){
 function nbClean(html){
   const tpl = document.createElement('template');
   tpl.innerHTML = html;
-  const ALLOW = new Set(['P','DIV','BR','H3','HR','UL','OL','LI','BLOCKQUOTE','B','STRONG','I','EM','SPAN']);
+  const ALLOW = new Set(['P','DIV','BR','H3','HR','UL','OL','LI','BLOCKQUOTE','B','STRONG','I','EM','U','MARK','SPAN']);
   const walk = node => [...node.childNodes].forEach(n => {
     if(n.nodeType === 3) return;
     if(n.nodeType !== 1 || /^(SCRIPT|STYLE|TEMPLATE|IFRAME|OBJECT)$/.test(n.tagName)){ n.remove(); return; }
@@ -7481,8 +7507,9 @@ function nbOpen(){
   document.getElementById('nb-title').value = st.t;
   document.getElementById('nb-ed').innerHTML = nbClean(st.h);
   S._nbLoaded = st.id; S._nbShown = nbClean(document.getElementById('nb-ed').innerHTML);
+  nbNoSpell();
   document.getElementById('nb-menu').classList.remove('on');
-  document.getElementById('nb-status').textContent = 'Saved on this device';
+  document.getElementById('nb-status').textContent = 'Saved on this device' + nbWords();
   openPopover('nb-panel');
   hintMaybe('notebook', 800);
 }
@@ -7493,7 +7520,7 @@ function nbStore(){
   // Only a real change counts as an edit (sync merges by the time of the last edit)
   if(S._nbLoaded === st.id){ const h = nbClean(ed.innerHTML); if(h !== st.h){ st.h = h; st.u = Date.now(); } S._nbShown = h; }
   nbSave();
-  document.getElementById('nb-status').textContent = 'Saved on this device';
+  document.getElementById('nb-status').textContent = 'Saved on this device' + nbWords();
 }
 function nbTitleInput(v){
   const st = nbActive();
@@ -7519,14 +7546,37 @@ function nbCmd(c){
   else if(c === 'ul') document.execCommand('insertUnorderedList');
   else if(c === 'ol') document.execCommand('insertOrderedList');
   else if(c === 'hr') document.execCommand('insertHorizontalRule');
-  else document.execCommand(c); // bold, italic, indent, outdent, undo, redo
+  else if(c === 'mark') nbMark();
+  else document.execCommand(c); // bold, italic, underline, indent, outdent, undo, redo
   clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 300);
 }
+// 🖍 Highlight the words selected (within one paragraph); inside a highlight, take it off
+function nbMark(){
+  const ed = document.getElementById('nb-ed'), sel = window.getSelection();
+  if(!sel || !sel.rangeCount) return;
+  const r = sel.getRangeAt(0);
+  const markOf = n => { for(let x = n; x && x !== ed; x = x.parentNode) if(x.nodeName === 'MARK') return x; return null; };
+  const m = markOf(r.startContainer) || markOf(r.endContainer);
+  if(m){ m.replaceWith(...m.childNodes); nbAfterEdit(); return; }
+  if(r.collapsed || !ed.contains(r.commonAncestorContainer)){ showToast('Select some words first, then tap 🖍'); return; }
+  const box = document.createElement('div'); box.append(r.cloneContents());
+  if(box.querySelector('p,div,li,h3,blockquote,ul,ol,hr')){ showToast('Highlight one paragraph at a time'); return; }
+  document.execCommand('insertHTML', false, `<mark>${nbClean(box.innerHTML)}</mark>`);
+}
+// Scripture keeps its own spelling: the spell checker looks only at what you write
+function nbNoSpell(){ document.querySelectorAll('#nb-ed .nb-v, #nb-ed .nb-ref').forEach(e => { e.spellcheck = false; }); }
+function nbWords(){
+  const t = (document.getElementById('nb-ed').innerText || '').trim();
+  const n = t ? t.split(/\s+/).length : 0;
+  return n ? ` · ${n.toLocaleString()} word${n !== 1 ? 's' : ''}` : '';
+}
+function nbAfterEdit(){ clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 300); }
 (function nbWire(){
   const ed = document.getElementById('nb-ed');
   if(!ed) return;
   ed.addEventListener('focus', () => { try{ document.execCommand('defaultParagraphSeparator', false, 'p'); }catch(e){} });
   ed.addEventListener('input', () => {
+    nbNoSpell();
     document.getElementById('nb-status').textContent = 'Saving…';
     clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 500);
   });
@@ -7734,7 +7784,7 @@ function nbAppend(html, what){
   st.h = nbClean((st.h || '') + html + '<p><br></p>');
   st.u = Date.now();
   nbSave();
-  if(S._nbLoaded === st.id) document.getElementById('nb-ed').innerHTML = st.h; // keep the editor in step
+  if(S._nbLoaded === st.id){ document.getElementById('nb-ed').innerHTML = st.h; nbNoSpell(); } // keep the editor in step
   showToast(`📝 ${what} added to “${st.t}”`);
 }
 const nbEsc = escapeHtml;
@@ -7813,10 +7863,18 @@ function nbAddDoctrine(ci, ti){
   const t = DOCTRINES[ci] && DOCTRINES[ci].topics[ti];
   if(t) nbAppend(`<h3>📑 ${nbEsc(t.name)}</h3><p>${nbEsc(t.desc.replace(/<[^>]+>/g, ''))}</p>`, t.name);
 }
-function nbAddHymn(){
+// A hymn into the study: n = one verse (0, 1 …) or 'r' the refrain; with no n,
+// the lines selected on the page — or, when none are, the first verse and refrain
+function nbAddHymn(n){
   const h = S._hymns && S._subView && S._hymns[+S._subView.key];
   if(!h) return;
-  nbAppend(`<p><b>🎵 ${nbEsc(h[0])}</b> — ${nbEsc(h[1])}, ${h[2]}</p><blockquote>${h[5][0].map(nbEsc).join('<br>')}${h[6].length ? '<br><br><i>' + h[6].map(nbEsc).join('<br>') + '</i>' : ''}</blockquote>`, h[0]);
+  const head = `<p><b>🎵 ${nbEsc(h[0])}</b> — ${nbEsc(h[1])}, ${h[2]}</p>`, lines = a => a.map(nbEsc).join('<br>');
+  if(n === 'r') return nbAppend(`${head}<blockquote><i>${lines(h[6])}</i></blockquote>`, `${h[0]} (refrain)`);
+  if(typeof n === 'number') return nbAppend(`${head}<blockquote>${lines(h[5][n])}</blockquote>`, `${h[0]} (verse ${n + 1})`);
+  const sel = window.getSelection(), view = document.getElementById('hymn-view');
+  const picked = sel && !sel.isCollapsed && view.contains(sel.anchorNode) ? sel.toString().split(/\n+/).map(x => x.replace(/^\d+\s*/, '').trim()).filter(x => x && x !== 'Refrain') : [];
+  if(picked.length) return nbAppend(`${head}<blockquote>${lines(picked)}</blockquote>`, `Lines of ${h[0]}`);
+  nbAppend(`${head}<blockquote>${lines(h[5][0])}${h[6].length ? '<br><br><i>' + lines(h[6]) + '</i>' : ''}</blockquote>`, h[0]);
 }
 function nbAddMap(){
   const m = MAPS[S._mapOpen];
@@ -12397,7 +12455,9 @@ const TOOL_TIPS = {
     ['🔖', '<strong>🔖 Insert from My Verses</strong> — pick one of your lists, then tap a verse or passage and it goes in where your cursor is (or <strong>Insert all</strong>). Each one becomes a verse slide when you present'],
     ['✍️', '<strong>Reading Journal</strong> — at the end of any chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts; tap the chapter to read it again'],
     ['✎', '<strong>Rename a study</strong> by tapping its name at the top, or ✏️ beside it in ☰ Studies'],
-    ['H', '<strong>H B I •≡ 1.</strong> make headings, bold, italic, bullets and a numbered outline; <strong>⇤ ⇥</strong> (or Tab / Shift+Tab on a keyboard) move a point up or down a level'],
+    ['H', '<strong>H B I U •≡ 1.</strong> make headings, bold, italic, underline, bullets and a numbered outline; <strong>⇤ ⇥</strong> (or Tab / Shift+Tab on a keyboard) move a point up or down a level'],
+    ['🖍', '<strong>🖍 Highlight</strong> — select some words, then tap 🖍 to mark them in gold (it shows when you present too); tap inside a highlight and 🖍 again to take it off'],
+    ['✓', '<strong>Spelling</strong> — words the phone or computer does not know are underlined in red as you write; tap or right-click one for suggestions. The verses you add keep the King James spelling and are not marked. The word count is at the bottom'],
     ['❝', '<strong>❝</strong> puts a paragraph in a quote box, <strong>¶</strong> makes it plain text again, and <strong>✂</strong> starts a new slide there when you present'],
     ['🎦', '<strong>🎦 Present</strong> shows the study as slides: its name is the title slide, each heading starts a slide, and every verse you added gets a slide of its own'],
     ['📖', '<strong>Tap a verse reference</strong> in the study to read it; the study stays as it was'],
@@ -12474,6 +12534,7 @@ const TOOL_TIPS = {
     ['📤', '<strong>📤 Share</strong> on a name, person or place sends who or what it is, how to say it, and a link that opens that page in the app'],
   ]},
   hymns: {i:'🎵', t:'Hymns', tips:[
+    ['📝＋', '<strong>📝＋ beside a verse</strong> (or the refrain) adds just that verse to your study. Or select some lines and tap <strong>📝＋ Add to Study</strong> at the top to add only those'],
     ['🎵', '<strong>98 hymns of the faith</strong> whose words are in the public domain, each with the Scriptures behind it — tap a 📖 reference to read it'],
     ['📝＋', '<strong>📝＋ Add to Study</strong> puts a hymn in your notebook'],
   ]},
