@@ -6,6 +6,11 @@
 
 ## New Features
 
+### 🎧 Hear the Hymns Sung (v58)
+- **🎧 Listen on a hymn**: in Search → Hymns, 39 of the 98 hymns have a recording in the FBC Hymns app (fbckjv.app/Hymns/) — marked 🎧 in the list. **🎧 Listen** on the hymn's page opens it there, playing, with the words to follow
+- **The Hymns app leads back to the Word**: it now reads this app's hymn words and Scriptures, so its lyrics show **📖** buttons that open the verses behind each hymn here, and every Sung Psalm shows its verses from this app's KJV text
+- New build script **tools/build-hymn-recordings.js** reads the Hymns app's song list (a Hymns checkout beside this one) and writes tools/hymns/recordings.json (hymnal title → song); **build-hymns.js** adds the song as an 8th field in hymns.json, which older copies of the app simply ignore. Congregational recordings are preferred, then piano, then specials
+
 ### 💾 A Backup File of Your Own (v57)
 - **⚙ Settings → 💾 Save a backup file**: everything the restore code backs up — studies, My Verses lists, highlights and their colour names, notes, plans, the reading log, badges, the streak, Sword Drill and settings — in one file named for the day (FBC-KJV-backup-2026-10-07). On a phone the share sheet opens, so it can go to Google Drive, iCloud Drive, Files or an email; on a computer it downloads. (Chrome on Android shares it as .txt, the same content.) No account or sign-in
 - **📂 Restore from a file**: says what the file holds (“12 studies, 4 lists, 230 highlights…”) and asks first; it is merged in item by item like a sync, so nothing on the phone is removed and anything changed there since is kept. Then it is backed up and the app reloads

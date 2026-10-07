@@ -10,14 +10,17 @@
 // and pathawks/Christmas-Songs (CC0). Edit texts.json directly to correct one.
 //
 // Emits ../hymns.json:
-//   { h: [[title, author, year, category, [[label, jumpRef], …], stanzas, chorus], …] }
-// where stanzas is [[line, …], …] and chorus is [line, …] (may be empty).
+//   { h: [[title, author, year, category, [[label, jumpRef], …], stanzas, chorus, song?], …] }
+// where stanzas is [[line, …], …] and chorus is [line, …] (may be empty), and
+// song (only when there is one) is the hymn's recording in the FBC Hymns app,
+// from tools/hymns/recordings.json (see tools/build-hymn-recordings.js).
 
 const fs = require('fs');
 const path = require('path');
 const root = path.join(__dirname, '..');
 const LIST = require('./hymns/list.js');
 const TEXTS = JSON.parse(fs.readFileSync(path.join(__dirname, 'hymns', 'texts.json'), 'utf8'));
+const RECORDINGS = JSON.parse(fs.readFileSync(path.join(__dirname, 'hymns', 'recordings.json'), 'utf8'));
 const BOOKS = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
 const book = b => JSON.parse(fs.readFileSync(path.join(root, 'bible', b.replace(/ /g, '') + '.json'), 'utf8'));
 
@@ -41,7 +44,7 @@ const out = { h: LIST.map(([t, a, y, c, refs]) => {
   return [t, a, y, c, refs.split(';').flatMap(r => {
     const m = r.trim().match(/^(.+? \d+:)(\d+(?:-\d+)?), (\d+)$/); // "Psalm 119:11, 105" → two references
     return m ? [ref(m[1] + m[2]), ref(m[1] + m[3])] : [ref(r)];
-  }), tx.v.map(s => s.map(curly)), tx.ch.map(curly)];
+  }), tx.v.map(s => s.map(curly)), tx.ch.map(curly), ...(RECORDINGS[t] ? [RECORDINGS[t]] : [])];
 }) };
 fs.writeFileSync(path.join(root, 'hymns.json'), JSON.stringify(out));
 console.log(`${out.h.length} hymns in ${new Set(out.h.map(h => h[3])).size} sections`);
