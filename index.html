@@ -492,6 +492,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #nb-foot{font-size:11px;color:var(--text-m);padding:6px 14px calc(6px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--border);display:flex;justify-content:space-between;gap:8px}
 .rc-nb{float:right;background:none;border:1px solid var(--border);color:var(--gold);border-radius:12px;font-size:11px;padding:1px 7px;margin:-2px -4px 0 6px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0;text-transform:none;font-weight:500}
 .nb-share{margin-left:6px}
+#nb-ed mark,#pres-txt mark{background:var(--hl-y);color:inherit;border-radius:3px;padding:0 1px}
 /* In the study tools — the top of search results */
 .th-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin:0 0 12px;overflow:hidden}
 .th-h{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:10px 14px 4px}
@@ -2828,6 +2829,8 @@ body.light #home-watermark{
     <button onclick="nbCmd('h')" title="Heading"><b>H</b></button>
     <button onclick="nbCmd('bold')" title="Bold"><b>B</b></button>
     <button onclick="nbCmd('italic')" title="Italic"><i>I</i></button>
+    <button onclick="nbCmd('underline')" title="Underline"><u>U</u></button>
+    <button onclick="nbCmd('mark')" title="Highlight — select words, then tap (tap again to take it off)" aria-label="Highlight">🖍</button>
     <span class="sep"></span>
     <button onclick="nbCmd('ul')" title="Bullet list">•≡</button>
     <button onclick="nbCmd('ol')" title="Numbered outline">1.</button>
@@ -7454,7 +7457,7 @@ function nbCreate(title){
 function nbClean(html){
   const tpl = document.createElement('template');
   tpl.innerHTML = html;
-  const ALLOW = new Set(['P','DIV','BR','H3','HR','UL','OL','LI','BLOCKQUOTE','B','STRONG','I','EM','SPAN']);
+  const ALLOW = new Set(['P','DIV','BR','H3','HR','UL','OL','LI','BLOCKQUOTE','B','STRONG','I','EM','U','MARK','SPAN']);
   const walk = node => [...node.childNodes].forEach(n => {
     if(n.nodeType === 3) return;
     if(n.nodeType !== 1 || /^(SCRIPT|STYLE|TEMPLATE|IFRAME|OBJECT)$/.test(n.tagName)){ n.remove(); return; }
@@ -7481,8 +7484,9 @@ function nbOpen(){
   document.getElementById('nb-title').value = st.t;
   document.getElementById('nb-ed').innerHTML = nbClean(st.h);
   S._nbLoaded = st.id; S._nbShown = nbClean(document.getElementById('nb-ed').innerHTML);
+  nbNoSpell();
   document.getElementById('nb-menu').classList.remove('on');
-  document.getElementById('nb-status').textContent = 'Saved on this device';
+  document.getElementById('nb-status').textContent = 'Saved on this device' + nbWords();
   openPopover('nb-panel');
   hintMaybe('notebook', 800);
 }
@@ -7493,7 +7497,7 @@ function nbStore(){
   // Only a real change counts as an edit (sync merges by the time of the last edit)
   if(S._nbLoaded === st.id){ const h = nbClean(ed.innerHTML); if(h !== st.h){ st.h = h; st.u = Date.now(); } S._nbShown = h; }
   nbSave();
-  document.getElementById('nb-status').textContent = 'Saved on this device';
+  document.getElementById('nb-status').textContent = 'Saved on this device' + nbWords();
 }
 function nbTitleInput(v){
   const st = nbActive();
@@ -7519,14 +7523,37 @@ function nbCmd(c){
   else if(c === 'ul') document.execCommand('insertUnorderedList');
   else if(c === 'ol') document.execCommand('insertOrderedList');
   else if(c === 'hr') document.execCommand('insertHorizontalRule');
-  else document.execCommand(c); // bold, italic, indent, outdent, undo, redo
+  else if(c === 'mark') nbMark();
+  else document.execCommand(c); // bold, italic, underline, indent, outdent, undo, redo
   clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 300);
 }
+// 🖍 Highlight the words selected (within one paragraph); inside a highlight, take it off
+function nbMark(){
+  const ed = document.getElementById('nb-ed'), sel = window.getSelection();
+  if(!sel || !sel.rangeCount) return;
+  const r = sel.getRangeAt(0);
+  const markOf = n => { for(let x = n; x && x !== ed; x = x.parentNode) if(x.nodeName === 'MARK') return x; return null; };
+  const m = markOf(r.startContainer) || markOf(r.endContainer);
+  if(m){ m.replaceWith(...m.childNodes); nbAfterEdit(); return; }
+  if(r.collapsed || !ed.contains(r.commonAncestorContainer)){ showToast('Select some words first, then tap 🖍'); return; }
+  const box = document.createElement('div'); box.append(r.cloneContents());
+  if(box.querySelector('p,div,li,h3,blockquote,ul,ol,hr')){ showToast('Highlight one paragraph at a time'); return; }
+  document.execCommand('insertHTML', false, `<mark>${nbClean(box.innerHTML)}</mark>`);
+}
+// Scripture keeps its own spelling: the spell checker looks only at what you write
+function nbNoSpell(){ document.querySelectorAll('#nb-ed .nb-v, #nb-ed .nb-ref').forEach(e => { e.spellcheck = false; }); }
+function nbWords(){
+  const t = (document.getElementById('nb-ed').innerText || '').trim();
+  const n = t ? t.split(/\s+/).length : 0;
+  return n ? ` · ${n.toLocaleString()} word${n !== 1 ? 's' : ''}` : '';
+}
+function nbAfterEdit(){ clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 300); }
 (function nbWire(){
   const ed = document.getElementById('nb-ed');
   if(!ed) return;
   ed.addEventListener('focus', () => { try{ document.execCommand('defaultParagraphSeparator', false, 'p'); }catch(e){} });
   ed.addEventListener('input', () => {
+    nbNoSpell();
     document.getElementById('nb-status').textContent = 'Saving…';
     clearTimeout(_nbTimer); _nbTimer = setTimeout(nbStore, 500);
   });
@@ -7734,7 +7761,7 @@ function nbAppend(html, what){
   st.h = nbClean((st.h || '') + html + '<p><br></p>');
   st.u = Date.now();
   nbSave();
-  if(S._nbLoaded === st.id) document.getElementById('nb-ed').innerHTML = st.h; // keep the editor in step
+  if(S._nbLoaded === st.id){ document.getElementById('nb-ed').innerHTML = st.h; nbNoSpell(); } // keep the editor in step
   showToast(`📝 ${what} added to “${st.t}”`);
 }
 const nbEsc = escapeHtml;
@@ -12397,7 +12424,9 @@ const TOOL_TIPS = {
     ['🔖', '<strong>🔖 Insert from My Verses</strong> — pick one of your lists, then tap a verse or passage and it goes in where your cursor is (or <strong>Insert all</strong>). Each one becomes a verse slide when you present'],
     ['✍️', '<strong>Reading Journal</strong> — at the end of any chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts; tap the chapter to read it again'],
     ['✎', '<strong>Rename a study</strong> by tapping its name at the top, or ✏️ beside it in ☰ Studies'],
-    ['H', '<strong>H B I •≡ 1.</strong> make headings, bold, italic, bullets and a numbered outline; <strong>⇤ ⇥</strong> (or Tab / Shift+Tab on a keyboard) move a point up or down a level'],
+    ['H', '<strong>H B I U •≡ 1.</strong> make headings, bold, italic, underline, bullets and a numbered outline; <strong>⇤ ⇥</strong> (or Tab / Shift+Tab on a keyboard) move a point up or down a level'],
+    ['🖍', '<strong>🖍 Highlight</strong> — select some words, then tap 🖍 to mark them in gold (it shows when you present too); tap inside a highlight and 🖍 again to take it off'],
+    ['✓', '<strong>Spelling</strong> — words the phone or computer does not know are underlined in red as you write; tap or right-click one for suggestions. The verses you add keep the King James spelling and are not marked. The word count is at the bottom'],
     ['❝', '<strong>❝</strong> puts a paragraph in a quote box, <strong>¶</strong> makes it plain text again, and <strong>✂</strong> starts a new slide there when you present'],
     ['🎦', '<strong>🎦 Present</strong> shows the study as slides: its name is the title slide, each heading starts a slide, and every verse you added gets a slide of its own'],
     ['📖', '<strong>Tap a verse reference</strong> in the study to read it; the study stays as it was'],
