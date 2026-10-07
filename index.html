@@ -1355,6 +1355,9 @@ body.light #home-watermark{
 #care-msg{flex:1}
 #care-btn{background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px}
 #care-x{background:none;border:none;color:var(--text-m);font-size:16px;cursor:pointer;padding:6px;min-width:34px;min-height:38px}
+.bk-l{font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin:16px 0 4px;text-align:center}
+.bk-d{font-size:12.5px;color:var(--text-d);line-height:1.5;text-align:center;margin-bottom:2px}
+#bk-status{font-size:12.5px;color:var(--text-d);text-align:center;margin:8px 2px 2px}
 #sync-status{font-size:12.5px;color:var(--text-d);line-height:1.5;margin:8px 2px 2px;text-align:center}
 #sync-status .ss-warn{color:var(--gold)}
 #sync-status button{background:none;border:1px solid var(--gold-d);color:var(--gold);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;margin-top:4px}
@@ -2497,7 +2500,7 @@ body.light #home-watermark{
 
       <div class="tips-section">
         <div class="tips-section-lbl">⚠️ Important</div>
-        <div class="tip-row"><span class="tip-ico">☁️</span><span class="tip-txt">Your streaks, badges, bookmarks, highlights, notes and progress are <strong>automatically backed up to the cloud</strong> using your restore code. You can safely switch devices or browsers at any time. <strong>Avoid clearing site data</strong> for fbckjv.app in Chrome settings as this removes your local copy — your cloud backup will still be intact via your restore code.</span></div>
+        <div class="tip-row"><span class="tip-ico">☁️</span><span class="tip-txt">Your streaks, badges, bookmarks, highlights, notes and progress are <strong>automatically backed up to the cloud</strong> using your restore code. You can safely switch devices or browsers at any time. <strong>Avoid clearing site data</strong> for fbckjv.app in Chrome settings as this removes your local copy — your cloud backup will still be intact via your restore code. For a copy you hold yourself, <strong>⚙ Settings → 💾 Save a backup file</strong> now and then.</span></div>
 
         <div style="text-align:center;margin-top:18px;padding-top:14px;border-top:1px solid var(--border);color:var(--text-m);font-size:11px;opacity:.6">
           ✝ FBC KJV Bible &nbsp;·&nbsp; <span id="tips-version"></span>
@@ -2620,6 +2623,7 @@ body.light #home-watermark{
       <div class="tips-section">
         <div class="tips-section-lbl">☁️ Backup &amp; Restore Your Data</div>
         <div class="tip-row"><span class="tip-ico">🔑</span><span class="tip-txt">Your data is automatically backed up to the cloud. Your <strong>restore code</strong> is shown below — write it down or screenshot it. On a new device, tap <strong>Restore from Another Device</strong> and your streaks, badges, bookmarks and progress come back. Under <strong>Sync Now</strong> it shows when this phone last backed up — and if a backup or a save ever fails, a card at the top says so, with <strong>Try again</strong>.</span></div>
+        <div class="tip-row"><span class="tip-ico">💾</span><span class="tip-txt"><strong>A backup file of your own</strong> — <strong>💾 Save a backup file</strong> puts everything in one file; on a phone, choose Google Drive, iCloud Drive, Files or email to keep it. <strong>📂 Restore from a file</strong> brings it back on any phone or computer, adding to what is there without removing anything.</span></div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin:6px 0 4px;text-align:center">
           <div style="font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Your Restore Code</div>
           <div id="rc-display-code" style="font-family:'IM Fell English',serif;font-size:30px;color:var(--gold);letter-spacing:.2em;margin-bottom:6px">——</div>
@@ -2629,6 +2633,12 @@ body.light #home-watermark{
         <button onclick="promptRestore()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px">📥 Restore from Another Device</button>
         <button onclick="fbSyncNow()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px" id="sync-now-btn">🔄 Sync Now</button>
         <div id="sync-status" role="status"></div>
+        <div class="bk-l">💾 A backup file of your own</div>
+        <div class="bk-d">Everything above in one file — keep it in Google Drive, iCloud Drive, your Files or an email to yourself, and bring it back on any phone or computer.</div>
+        <button onclick="saveBackupFile()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px" id="bk-save-btn">💾 Save a backup file</button>
+        <button onclick="document.getElementById('bk-input').click()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px">📂 Restore from a file</button>
+        <input type="file" id="bk-input" accept=".json,.txt,application/json,text/plain" style="display:none" onchange="onBackupPicked(event)">
+        <div id="bk-status"></div>
       </div>
 
       <div class="tips-section">
@@ -15217,7 +15227,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v56';
+const WHATS_NEW_VERSION = 'v57';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -15702,7 +15712,7 @@ function syncWorked(bytes){
   LS.set(SYNC_OK_KEY, Date.now());
   S._syncErr = null;
   syncStatusRender();
-  if(bytes > SYNC_NEAR_FULL) careToast('near', '☁️ Your notes are nearly too large for the backup. They are safe on this phone; please let the church office know so it can be looked at.', '', null, 7 * 24 * 60);
+  if(bytes > SYNC_NEAR_FULL) careToast('near', '☁️ Your notes are nearly too large for the backup. They are safe on this phone — a backup file of your own keeps a copy too.', 'Save a file', saveBackupFile, 7 * 24 * 60);
 }
 function syncFailed(e){
   console.warn('Sync error:', e);
@@ -15710,14 +15720,96 @@ function syncFailed(e){
   S._syncErr = {kind, at: Date.now()};
   syncStatusRender();
   if(kind === 'offline') return;
-  careToast('sync-' + kind, `☁️ ${SYNC_SAY[kind]} They are safe on this phone.`, 'Try again', syncRetry, 30);
+  if(kind === 'size') careToast('sync-size', `☁️ ${SYNC_SAY.size} They are safe on this phone — save a backup file to keep a copy.`, 'Save a file', saveBackupFile, 24 * 60);
+  else careToast('sync-' + kind, `☁️ ${SYNC_SAY[kind]} They are safe on this phone.`, 'Try again', syncRetry, 30);
 }
 async function syncRetry(){
   showToast('☁️ Backing up…');
   await fbSync();
   showToast(S._syncErr ? (S._syncErr.kind === 'offline' ? '☁️ No connection — it will back up when you are online' : '☁️ Still not backed up — it will keep trying') : '✅ Backed up');
 }
+/* ── 💾 A backup file of your own ──
+   Everything the restore code backs up, in one file the person keeps. On a
+   phone the share sheet offers Google Drive, iCloud Drive, Files or email
+   (Chrome on Android shares only some kinds of file, so it goes as .txt
+   there); on a computer it downloads. Restoring merges it in item by item,
+   as a sync does, so nothing on this phone is removed and anything changed
+   here since is kept. The file is plain JSON:
+   {app, kind:'backup', v:1, made, code, count:{…}, data:{key: stored text}} */
+const BACKUP_FILE_KEY = 'kjv_backup_file_at'; // this device only: when a file was last saved
+const backupKeys = () => [...new Set([...SYNC_KEYS, ...Object.keys(MERGE_STORES), SYNC_META])];
+function backupCounts(get){
+  const n = (k, f) => { try{ return f(syncParse(get(k))) || 0; }catch(e){ return 0; } };
+  return {
+    studies: n('kjv_studies', v => ((v && v.list) || []).length),
+    lists: n('kjv_collections', v => ((v && v.list) || []).length),
+    highlights: n('kjv_hl', v => Object.keys(v || {}).length),
+    notes: n('kjv_notes', v => Object.keys(v || {}).length),
+    'chapters read': n(READ_KEY, v => readAll(v || {}).size),
+    plans: n('kjv_plans', v => ((v && v.list) || []).length),
+  };
+}
+function backupCountsText(c){
+  const one = {studies: 'study', lists: 'list', highlights: 'highlight', notes: 'note', 'chapters read': 'chapter read', plans: 'plan'};
+  const parts = Object.entries(c).filter(([, v]) => v).map(([k, v]) => `${v} ${v === 1 ? one[k] : k}`);
+  return parts.length ? parts.join(', ') : 'your settings';
+}
+async function saveBackupFile(){
+  // a study typed in the last moment goes in too
+  if(document.getElementById('nb-panel')?.classList.contains('on')){ clearTimeout(_nbTimer); nbStore(); }
+  const data = {};
+  for(const k of backupKeys()){ const v = localStorage.getItem(k); if(v !== null) data[k] = v; }
+  const body = JSON.stringify({app: 'FBC KJV Bible', kind: 'backup', v: 1, made: new Date().toISOString(),
+    code: localStorage.getItem('kjv_rc') || '', count: backupCounts(k => data[k]), data});
+  const name = `FBC-KJV-backup-${todayStr()}`;
+  let how = '';
+  if(navigator.canShare && matchMedia('(pointer:coarse)').matches){
+    for(const [ext, type] of [['json', 'application/json'], ['txt', 'text/plain']]){
+      const f = new File([body], `${name}.${ext}`, {type});
+      if(!navigator.canShare({files: [f]})) continue;
+      try{ await navigator.share({files: [f], title: 'FBC KJV Bible backup'}); how = 'shared'; }
+      catch(e){ if(e && e.name === 'AbortError') return; } // they closed the share sheet
+      break;
+    }
+  }
+  if(!how){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([body], {type: 'application/json'}));
+    a.download = `${name}.json`;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    how = 'downloaded';
+  }
+  LS.set(BACKUP_FILE_KEY, Date.now());
+  showToast(how === 'shared' ? '💾 Backup file made — keep it somewhere safe' : '💾 Backup file saved to your downloads');
+  backupStatusRender();
+}
+async function onBackupPicked(ev){
+  const f = ev.target.files && ev.target.files[0];
+  ev.target.value = '';
+  if(!f) return;
+  let file = null;
+  try{ file = JSON.parse(await f.text()); }catch(e){}
+  if(!file || file.kind !== 'backup' || !file.data || typeof file.data !== 'object'){ showToast('That is not an FBC KJV Bible backup file'); return; }
+  const made = new Date(file.made), day = isNaN(made) ? 'an earlier day' : made.toLocaleDateString(undefined, {month: 'long', day: 'numeric', year: 'numeric'});
+  const ok = await appConfirm(`This backup from ${day} holds ${backupCountsText(backupCounts(k => file.data[k]))}. Bring it into this phone? Nothing here is removed, and anything you have changed here since is kept.`, 'Bring it in', false, '📂 Restore from a file');
+  if(!ok) return;
+  const data = {};
+  for(const k of backupKeys()) if(typeof file.data[k] === 'string') data[k.replace(/[^a-zA-Z0-9]/g, '_')] = file.data[k];
+  applySyncData(data);
+  showToast('✅ Brought in — one moment…');
+  await fbSync();
+  setTimeout(() => location.reload(), 900);
+}
+function backupStatusRender(){
+  const el = document.getElementById('bk-status');
+  if(!el) return;
+  const t = +LS.get(BACKUP_FILE_KEY, 0) || 0;
+  el.textContent = t ? `Last backup file from this phone: ${new Date(t).toLocaleDateString(undefined, {month: 'short', day: 'numeric', year: 'numeric'})}` : 'No backup file saved from this phone yet';
+}
+
 function syncStatusRender(){
+  backupStatusRender();
   const el = document.getElementById('sync-status');
   if(!el) return;
   const ok = +LS.get(SYNC_OK_KEY, 0) || 0, err = S._syncErr;
@@ -16090,6 +16182,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v57" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">💾</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">A Backup File of Your Own</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          In <strong>⚙ Settings</strong>, <strong>💾 Save a backup file</strong> puts your studies, lists, highlights, notes, plans and reading in one file — keep it in Google Drive, iCloud Drive, Files or an email to yourself. <strong>📂 Restore from a file</strong> brings it back on any phone, without removing anything. Settings also shows when this phone last backed up, and if a backup ever fails, the app now tells you.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v56" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔤</div>
       <div>

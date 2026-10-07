@@ -8,7 +8,7 @@
 // Bump CACHE_NAME on every deploy (either kind) — it invalidates the cache
 // and is read back by the app (refreshAppVersion) for the Settings display.
 
-const CACHE_NAME = 'fbckjv-bible-v56.02';
+const CACHE_NAME = 'fbckjv-bible-v57';
 
 // Bible maps + the concordance and Bible-names indexes — bundled static
 // assets, precached so they work offline.
@@ -60,6 +60,8 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE_NAME).then(c => c.put(e.request, copy));
       }
       return res;
-    }).catch(() => caches.match(e.request).then(m => m || caches.match('./')))
+    // Offline: what was saved; a page opens the saved app, but a script or a
+    // data file is never answered with the app's page (it would be run as code)
+    }).catch(() => caches.match(e.request).then(m => m || (e.request.mode === 'navigate' ? caches.match('./') : Response.error())))
   );
 });
