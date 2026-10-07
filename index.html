@@ -1350,6 +1350,14 @@ body.light #home-watermark{
 #mk-go:disabled{opacity:.5;cursor:default}
 .pl-mk{border-style:dashed}
 /* Undo after a delete (v54) */
+#care-toast{position:fixed;left:50%;top:calc(64px + env(safe-area-inset-top,0px));transform:translate(-50%,-12px);display:flex;align-items:center;gap:10px;background:var(--bg2);color:var(--text);border:1.5px solid var(--gold);border-radius:14px;padding:10px 8px 10px 14px;font-size:14px;line-height:1.4;z-index:655;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;width:min(460px,calc(100% - 24px));box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#care-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#care-msg{flex:1}
+#care-btn{background:var(--gold);color:var(--bg);border:none;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;min-height:38px}
+#care-x{background:none;border:none;color:var(--text-m);font-size:16px;cursor:pointer;padding:6px;min-width:34px;min-height:38px}
+#sync-status{font-size:12.5px;color:var(--text-d);line-height:1.5;margin:8px 2px 2px;text-align:center}
+#sync-status .ss-warn{color:var(--gold)}
+#sync-status button{background:none;border:1px solid var(--gold-d);color:var(--gold);border-radius:8px;padding:4px 10px;font-size:12px;cursor:pointer;margin-top:4px}
 #undo-toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);display:flex;align-items:center;gap:14px;background:var(--text);color:var(--bg);border-radius:14px;padding:10px 10px 10px 16px;font-size:14px;z-index:650;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100% - 24px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
 #undo-toast.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #undo-msg{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
@@ -2611,7 +2619,7 @@ body.light #home-watermark{
 
       <div class="tips-section">
         <div class="tips-section-lbl">☁️ Backup &amp; Restore Your Data</div>
-        <div class="tip-row"><span class="tip-ico">🔑</span><span class="tip-txt">Your data is automatically backed up to the cloud. Your <strong>restore code</strong> is shown below — write it down or screenshot it. On a new device, tap <strong>Restore from Another Device</strong> and your streaks, badges, bookmarks and progress come back.</span></div>
+        <div class="tip-row"><span class="tip-ico">🔑</span><span class="tip-txt">Your data is automatically backed up to the cloud. Your <strong>restore code</strong> is shown below — write it down or screenshot it. On a new device, tap <strong>Restore from Another Device</strong> and your streaks, badges, bookmarks and progress come back. Under <strong>Sync Now</strong> it shows when this phone last backed up — and if a backup or a save ever fails, a card at the top says so, with <strong>Try again</strong>.</span></div>
         <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;margin:6px 0 4px;text-align:center">
           <div style="font-size:11px;color:var(--text-m);font-family:'Inter',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Your Restore Code</div>
           <div id="rc-display-code" style="font-family:'IM Fell English',serif;font-size:30px;color:var(--gold);letter-spacing:.2em;margin-bottom:6px">——</div>
@@ -2620,6 +2628,7 @@ body.light #home-watermark{
         </div>
         <button onclick="promptRestore()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px">📥 Restore from Another Device</button>
         <button onclick="fbSyncNow()" style="width:100%;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px" id="sync-now-btn">🔄 Sync Now</button>
+        <div id="sync-status" role="status"></div>
       </div>
 
       <div class="tips-section">
@@ -2744,6 +2753,7 @@ body.light #home-watermark{
 </div>
 <!-- Undo after a delete (showUndo) -->
 <div id="undo-toast" role="status" aria-live="polite"><span id="undo-msg"></span><button id="undo-btn" onclick="undoNow()">Undo</button></div>
+<div id="care-toast" role="alert"><span id="care-msg"></span><button id="care-btn"></button><button id="care-x" onclick="careClose()" aria-label="Close">✕</button></div>
 <!-- Name the highlight colours (hlNameSheet) -->
 <div id="hln-sheet" onclick="if(event.target===this)closePopover('hln-sheet')" role="dialog" aria-modal="true" aria-labelledby="hln-t">
   <div id="hln-inner">
@@ -3167,7 +3177,7 @@ const BIBLE_CACHE = 'kjv-bible-v1';
 const BOOKS=["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
 const CH_COUNTS=[50,40,27,36,34,24,21,4,31,24,22,25,29,36,10,13,10,42,150,31,12,8,66,52,5,48,12,14,3,9,1,4,7,3,3,3,2,14,4,28,16,24,21,28,16,16,13,6,6,4,4,5,3,6,4,3,1,13,5,5,3,5,1,1,1,22];
 const bookFile=n=>n.replace(/ /g,'')+'.json';
-const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){lsFull(e)}}};
 
 // Escapes user-supplied text (search queries, notes) before it is placed into
 // innerHTML — anything rendered via innerHTML that didn't originate from our
@@ -15434,7 +15444,7 @@ function syncAdopt(vals, rmeta){
     meta[st.tag] = r.meta;
     const nv = JSON.stringify(r.value);
     if(localStorage.getItem(key) !== nv && !(lv === null && !Object.keys(st.items(r.value)).length)){
-      try{ localStorage.setItem(key, nv); changed.push(key); }catch(e){}
+      try{ localStorage.setItem(key, nv); changed.push(key); }catch(e){ lsFull(e); }
     }
     base[st.tag] = syncHashes(st.items(r.value));
   }
@@ -15499,65 +15509,229 @@ function fbInit(){
   }catch(e){ console.warn('Firebase init failed:', e); }
 }
 
+/* ── Studies in records of their own ──
+   Everything else shares one cloud record per restore code, and Firestore
+   allows 1 MB a record — a pastor's year of sermon studies could fill it and
+   stop the backup. So each study is kept at users/{code}/studies/{id}; the
+   main record keeps their changes (kjv_sync_meta) and what the cloud holds
+   (kjv_studies_ix: {id: hash}), so a sync fetches only the studies that
+   changed. Until v56.02 the studies sat in the main record as kjv_studies: it
+   is still read (an older copy of the app writes it there) and then removed.
+   An older copy that finds no kjv_studies keeps its own studies, so nothing
+   is lost while a phone catches up. If the cloud's rules refuse the separate
+   records, this device keeps the old way for a day, then tries again. */
+const ST_KEY = 'kjv_studies', ST_IX = 'kjv_studies_ix', ST_OFF = 'kjv_studies_split_off';
+const stSplitOn = () => { const t = +LS.get(ST_OFF, 0) || 0; return !t || Date.now() - t > 864e5; };
+const stRef = (ref, id) => ref.collection('studies').doc(id);
+// The cloud's studies: unchanged ones are this device's own copy, the rest are fetched
+async function cloudStudies(ref, main){
+  const st = MERGE_STORES[ST_KEY], ix = syncParse(main[ST_IX]) || {};
+  const mine = st.items(LS.get(ST_KEY, null)), mineH = syncHashes(mine);
+  const got = S._stGot || (S._stGot = {}), items = {};
+  await Promise.all(Object.entries(ix).map(async ([id, h]) => {
+    if(mineH[id] === h){ items[id] = mine[id]; return; }
+    if(got[id] && got[id].h === h){ items[id] = got[id].it; return; }
+    const d = await stRef(ref, id).get();
+    const it = d.exists ? syncParse((d.data() || {}).s) : null;
+    if(it && it.id){ items[id] = it; got[id] = {h, it}; }
+  }));
+  // what an older copy of the app has put in the main record since is the newer
+  for(const [id, it] of Object.entries(st.items(syncParse(main[ST_KEY])))) items[id] = it;
+  return {list: Object.values(items), ix};
+}
+// A record's size as Firestore counts it, near enough (it allows 1,048,576 bytes)
+function syncBytes(data){
+  const enc = new TextEncoder();
+  return Object.entries(data).reduce((n, [k, v]) => n + k.length + 1 + (typeof v === 'string' ? enc.encode(v).length + 1 : 8), 32);
+}
+const SYNC_NEAR_FULL = 850000;
+
+// One sync at a time (hiding the app asks twice)
 function fbSync(){
   if(!_db) return Promise.resolve();
   const code = localStorage.getItem('kjv_rc');
   if(!code) return Promise.resolve();
+  return (S._syncQ = (S._syncQ || Promise.resolve()).then(() => fbSyncRun(code)));
+}
+async function fbSyncRun(code){
   const ref = _db.collection('users').doc(code);
-  // Push inside a transaction so the streak fields are merged as MAX(cloud,
-  // local) instead of blindly overwritten. Without this, a device that
-  // happens to hold a lower/stale streak (e.g. a laptop that hasn't pulled
-  // yet) would clobber the higher value already in the cloud on every push.
-  // This is strictly non-destructive: protected fields can only ever rise,
-  // never decrease — on this device or in the cloud.
-  //
-  // Bookmarks, highlights, notes, studies and plans are merged item by item
-  // (MERGE_STORES): the merged copy goes to the cloud and back to this device.
-  const meta = syncStamp();
-  let merged = null;
-  return _db.runTransaction(async tx => {
-    const snap = await tx.get(ref);
-    const cloud = snap.exists ? (snap.data() || {}) : {};
-    const data = { lastSync: firebase.firestore.FieldValue.serverTimestamp(), v: 2 };
-    const bumps = {}; // higher cloud values to adopt locally after the write
-    const cloudMeta = syncParse(cloud[SYNC_META]) || {}, newMeta = {};
-    merged = {vals: {}, meta: newMeta};
-    for(const [k, st] of Object.entries(MERGE_STORES)){
-      const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
-      const r = syncMergeStore(st, LS.get(k, null), meta[st.tag], syncParse(cloud[fk]), cloudMeta[st.tag]);
-      data[fk] = JSON.stringify(r.value);
-      merged.vals[k] = r.value; newMeta[st.tag] = r.meta;
-    }
-    data[SYNC_META] = JSON.stringify(newMeta);
-    SYNC_KEYS.forEach(k=>{
-      if(MERGE_STORES[k]) return;
-      const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
-      const lv = localStorage.getItem(k);
-      if(PROTECTED_MAX_FIELDS.includes(k)){
-        const cloudNum = parseInt(cloud[fk] || '0') || 0;
-        const localNum = parseInt(lv || '0') || 0;
-        const best = Math.max(cloudNum, localNum);
-        data[fk] = String(best);
-        // Cloud was ahead of us — adopt it so this device's badge catches up.
-        if(cloudNum > localNum) bumps[k] = String(best);
-      } else if(k === RECENT_KEY){
-        // recent searches: both devices' lists, newest uses first
-        data[fk] = JSON.stringify(recentMerge(syncParse(lv), syncParse(cloud[fk])));
-        if(data[fk] !== lv) bumps[k] = data[fk];
-      } else if(lv !== null){
-        data[fk] = lv;
+  let split = stSplitOn();
+  for(let attempt = 0; attempt < 4; attempt++){
+    try{
+      // Push inside a transaction so the streak fields are merged as MAX(cloud,
+      // local) instead of blindly overwritten. Without this, a device that
+      // happens to hold a lower/stale streak (e.g. a laptop that hasn't pulled
+      // yet) would clobber the higher value already in the cloud on every push.
+      // This is strictly non-destructive: protected fields can only ever rise,
+      // never decrease — on this device or in the cloud.
+      //
+      // Bookmarks, highlights, notes, studies and plans are merged item by item
+      // (MERGE_STORES): the merged copy goes to the cloud and back to this device.
+      const meta = syncStamp();
+      let pre = null, cst = null;
+      if(split){
+        const s0 = await ref.get();
+        pre = s0.exists ? (s0.data() || {}) : {};
+        cst = await cloudStudies(ref, pre);
       }
-    });
-    tx.set(ref, data, {merge:true});
-    return bumps;
-  }).then(bumps => {
-    if(merged) syncAdopt(merged.vals, merged.meta);
-    if(bumps && Object.keys(bumps).length){
-      Object.entries(bumps).forEach(([k,v]) => localStorage.setItem(k, v));
-      // Refresh in-memory streak state + header badge from the adopted values.
-      try{ loadStreak(); }catch(e){}
+      let merged = null, bytes = 0, bigStudy = 0;
+      const bumps = await _db.runTransaction(async tx => {
+        const snap = await tx.get(ref);
+        const cloud = snap.exists ? (snap.data() || {}) : {};
+        // another device synced in between: start again from what it left
+        if(split && ((cloud[ST_IX] || '') !== (pre[ST_IX] || '') || (cloud[ST_KEY] || '') !== (pre[ST_KEY] || ''))){
+          const e = new Error('changed meanwhile'); e.again = true; throw e;
+        }
+        const data = { lastSync: firebase.firestore.FieldValue.serverTimestamp(), v: 2 };
+        const bumps = {}; // higher cloud values to adopt locally after the write
+        const cloudMeta = syncParse(cloud[SYNC_META]) || {}, newMeta = {};
+        merged = {vals: {}, meta: newMeta}; bigStudy = 0;
+        for(const [k, st] of Object.entries(MERGE_STORES)){
+          const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
+          const r = syncMergeStore(st, LS.get(k, null), meta[st.tag], split && k === ST_KEY ? cst : syncParse(cloud[fk]), cloudMeta[st.tag]);
+          merged.vals[k] = r.value; newMeta[st.tag] = r.meta;
+          if(split && k === ST_KEY){
+            // each changed study to its own record; the main record keeps the index
+            const items = st.items(r.value), hs = syncHashes(items);
+            for(const id in items) if(cst.ix[id] !== hs[id]){
+              const body = JSON.stringify(items[id]);
+              bigStudy = Math.max(bigStudy, body.length);
+              tx.set(stRef(ref, id), {s: body, u: Date.now()});
+            }
+            for(const id in cst.ix) if(!(id in items)) tx.delete(stRef(ref, id));
+            data[ST_IX] = JSON.stringify(hs);
+            if(cloud[ST_KEY] !== undefined) data[ST_KEY] = firebase.firestore.FieldValue.delete();
+          } else {
+            data[fk] = JSON.stringify(r.value);
+          }
+        }
+        data[SYNC_META] = JSON.stringify(newMeta);
+        SYNC_KEYS.forEach(k=>{
+          if(MERGE_STORES[k]) return;
+          const fk = k.replace(/[^a-zA-Z0-9]/g,'_');
+          const lv = localStorage.getItem(k);
+          if(PROTECTED_MAX_FIELDS.includes(k)){
+            const cloudNum = parseInt(cloud[fk] || '0') || 0;
+            const localNum = parseInt(lv || '0') || 0;
+            const best = Math.max(cloudNum, localNum);
+            data[fk] = String(best);
+            // Cloud was ahead of us — adopt it so this device's badge catches up.
+            if(cloudNum > localNum) bumps[k] = String(best);
+          } else if(k === RECENT_KEY){
+            // recent searches: both devices' lists, newest uses first
+            data[fk] = JSON.stringify(recentMerge(syncParse(lv), syncParse(cloud[fk])));
+            if(data[fk] !== lv) bumps[k] = data[fk];
+          } else if(lv !== null){
+            data[fk] = lv;
+          }
+        });
+        // what the record will hold: the fields written now and those kept
+        const whole = {...Object.fromEntries(Object.entries(cloud).filter(([k, v]) => typeof v === 'string')), ...data};
+        if(data[ST_KEY] !== undefined && typeof data[ST_KEY] !== 'string') delete whole[ST_KEY];
+        bytes = syncBytes(whole);
+        tx.set(ref, data, {merge:true});
+        return bumps;
+      });
+      if(merged) syncAdopt(merged.vals, merged.meta);
+      if(bumps && Object.keys(bumps).length){
+        Object.entries(bumps).forEach(([k,v]) => localStorage.setItem(k, v));
+        // Refresh in-memory streak state + header badge from the adopted values.
+        try{ loadStreak(); }catch(e){}
+      }
+      syncWorked(Math.max(bytes, bigStudy));
+      return;
+    }catch(e){
+      if(e && e.again && attempt < 3) continue;
+      // The cloud's rules do not allow the studies' own records yet: the old way, for now
+      if(split && e && e.code === 'permission-denied'){ LS.set(ST_OFF, Date.now()); split = false; continue; }
+      syncFailed(e);
+      return;
     }
-  }).catch(e => console.warn('Sync error:', e));
+  }
+}
+// The studies, for a restore or Sync Now: put back in the record as before
+async function withCloudStudies(ref, data){
+  if(data && data[ST_IX] !== undefined){
+    try{ data[ST_KEY] = JSON.stringify({list: (await cloudStudies(ref, data)).list}); }
+    catch(e){ console.warn('Studies:', e); }
+  }
+  return data;
+}
+
+/* ── When saving or the backup fails, say so ──
+   A plain card at the top with what happened and what to do; never for
+   being offline (the notes are safe and go up when the phone is back
+   online). Settings → Backup shows when this device last backed up. */
+const SYNC_OK_KEY = 'kjv_sync_ok'; // this device only: when the backup last worked
+const _careAt = {};
+function careToast(kind, msg, label, fn, gapMin = 60){
+  const now = Date.now();
+  if(_careAt[kind] && now - _careAt[kind] < gapMin * 60000) return;
+  _careAt[kind] = now;
+  const t = document.getElementById('care-toast');
+  if(!t){ console.warn(msg); return; }
+  document.getElementById('care-msg').textContent = msg;
+  const b = document.getElementById('care-btn');
+  b.textContent = label || ''; b.style.display = label ? '' : 'none';
+  b.onclick = () => { careClose(); if(fn) fn(); };
+  t.classList.add('on');
+  clearTimeout(t._t); t._t = setTimeout(careClose, 15000);
+}
+function careClose(){ const t = document.getElementById('care-toast'); if(t) t.classList.remove('on'); }
+// The phone has no room left for the app's notes: the change was not kept
+function lsFull(e){
+  if(!e || !(e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED' || e.code === 22 || e.code === 1014 || /quota/i.test(e.message || ''))) return;
+  careToast('full', '⚠️ This phone has no room left for the app’s notes, so your last change was not saved. Removing a study you no longer need makes room.', '', null, 2);
+}
+function syncKind(e){
+  const c = (e && e.code) || '', m = String((e && e.message) || e || '');
+  if(!navigator.onLine || c === 'unavailable' || c === 'deadline-exceeded' || /offline|network|failed to get document because the client is offline/i.test(m)) return 'offline';
+  if(/maximum|too large|too big|exceeds|size/i.test(m)) return 'size';
+  if(c === 'resource-exhausted') return 'busy';
+  if(c === 'permission-denied' || c === 'unauthenticated') return 'denied';
+  return 'other';
+}
+const SYNC_SAY = {
+  offline: 'Waiting for a connection — your notes are safe on this phone and will be backed up when it is online.',
+  size: 'Your notes have grown too large for the backup.',
+  busy: 'The backup service is busy — it will try again later.',
+  denied: 'The backup service turned this phone’s notes away.',
+  other: 'Your notes could not be backed up just now.',
+};
+function syncWorked(bytes){
+  LS.set(SYNC_OK_KEY, Date.now());
+  S._syncErr = null;
+  syncStatusRender();
+  if(bytes > SYNC_NEAR_FULL) careToast('near', '☁️ Your notes are nearly too large for the backup. They are safe on this phone; please let the church office know so it can be looked at.', '', null, 7 * 24 * 60);
+}
+function syncFailed(e){
+  console.warn('Sync error:', e);
+  const kind = syncKind(e);
+  S._syncErr = {kind, at: Date.now()};
+  syncStatusRender();
+  if(kind === 'offline') return;
+  careToast('sync-' + kind, `☁️ ${SYNC_SAY[kind]} They are safe on this phone.`, 'Try again', syncRetry, 30);
+}
+async function syncRetry(){
+  showToast('☁️ Backing up…');
+  await fbSync();
+  showToast(S._syncErr ? (S._syncErr.kind === 'offline' ? '☁️ No connection — it will back up when you are online' : '☁️ Still not backed up — it will keep trying') : '✅ Backed up');
+}
+function syncStatusRender(){
+  const el = document.getElementById('sync-status');
+  if(!el) return;
+  const ok = +LS.get(SYNC_OK_KEY, 0) || 0, err = S._syncErr;
+  const when = t => {
+    const d = new Date(t), same = d.toDateString() === new Date().toDateString();
+    return (same ? 'today' : d.toLocaleDateString(undefined, {month: 'short', day: 'numeric'})) + ' at ' + d.toLocaleTimeString(undefined, {hour: 'numeric', minute: '2-digit'});
+  };
+  if(err && err.at > ok){
+    el.innerHTML = `<span class="ss-warn">${err.kind === 'offline' ? '⏳' : '⚠️'} ${escapeHtml(SYNC_SAY[err.kind])}</span>`
+      + (ok ? `<br>Last backed up ${when(ok)}.` : '')
+      + (err.kind === 'offline' ? '' : `<br><button onclick="syncRetry()">Try again</button>`);
+  } else {
+    el.textContent = ok ? `✅ Backed up ${when(ok)}` : (_db ? 'Not backed up from this phone yet' : 'Backup is not available on this phone');
+  }
 }
 
 // Synced (near-instant) — call this after any data change.
@@ -15622,9 +15796,10 @@ async function fbRestore(code){
   if(code.length < 6){ showToast('Invalid code'); return; }
   showToast('Restoring...');
   try{
-    const doc = await _db.collection('users').doc(code).get();
+    const ref = _db.collection('users').doc(code);
+    const doc = await ref.get();
     if(!doc.exists){ showToast('No data found for that code'); return; }
-    const data = doc.data();
+    const data = await withCloudStudies(ref, doc.data());
     const count = applySyncData(data);
     // Set this device to use the same restore code
     localStorage.setItem('kjv_rc', code);
@@ -15655,13 +15830,14 @@ async function fbSyncNow(){
     // can race ahead and overwrite fresh local data with a stale snapshot
     await fbSync();
     // Then pull latest from Firebase
-    const doc = await _db.collection('users').doc(code).get();
+    const ref = _db.collection('users').doc(code);
+    const doc = await ref.get();
     if(!doc.exists){
       showToast('No cloud data found yet — keep using the app!');
       if(btn){ btn.textContent = '🔄 Sync Now'; btn.disabled = false; }
       return;
     }
-    const data = doc.data();
+    const data = await withCloudStudies(ref, doc.data());
     const count = applySyncData(data);
     showToast(`✅ Synced ${count} items — reloading...`);
     setTimeout(()=> location.reload(), 1500);
@@ -15775,6 +15951,7 @@ function openSettings(){
   refreshAppVersion();
   setTimeout(checkOfflineStatus, 100);
   setTimeout(populateRestoreCodeDisplay, 200);
+  syncStatusRender();
   setTimeout(updateNotifStatus, 150);
   document.getElementById('settings-sheet').classList.add('on');
   history.pushState({screen:S.screen, modal:'settings'}, '', '');
