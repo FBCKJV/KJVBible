@@ -1999,7 +1999,7 @@ body.light #home-watermark{
     All
   </button>
   <div id="clip-badge" onclick="openClipboard()" title="Verse card clipboard"><span>📋</span><span id="clip-badge-n">0</span></div>
-  <button id="nb-btn" class="hbtn" onclick="nbOpen()" title="My study notebook" aria-label="Study notebook">📝</button>
+  <button id="nb-btn" class="hbtn" onclick="nbToggle()" title="My study notebook" aria-label="Study notebook">📝</button>
   <div id="streak-badge" onclick="showStreakInfo()" title="Reading streak">🔥<span id="streak-num">0</span></div>
   <button class="hbtn" onclick="openSettings()" title="Settings">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -4775,7 +4775,7 @@ window.addEventListener('popstate', e => {
   // Close any open pop-over card first — Back dismisses the card instead of
   // navigating the page beneath it (each pushed a history entry when opened).
   // (and the verse card) — the most recently opened one, when several are open
-  const _open = [...POPOVER_IDS, 'vpop', 'tips-sheet'].map(id => document.getElementById(id)).filter(el => el && el.classList.contains('on'));
+  const _open = [...POPOVER_IDS, 'vpop', 'tips-sheet'].map(id => document.getElementById(id)).filter(el => el && el.classList.contains('on') && !(el.id === 'nb-panel' && isWideScreen())); // beside the page, the notebook stays
   if(_open.length){
     const _top = _open.reduce((a, b) => (+b.dataset.t || 0) > (+a.dataset.t || 0) ? b : a);
     _top.classList.remove('on'); if(_top.id === 'pres-overlay') presEnd();
@@ -7528,6 +7528,12 @@ function nbClean(html){
 }
 
 // ── The panel ──
+// The header's 📝: opens the notebook, or on a wide screen puts it away again
+function nbToggle(){
+  const p = document.getElementById('nb-panel');
+  if(p.classList.contains('on') && isWideScreen()){ nbStore(); closePopover('nb-panel'); return; }
+  nbOpen();
+}
 function nbOpen(){
   const st = nbActive();
   document.getElementById('nb-title').value = st.t;
@@ -7536,7 +7542,11 @@ function nbOpen(){
   nbNoSpell();
   document.getElementById('nb-menu').classList.remove('on');
   document.getElementById('nb-status').textContent = 'Saved on this device' + nbWords();
-  openPopover('nb-panel');
+  // On a wide screen the notebook is a panel beside the page, switched on and
+  // off with 📝 or ✕ — not a step in Back's history, so Back only ever moves
+  // the page beside it. On a phone it fills the screen and Back closes it.
+  if(isWideScreen()){ const p = document.getElementById('nb-panel'); if(!p.classList.contains('on')){ p.classList.add('on'); p.dataset.t = ++LAYER_SEQ; } }
+  else openPopover('nb-panel');
   hintMaybe('notebook', 800);
 }
 let _nbTimer = null;
@@ -7641,6 +7651,7 @@ async function nbShowPlace(id){
 }
 // Closes a pop-over (consuming its history entry), then runs fn
 function leavePopoverThen(id, fn){
+  if(id === 'nb-panel' && isWideScreen()){ fn(); return; } // the notebook stays open beside the page
   const el = document.getElementById(id);
   if(el && el.classList.contains('on') && history.state && history.state.modal === id){
     const after = () => { window.removeEventListener('popstate', after); setTimeout(fn, 0); };
@@ -12518,6 +12529,7 @@ const TOOL_TIPS = {
     ['✍️', '<strong>Reading Journal</strong> — at the end of any chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts; tap the chapter to read it again'],
     ['✎', '<strong>Rename a study</strong> by tapping its name at the top, or ✏️ beside it in ☰ Studies'],
     ['H', '<strong>H B I U •≡ 1.</strong> make headings, bold, italic, underline, bullets and a numbered outline; <strong>⇤ ⇥</strong> (or Tab / Shift+Tab on a keyboard) move a point up or down a level'],
+    ['💻', 'On a laptop or a tablet held sideways the notebook stays open beside whatever you are reading: <strong>Back</strong> only moves the page on the left, and tapping a reference opens it there. Close the notebook with <strong>✕</strong> or by tapping <strong>📝</strong> at the top again'],
     ['🗺️', '<strong>Maps, places and hymns</strong> — 📝 on a classic map puts a small picture of it in your study (tap it for the full map; it gets a slide of its own when you present). 📝＋ on a place adds a card that shows the place on the map. A hymn verse comes in like a Bible verse, with a gold label that opens the hymn'],
     ['🖍', '<strong>🖍 Highlight</strong> — select some words, then tap 🖍 to mark them in gold (it shows when you present too); tap inside a highlight and 🖍 again to take it off'],
     ['✓', '<strong>Spelling</strong> — words the phone or computer does not know are underlined in red as you write; tap or right-click one for suggestions. The verses you add keep the King James spelling and are not marked. The word count is at the bottom'],
