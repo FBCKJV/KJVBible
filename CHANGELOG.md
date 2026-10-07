@@ -6,6 +6,12 @@
 
 ## New Features
 
+### 💾 A Backup File of Your Own (v57)
+- **⚙ Settings → 💾 Save a backup file**: everything the restore code backs up — studies, My Verses lists, highlights and their colour names, notes, plans, the reading log, badges, the streak, Sword Drill and settings — in one file named for the day (FBC-KJV-backup-2026-10-07). On a phone the share sheet opens, so it can go to Google Drive, iCloud Drive, Files or an email; on a computer it downloads. (Chrome on Android shares it as .txt, the same content.) No account or sign-in
+- **📂 Restore from a file**: says what the file holds (“12 studies, 4 lists, 230 highlights…”) and asks first; it is merged in item by item like a sync, so nothing on the phone is removed and anything changed there since is kept. Then it is backed up and the app reloads
+- Settings shows when this phone last saved a file. When the backup nears or passes its size limit, the card offers **Save a file**
+- Tips & Help: a row for the backup file, and the Important note suggests saving one now and then
+
 ### 🔤 Hebrew & Greek — Strong's (v56)
 - **Every word of the KJV tied to its Hebrew or Greek word** by James Strong's numbers (1890): 8,674 Hebrew and 5,523 Greek words, and 94% of the words in the text (the rest are mostly the translators' italic words, which have no original behind them)
 - **On the verse card**: a fold at the bottom, **🔤 Hebrew words · Strong's** (Greek in the New Testament), lists the verse's words — *In the beginning* H7225, *God* H430, *created* H1254 … Tap one for the original word, how to say it, its meaning and how the KJV renders it, then **Full entry · every verse ›**. The fold stays open or closed as you left it (per device), so a reader who never opens it never sees more than one quiet line
@@ -413,6 +419,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Offline, a script or data file is no longer answered with the app's page (v57)** — when a request failed, the service worker answered everything with the saved app page, so the Firebase and notification scripts (and any data file) could be handed a web page and fail with “Unexpected token <”. Only opening the app falls back to the saved page now
 - **No more silent failures when saving or backing up (v56.02)** — a backup that failed (too large, refused, the service busy) or a phone with no room left to save a change used to fail without a word. Now a card at the top says what happened, that the notes are safe on the phone, and offers **Try again**; being offline is not a failure and stays quiet. **Settings → Backup** shows when this phone last backed up (“✅ Backed up today at 9:14”) or what is wrong. A notice comes if the backup nears its size limit
 - **Studies are backed up in records of their own (v56.02)** — everything shared one cloud record per restore code, which Firestore limits to 1 MB, so a year of sermon studies could fill it and stop the backup. Each study now has its own record (users/{code}/studies/{id}); the main record keeps an index, and a sync fetches only the studies that changed. Existing studies move over at the next sync. An older copy of the app still works meanwhile (it keeps its studies and they are picked up); if the cloud's rules do not yet allow the new records, the phone keeps the old way and tries again the next day
 - **Tips & Help brought up to date (v56.01)** — the verse card's row now lists everything on the card (colour names, cross-references, 🔤 Hebrew / Greek words); *One search looks everywhere* includes the Hebrew & Greek; the two 🔥 rows are one, and say that a chapter reached any way counts toward the streak (v55.18); new rows for the ✍️ Reading Journal; My Verses and Sword Drill name ⚔️ Drill, 📸 Card and 🎤; the Dictionary's tips name its Hebrew & Greek link. New first-use hints for the Hebrew & Greek tool, the reading calendar and badges, and a My Verses list's ↑ ↓ / 📸 Card / ⚔️ Drill; the verse card's hint mentions ✏️ colour names
