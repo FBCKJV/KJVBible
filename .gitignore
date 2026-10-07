@@ -1,2 +1,3 @@
 tools/geo/*.geojson
 __pycache__/
+tools/check-shots/
