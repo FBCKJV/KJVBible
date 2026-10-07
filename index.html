@@ -2138,7 +2138,7 @@ body.light #home-watermark{
           color:var(--gold);font-size:13px;padding:2px 10px;cursor:pointer;
           display:none;transition:all .2s" title="Listen to this chapter">🔊</button>
       </div>
-      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button> <button id="ch-where-btn" class="ch-map" style="display:none" onclick="openChapterMap()">📍 Where</button> <span id="ch-jr"></span> <button id="ch-pres-btn" class="ch-map" onclick="presFromReader()">🎦 Present</button></div>
+      <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button> <button id="ch-where-btn" class="ch-map" style="display:none" onclick="openChapterMap()">📍 Where</button> <span id="ch-jr"></span> <a id="ch-sung-btn" class="ch-map" style="display:none;text-decoration:none" target="_blank" rel="noopener" title="Hear this Psalm sung, word for word from the King James Bible, in the FBC Hymns app">🎧 Sung</a> <button id="ch-pres-btn" class="ch-map" onclick="presFromReader()">🎦 Present</button></div>
       <div id="verses"></div>
     </div>
   
@@ -3815,6 +3815,7 @@ function renderReader(){
   const _bi = BOOKS.indexOf(S.book);
   document.getElementById('r-prev').disabled = _bi===0 && S.ch===0;
   document.getElementById('r-next').disabled = _bi===BOOKS.length-1 && S.ch===S.bookData.chapters.length-1;
+  updateChapterSungButton();
   updateChapterMapButton();
   updateChapterTimeButton();
   updateChapterWhereButton();
@@ -8461,6 +8462,14 @@ function chapterPlaces(){
   }
   return ids;
 }
+// Every Psalm is sung word for word in the FBC Hymns app (Sing the KJV)
+function updateChapterSungButton(){
+  const a = document.getElementById('ch-sung-btn');
+  if(!a) return;
+  const on = S.book === 'Psalms';
+  a.style.display = on ? 'inline-block' : 'none';
+  if(on) a.href = HYMNS_APP + '?psalm=' + (S.ch + 1);
+}
 function updateChapterWhereButton(){
   const btn = document.getElementById('ch-where-btn');
   if(!btn) return;
@@ -13076,7 +13085,7 @@ const TOOL_TIPS = {
   hymns: {i:'🎵', t:'Hymns', tips:[
     ['📝＋', '<strong>📝＋ beside a verse</strong> (or the refrain) adds just that verse to your study. Or select some lines and tap <strong>📝＋ Add to Study</strong> at the top to add only those'],
     ['🎵', '<strong>98 hymns of the faith</strong> whose words are in the public domain, each with the Scriptures behind it — tap a 📖 reference to read it'],
-    ['🎧', '<strong>🎧 Listen</strong> on a hymn (marked 🎧 in the list) opens it sung in the FBC Hymns app, with the words to follow'],
+    ['🎧', '<strong>🎧 Listen</strong> on a hymn (marked 🎧 in the list) opens it sung in the FBC Hymns app, with the words to follow. In the <strong>Psalms</strong>, <strong>🎧 Sung</strong> under the chapter title does the same for that Psalm'],
     ['📝＋', '<strong>📝＋ Add to Study</strong> puts a hymn in your notebook'],
   ]},
   doctrine: {i:'📑', t:'Doctrines', tips:[
@@ -13122,7 +13131,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
    welcome screen; Skip is always there, and Tips & Help shows it again. */
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
-  reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. At the end of every chapter, <b>✍️</b> opens your Reading Journal.', at:'#verses .vblock'},
+  reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share, and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
@@ -15233,7 +15242,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v58';
+const WHATS_NEW_VERSION = 'v59';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -16188,6 +16197,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v59" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎧</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Hear Every Psalm Sung</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Open any Psalm and tap <strong>🎧 Sung</strong> under the chapter title: the <strong>FBC Hymns</strong> app opens on that Psalm, sung word for word from the King James Bible, with the verses to follow. All 150 Psalms are there.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v58" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎧</div>
       <div>
