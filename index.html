@@ -564,6 +564,44 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .wd-src:empty{display:none}
 .wd-vp{font-family:'Crimson Pro',serif;font-size:13.5px;color:var(--text-d);line-height:1.5;margin:8px 0 6px}
 #vpop-def-webster .vl-chip{margin-top:2px}
+/* Strong's Hebrew & Greek */
+.sg-fold{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;border-top:1px solid var(--border);padding:10px 0 4px;margin-top:8px;cursor:pointer;min-height:40px}
+.sg-fold .vd-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m)}
+.sg-arr{color:var(--gold);font-size:18px;line-height:1;display:inline-block;transition:transform .2s}
+.sg-fold.on .sg-arr{transform:rotate(90deg)}
+.sg-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.sg-chip{display:inline-flex;align-items:baseline;gap:5px;min-height:32px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:14px;padding:4px 10px;font-size:14px;font-family:'Crimson Pro',serif;cursor:pointer;text-align:left}
+.sg-chip small{font-family:Inter,sans-serif;font-size:10px;color:var(--gold)}
+.sg-chip.on{border-color:var(--gold);background:var(--bg3)}
+.sg-det{background:var(--bg3);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:8px 12px;margin:4px 0 6px;font-family:'Crimson Pro',serif;font-size:14.5px;color:var(--text);line-height:1.5}
+.sg-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sg-lemma{font-family:'SBL Hebrew','Ezra SIL','Times New Roman',serif;font-size:1.35em;color:var(--gold);font-style:normal}
+.sg-x{font-style:italic}
+.sg-num{font-family:Inter,sans-serif;font-size:11px;color:var(--text-m)}
+.sg-say{font-family:Inter,sans-serif;font-size:12.5px;color:var(--text-d);margin:2px 0}
+.sg-say b{color:var(--text);font-weight:600}
+.sg-gl{margin:4px 0}
+.sg-kjv{font-size:13.5px;color:var(--text-d);margin-bottom:6px}
+.sg-kjv span{font-family:Inter,sans-serif;font-size:10.5px;color:var(--gold)}
+.sg-note{font-size:12px;color:var(--text-m);font-style:italic;padding:4px 0}
+.sg-big{text-align:center;font-size:40px;line-height:1.35;margin:0 0 4px}
+.sg-big .sg-lemma{font-size:inherit}
+.sg-entry .wd-head{text-align:center}
+.sg-entry .sg-say{text-align:center;margin-bottom:10px}
+.sg-sec{font-family:Inter,sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:12px 0 2px}
+.sg-rs-l{font-family:Inter,sans-serif;font-size:12px;color:var(--text-m);margin:8px 0 2px}
+.vl-chip.sg-r small{font-family:Inter,sans-serif;font-size:10px;color:var(--text-m)}
+.vl-chip.sg-r.on{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.vl-chip.sg-r.on small{color:inherit}
+.sg-ref{color:var(--gold);border-bottom:1px dotted var(--gold-d);cursor:pointer;text-decoration:none;font-family:Inter,sans-serif;font-size:.85em}
+.sg-vh{font-family:Inter,sans-serif;font-size:12px;color:var(--text-m);margin:16px 2px 8px}
+.sg-vh a{color:var(--gold)}
+.sg-hit{color:var(--gold);font-weight:700}
+.sg-more{width:100%;margin-top:8px}
+.sg-intro{font-family:'Crimson Pro',serif;font-size:15px;color:var(--text);line-height:1.55;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+.sg-row-k{display:block;font-family:Inter,sans-serif;font-size:12px;color:var(--text-m);margin-top:3px}
+.wd-row-w .sg-lemma{font-size:1.05em;margin-right:4px}
+#sg-lang{display:flex;gap:6px;margin-bottom:10px}
 .pl-site{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
 .pl-site-name{font-family:'IM Fell English',serif;font-size:18px;color:var(--text)}
 .pl-desc,.pl-why{font-family:'Crimson Pro',serif;font-size:14.5px;color:var(--text-d)}
@@ -1898,9 +1936,9 @@ body.light #home-watermark{
 @media (min-width:1100px){
   body:not(.side-open) #screen-search > div{max-width:1500px;margin:0 auto}
   body:not(.side-open) #s-hub{grid-template-columns:repeat(4,1fr)}
-  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel)[style*="display: block"]{display:grid !important;grid-template-columns:minmax(320px,36%) minmax(0,1fr);column-gap:22px;align-items:start}
-  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel) > [id$="-browse"]{grid-column:1;grid-row:1;position:sticky;top:0;max-height:calc(100dvh - 150px);overflow-y:auto;padding-right:8px;overscroll-behavior:contain}
-  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel) > [id$="-view"],body:not(.side-open) .split-ph{grid-column:2;grid-row:1;min-width:0}
+  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel,#strongs-panel)[style*="display: block"]{display:grid !important;grid-template-columns:minmax(320px,36%) minmax(0,1fr);column-gap:22px;align-items:start}
+  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel,#strongs-panel) > [id$="-browse"]{grid-column:1;grid-row:1;position:sticky;top:0;max-height:calc(100dvh - 150px);overflow-y:auto;padding-right:8px;overscroll-behavior:contain}
+  body:not(.side-open) :is(#dict-panel,#topics-panel,#names-panel,#hymns-panel,#strongs-panel) > [id$="-view"],body:not(.side-open) .split-ph{grid-column:2;grid-row:1;min-width:0}
   body:not(.side-open) .split-ph{display:flex;align-items:center;justify-content:center;min-height:50vh;border:1px dashed var(--border);border-radius:14px;color:var(--text-m);font-family:'Crimson Pro',serif;font-style:italic;font-size:17px;text-align:center;padding:20px}
   body:not(.side-open) .split-open > .split-ph{display:none}
   /* Maps: the place card beside the map */
@@ -2117,6 +2155,10 @@ body.light #home-watermark{
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="17" x2="13" y2="17"/><line x1="3.5" y1="7" x2="3.5" y2="7"/><line x1="3.5" y1="12" x2="3.5" y2="12"/><line x1="3.5" y1="17" x2="3.5" y2="17"/></svg>
           Concordance
         </button>
+        <button class="smode" id="smode-strongs" onclick="switchSearchMode('strongs')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+          Hebrew &amp; Greek
+        </button>
         <button class="smode" id="smode-names" onclick="switchSearchMode('names')">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>
           Names
@@ -2199,6 +2241,24 @@ body.light #home-watermark{
         </div>
         <div id="concord-az"></div>
         <div id="concord-list"><div id="s-status">Loading concordance…</div></div>
+      </div>
+
+      <!-- Strong's Hebrew & Greek panel (the original words, by Strong's number) -->
+      <div id="strongs-panel" style="display:none">
+        <div id="strongs-browse">
+          <div class="s-wrap" style="margin-bottom:10px">
+            <svg class="s-ico" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="search" id="strongs-input" placeholder="An English word, or a number like G26…" oninput="handleStrongsSearch(this.value)" autocomplete="off">
+          </div>
+          <div id="sg-lang">
+            <button class="sf-btn on" data-l="" onclick="sgSetLang('')">Both</button>
+            <button class="sf-btn" data-l="H" onclick="sgSetLang('H')">Hebrew · OT</button>
+            <button class="sf-btn" data-l="G" onclick="sgSetLang('G')">Greek · NT</button>
+          </div>
+          <div id="strongs-results"></div>
+        </div>
+        <div id="strongs-view" style="display:none"></div>
+        <div class="split-ph">Choose a word to see it here</div>
       </div>
 
       <!-- Bible Names panel (A–Z name meanings) -->
@@ -2397,6 +2457,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with our church's KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
+        <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Search → Hebrew &amp; Greek</strong> is Strong's — every word of the KJV tied to the Hebrew or Greek it translates. Type an English word (<em>mercy</em>), a Hebrew or Greek word (<em>agape</em>) or a number (<em>G26</em>). A word's page lists every verse it is in; tap a rendering to see only those verses. While reading, tap a verse and open <strong>🔤 Hebrew words</strong> at the bottom of the card</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
         <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it</span></div>
         <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
@@ -2566,7 +2627,8 @@ body.light #home-watermark{
         <div class="set-row"><div class="set-lbl">Version</div><div class="set-ctrl" id="settings-version" style="color:var(--text-m)">—</div></div>
         <a class="set-link" href="kjv/index.html" style="text-decoration:none">📜 The King James Bible as web pages — a page for every chapter, to share with anyone<span>›</span></a>
         <div class="set-row col"><div class="set-lbl" style="font-size:12px;color:var(--text-m);line-height:1.6">
-          Bible name meanings from <strong>Hitchcock's Bible Names Dictionary</strong> (Roswell D. Hitchcock, 1869 — public domain), compiled via the <strong>BibleData</strong> project (Brady Stephenson).
+          Bible name meanings from <strong>Hitchcock's Bible Names Dictionary</strong> (Roswell D. Hitchcock, 1869 — public domain), compiled via the <strong>BibleData</strong> project (Brady Stephenson).<br>
+          Hebrew and Greek from <strong>Strong's Exhaustive Concordance</strong> (James Strong, 1890 — public domain; XML by David Troidl, David Instone-Brewer and Ulrik Petersen), each KJV word tied to its number by the <strong>CrossWire Bible Society</strong>'s King James Version.
         </div></div>
       </div>
     </div>
@@ -2984,6 +3046,7 @@ body.light #home-watermark{
     </div>
     <div id="vpop-links" style="display:none"></div>
     <div id="vpop-tsk" style="display:none"></div>
+    <div id="vpop-sg" style="display:none"></div>
     <div class="hl-row" id="hl-row">
       <span class="hl-label">Highlight</span>
       <button class="hl-opt" onclick="setHL('y')"><span class="hl-dot" data-c="y"></span><span class="hl-nm" data-c="y"></span></button>
@@ -4055,6 +4118,7 @@ function openVPop(ref,txt){
   document.getElementById('vpop-name-def').style.display = 'none';
   fillVpopLinks(ref);
   fillVpopTreasury(ref);
+  fillVpopStrongs(ref);
 
   const vp = document.getElementById('vpop');
   const wasOpen = vp.classList.contains('on');
@@ -4132,7 +4196,7 @@ window.addEventListener('hashchange', () => { if(/^#[a-z]+=/.test(location.hash)
    A name, person, place, dictionary word, topic, hymn or map is shared as a
    line or two and a link that opens the app on that page (openDeepLink).
    The phone's own share sheet, or the link copied where there is none. */
-const SHARE_SUBS = ['word', 'person', 'place', 'name', 'topic', 'hymn'];
+const SHARE_SUBS = ['word', 'person', 'place', 'name', 'topic', 'hymn', 'strongs'];
 const pageLink = (sub, key) => APP_URL + '#' + sub + '=' + encodeURIComponent(key);
 function sharePage(title, text, url){
   if(navigator.share){ navigator.share({title, text: text ? text + '\n' : title, url}).catch(() => {}); return; }
@@ -4158,6 +4222,10 @@ function shareSub(){
     const e = S._nameIndex.get(v.key); title = e.name; text = `📛 ${e.name}${say(e.name, 'name')}${e.meaning ? ` — “${e.meaning}”` : ''}`;
   } else if(v.sub === 'topic'){
     title = naveTitle(v.key); text = `📚 ${title} — what the Bible says, verse by verse`;
+  } else if(v.sub === 'strongs' && S._sgShown){
+    const st = S._sgShown, e = st.e; title = `${st.key} ${e.x}`;
+    const flat = h => (h || '').replace(/<[^>]+>/g, '');
+    text = `🔤 ${st.key} ${e.l} (${e.x}) — ${clip(flat(e.s) || flat(e.k))}${st.refs.length ? ` · in ${st.refs.length} verses of the KJV` : ''}`;
   } else {
     const t = document.querySelector('#' + SUBVIEWS[v.sub].view + ' .dv-title');
     title = t ? t.textContent.trim() : 'FBC KJV Bible'; text = `🎵 ${title}`;
@@ -5902,6 +5970,9 @@ function findToolHits(q){
   const one = words.length === 1 && /^[a-z]+$/i.test(q.trim()) ? words[0] : null;
   const has = text => words.length > 0 && words.every(w => new RegExp(`(^|[^a-z])${w}`, 'i').test(text || ''));
   const cap = (list, n) => list.slice(0, n);
+  // A Strong's number ("G26", "H2617") opens its word
+  const sk = sgKey(q);
+  if(sk) rows.push({i:'🔤', t:`Strong’s ${sk}`, d:`The ${sgLangName(sk[0])} word, its meaning and every verse it is in`, go:`openStrongs('${sk}')`});
   for(const t of S._topicMatches || []) rows.push({i:'📖', t:t.title, d:`${t.rangeLabel} — read the passage`, go:`jumpToRef('${js(t.ref)}')`});
   const pr = findPeopleHit(q); if(pr) rows.push(pr);
   // Our doctrines: by name first, else by what they teach
@@ -5934,6 +6005,7 @@ function findToolHits(q){
   if(one && S._concord){
     const L = S._concord.letters[one[0].toUpperCase()], hit = L && L.find(x => x[0] === one);
     if(hit) rows.push({i:'📜', t:`Concordance — “${one}”`, d:`${hit[1]} verse${hit[1] !== 1 ? 's' : ''} in the KJV, book by book`, go:`openConcordWord('${js(one)}')`});
+    if(hit) rows.push({i:'🔤', t:`Hebrew & Greek — “${one}”`, d:`The original words the KJV renders “${one}”, with Strong’s numbers`, go:`strongsSearchFor('${js(one)}')`});
   }
   return rows;
 }
@@ -6080,7 +6152,7 @@ async function doSearch(raw) {
       el.innerHTML = renderToolHits()
         + renderPersonalCards(S._personalMatches)
         + renderDidYouMean()
-        + `<div id="s-status">No results found. Try fewer words or check spelling.</div>`;
+        + (sgKey(cleaned) ? '' : `<div id="s-status">No results found. Try fewer words or check spelling.</div>`); // a Strong's number is answered by its row
       if (strip) strip.style.display = 'none';
       return;
     }
@@ -7990,6 +8062,7 @@ const SEARCH_TOOLS = [
   {m:'topics',   i:'📚', n:'Topics',      d:"Nave's 5,300 Bible topics"},
   {m:'dict',     i:'📖', n:'Dictionary',  d:"Webster's 1828 + KJV notes"},
   {m:'concord',  i:'📜', n:'Concordance', d:'Every word of the KJV'},
+  {m:'strongs',  i:'🔤', n:'Hebrew & Greek', d:"Strong's — the words behind the KJV"},
   {m:'names',    i:'👤', n:'Names',       d:'People, places & meanings'},
   {m:'timeline', i:'📅', n:'Timeline',    d:'Creation to Revelation'},
   {m:'maps',     i:'🗺️', n:'Maps',        d:'Every place · atlas plates'},
@@ -9030,6 +9103,7 @@ const RECENT_BOXES = [
   {tool:'names',   input:'names-filter',   results:'names-list',   pick: r => firstText(r.querySelector('.nm-name'))},
   {tool:'places',  input:'mx-filter',      results:'mx-sugg',      pick: r => firstText(r).replace(/^📍\s*/, '')},
   {tool:'hymns',   input:'hymns-filter',   results:'hymns-list'},
+  {tool:'strongs', input:'strongs-input',  results:'strongs-results', pick: r => r.dataset.k},
   {tool:'search',  input:'home-q', max:3, go: q => { document.getElementById('home-q').value = q; homeSearchGo(); }},
 ];
 function recentDrop(box, show){
@@ -9253,6 +9327,7 @@ async function openWord(key, pushHistory=true, scrollY=0){
     <div class="wd-first" id="wd-first"></div>
     <div style="margin-top:12px"><button class="nb-add" onclick="nbAddWord()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button></div>
     <button class="nv-showmore pp-find" onclick="concordSearch('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔍 Find “${escapeHtml(r.noteWord || r.word)}” in Scripture</button>
+    <button class="nv-showmore pp-find" onclick="strongsSearchFor('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔤 The Hebrew &amp; Greek behind “${escapeHtml(r.noteWord || r.word)}” ›</button>
     <div class="nv-credit">Noah Webster, An American Dictionary of the English Language (1828 — public domain); transcription by akaitsurugi/webster1828, CC BY-SA 4.0. Scripture references checked against the KJV.</div>`;
   S._wordShown = r;
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
@@ -9296,6 +9371,313 @@ async function vpopWebster(word){
     + `<button class="vl-chip" onclick="event.stopPropagation();openWordFromVerse('${r.key}')">Full dictionary entry →</button>`;
 }
 function openWordFromVerse(key){ leaveVPopThen(() => openWord(key)); }
+
+/* ════ STRONG'S HEBREW & GREEK ════
+   Each word of the KJV tied to the Hebrew or Greek word it translates, by
+   James Strong's numbers (1890), so one word can be followed through every
+   verse the translators rendered it. Built by tools/build-strongs.js from
+   the CrossWire KJV and Strong's dictionaries (public domain):
+     strongs/v/<book>.json — each verse's words and the numbers under them
+     strongs/H.json, G.json — every word in brief (the list, search, verse card)
+     strongs/H0.json …     — the full entries, 500 to a file, with their verses
+   Each file loads on first use and is kept on the device. */
+const SG_VERSION = '2026-10-07'; // bump whenever tools/build-strongs.js is re-run
+const SG_SHARD = 500;
+const sgLoadIndex = L => (S._sgIdx && S._sgIdx[L]) ? Promise.resolve(S._sgIdx[L])
+  : loadCachedJSON(`strongs/${L}.json?v=${SG_VERSION}`).then(d => ((S._sgIdx = S._sgIdx || {})[L] = d));
+const sgLoadShard = (L, k) => loadCachedJSON(`strongs/${L}${k}.json?v=${SG_VERSION}`);
+const sgLoadTags = b => loadCachedJSON(`strongs/v/${b}.json?v=${SG_VERSION}`);
+const sgLangName = L => L === 'H' ? 'Hebrew' : 'Greek';
+// "g26", "G 026", "H8034" → "G26"
+function sgKey(s){ const m = String(s || '').trim().match(/^([HhGg])\s*0*(\d{1,4})$/); return m && +m[2] ? m[1].toUpperCase() + +m[2] : null; }
+// A verse's runs ("3H8034 _ H458+H1") → the numbers under each word
+function sgDecode(runs){
+  const out = [];
+  for(const tok of (runs || '').split(' ')){
+    const m = tok.match(/^(\d*)(.+)$/);
+    if(!m) continue;
+    const nums = m[2] === '_' ? [] : m[2].split('+');
+    for(let i = +m[1] || 1; i > 0; i--) out.push(nums);
+  }
+  return out;
+}
+// The Greek article and the Hebrew object marker go with the word beside them
+const SG_QUIET = new Set(['G3588', 'H853']);
+// A verse's original words in order: [{n:"H7225", idx:[0,1,2], text:"In the beginning"}]
+function sgPhrases(text, runs){
+  const words = text.trim().split(/\s+/), by = new Map();
+  sgDecode(runs).forEach((nums, i) => nums.forEach(n => {
+    if(SG_QUIET.has(n) && nums.length > 1) return;
+    if(!by.has(n)) by.set(n, []);
+    by.get(n).push(i);
+  }));
+  return [...by].map(([n, idx]) => ({n, idx, text: sgParts(idx).map(p => p.map(i => words[i]).join(' ').replace(/^[^A-Za-z’']+|[^A-Za-z’']+$/g, '')).join(' … ')}));
+}
+// [3,4,7] → [[3,4],[7]]
+function sgParts(idx){
+  const parts = [];
+  idx.forEach(i => { const p = parts[parts.length - 1]; if(p && p[p.length - 1] === i - 1) p.push(i); else parts.push([i]); });
+  return parts;
+}
+// How a verse renders a number, as tools/build-strongs.js counts it (keep the two alike)
+const SG_LEAD = new Set(('and the a an of to in for with by from unto upon on at into that which who whom whose his her their my thy thine our your its own '
+  + 'they he she it i we ye you thou thee him them me us shall will should would shalt wilt may might let be is was were are been hath have had hast '
+  + 'did do doth not nor but or so as also even when then there therefore now behold because against according after before all every no yet if '
+  + 'how what why where whither wherefore wherewith whereby moreover seeing yea only any more above lest since till until about over under through among this these those o').split(' '));
+function sgRendering(words){
+  const w = words.map(x => x.toLowerCase().replace(/[^a-z’'-]/g, '').replace(/[’']s?$/, '')).filter(Boolean);
+  while(w.length > 1 && SG_LEAD.has(w[0])) w.shift();
+  while(w.length > 1 && SG_LEAD.has(w[w.length - 1])) w.pop();
+  return w.join(' ');
+}
+function sgVerseRenderings(text, runs, n){
+  const words = text.trim().split(/\s+/), idx = [];
+  sgDecode(runs).forEach((nums, i) => { if(nums.includes(n)) idx.push(i); });
+  const ws = sgParts(idx).map(p => sgRendering(p.map(i => words[i]))).filter(Boolean);
+  const meaningful = ws.filter(x => !SG_LEAD.has(x));
+  return meaningful.length ? meaningful : ws;
+}
+// "love 86|charity 27" → [["love",86],["charity",27]]
+const sgRenders = s => (s || '').split('|').filter(Boolean).map(x => { const i = x.lastIndexOf(' '); return [x.slice(0, i), +x.slice(i + 1)]; });
+const sgLemma = (L, l) => `<span class="sg-lemma" lang="${L === 'H' ? 'he' : 'grc'}"${L === 'H' ? ' dir="rtl"' : ''}>${escapeHtml(l)}</span>`;
+// "b.c:v,v;b.c:v" → [[b, c, v], …]
+function sgRefList(s){
+  const out = [];
+  for(const part of (s || '').split(';')){
+    if(!part) continue;
+    const [bc, vs] = part.split(':'), [b, c] = bc.split('.').map(Number);
+    for(const v of vs.split(',')) out.push([b, c, +v]);
+  }
+  return out;
+}
+
+/* ── On the verse card: 🔤 Hebrew / Greek words (a fold, closed until opened) ── */
+function fillVpopStrongs(ref){
+  const el = document.getElementById('vpop-sg');
+  if(!el) return;
+  const m = (ref || '').match(/^(.+) (\d+):(\d+)$/), b = m ? BOOKS.indexOf(m[1]) : -1;
+  if(b < 0){ el.style.display = 'none'; el.innerHTML = ''; return; }
+  const open = !!LS.get('kjv_sg_open', false);
+  el.innerHTML = `<button class="sg-fold${open ? ' on' : ''}" aria-expanded="${open}" onclick="event.stopPropagation();sgToggleFold()"><span class="vd-label">🔤 ${sgLangName(b >= 39 ? 'G' : 'H')} words · Strong’s</span><span class="sg-arr">›</span></button><div id="sg-body"></div>`;
+  el.style.display = 'block';
+  if(open) sgFillBody(ref);
+}
+function sgToggleFold(){
+  const on = !LS.get('kjv_sg_open', false);
+  LS.set('kjv_sg_open', on);
+  const f = document.querySelector('#vpop-sg .sg-fold');
+  if(f){ f.classList.toggle('on', on); f.setAttribute('aria-expanded', on); }
+  if(on) sgFillBody(S.popRef);
+  else { const b = document.getElementById('sg-body'); if(b) b.innerHTML = ''; }
+}
+async function sgFillBody(ref){
+  const body = document.getElementById('sg-body');
+  if(!body) return;
+  const m = ref.match(/^(.+) (\d+):(\d+)$/), b = BOOKS.indexOf(m[1]), L = b >= 39 ? 'G' : 'H';
+  body.innerHTML = '<div class="sg-note">Loading…</div>';
+  const [tags, idx] = await Promise.all([sgLoadTags(b).catch(() => null), sgLoadIndex(L).catch(() => null)]);
+  if(S.popRef !== ref || !document.getElementById('sg-body')) return; // another verse opened meanwhile
+  if(!tags || !idx){ body.innerHTML = '<div class="sg-note">Strong’s could not load — check your connection.</div>'; return; }
+  const runs = tags[`${m[2]}:${m[3]}`], ph = runs ? sgPhrases(S.popTxt || '', runs) : [];
+  if(!ph.length){ body.innerHTML = '<div class="sg-note">This verse has no Strong’s numbers.</div>'; return; }
+  body._ph = ph;
+  body.innerHTML = `<div class="sg-chips">${ph.map((p, i) => `<button class="sg-chip" data-i="${i}" onclick="event.stopPropagation();sgChip(this)">${escapeHtml(p.text || '—')}<small>${p.n}</small></button>`).join('')}</div>
+    <div id="sg-det"></div><div class="xr-hint">Tap a word to see the ${sgLangName(L)} behind it</div>`;
+}
+function sgChip(btn){
+  const body = document.getElementById('sg-body'), det = document.getElementById('sg-det');
+  if(!body || !det || !body._ph) return;
+  const was = btn.classList.contains('on');
+  body.querySelectorAll('.sg-chip.on').forEach(x => x.classList.remove('on'));
+  if(was){ det.innerHTML = ''; return; }
+  btn.classList.add('on');
+  const p = body._ph[+btn.dataset.i], L = p.n[0], e = S._sgIdx && S._sgIdx[L] && S._sgIdx[L][p.n.slice(1)];
+  if(!e){ det.innerHTML = `<div class="sg-det">${p.n} is not in Strong’s dictionary.</div>`; return; }
+  const rs = sgRenders(e[5]).slice(0, 4);
+  det.innerHTML = `<div class="sg-det">
+      <div class="sg-hd">${sgLemma(L, e[0])}<span class="sg-x">${escapeHtml(e[1])}</span><span class="sg-num">${p.n}</span></div>
+      ${e[2] ? `<div class="sg-say">Say it: <b>${escapeHtml(e[2])}</b></div>` : ''}
+      <div class="sg-gl">${escapeHtml(e[3])}</div>
+      ${rs.length ? `<div class="sg-kjv">In the KJV: ${rs.map(([w, c]) => `${escapeHtml(w)} <span>${c}</span>`).join(' · ')}</div>` : ''}
+      <button class="vl-chip" onclick="event.stopPropagation();leaveVPopThen(()=>openStrongs('${p.n}'))">Full entry · every verse (${e[4]}) ›</button>
+    </div>`;
+}
+
+/* ── The Strong's page: the word, its meaning, and every verse it is in ── */
+SUBVIEWS.strongs = { mode:'strongs', browse:'strongs-browse', view:'strongs-view', open:(k, push, y) => openStrongs(k, push, y) };
+const SG_PAGE = 30; // verses shown at a time
+async function openStrongs(key, pushHistory=true, scrollY=0){
+  key = sgKey(key);
+  if(!key) return;
+  const L = key[0], n = +key.slice(1);
+  const shard = await sgLoadShard(L, Math.floor(n / SG_SHARD)).catch(() => null);
+  const e = shard && shard[n];
+  if(!e){ showToast(shard ? `There is no Strong’s ${key}` : 'Strong’s could not load — check your connection'); return; }
+  enterSubView('strongs', key, pushHistory);
+  const refs = sgRefList(e.v);
+  // the renderings worth a chip: a word or two ("mercy seat"), not a run of the text
+  const rs = e.r.filter(([w]) => w.split(' ').length <= 2).slice(0, 10);
+  const first = refs[0] ? `${BOOKS[refs[0][0]]} ${refs[0][1]}:${refs[0][2]}` : '';
+  const top = rs.length && /^[a-z]+$/.test(rs[0][0]) ? rs[0][0] : '';
+  const st = S._sgShown = {key, e, refs, rs, fi: null, list: refs, shown: 0};
+  const view = document.getElementById('strongs-view');
+  view.innerHTML = `
+    <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
+    <div class="wd-entry sg-entry">
+      <div class="sg-big">${sgLemma(L, e.l)}</div>
+      <div class="wd-head"><span class="wd-word">${escapeHtml(e.x)}</span> <span class="wd-pos">${key} · ${escapeHtml(e.t)}</span></div>
+      ${e.p ? `<div class="sg-say">Say it: <b>${escapeHtml(e.p)}</b></div>` : ''}
+      <div class="wd-kjv"><div class="wd-kjv-l">In the King James Bible</div>
+        ${refs.length ? `Found in <b>${refs.length}</b> verse${refs.length !== 1 ? 's' : ''} · first in <a href="#" class="ref-link" onclick="jumpToRef('${first}');return false">${first}</a>` : 'Not found in the King James text.'}
+        ${rs.length ? `<div class="sg-rs-l">Rendered — tap one to see only those verses</div><div class="vl-chips">${rs.map(([w, c], i) => `<button class="vl-chip sg-r" data-i="${i}" onclick="sgFilter(${i})">${escapeHtml(w)} <small>${c}</small></button>`).join('')}</div>` : ''}
+      </div>
+      ${e.s ? `<div class="sg-sec">Strong’s definition</div><div class="wd-def">${e.s}</div>` : ''}
+      ${e.d ? `<div class="sg-sec">Comes from</div><div class="wd-def">${e.d}</div>` : ''}
+      ${e.k ? `<div class="sg-sec">Strong’s list of KJV renderings</div><div class="wd-def">${e.k}</div>` : ''}
+      <div class="wd-src">James Strong, Exhaustive Concordance of the Bible (1890) — ${sgLangName(L)} dictionary</div>
+    </div>
+    <div style="margin-top:12px"><button class="nb-add" onclick="nbAddStrongs()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button></div>
+    ${top ? `<button class="nv-showmore pp-find" onclick="openWord('${top}')">📖 “${top}” in Webster’s 1828 ›</button>` : ''}
+    <div class="sg-vh" id="sg-vh"></div>
+    <div id="sg-verses"></div>
+    <div class="nv-credit">Strong’s Hebrew and Greek dictionaries (James Strong, 1890 — public domain; XML by David Troidl, David Instone-Brewer and Ulrik Petersen). The words of the KJV tied to their numbers by the CrossWire Bible Society’s King James Version.</div>`;
+  if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
+  hintMaybe('strongs', 900);
+  sgShowVerses(false, st);
+}
+// The verses, a page at a time, the words that render the number in bold
+async function sgShowVerses(more, st = S._sgShown){
+  const box = document.getElementById('sg-verses'), head = document.getElementById('sg-vh');
+  if(!box || !st || S._sgShown !== st) return;
+  const list = st.list, from = more ? st.shown : 0, slice = list.slice(from, from + SG_PAGE);
+  const filt = st.fi !== null ? st.rs[st.fi][0] : '';
+  head.innerHTML = filt ? `${list.length} verse${list.length !== 1 ? 's' : ''} where it is rendered “${escapeHtml(filt)}” · <a href="#" onclick="sgFilter(${st.fi});return false">Show all ${st.refs.length}</a>`
+    : st.refs.length ? `Every verse · ${st.refs.length}` : '';
+  const books = [...new Set(slice.map(r => r[0]))];
+  const got = await Promise.all(books.map(b => Promise.all([fetchBook(BOOKS[b]), sgLoadTags(b).catch(() => null)]).then(x => [b, x])));
+  if(S._sgShown !== st || st.list !== list) return; // another word, or another filter, meanwhile
+  const data = Object.fromEntries(got);
+  const cards = slice.map(([b, c, v]) => {
+    const [book, tags] = data[b] || [], ch = book && book.chapters[c - 1], vs = ch && ch.verses.find(x => +x.verse === v);
+    if(!vs) return '';
+    const marks = sgDecode(tags && tags[`${c}:${v}`]);
+    const html = vs.text.trim().split(/\s+/).map((w, i) => marks[i] && marks[i].includes(st.key) ? `<b class="sg-hit">${escapeHtml(w)}</b>` : escapeHtml(w)).join(' ');
+    const ref = `${BOOKS[b]} ${c}:${v}`;
+    return `<div tabindex="0" class="rc" onclick="jumpToRef('${ref.replace(/'/g, "\\'")}')"><div class="rc-ref">${ref}</div><div class="rc-txt">${html}</div></div>`;
+  }).join('');
+  if(!more) box.innerHTML = '';
+  box.querySelector('.sg-more')?.remove();
+  box.insertAdjacentHTML('beforeend', cards);
+  st.shown = from + slice.length;
+  const left = list.length - st.shown;
+  if(left > 0) box.insertAdjacentHTML('beforeend', `<button class="nv-showmore sg-more" onclick="sgShowVerses(true)">Show ${Math.min(SG_PAGE, left)} more · ${left} to go</button>`);
+}
+// Only the verses where the KJV renders it one way ("mercy", "kindness" …); tap again for all
+async function sgFilter(i){
+  const st = S._sgShown;
+  if(!st) return;
+  if(st.fi === i){ st.fi = null; st.list = st.refs; }
+  else {
+    const w = st.rs[i][0], head = document.getElementById('sg-vh');
+    if(head) head.textContent = `Finding the verses where it is rendered “${w}”…`;
+    const books = [...new Set(st.refs.map(r => r[0]))];
+    const got = await Promise.all(books.map(b => Promise.all([fetchBook(BOOKS[b]), sgLoadTags(b).catch(() => null)]).then(x => [b, x])));
+    if(S._sgShown !== st) return;
+    const data = Object.fromEntries(got);
+    st.fi = i;
+    st.list = st.refs.filter(([b, c, v]) => {
+      const [book, tags] = data[b] || [], ch = book && book.chapters[c - 1], vs = ch && ch.verses.find(x => +x.verse === v);
+      return vs && tags && sgVerseRenderings(vs.text, tags[`${c}:${v}`], st.key).includes(w);
+    });
+  }
+  document.querySelectorAll('#strongs-view .sg-r').forEach(b => b.classList.toggle('on', +b.dataset.i === st.fi));
+  sgShowVerses(false, st);
+}
+// The derivation's numbers are links to their own entries
+document.addEventListener('click', e => {
+  const a = e.target.closest('.sg-ref');
+  if(!a || !a.dataset.s) return;
+  e.preventDefault(); e.stopPropagation();
+  openStrongs(a.dataset.s);
+});
+function nbAddStrongs(){
+  const st = S._sgShown;
+  if(!st) return;
+  const e = st.e, plain = h => (h || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const rs = st.rs.slice(0, 5).map(([w, c]) => `${w} (${c})`).join(', ');
+  nbAppend(`<p><b>🔤 ${nbEsc(st.key)} · ${nbEsc(e.l)} · ${nbEsc(e.x)}</b></p>`
+    + `<blockquote>${nbEsc(plain(e.s) || plain(e.k))}${rs ? `<br>In the KJV: ${nbEsc(rs)} — in ${st.refs.length} verses` : ''}</blockquote>`, `${st.key} ${e.x}`);
+}
+
+/* ── Search → Hebrew & Greek: by English word, transliteration or number ── */
+// Words a Bible student meets first
+const SG_START = ['G26','G25','G5368','G5485','G4102','G1680','G4991','G1343','G2434','G1577','G907','G3056','G4151','G3341',
+  'H2617','H7965','H3068','H430','H1285','H539','H3444','H6666','H7307','H5315','H1350','H3722'];
+// "chêçêd" → "chesed", "agápē" → "agape"
+const sgFold = s => (s || '').replace(/ç/g, 's').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z]/g, '');
+function sgRow(K){
+  const L = K[0], e = S._sgIdx && S._sgIdx[L] && S._sgIdx[L][K.slice(1)];
+  if(!e) return '';
+  const r = sgRenders(e[5]).slice(0, 3);
+  return `<button class="wd-row" data-k="${K}" onclick="openStrongs('${K}')">
+    <span class="wd-row-w">${sgLemma(L, e[0])} ${escapeHtml(e[1])} <span class="wd-pos">${K}</span></span>
+    <span class="wd-row-d">${escapeHtml(e[3])}</span>
+    ${r.length ? `<span class="sg-row-k">KJV: ${r.map(([w, c]) => `${escapeHtml(w)} (${c})`).join(', ')} · ${e[4]} verse${e[4] !== 1 ? 's' : ''}</span>` : ''}</button>`;
+}
+function sgSetLang(L){
+  S._sgLang = L;
+  document.querySelectorAll('#sg-lang .sf-btn').forEach(b => b.classList.toggle('on', b.dataset.l === L));
+  handleStrongsSearch(document.getElementById('strongs-input').value || '');
+}
+async function handleStrongsSearch(q){
+  showTabList('strongs');
+  const el = document.getElementById('strongs-results'), inp = document.getElementById('strongs-input');
+  const raw = (q || '').trim(), lang = S._sgLang || '';
+  if(!(S._sgIdx && S._sgIdx.H && S._sgIdx.G)){
+    el.innerHTML = '<div id="s-status">Opening Strong’s…</div>';
+    const ok = await Promise.all([sgLoadIndex('H'), sgLoadIndex('G')]).catch(() => null);
+    if(!ok){ el.innerHTML = '<div id="s-status">Strong’s could not load — check your connection.</div>'; return; }
+    if(inp.value.trim() !== raw) return; // typed on
+  }
+  const keep = K => !lang || K[0] === lang;
+  if(!raw){
+    el.innerHTML = `<div class="sg-intro">Our King James Bible was translated from <b>Hebrew</b> (the Old Testament) and <b>Greek</b> (the New). James Strong gave each of those words a number in his <i>Exhaustive Concordance</i> (1890), so one word can be followed through every verse where the translators met it — Scripture shedding light on Scripture.<br><br>Type an English word (<i>mercy</i>), a Hebrew or Greek word (<i>chesed</i>, <i>agape</i>) or a number (<i>H2617</i>, <i>G26</i>). While reading, tap a verse and open <b>🔤 Hebrew words</b>.</div>
+      <div class="wd-list-h">Words worth knowing</div>${SG_START.filter(keep).map(sgRow).join('')}`;
+    return;
+  }
+  let keys = [];
+  const exact = sgKey(raw);
+  if(exact) keys = [exact];
+  else if(/^\d{1,4}$/.test(raw)) keys = ['H' + +raw, 'G' + +raw];
+  else {
+    // the English the KJV renders it by, first; then the Hebrew or Greek word itself; then Strong's definition
+    const w = raw.toLowerCase().replace(/[^a-z’' -]/g, '').trim(), f = sgFold(raw), scored = [];
+    const re = w ? new RegExp(`(^|[^a-z])${w.replace(/[’']/g, '.')}($|[^a-z])`) : null;
+    for(const L of ['H', 'G']) for(const [n, e] of Object.entries(S._sgIdx[L])){
+      let s = 0;
+      for(const [r, c] of sgRenders(e[5])){
+        if(r === w) s += c * 2;
+        else if(re && re.test(r)) s += c;
+        else if(w.length >= 4 && r.startsWith(w)) s += c / 2;
+      }
+      if(f.length >= 3 && sgFold(e[1]).startsWith(f)) s += sgFold(e[1]) === f ? 5000 : 2000;
+      if(!s && re && re.test(e[3].toLowerCase())) s = 0.5;
+      if(s) scored.push([L + n, s, e[4]]);
+    }
+    keys = scored.sort((a, b) => b[1] - a[1] || b[2] - a[2]).map(x => x[0]);
+  }
+  const rows = keys.filter(K => keep(K) && S._sgIdx[K[0]][K.slice(1)]).slice(0, 50);
+  el.innerHTML = rows.length ? rows.map(sgRow).join('') : `<div id="s-status">No ${lang ? sgLangName(lang) + ' ' : ''}word found for “${escapeHtml(raw)}”</div>`;
+}
+function renderStrongsList(){ handleStrongsSearch((document.getElementById('strongs-input') || {}).value || ''); }
+// From a search, the dictionary or a verse: the Hebrew and Greek words behind an English one
+function strongsSearchFor(w){
+  if(S.screen !== 'search') showScreen('search', false);
+  switchSearchMode('strongs', true, false);
+  const inp = document.getElementById('strongs-input');
+  if(inp) inp.value = w;
+  handleStrongsSearch(w);
+}
 /* ════ KJV DICTIONARY ════ */
 
 // render=false only switches panels (a sub-page is about to fill its tab)
@@ -9312,6 +9694,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
   document.getElementById('dict-panel').style.display     = mode==='dict'     ? 'block':'none';
   document.getElementById('topics-panel').style.display   = mode==='topics'   ? 'block':'none';
   document.getElementById('concord-panel').style.display  = mode==='concord'  ? 'block':'none';
+  document.getElementById('strongs-panel').style.display  = mode==='strongs'  ? 'block':'none';
   document.getElementById('names-panel').style.display    = mode==='names'    ? 'block':'none';
   document.getElementById('maps-panel').style.display     = mode==='maps'     ? 'block':'none';
   document.getElementById('timeline-panel').style.display = mode==='timeline' ? 'block':'none';
@@ -9325,6 +9708,7 @@ function switchSearchMode(mode, pushHistory=true, render=true){
     if(mode==='dict') handleDictSearch(document.getElementById('dict-input').value || '');
     if(mode==='topics') renderNaveBrowse();
     if(mode==='concord') renderConcordance();
+    if(mode==='strongs') renderStrongsList();
     if(mode==='names') renderNames();
     if(mode==='maps'){ renderMaps(); mxMount(); renderJourneyList(); }
     if(mode==='timeline') renderTimeline();
@@ -12634,6 +13018,14 @@ const TOOL_TIPS = {
     ['🔊', '<strong>🔊 Hear it</strong> says the word aloud (tap again for slowly); old words like <em>shew</em>, <em>divers</em> and <em>victuals</em> show how to say them'],
     ['📤', '<strong>📤 Share</strong> sends the word, its meaning and a link that opens this page in the app'],
   ]},
+  strongs: {i:'🔤', t:'Hebrew & Greek', tips:[
+    ['🔤', '<strong>Every word of the KJV</strong> is tied to the Hebrew or Greek word it translates, by James Strong’s numbers (1890) — <em>H</em> for Hebrew (the Old Testament), <em>G</em> for Greek (the New)'],
+    ['🔍', 'Type an <strong>English word</strong> (<em>mercy</em>) to see the original words the KJV renders by it, most used first; or a Hebrew or Greek word (<em>chesed</em>, <em>agape</em>), or a number (<em>H2617</em>, <em>G26</em>). A number typed in the main Search works too'],
+    ['📖', 'A word’s page shows its meaning, how to say it, the word it comes from, and <strong>every verse</strong> it is in, its English in bold — tap one to read the chapter'],
+    ['🏷', '<strong>Tap a rendering</strong> (<em>mercy 135 · kindness 38</em>) to see only the verses where the translators chose that word; tap it again for all'],
+    ['📝', 'While reading, <strong>tap a verse</strong> and open <strong>🔤 Hebrew words</strong> (or Greek) at the bottom of the card. It stays open for the next verse until you close it'],
+    ['📝＋', '<strong>📝＋ Add to Study</strong> puts the word in your notebook; <strong>📤 Share</strong> sends it with a link'],
+  ]},
   topics: {i:'📚', t:'Topics', tips:[
     ['📚', '<strong>Nave’s Topical Bible</strong> — about 5,300 subjects A–Z, each with its passages arranged by sub-topic'],
     ['🔍', 'Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results'],
@@ -12679,7 +13071,7 @@ function toolTips(key){
   openPopover('tt-pop');
 }
 // The Search tools' ? follows the page that is open (a place page is Names, the Treasury opens from Topics)
-const TT_SUB = {xref:'treasury', place:'names', person:'names', name:'names', word:'dict', hymn:'hymns', topic:'topics'};
+const TT_SUB = {xref:'treasury', place:'names', person:'names', name:'names', word:'dict', hymn:'hymns', topic:'topics', strongs:'strongs'};
 function ttCat(){
   const b = document.getElementById('cat-tips'); if(!b) return;
   const sv = activeSubView(), mode = currentSearchMode();
@@ -12708,6 +13100,7 @@ const HINTS = {
   notebook: {i:'✍️', t:'Your Study Notebook', b:'Write a lesson or sermon here. <b>🔖</b> brings in verses from your lists, <b>📝＋</b> anywhere in the app adds to it, and <b>🎦 Present</b> turns it into slides.', at:'#nb-tools button', tt:'notebook'},
   search:   {i:'🔎', t:'Look anything up', b:'Type a verse (“John 3:16”), a word or a phrase. Or open a tool below — <b>Doctrines</b>, the <b>Dictionary</b>, <b>Topics</b>, <b>Maps</b>, the <b>Timeline</b> and more.', at:'#s-input'},
   say:      {i:'🔊', t:'Hear it said', b:'Tap <b>🔊 Hear it</b> to hear a name or word said aloud — tap it again to hear it slowly. Hard names are written the way they sound, with the strong part in capitals: <b>meh-FIB-oh-sheth</b>.', at:'.say-btn'},
+  strongs:  {i:'🔤', t:'Follow a word', b:'Every verse this word is in is listed below, its English in bold. Tap a rendering such as <b>mercy</b> or <b>kindness</b> to see only those verses.', at:'#strongs-view .sg-r', tt:'strongs'},
   sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and come back when it is due for review — badges mark your progress. In First Letters and Full Recall you can tap <b>🎤</b> and say the verse aloud.', at:null},
 };
 const HINT_GAP = 8000; // at least this long between two hints
@@ -14808,7 +15201,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v55';
+const WHATS_NEW_VERSION = 'v56';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -15514,6 +15907,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v56" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔤</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Hebrew &amp; Greek — Strong’s</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Every word of the King James Bible is now tied to the Hebrew or Greek word it translates, by <strong>Strong’s numbers</strong>. Tap a verse and open <strong>🔤 Hebrew words</strong> (or Greek) at the bottom of the card to see the original word, how it is said and what it means. Its page lists <strong>every verse</strong> it is in, and a tap on <em>mercy</em> or <em>lovingkindness</em> shows only the verses where the translators chose that word. Find it under <strong>Search → Hebrew &amp; Greek</strong>, or type a number like <strong>G26</strong> in Search.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v55" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🔊</div>
       <div>
