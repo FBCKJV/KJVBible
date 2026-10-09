@@ -1949,6 +1949,44 @@ body.light #home-watermark{
 .t-section .t-label > span:first-child{flex:1}
 .t-section .books-grid{padding:10px;border-top:1px solid var(--border)}
 .t-section .book-card{padding:8px 10px}
+/* ── Home, Scripture first (v61.02): the Testaments and the Romans Road share one
+   large header; every other card is one narrow line. ── */
+#vod-wrap{margin-bottom:8px;touch-action:pan-y}
+#vod-wrap.away{display:none}
+#vod-wrap #vod{margin-bottom:0;padding:12px 16px;user-select:none;-webkit-user-select:none;will-change:transform}
+#vod.drag{transition:none}
+#vod:not(.drag){transition:transform .22s ease,opacity .22s ease,border-color .15s}
+#vod-undo{position:fixed;left:12px;right:12px;bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--text);color:var(--bg);border-radius:10px;padding:11px 14px;font-size:13px;display:flex;align-items:center;justify-content:space-between;gap:10px;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .2s,transform .2s}
+#vod-undo.show{opacity:1;pointer-events:auto;transform:none}
+#vod-undo button{background:none;border:none;color:inherit;font:700 13px 'Inter',sans-serif;text-decoration:underline;cursor:pointer;min-height:44px;padding:0 6px}
+.t-section .t-label,#rr-header{min-height:64px}
+.t-section .t-label{padding:18px 16px!important;font-family:'IM Fell English',serif;font-size:18px;font-weight:400;letter-spacing:.03em;text-transform:none;color:var(--text-d)}
+.t-section .t-count,#rr-header .t-count{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;letter-spacing:0;border:1px solid var(--border);border-radius:99px;padding:3px 9px;color:var(--text-d)}
+.t-section .t-chevron,#rr-toggle{width:34px;height:34px;border-radius:50%;background:var(--bg);border:1px solid var(--border);color:var(--gold)}
+.t-section .t-chevron svg,#rr-toggle svg{width:18px;height:18px}
+.t-section.open .t-chevron{transform:rotate(90deg)}
+#rr-card{margin-bottom:22px}
+#rr-card::before{display:none}
+#rr-header{align-items:center;padding:18px 16px;gap:10px}
+#rr-title{font-size:18px;letter-spacing:.03em;color:var(--text-d);margin:0}
+.light #rr-title,.sepia #rr-title{color:var(--text-d)}
+#rr-toggle{padding-top:0;color:#c06060;border-color:#7a2020}
+.light #rr-toggle,.sepia #rr-toggle{color:#a03030;border-color:#d08080}
+#rr-card{border-color:#b05a5a}
+.light #rr-card,.sepia #rr-card{border-color:#d08080}
+.sepia #rr-card{background:linear-gradient(160deg,#fff5f5,#fde8e8 60%,#fff5ee)}
+/* every other card: one narrow line */
+#cont-banner .cont-top{padding:0 10px 0 14px;min-height:46px}
+#cont-banner .cont-main>div:last-child{display:flex;align-items:baseline;gap:8px;flex-wrap:nowrap;overflow:hidden}
+#cont-banner .cont-lbl{margin:0;white-space:nowrap;flex-shrink:0}
+#cont-banner .cont-ref{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#home-try .hw-hd,#home-plans .hw-hd,#home-notes .hw-hd,#mem-home-card .hw-hd{padding:0 14px;min-height:46px}
+#home-try .hw-tt,#home-plans .hw-tt,#home-notes .hw-tt,#mem-home-card .hw-tt{flex-direction:row;align-items:baseline;gap:8px;overflow:hidden}
+#home-try .hw-lbl,#home-plans .hw-lbl,#home-notes .hw-lbl,#mem-home-card .hw-lbl{margin:0;white-space:nowrap;flex-shrink:0}
+#home-try .hw-big,#home-plans .hw-big,#home-notes .hw-big,#mem-home-card .hw-big,#home-plans .hw-peek,#home-notes .hw-peek{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:15px;margin:0}
+#home-try .hw-sm,#mem-home-card .hw-sm{display:none}
+.hw,#cont-banner{margin-bottom:8px}
+@media (prefers-reduced-motion:reduce){#vod:not(.drag),#vod-undo{transition:none}}
 /* Wide screens: Search tools in two columns — the list on the left, the page on the right */
 .split-ph{display:none}
 @media (min-width:1100px){
@@ -2485,7 +2523,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — run Bible in a Year, NT in 30 Days and Proverbs in a Month, one or several at once, each at your own pace. A chapter checks off once you have read to the end of it; <strong>✓ Mark read</strong> is for a day read from a printed Bible. Your next reading of each plan is on Home; <strong>⋯</strong> pauses, starts over or removes a plan</span></div>
         <div class="tip-row"><span class="tip-ico">🔖</span><span class="tip-txt"><strong>My Verses</strong> — tap a verse, then <strong>🔖 Save</strong>, and put it in a list you name: a doctrine you often explain, verses for comfort, a lesson. A verse can be in any number of lists. In <strong>Notes → My Verses</strong>, open a list to put its verses in your order (↑ ↓ or ⇅ Bible order), make a picture of one with <strong>📸 Card</strong>, memorize one with <strong>⚔️ Drill</strong>, <strong>Share</strong> it, <strong>Present</strong> it as slides or add it to a study. A doctrine page can be saved as a list with <strong>🔖 Save to My Verses</strong>. Your old bookmarks are in a list called Bookmarks</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>Notes tab</strong> — everything you have marked or written: <strong>My Verses</strong> (your own named lists), <strong>Highlights</strong>, verse <strong>Notes</strong> and your <strong>Studies</strong> from the 📝 notebook (tap one to open it, or ＋ New study). The search box looks through all of them</span></div>
-        <div class="tip-row"><span class="tip-ico">🏠</span><span class="tip-txt"><strong>Home</strong> — a card for each bottom tab under the books: Search &amp; Study Tools (type in the box, or open the arrow for every tool), Reading Plans and Notes. An arrow that turns folds a card open; <strong>›</strong> goes to its page. Home remembers which cards you left open</span></div>
+        <div class="tip-row"><span class="tip-ico">🏠</span><span class="tip-txt"><strong>Home</strong> — a card for each bottom tab under the books: Search &amp; Study Tools (type in the box, or open the arrow for every tool), Reading Plans and Notes. An arrow that turns folds a card open; <strong>›</strong> goes to its page. Home remembers which cards you left open. <strong>Swipe the Verse of the Day</strong> left or right to put it away until tomorrow; the Old Testament, New Testament and Romans Road come right under it</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
         <div class="tip-row"><span class="tip-ico">⚔️</span><span class="tip-txt"><strong>Sword Drill</strong> (home screen) hides verses in your heart with fill-in-the-blank memory, spaced review and badges — add any verse you like under <strong>Custom Verses</strong>, send selected verses (press and hold) or a verse from a My Verses list with <strong>⚔️ Drill</strong>, and in First Letters or Full Recall tap <strong>🎤</strong> to say it aloud</span></div>
       </div>
@@ -2742,6 +2780,7 @@ body.light #home-watermark{
 </div>
 
 <!-- Simple toast -->
+<div id="vod-undo" role="status"><span>Verse of the Day put away until tomorrow.</span><button onclick="vodUndo()">Undo</button></div>
 <div id="mem-toast"></div>
 
 <!-- ADD-YOUR-OWN MEMORY VERSE -->
@@ -3431,19 +3470,33 @@ function buildBooks(){
   h+=`<div id="cont-banner" class="hidden"></div>`;
 
   // Verse of the Day
-  h+=`<div id="vod" onclick="jumpVOD()"><div id="vod-lbl">✦ Verse of the Day</div><div id="vod-txt">Loading…</div><div id="vod-ref"></div></div>`;
+  // Swipe it left or right to put it away until tomorrow (see vodSwipeInit)
+  h+=`<div id="vod-wrap"><div id="vod" onclick="jumpVOD()"><div id="vod-lbl">✦ Verse of the Day</div><div id="vod-txt">Loading…</div><div id="vod-ref"></div></div></div>`;
 
   // One gentle suggestion of something not yet tried (filled by updateHomeTry)
   h+=`<div id="home-try" class="hw" hidden></div>`;
 
-  // ── Roman's Road Card ──
+  // OT + NT grids — each testament is a collapsible section (persisted,
+  // default open) so the long book list can be folded away to cut scrolling.
+  const collapsed = new Set(LS.get('kjv_books_collapsed', []));
+  const otOpen = !collapsed.has('ot'), ntOpen = !collapsed.has('nt');
+
+  h+=`<div class="t-section${otOpen?' open':''}" id="tsec-ot">`;
+  h+=`<div class="t-label t-toggle" onclick="toggleTestament('ot')" role="button" tabindex="0" aria-expanded="${otOpen}"><span>Old Testament</span><span class="t-count">39</span><span class="t-chevron">${HW_CHEV}</span></div>`;
+  h+=`<div class="books-grid">`;
+  BOOKS.slice(0,39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[i]} ch.</div></div>`);
+  h+=`</div></div>`;
+
+  h+=`<div class="t-section${ntOpen?' open':''}" id="tsec-nt">`;
+  h+=`<div class="t-label t-toggle" onclick="toggleTestament('nt')" role="button" tabindex="0" aria-expanded="${ntOpen}"><span>New Testament</span><span class="t-count">27</span><span class="t-chevron">${HW_CHEV}</span></div>`;
+  h+=`<div class="books-grid">`;
+  BOOKS.slice(39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[39+i]} ch.</div></div>`);
+  h+=`</div></div>`;
+  // The Romans Road sits under the Testaments so Scripture comes first; the tools follow it
   h += `<div id="rr-card">
-    <div id="rr-header" onclick="toggleRR()">
-      <div id="rr-title-block">
-        <div id="rr-eyebrow">✝ Featured Study</div>
-        <div id="rr-title">The Romans Road</div>
-        <div id="rr-sub">Seven verses that lead to salvation — tap any to read in full</div>
-      </div>
+    <div id="rr-header" onclick="toggleRR()" role="button" tabindex="0" aria-expanded="false">
+      <div id="rr-title-block"><div id="rr-title">The Romans Road</div></div>
+      <span class="t-count">${RR.length}</span>
       <div id="rr-toggle">${HW_CHEV}</div>
     </div>
     <div id="rr-steps">
@@ -3463,22 +3516,6 @@ function buildBooks(){
 
   h += `</div></div>`; // close rr-steps, rr-card
 
-  // OT + NT grids — each testament is a collapsible section (persisted,
-  // default open) so the long book list can be folded away to cut scrolling.
-  const collapsed = new Set(LS.get('kjv_books_collapsed', []));
-  const otOpen = !collapsed.has('ot'), ntOpen = !collapsed.has('nt');
-
-  h+=`<div class="t-section${otOpen?' open':''}" id="tsec-ot">`;
-  h+=`<div class="t-label t-toggle" onclick="toggleTestament('ot')" role="button" tabindex="0" aria-expanded="${otOpen}"><span>Old Testament</span><span class="t-count">39</span><span class="t-chevron">${HW_CHEV}</span></div>`;
-  h+=`<div class="books-grid">`;
-  BOOKS.slice(0,39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[i]} ch.</div></div>`);
-  h+=`</div></div>`;
-
-  h+=`<div class="t-section${ntOpen?' open':''}" id="tsec-nt">`;
-  h+=`<div class="t-label t-toggle" onclick="toggleTestament('nt')" role="button" tabindex="0" aria-expanded="${ntOpen}"><span>New Testament</span><span class="t-count">27</span><span class="t-chevron">${HW_CHEV}</span></div>`;
-  h+=`<div class="books-grid">`;
-  BOOKS.slice(39).forEach((b,i)=>h+=`<div tabindex="0" class="book-card" onclick="selectBook('${b}')"><div class="book-name">${b}</div><div class="book-meta">${CH_COUNTS[39+i]} ch.</div></div>`);
-  h+=`</div></div>`;
   // A widget for each bottom tab, in the bar's order (Search, Plans, Notes),
   // then Sword Drill. Their contents are filled by the update functions.
   h+=homeSearchWidget();
@@ -3489,6 +3526,7 @@ function buildBooks(){
   el.innerHTML=h;
 
   updateContinueBanner(); // fill the Continue Reading placeholder (and the widgets)
+  vodSwipeInit();
 
   // Restore RR open state
   if(LS.get('rr_open', false)) openRRPanel();
@@ -3513,11 +3551,13 @@ function toggleRR(){
 function openRRPanel(){
   document.getElementById('rr-steps').classList.add('open');
   document.getElementById('rr-toggle').classList.add('open');
+  document.getElementById('rr-header').setAttribute('aria-expanded', 'true');
   LS.set('rr_open', true);
 }
 function closeRRPanel(){
   document.getElementById('rr-steps').classList.remove('open');
   document.getElementById('rr-toggle').classList.remove('open');
+  document.getElementById('rr-header').setAttribute('aria-expanded', 'false');
   LS.set('rr_open', false);
 }
 
@@ -3553,6 +3593,51 @@ async function loadVOD(){
     document.getElementById('vod-ref').textContent=`${r.b} ${r.c}:${r.v} (KJV)`;
     vodMeta={book:r.b,ch:r.c-1,v:r.v,data};
   }catch(e){}
+}
+/* Swipe the Verse of the Day away (left or right) to put it away until tomorrow.
+   A bar offers Undo. kjv_vod_off = the day it was put away, this device only. */
+const VOD_OFF = 'kjv_vod_off';
+const vodToday = () => new Date().toDateString();
+function vodSwipeInit(){
+  const wrap = document.getElementById('vod-wrap'), el = document.getElementById('vod');
+  if(!wrap || !el) return;
+  if(LS.get(VOD_OFF, '') === vodToday()) wrap.classList.add('away');
+  let sx = 0, sy = 0, dx = 0, on = false, moved = false;
+  el.addEventListener('pointerdown', e => { on = true; moved = false; sx = e.clientX; sy = e.clientY; dx = 0; });
+  el.addEventListener('pointermove', e => {
+    if(!on) return;
+    dx = e.clientX - sx;
+    if(!moved && (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(e.clientY - sy))) return;
+    if(!moved){ moved = true; el.classList.add('drag'); try{ el.setPointerCapture(e.pointerId); }catch(_){} }
+    el.style.transform = `translateX(${dx}px)`;
+    el.style.opacity = Math.max(.35, 1 - Math.abs(dx) / 320);
+  });
+  const end = () => {
+    if(!on) return; on = false;
+    if(!moved) return;
+    el.classList.remove('drag');
+    if(Math.abs(dx) > 90){
+      el.style.transform = `translateX(${dx > 0 ? 120 : -120}%)`; el.style.opacity = 0;
+      setTimeout(vodPutAway, 200);
+    }else{ el.style.transform = ''; el.style.opacity = ''; }
+  };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  // a swipe must not also count as a tap that opens the chapter
+  el.addEventListener('click', e => { if(moved){ e.stopImmediatePropagation(); moved = false; } }, true);
+}
+function vodPutAway(){
+  const wrap = document.getElementById('vod-wrap'); if(!wrap) return;
+  wrap.classList.add('away'); LS.set(VOD_OFF, vodToday());
+  const t = document.getElementById('vod-undo'); if(!t) return;
+  t.classList.add('show'); clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 6000);
+}
+function vodUndo(){
+  const wrap = document.getElementById('vod-wrap'), el = document.getElementById('vod');
+  LS.set(VOD_OFF, '');
+  if(wrap) wrap.classList.remove('away');
+  if(el){ el.style.transform = ''; el.style.opacity = ''; }
+  document.getElementById('vod-undo')?.classList.remove('show');
 }
 // Opens the chapter at the verse itself, marked for a moment (as any reference does)
 async function jumpVOD(){if(!vodMeta)return;await jumpToRef(`${vodMeta.book} ${vodMeta.ch+1}:${vodMeta.v}`);recordActivity();}
@@ -13207,7 +13292,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
    The tour is four cards for brand-new people only, straight after the
    welcome screen; Skip is always there, and Tips & Help shows it again. */
 const HINTS = {
-  home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
+  home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share, and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},

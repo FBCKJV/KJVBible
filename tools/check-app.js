@@ -142,6 +142,24 @@ check('reading: a chapter read to the end keeps the streak', async (p, ctx) => {
   assert(r.streak === 6, `streak should be 6 after reading to the end, is ${r.streak}`);
 }, {clock: true});
 
+check('home: Scripture first, swipe the Verse of the Day, Undo', async p => {
+  const order = await p.evaluate(() => [...document.querySelectorAll('#books-inner > div > *')].map(e => e.id || e.className.split(' ')[0]).filter(Boolean));
+  const at = k => order.indexOf(k);
+  assert(at('vod-wrap') < at('tsec-ot') && at('tsec-ot') < at('tsec-nt') && at('tsec-nt') < at('rr-card') && at('rr-card') < at('home-search'), 'Home order is wrong: ' + order.join(' '));
+  const h = await p.evaluate(() => ['#tsec-ot .t-label', '#tsec-nt .t-label', '#rr-header'].map(s => Math.round(document.querySelector(s).getBoundingClientRect().height)));
+  assert(h[0] === h[1] && h[1] === h[2] && h[0] >= 60, 'the three big headers differ in size: ' + h);
+  await p.evaluate(() => { document.getElementById('home-search').scrollIntoView(); document.getElementById('books-inner').parentElement.scrollTop = 0; });
+  const b = await p.locator('#vod').boundingBox();
+  await p.mouse.move(b.x + 80, b.y + 30); await p.mouse.down(); await p.mouse.move(b.x + 300, b.y + 30, {steps: 6}); await p.mouse.up();
+  await sleep(500);
+  assert(await p.evaluate(() => getComputedStyle(document.getElementById('vod-wrap')).display) === 'none', 'a swipe should put the verse away');
+  assert(await p.evaluate(() => S.screen !== 'reader' && !document.getElementById('screen-reader')?.classList.contains('active')), 'a swipe must not open the chapter');
+  await p.reload(); await sleep(2200);
+  assert(await p.evaluate(() => getComputedStyle(document.getElementById('vod-wrap')).display) === 'none', 'it should stay away for the day');
+  await p.evaluate(() => vodUndo());
+  assert(await p.evaluate(() => getComputedStyle(document.getElementById('vod-wrap')).display) !== 'none', 'Undo should bring it back');
+});
+
 check('verse card: Strong\'s fold and a word', async p => {
   await p.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
   await p.evaluate(() => { const d = S.bookData.chapters[2].verses[15]; openVPop('John 3:16', d.text); sgToggleFold(); });
