@@ -7579,7 +7579,7 @@ async function openTimelineAt(id){
    Scriptures behind it. Built into hymns.json by tools/build-hymns.js from
    tools/hymns/list.js and texts.json.
    Hymn: [title, author, year, section, [[label, jumpRef], …], stanzas, chorus] */
-const HYMNS_VERSION = '2026-10-09'; // bump whenever tools/build-hymns.js is re-run
+const HYMNS_VERSION = '2026-10-09b'; // bump whenever tools/build-hymns.js is re-run
 SUBVIEWS.hymn = { mode:'hymns', browse:'hymns-browse', view:'hymn-view', open:(k, push, y) => openHymn(+k, push, y) };
 function loadHymns(){ return loadCachedJSON(`hymns.json?v=${HYMNS_VERSION}`).then(d => S._hymns = d.h); }
 async function renderHymns(){

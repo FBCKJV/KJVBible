@@ -38,8 +38,15 @@ ctx.HYMNS.forEach(h => {
   if(!best || (RANK[h.source] ?? 9) < (RANK[best.source] ?? 9)) songs[n] = h;
 });
 
+// Same hymn, recorded under a shorter or fuller title
+const ALIAS = {
+  'Come, Thou Fount of Every Blessing': 'Come Thou Fount',
+  'Pass Me Not': 'Pass Me Not, O Gentle Savior',
+  'Brighten the Corner Where You Are': 'Brighten the Corner',
+};
+
 const LIST = require('./hymns/list.js');
 const out = {};
-LIST.forEach(([t]) => { const s = songs[norm(t)]; if(s) out[t] = s.id; });
+LIST.forEach(([t]) => { const s = songs[norm(t)] || songs[norm(ALIAS[t] || '')]; if(s) out[t] = s.id; });
 fs.writeFileSync(path.join(__dirname, 'hymns', 'recordings.json'), JSON.stringify(out, null, 1) + '\n');
 console.log(`${Object.keys(out).length} of ${LIST.length} hymns have a recording in the Hymns app`);
