@@ -7579,7 +7579,7 @@ async function openTimelineAt(id){
    Scriptures behind it. Built into hymns.json by tools/build-hymns.js from
    tools/hymns/list.js and texts.json.
    Hymn: [title, author, year, section, [[label, jumpRef], …], stanzas, chorus] */
-const HYMNS_VERSION = '2026-10-07'; // bump whenever tools/build-hymns.js is re-run
+const HYMNS_VERSION = '2026-10-09'; // bump whenever tools/build-hymns.js is re-run
 SUBVIEWS.hymn = { mode:'hymns', browse:'hymns-browse', view:'hymn-view', open:(k, push, y) => openHymn(+k, push, y) };
 function loadHymns(){ return loadCachedJSON(`hymns.json?v=${HYMNS_VERSION}`).then(d => S._hymns = d.h); }
 async function renderHymns(){
@@ -7589,8 +7589,11 @@ async function renderHymns(){
   if(!H){ list.innerHTML = '<div id="s-status">Hymns unavailable — check your connection.</div>'; return; }
   const filt = document.getElementById('hymns-filter');
   if(filt && filt.value.trim()) return filterHymns(filt.value);
-  let sec = '';
-  list.innerHTML = H.map((h, i) => (h[3] !== sec ? `<div class="hy-sec">${escapeHtml(sec = h[3])}</div>` : '') + hymnRow(i)).join('');
+  // Grouped by section, in the order each section first appears. A hymn keeps its own number
+  // (notes and shared links open it by that), so later additions sit at the end of the file
+  // and are gathered under their section here.
+  const secs = [...new Set(H.map(h => h[3]))];
+  list.innerHTML = secs.map(sec => `<div class="hy-sec">${escapeHtml(sec)}</div>` + H.map((h, i) => h[3] === sec ? hymnRow(i) : '').join('')).join('');
 }
 const hymnRow = (i, mark) => { const h = S._hymns[i];
   const m = t => mark ? escapeHtml(t).replace(mark, '<mark>$&</mark>') : escapeHtml(t);
@@ -8144,7 +8147,7 @@ const SEARCH_TOOLS = [
   {m:'names',    i:'👤', n:'Names',       d:'People, places & meanings'},
   {m:'timeline', i:'📅', n:'Timeline',    d:'Creation to Revelation'},
   {m:'maps',     i:'🗺️', n:'Maps',        d:'Every place · atlas plates'},
-  {m:'hymns',    i:'🎵', n:'Hymns',       d:'98 hymns of the faith'},
+  {m:'hymns',    i:'🎵', n:'Hymns',       d:'224 hymns of the faith'},
 ];
 function renderSearchHub(){
   const hub = document.getElementById('s-hub');
@@ -13158,7 +13161,7 @@ const TOOL_TIPS = {
   ]},
   hymns: {i:'🎵', t:'Hymns', tips:[
     ['📝＋', '<strong>📝＋ beside a verse</strong> (or the refrain) adds just that verse to your study. Or select some lines and tap <strong>📝＋ Add to Study</strong> at the top to add only those'],
-    ['🎵', '<strong>98 hymns of the faith</strong> whose words are in the public domain, each with the Scriptures behind it — tap a 📖 reference to read it'],
+    ['🎵', '<strong>224 hymns of the faith</strong> whose words are in the public domain — the old gospel hymns, the great hymns of the church and the Christmas and Easter carols — each with the Scriptures behind it. Tap a 📖 reference to read it'],
     ['🎧', '<strong>🎧 Listen</strong> on a hymn (marked 🎧 in the list) opens it sung in the FBC Hymns app, with the words to follow. In the <strong>Psalms</strong>, <strong>🎧 Sung</strong> under the chapter title does the same for that Psalm'],
     ['📝＋', '<strong>📝＋ Add to Study</strong> puts a hymn in your notebook'],
   ]},
@@ -15350,7 +15353,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v60';
+const WHATS_NEW_VERSION = 'v61';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -16306,6 +16309,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v61" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎵</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">224 Hymns of the Faith</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>Search &rarr; Hymns</strong> has grown from 98 hymns to 224: more of the old gospel hymns and the great hymns of the church (<em>A Mighty Fortress</em>, <em>Abide with Me</em>, <em>Hiding in Thee</em>, <em>Be Not Dismayed</em>) and the Christmas carols (<em>Silent Night</em>, <em>O Come, All Ye Faithful</em>, <em>The First Noel</em>), each with every stanza, the refrain and the Scriptures behind it. They are gathered under the same sections, and the hymns you already know have not moved.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v60" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🧭</div>
       <div>
@@ -16568,7 +16580,7 @@ function closeSettings(e){
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">The Hymnal</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          <strong>Search &rarr; Hymns</strong> holds 98 beloved hymns &mdash; <em>Amazing Grace</em>, <em>Blessed Assurance</em>, <em>It Is Well</em>, <em>The Old Rugged Cross</em> and more &mdash; with every stanza, the refrain, and the Scriptures behind each hymn. Find one by title, author, or any line you remember.
+          <strong>Search &rarr; Hymns</strong> holds 224 beloved hymns &mdash; <em>Amazing Grace</em>, <em>Blessed Assurance</em>, <em>It Is Well</em>, <em>The Old Rugged Cross</em> and more &mdash; with every stanza, the refrain, and the Scriptures behind each hymn. Find one by title, author, or any line you remember.
         </div>
       </div>
     </div>
