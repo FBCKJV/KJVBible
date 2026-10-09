@@ -6,6 +6,13 @@
 
 ## New Features
 
+### 🧭 Any Pace, Listening Counts, Share a Link (v60)
+- **🧭 Make your own plan: any pace**. Under the 1–5 buttons, **More chapters a day, or finish in so many days** takes any number of chapters a day (the New Testament at 9 a day), or a number of days to finish in, and the chapters are spread evenly over them (the whole Bible in 182 days is 6–7 a day; the Old Testament in 31 days is 29–30). The plan stores its days as custom.days beside per, so an older copy of the app still reads it (at per a day)
+- **Listening counts as reading**: a chapter heard through on the Scourby audio Bible, in Chapter Play (auto-play included) or Book Play, counts just as one read to its end: the calendar, the 🔥 streak, the book in the Reading Journey and every plan it is in, whether or not the page was scrolled. Only time really listened counts: skips and drags along the bar are jumps, and at least half the chapter must be heard (unless Chapter Play took up where it left off)
+- **Share a link to a chapter or verses**: **Share** on the verse card now sends the verse with a link that opens the app on it. Several verses chosen together are shared with a link that opens on them all lit up (#John+3:3-5,8); with every verse selected (Select All) it links to the whole chapter (#Ephesians+2). Someone opening the app for the first time from a link sees the verses first: the welcome waits until they leave the chapter, and a note says to read on with Next
+- **Home at the top of a chapter**: the button beside the book's name read as “← Ephesians” but went Home; it now says **⌂ Home**
+- Tips & Help, the reader's and the plans' first-use hints, and What's New mention them
+
 ### 🎧 Hear Every Psalm Sung (v59)
 - **🎧 Sung on a Psalm**: under the chapter title of any Psalm, **🎧 Sung** opens the FBC Hymns app (fbckjv.app/Hymns/?psalm=23) on that Psalm, sung word for word from the King James Bible with the verses to follow. A long Psalm that is recorded in parts (119) opens at the first part with the others listed beneath. Other books show nothing new
 - Tips & Help and the reader's tips mention it

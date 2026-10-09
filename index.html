@@ -116,6 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #ch-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-m);text-align:center;margin-bottom:24px}
 
 /* ─── VERSE BLOCKS ─── */
+.vblock.vlink{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
 .vblock{
   display:flex;gap:8px;border-radius:6px;padding:5px 6px;
   cursor:pointer;transition:background .1s,border-color .1s,transform .1s;
@@ -1347,6 +1348,10 @@ body.light #home-watermark{
 .mk-per{display:flex;gap:6px}
 .mk-per button{flex:1;min-height:42px;background:var(--surface);border:1px solid var(--border);border-radius:10px;font-size:16px;font-weight:700;color:var(--text-d);cursor:pointer}
 .mk-per button.on{background:var(--gold);border-color:var(--gold);color:var(--bg)}
+.mk-adv{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.mk-adv label{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--text-d)}
+.mk-adv input{width:84px;min-height:42px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:6px 10px;font-size:16px;font-family:'Inter',sans-serif}
+.mk-adv input:focus{border-color:var(--gold);outline:none}
 .mk-sum{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);text-align:center;padding:4px 0}
 #mk-name{background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 12px;font-size:15px;font-family:'Inter',sans-serif}
 #mk-go:disabled{opacity:.5;cursor:default}
@@ -2037,8 +2042,9 @@ body.light #home-watermark{
 <body>
 
 <div id="header">
-  <button class="hbtn" id="btn-back" onclick="goBack()" style="display:none">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  <button class="hbtn" id="btn-back" onclick="showScreen('books')" style="display:none" aria-label="Home">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+    Home
   </button>
   <div id="logo">✝ Faith Baptist Church</div>
   <button class="hbtn" id="btn-select" onclick="toggleSelectMode()" style="display:none" title="Select verses">
@@ -2460,7 +2466,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
         <div class="tip-row"><span class="tip-ico">🎤</span><span class="tip-txt"><strong>Say it aloud in Sword Drill</strong> — in First Letters or Full Recall, tap 🎤 beside the box and say the verse at your own pace; each word fills in as you say it. A word the phone mishears is simply passed over, and 💡 still helps. Tap 🎤 again to stop</span></div>
         <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Chapters you have read</strong> show a ✓ in a book's chapter list. Read a book before the app counted? Tap <strong>✓ Mark chapters I read before</strong>, then the chapters — finish a book and it is celebrated and ticked off in your Reading Journey</span></div>
-        <div class="tip-row"><span class="tip-ico">🧭</span><span class="tip-txt"><strong>Make your own plan</strong> at the bottom of the Plans page: pick the Gospels, Psalms, Paul’s letters, a Testament — or any books — and how many chapters a day. It works like the other plans: read at your own pace, chapters count when you reach the end</span></div>
+        <div class="tip-row"><span class="tip-ico">🧭</span><span class="tip-txt"><strong>Make your own plan</strong> at the bottom of the Plans page: pick the Gospels, Psalms, Paul’s letters, a Testament — or any books — and how many chapters a day (under <strong>More chapters a day</strong>, any number, or a number of days to finish in — the New Testament in 31 days, the Bible in six months). It works like the other plans: read at your own pace, chapters count when you reach the end</span></div>
         <div class="tip-row"><span class="tip-ico">↩️</span><span class="tip-txt"><strong>Undo</strong> — removing a highlight, note, list verse, list or study shows <strong>Undo</strong> for a few seconds</span></div>
         <div class="tip-row"><span class="tip-ico">🔔</span><span class="tip-txt"><strong>A daily reading reminder</strong> — on the Plans page, tap 🔔 and choose morning, midday or evening. Each day a short note on this device names your next reading; tap it to open your plans. Turn it off the same way</span></div>
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
@@ -2496,6 +2502,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Book Play</strong> — From any book's chapter list, tap the <strong>🔊 Listen</strong> button below the chapters to stream the entire book. A floating player bar stays with you across all screens — read along, search, or navigate while the audio continues. Your position in every book is saved automatically.</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Chapter Play</strong> — While reading, tap the <strong>🔊</strong> button next to the chapter title to hear just that chapter. Audio plays to the end of the last verse, then stops automatically. Pause or leave partway and tapping 🔊 again picks up right where you left off; once a chapter finishes it starts fresh next time.</span></div>
         <div class="tip-row"><span class="tip-ico">🌙</span><span class="tip-txt"><strong>Sleep timer &amp; Auto-play</strong> — Tap the <strong>🌙</strong> on the player bar to wind down after 15, 30, or 60 minutes. Turn on <strong>Auto-play next chapter</strong> in ⚙ Settings to keep listening — and if you're reading the chapter that's playing, the text follows along as it advances.</span></div>
+        <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Listening counts as reading</strong> — a chapter heard through to its end, in Chapter Play or Book Play, is checked off just as if you had read it: in your plans, your books and Reading Journey, the reading calendar and your 🔥 streak. Skipping ahead with 30▶ doesn't count; at least half the chapter must be heard.</span></div>
         <div class="tip-row"><span class="tip-ico">▶</span><span class="tip-txt">Both modes share the same floating player bar with play/pause, <strong>◀30</strong> / <strong>30▶</strong> skip, speed control (0.5×–2.0×), and a progress bar. Chapter Play shows chapter progress; Book Play shows whole-book progress.</span></div>
         <div class="tip-row"><span class="tip-ico">💾</span><span class="tip-txt">Both Book Play and Chapter Play positions are <strong>saved to the cloud</strong> with your restore code — switch devices and pick up exactly where you left off, whether in a whole book or a single chapter.</span></div>
       </div>
@@ -2758,6 +2765,12 @@ body.light #home-watermark{
     <details class="mk-more"><summary>Or choose books one by one</summary><div id="mk-books"></div></details>
     <div class="mk-lbl">Chapters a day</div>
     <div class="mk-per" id="mk-per"><button data-n="1" onclick="mkPer(1)">1</button><button data-n="2" onclick="mkPer(2)">2</button><button data-n="3" onclick="mkPer(3)">3</button><button data-n="4" onclick="mkPer(4)">4</button><button data-n="5" onclick="mkPer(5)">5</button></div>
+    <details class="mk-more" id="mk-adv"><summary>More chapters a day, or finish in so many days</summary>
+      <div class="mk-adv">
+        <label>Chapters a day <input id="mk-per-n" type="number" inputmode="numeric" min="1" max="1189" placeholder="e.g. 9" oninput="mkPerN(this.value)"></label>
+        <label>Or finish in <input id="mk-days-n" type="number" inputmode="numeric" min="1" max="3650" placeholder="e.g. 31" oninput="mkDaysN(this.value)"> days</label>
+      </div>
+    </details>
     <div class="mk-sum" id="mk-sum"></div>
     <input id="mk-name" maxlength="40" aria-label="Name of your plan">
     <div class="hln-acts"><button class="hln-cancel" onclick="closePopover('mk-sheet')">Cancel</button><button class="hln-save" id="mk-go" onclick="mkCreate()">Start this plan</button></div>
@@ -4068,11 +4081,16 @@ function doCopy(txt){
 
 function multiShare(){
   const sorted = getSelectedSorted();
+  if(!sorted.length) return;
   const first  = sorted[0];
   const last   = sorted[sorted.length-1];
   const txt    = buildBlockText(sorted, first, last);
-  if(navigator.share) navigator.share({title:first.ref, text:txt});
-  else navigator.clipboard?.writeText(txt);
+  // With a link that opens the app on these verses, or on the whole chapter
+  const [, book, ch] = first.ref.match(/^(.+) (\d+):/) || [];
+  if(!book){ sharePage(first.ref, txt, APP_URL); return; }
+  const whole = sorted.length >= document.querySelectorAll('#verses .vblock').length;
+  const nums = sorted.map(v => +v.vnum);
+  sharePage(whole ? `${book} ${ch}` : `${book} ${ch}:${verseSpan(nums, '–')}`, txt, passageLink(book, +ch, whole ? null : nums));
 }
 
 function multiScreenshot(){
@@ -4176,13 +4194,22 @@ function cancelNote(){document.getElementById('note-area-wrap').classList.remove
 function saveNote(){const t=document.getElementById('note-area').value.trim();if(t)S.notes[S.popRef]=t;else delete S.notes[S.popRef];LS.set('kjv_notes',S.notes);fbSyncSoon();cancelNote();refreshVBlock(S.popRef);}
 function openNoteChip(e,ref){e.stopPropagation();openVPop(ref,document.querySelector(`[data-ref="${ref}"] .vtxt`).textContent);setTimeout(openNote,50);}
 function copyVerse(){const t=`${S.popRef}  ${S.popTxt}`;navigator.clipboard?.writeText(t);}
-function shareVerse(){const t=`${S.popRef}  ${S.popTxt}`;if(navigator.share)navigator.share({title:'Bible Verse',text:t});else navigator.clipboard?.writeText(t);}
+function shareVerse(){ sharePage(S.popRef, `${S.popRef}  ${S.popTxt}`, verseLink(S.popRef)); }
 // Deep link to a verse — a URL that opens the app straight to this verse.
 // Canonical location of the live app. Share links and the share-app QR point
 // here so people always land on the current build (the app is served at the
 // /KJVBible path — the bare domain root is a separate, older deployment).
 const APP_URL = 'https://fbckjv.app/KJVBible/';
 function verseLink(ref){ return APP_URL + '#' + ref.replace(/ /g,'+'); }
+// Verse numbers as a reference: [3,4,5,8] → "3-5,8" (sep '–' to show it)
+function verseSpan(nums, sep = '-'){
+  const n = [...new Set(nums.map(Number))].sort((a, b) => a - b), out = [];
+  for(let i = 0; i < n.length; i++){ let j = i; while(n[j + 1] === n[j] + 1) j++; out.push(j > i ? n[i] + sep + n[j] : '' + n[i]); i = j; }
+  return out.join(',');
+}
+// A link that opens the app on a chapter, or on chosen verses of it (v60):
+// #Ephesians+2, #John+3:16, #John+3:16-18, #John+3:3-5,8
+function passageLink(book, ch, nums){ return verseLink(book + ' ' + ch + (nums && nums.length ? ':' + verseSpan(nums) : '')); }
 function copyVerseLink(){
   const link = verseLink(S.popRef);
   if(navigator.clipboard){
@@ -4210,8 +4237,37 @@ function openDeepLink(){
   }
   let raw; try{ raw = decodeURIComponent(h); }catch(e){ raw = h; }
   const ref = raw.replace(/\+/g,' ').trim();
-  if(/^.+ \d+:\d+$/.test(ref)){ jumpToRef(ref); return true; }
-  return false;
+  // A chapter, a verse, or several: John 3, John 3:16, John 3:16-18, John 3:3-5,8
+  const m = ref.match(/^(.+?) (\d+)(?::([\d,\-–]+))?$/);
+  const book = m && BOOKS.find(b => b.toLowerCase() === m[1].toLowerCase());
+  if(!book || +m[2] < 1 || +m[2] > CH_COUNTS[BOOKS.indexOf(book)]) return false;
+  const nums = [];
+  (m[3] || '').split(',').forEach(p => { const [a, b] = p.split(/[-–]/).map(Number); if(a > 0) for(let v = a; v <= Math.min(b >= a ? b : a, a + 199); v++) nums.push(v); });
+  history.replaceState(history.state, '', location.pathname + location.search);
+  openPassage(book, +m[2], nums);
+  return true;
+}
+// Open a shared chapter, with its verses lit up. Someone opening the app for
+// the first time sees the verses first: the welcome waits until they leave.
+async function openPassage(book, ch, nums){
+  S._linkHold = true;
+  const data = await fetchBook(book);
+  if(!data || !data.chapters[ch - 1]){ linkRelease(); return; }
+  S.book = book; S.ch = ch - 1; S.bookData = data;
+  renderReader(); showScreen('reader');
+  S._linkShown = true;
+  setTimeout(() => {
+    const els = nums.map(v => document.querySelector(`[data-ref="${book} ${ch}:${v}"]`)).filter(Boolean);
+    if(els[0]) els[0].scrollIntoView({behavior: 'smooth', block: 'center'});
+    els.forEach(el => { el.classList.add('vlink'); setTimeout(() => el.classList.remove('vlink'), 6000); });
+  }, 250);
+  if(S._newHere) setTimeout(() => showToast('📖 Shared with you — read on with Next ›'), 1500);
+}
+function linkRelease(){
+  if(!S._linkHold) return;
+  S._linkHold = S._linkShown = false;
+  if(S._welcomeLater){ S._welcomeLater = false; setTimeout(showWelcomeIfNeeded, 400); }
+  if(S._whatsNewLater){ S._whatsNewLater = false; setTimeout(showWhatsNewIfNeeded, 600); }
 }
 window.addEventListener('hashchange', () => { if(/^#[a-z]+=/.test(location.hash)) openDeepLink(); });
 
@@ -4768,6 +4824,7 @@ function showScreen(name, pushHistory=true){
   document.getElementById('screen-'+name)?.classList.add('on');
   document.getElementById('bn-'+name)?.classList.add('on');
   S.screen=name; updateHeaderState();
+  if(S._linkShown && name !== 'reader') linkRelease(); // left the shared chapter
   // Pause Scourby when leaving reader context
   if(name==='books'){
     const aud=document.getElementById('scourby-audio');
@@ -4795,11 +4852,6 @@ function updateContinueBanner(){
   el.classList.remove('open'); // default collapsed each time Home is shown
   el.innerHTML = inner;
   el.classList.remove('hidden');
-}
-
-function goBack(){
-  // Called by the in-app ← button — use browser history so it stays in sync
-  history.back();
 }
 
 /* ── Back-button dismissal for pop-over cards ──
@@ -11039,7 +11091,8 @@ function getPlanDayReadings(planId, dayIdx){
 }
 /* ── Plans you make yourself (v54) ──
    A made plan carries its own definition (p.def = {id, name, icon, desc,
-   days, custom: {books: [bookIdx…], per: chapters a day}}) so it syncs and
+   days, custom: {books: [bookIdx…], per: chapters a day, days?: finish in
+   so many days}}) so it syncs and
    restarts like the others; plansData() registers it in PLAN_DEFS. Its days
    are the chosen books' chapters in Bible order, so many a day. */
 const _customDays = {};
@@ -11047,7 +11100,15 @@ function customPlanDays(def){
   if(_customDays[def.id]) return _customDays[def.id];
   const all = [];
   [...def.custom.books].sort((a, b) => a - b).forEach(bi => { for(let c = 0; c < CH_COUNTS[bi]; c++) all.push([bi, c]); });
-  const per = Math.max(1, def.custom.per | 0), days = [];
+  const days = [];
+  // A plan made to finish in so many days (v60) spreads the chapters evenly
+  // over them; older copies of the app read its per (the most in a day)
+  const n = Math.min(def.custom.days | 0, all.length);
+  if(n > 0){
+    for(let d = 0, i = 0; d < n; d++){ const k = Math.ceil((all.length - i) / (n - d)); days.push(all.slice(i, i + k)); i += k; }
+    return _customDays[def.id] = days;
+  }
+  const per = Math.max(1, def.custom.per | 0);
   for(let i = 0; i < all.length; i += per) days.push(all.slice(i, i + per));
   return _customDays[def.id] = days;
 }
@@ -11063,8 +11124,10 @@ const MK_PICKS = [
   ['The whole Bible', Array.from({length: 66}, (_, i) => i)],
 ];
 function mkOpen(){
-  S._mk = {books: new Set(), per: 1};
+  S._mk = {books: new Set(), per: 1, days: 0};
   document.getElementById('mk-name').value = '';
+  document.getElementById('mk-per-n').value = document.getElementById('mk-days-n').value = '';
+  document.getElementById('mk-adv').open = false;
   mkRender();
   openPopover('mk-sheet');
 }
@@ -11074,7 +11137,16 @@ function mkPick(i){
   mkRender();
 }
 function mkBook(bi){ S._mk.books.has(bi) ? S._mk.books.delete(bi) : S._mk.books.add(bi); mkRender(); }
-function mkPer(n){ S._mk.per = n; mkRender(); }
+function mkPer(n){ S._mk.per = n; S._mk.days = 0; document.getElementById('mk-per-n').value = document.getElementById('mk-days-n').value = ''; mkRender(); }
+// Any number of chapters a day, or a number of days to finish in (v60)
+function mkPerN(v){ v = Math.min(1189, v | 0); document.getElementById('mk-days-n').value = ''; S._mk.days = 0; S._mk.per = v > 0 ? v : 1; mkRender(); }
+function mkDaysN(v){ v = Math.min(3650, v | 0); document.getElementById('mk-per-n').value = ''; S._mk.days = v > 0 ? v : 0; mkRender(); }
+// How the chosen pace works out: days, and chapters a day ("8–9")
+function mkPace(ch){
+  const m = S._mk;
+  if(m.days){ const d = Math.max(1, Math.min(m.days, ch)), lo = Math.floor(ch / d), hi = Math.ceil(ch / d); return {days: d, per: hi, a: lo === hi ? '' + hi : lo + '–' + hi}; }
+  return {days: Math.ceil(ch / m.per), per: m.per, a: '' + m.per};
+}
 function mkAutoName(){
   const b = [...S._mk.books].sort((x, y) => x - y);
   if(!b.length) return '';
@@ -11085,22 +11157,24 @@ function mkAutoName(){
   return `${BOOKS[b[0]]} – ${BOOKS[b[b.length - 1]]} (${b.length} books)`;
 }
 function mkRender(){
-  const m = S._mk, b = [...m.books], ch = b.reduce((t, bi) => t + CH_COUNTS[bi], 0), days = Math.ceil(ch / m.per);
+  const m = S._mk, b = [...m.books], ch = b.reduce((t, bi) => t + CH_COUNTS[bi], 0), pace = mkPace(ch), days = pace.days;
   const same = bs => bs.length === m.books.size && bs.every(x => m.books.has(x));
   document.getElementById('mk-picks').innerHTML = MK_PICKS.map(([n, bs], i) => `<button class="${same(bs) ? 'on' : ''}" onclick="mkPick(${i})">${n}</button>`).join('');
   const chip = bi => `<button class="${m.books.has(bi) ? 'on' : ''}" onclick="mkBook(${bi})">${BOOKS[bi]}</button>`;
   document.getElementById('mk-books').innerHTML = `<div class="mk-lbl">Old Testament</div><div class="mk-bk">${BOOKS.slice(0, 39).map((_, i) => chip(i)).join('')}</div><div class="mk-lbl">New Testament</div><div class="mk-bk">${BOOKS.slice(39).map((_, i) => chip(39 + i)).join('')}</div>`;
-  document.querySelectorAll('#mk-per button').forEach(x => x.classList.toggle('on', +x.dataset.n === m.per));
+  document.querySelectorAll('#mk-per button').forEach(x => x.classList.toggle('on', !m.days && +x.dataset.n === m.per));
   document.getElementById('mk-name').placeholder = mkAutoName() || 'Name your plan';
-  document.getElementById('mk-sum').textContent = ch ? `${ch} chapter${ch === 1 ? '' : 's'} · ${days} day${days === 1 ? '' : 's'} at ${m.per} a day` : 'Choose what to read — a group above, or any books below';
+  document.getElementById('mk-sum').textContent = ch ? `${ch} chapter${ch === 1 ? '' : 's'} · ${days} day${days === 1 ? '' : 's'} at ${pace.a} a day` : 'Choose what to read — a group above, or any books below';
   document.getElementById('mk-go').disabled = !ch;
 }
 function mkCreate(){
   const m = S._mk, books = [...m.books].sort((a, b) => a - b);
   if(!books.length) return;
-  const ch = books.reduce((t, bi) => t + CH_COUNTS[bi], 0), days = Math.ceil(ch / m.per);
+  const ch = books.reduce((t, bi) => t + CH_COUNTS[bi], 0), pace = mkPace(ch), days = pace.days;
   const name = document.getElementById('mk-name').value.trim() || mkAutoName();
-  const def = {id: 'u' + planNewId().slice(1), name, icon: '🧭', desc: `${days} days · ${m.per} chapter${m.per === 1 ? '' : 's'} a day`, days, custom: {books, per: m.per}};
+  const custom = {books, per: pace.per};
+  if(m.days) custom.days = days;
+  const def = {id: 'u' + planNewId().slice(1), name, icon: '🧭', desc: `${days} day${days === 1 ? '' : 's'} · ${pace.a} chapter${pace.a === '1' ? '' : 's'} a day`, days, custom};
   PLAN_DEFS[def.id] = def;
   const d = plansData();
   d.list.unshift({id: planNewId(), plan: def.id, def, start: todayStr(), st: 'active', days: {}, chs: {}, fin: null});
@@ -13131,11 +13205,11 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
    welcome screen; Skip is always there, and Tips & Help shows it again. */
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
-  reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
+  reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share, and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
-  plans:    {i:'📅', t:'Reading Plans', b:'Pick a plan and read <b>at your own pace</b> — you can run more than one. A chapter checks off when you reach the end of it, and your 🔥 streak grows each day you read.', at:'#plans-inner .pl-btn'},
+  plans:    {i:'📅', t:'Reading Plans', b:'Pick a plan and read <b>at your own pace</b> — you can run more than one. A chapter checks off when you reach the end of it, or hear it through on the 🔊 audio Bible, and your 🔥 streak grows each day you read.', at:'#plans-inner .pl-btn'},
   notes:    {i:'📝', t:'Your Notes', b:'Everything you have kept is here: <b>My Verses</b> (lists you name), your <b>Highlights</b>, verse <b>Notes</b> and your <b>Studies</b>. The box at the top searches all of it.', at:'#tab-bm'},
   notebook: {i:'✍️', t:'Your Study Notebook', b:'Write a lesson or sermon here. <b>🔖</b> brings in verses from your lists, <b>📝＋</b> anywhere in the app adds to it, and <b>🎦 Present</b> turns it into slides.', at:'#nb-tools button', tt:'notebook'},
   search:   {i:'🔎', t:'Look anything up', b:'Type a verse (“John 3:16”), a word or a phrase. Or open a tool below — <b>Doctrines</b>, the <b>Dictionary</b>, <b>Topics</b>, <b>Maps</b>, the <b>Timeline</b> and more.', at:'#s-input'},
@@ -14779,6 +14853,7 @@ function scourbyPlayChapter(bookName, chIdx){
   // position sitting at the very start or all but finished (start fresh there).
   const savedPos = scourbyGetChapterPos(bookName, chIdx);
   const seekTo = (savedPos > chStart + 2 && savedPos < chEnd - 3) ? savedPos : chStart;
+  SA.resumed = seekTo !== chStart ? bookName + '|' + chIdx : null; // the first part was heard before
 
   // Stop book mode if running
   if(!SA.chMode && SA.book){
@@ -15070,6 +15145,7 @@ function scourbyTimeUpdate(){
   const ts = SCOURBY_TS[SA.book];
   if(!ts) return;
   const t = audio.currentTime;
+  scourbyHeard(ts, t);
 
   // Chapter mode — chapter end reached
   if(SA.chMode && SA.chEnd !== null && t >= SA.chEnd){
@@ -15128,7 +15204,38 @@ function scourbyTimeUpdate(){
   }
 }
 
+/* ── Listening counts as reading (v60) ──
+   A chapter heard through, in the chapter player or the whole-book player,
+   counts just as one read to its end: the calendar, the streak, the book in
+   the Reading Journey and every plan it is in. Only time really listened
+   counts (a skip or a drag along the bar is a jump, not listening), and at
+   least half the chapter must have been heard, unless the chapter player
+   took up where it was left off on another day. */
+function scourbyChEnd(ts, i){ return (ts.e && ts.e[i]) ? ts.e[i] : (ts.c[i + 1] || ts.t); }
+function scourbyChAt(ts, t){ let i = 0; while(ts.c[i + 1] !== undefined && ts.c[i + 1] <= t) i++; return i; }
+function scourbyHeard(ts, t, ended){
+  const h = SA.heard || (SA.heard = {book: null, last: 0, secs: {}});
+  if(h.book !== SA.book){ h.book = SA.book; h.secs = {}; h.last = t; return; }
+  const prev = h.last, dt = t - prev;
+  h.last = t;
+  if(!((dt > 0 || (ended && dt === 0)) && dt < 3 * (SA.rate || 1) + 1)) return; // a jump, not listening
+  const i = scourbyChAt(ts, prev), start = ts.c[i] || 0, end = scourbyChEnd(ts, i);
+  h.secs[i] = (h.secs[i] || 0) + dt;
+  if(!(ended || (prev < end && t >= end))) return;
+  if(h.secs[i] >= (end - start) / 2 || SA.resumed === SA.book + '|' + i) chapterHeard(BOOKS.indexOf(SA.book), i);
+}
+function chapterHeard(bi, ci){
+  if(bi < 0 || ci < 0 || ci >= CH_COUNTS[bi]) return;
+  if(_prw && _prw.bi === bi && _prw.ci === ci){ clearTimeout(_prw.timer); _prw.done = true; }
+  logChapterRead(bi, ci);
+  planCountChapter(bi, ci);
+  if(S.screen === 'reader' && BOOKS.indexOf(S.book) === bi && S.ch === ci) planEndBar();
+  if(S.screen === 'chapters' && BOOKS.indexOf(S.book) === bi) chGridMarks();
+}
+
 function scourbyOnEnded(){
+  const ts = SCOURBY_TS[SA.book], audio = document.getElementById('scourby-audio');
+  if(ts && audio) scourbyHeard(ts, audio.currentTime, true); // the last chapter runs to the end of the file
   document.getElementById('sb-playpause').textContent = '▶';
   if(SA.chMode) scourbyClearChapterPos(SA.book, SA.chIdx); // last chapter ran to file end
   scouryySavePos(SA.book, 0); // reset book position on completion
@@ -15229,6 +15336,7 @@ function scourbyToggleFromPicker(){
 function showWelcomeIfNeeded(){
   // Had a restore code before this visit — seen the app before, skip entirely
   if(!S._newHere) return;
+  if(S._linkHold){ S._welcomeLater = true; return; } // a shared verse comes first
   const modal = document.getElementById('onboard-modal');
   if(!modal) return;
   // a hint caught under the welcome has not really been seen
@@ -15242,7 +15350,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v59';
+const WHATS_NEW_VERSION = 'v60';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -15251,6 +15359,7 @@ function showWhatsNewIfNeeded(){
     localStorage.setItem('kjv_whatsnew', WHATS_NEW_VERSION);
     return;
   }
+  if(S._linkHold){ S._whatsNewLater = true; return; } // a shared verse comes first
   // Don't stack on top of the onboarding modal if it happens to be open.
   const ob = document.getElementById('onboard-modal');
   if(ob && ob.style.display === 'flex') return;
@@ -16197,6 +16306,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v60" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🧭</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Any Pace You Like · Listening Counts · Share a Link</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>🧭 Make your own plan</strong> now takes any number of chapters a day, or a number of days to finish in: the whole Bible in six months, the New Testament in 31 days, even a Testament in a month. <strong>Listening counts as reading</strong>: a chapter heard through on the 🔊 audio Bible checks off in your plans, your books and the calendar. <strong>Share</strong> on a verse, or on several verses chosen together, now sends a link that opens the app right on them; choose <strong>Select All</strong> to share the whole chapter. And the button at the top of a chapter now says <strong>Home</strong>.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v59" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎧</div>
       <div>

@@ -316,6 +316,68 @@ check('backup file: save on one phone, restore on another', async (p, ctx, brows
   assert(r.studies === 'Grace,Mine' && r.hl === 'John 3:16' && r.code === 'BBBBBB', `restore from a file: ${JSON.stringify(r)}`);
 });
 
+check('plans: make a plan at any pace (chapters a day or days to finish)', async p => {
+  const r = await p.evaluate(() => {
+    mkOpen(); mkPick(MK_PICKS.findIndex(x => x[0] === 'New Testament'));
+    mkDaysN('31'); const days = document.getElementById('mk-sum').textContent;
+    mkPerN('9'); const per = document.getElementById('mk-sum').textContent;
+    mkDaysN('31'); mkCreate();
+    const def = plansData().list[0].def, ds = customPlanDays(def);
+    return {days, per, d: def.days, n: ds.length, total: ds.reduce((t, x) => t + x.length, 0), most: Math.max(...ds.map(x => x.length)), least: Math.min(...ds.map(x => x.length)), first: getPlanDayReadings(def.id, 0).length};
+  });
+  assert(/260 chapters · 31 days at 8–9 a day/.test(r.days), `31 days: ${r.days}`);
+  assert(/260 chapters · 29 days at 9 a day/.test(r.per), `9 a day: ${r.per}`);
+  assert(r.d === 31 && r.n === 31 && r.total === 260 && r.most === 9 && r.least === 8 && r.first === 9, `plan days ${JSON.stringify(r)}`);
+});
+
+check('listening: a chapter heard through counts in plans, books and the calendar', async p => {
+  const r = await p.evaluate(() => {
+    mkOpen(); mkBook(48); mkCreate();
+    const ts = SCOURBY_TS.Ephesians, play = (a, b) => { for(let t = a; t <= b; t += 0.25) scourbyHeard(ts, t); };
+    SA.book = 'Ephesians'; SA.rate = 1; SA.heard = null; SA.resumed = null;
+    play(ts.c[0], ts.c[0] + 1);
+    play(ts.c[0] + 1, ts.c[1] + 1);              // chapter 1 heard through
+    scourbyHeard(ts, ts.c[2] - 5); play(ts.c[2] - 5, ts.c[2] + 1); // chapter 2: jumped near its end
+    const log = readLog()[todayStr()] || [], plan = plansData().list[0];
+    return {one: log.includes('48:0'), two: log.includes('48:1'), plan: '48:0' in plan.chs, streak: S.streak};
+  });
+  assert(r.one, 'Ephesians 1 heard through was not logged as read');
+  assert(r.plan, 'Ephesians 1 heard through did not count in the plan');
+  assert(!r.two, 'Ephesians 2 skipped to its end should not count');
+  assert(r.streak >= 1, 'listening should keep the streak');
+});
+
+check('share: links open a chapter or verses; a newcomer sees them first; Home', async (p, ctx, browser, base) => {
+  const links = await p.evaluate(() => ({one: passageLink('1 John', 3, [16]), some: passageLink('John', 3, [5, 3, 4, 8]), ch: passageLink('Song of Solomon', 2), span: verseSpan([1, 2, 3, 7, 9, 10], '–')}));
+  assert(links.one.endsWith('#1+John+3:16') && links.some.endsWith('#John+3:3-5,8') && links.ch.endsWith('#Song+of+Solomon+2') && links.span === '1–3,7,9–10', JSON.stringify(links));
+  // Several verses chosen on the card are shared with their link
+  await p.evaluate(() => { window.__shared = null; navigator.share = d => { window.__shared = d; return Promise.resolve(); }; jumpToRef('John 3:16'); });
+  await sleep(1200);
+  const sh = await p.evaluate(() => {
+    const vs = [...document.querySelectorAll('#verses .vblock')];
+    S.selectedData = new Set([2, 3, 4, 7].map(i => ({ref: 'John 3:' + (i + 1), vnum: '' + (i + 1), txt: 'x'}))); multiShare();
+    const a = window.__shared;
+    S.selectedData = new Set(vs.map((v, i) => ({ref: 'John 3:' + (i + 1), vnum: '' + (i + 1), txt: 'x'}))); multiShare();
+    return {some: a, all: window.__shared, home: document.getElementById('btn-back').textContent.trim()};
+  });
+  assert(sh.some && sh.some.url.endsWith('#John+3:3-5,8') && sh.some.title === 'John 3:3–5,8', `several verses: ${JSON.stringify(sh.some)}`);
+  assert(sh.all && sh.all.url.endsWith('#John+3') && sh.all.title === 'John 3', `whole chapter: ${JSON.stringify(sh.all)}`);
+  assert(sh.home === 'Home', `the button at the top should say Home, says ${sh.home}`);
+  await p.click('#btn-back'); await sleep(300);
+  assert(await p.evaluate(() => S.screen) === 'books', 'Home should go to Home');
+  // Someone new opens a shared link
+  const fresh = await browser.newContext({viewport: {width: 390, height: 844}}), q = await fresh.newPage(); q._errors = []; q.on('pageerror', e => q._errors.push(e.message));
+  await q.goto(base + '/index.html#Ephesians+2:8-9'); await sleep(2600);
+  const n = await q.evaluate(() => ({screen: S.screen, book: S.book, ch: S.ch, lit: [...document.querySelectorAll('.vblock.vlink')].map(x => x.dataset.ref), welcome: document.getElementById('onboard-modal').style.display}));
+  assert(n.screen === 'reader' && n.book === 'Ephesians' && n.ch === 1, `link opened ${n.screen} ${n.book} ${n.ch}`);
+  assert(n.lit.join() === 'Ephesians 2:8,Ephesians 2:9', `verses lit: ${n.lit.join()}`);
+  assert(n.welcome !== 'flex', 'the welcome should wait while the shared chapter is open');
+  await q.evaluate(() => showScreen('books')); await sleep(800);
+  assert(await q.evaluate(() => document.getElementById('onboard-modal').style.display) === 'flex', 'the welcome should come once they leave the chapter');
+  const errs = q._errors; await fresh.close();
+  assert(!errs.length, 'page errors: ' + errs.join(' / '));
+});
+
 check('screenshots (light and dark)', async (p, ctx, browser, base) => {
   fs.mkdirSync(SHOT_DIR, {recursive: true});
   for(const theme of ['dark', 'light']){
