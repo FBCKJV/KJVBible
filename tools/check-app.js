@@ -201,6 +201,31 @@ check('dictionary: a word links to Hebrew & Greek', async p => {
   assert(/Hebrew & Greek behind “grace”/.test(b), 'no Hebrew & Greek link on the Dictionary page');
 });
 
+check('hymns: the grown hymnal, grouped by section, old numbers unchanged', async p => {
+  await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
+  const r = await p.evaluate(async () => {
+    const H = await loadHymns();
+    await renderHymns();
+    const heads = [...document.querySelectorAll('#hymns-list .hy-sec')].map(x => x.textContent);
+    const rows = document.querySelectorAll('#hymns-list .hy-row').length;
+    await openHymn(0);
+    const first = document.querySelector('#hymn-view .dv-title').textContent;
+    const last = H.length - 1;
+    await openHymn(last);
+    return {n: H.length, rows, heads, first, lastTitle: H[last][0], shown: document.querySelector('#hymn-view .dv-title').textContent,
+      refs: document.querySelectorAll('#hymn-view .hy-refs .vl-chip').length,
+      bad: H.filter(h => !h[4].length || !h[5].length || h[5].some(st => !st.length) || !(h[2] > 1500 && h[2] < 1928)).map(h => h[0]),
+      dup: H.length - new Set(H.map(h => h[0])).size};
+  });
+  assert(r.n >= 200, `only ${r.n} hymns`);
+  assert(r.rows === r.n, `${r.rows} rows for ${r.n} hymns`);
+  assert(new Set(r.heads).size === r.heads.length, 'a section heading is repeated: ' + r.heads.join(' | '));
+  assert(r.first === 'Holy, Holy, Holy', 'hymn 0 is now ' + r.first);
+  assert(r.shown === r.lastTitle && r.refs > 0, 'the last hymn does not open with its Scriptures');
+  assert(!r.bad.length, 'hymns with no refs, no words or a year outside 1500–1927: ' + r.bad.join(', '));
+  assert(!r.dup, r.dup + ' duplicate titles');
+});
+
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
   await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
   const r = await p.evaluate(async () => {

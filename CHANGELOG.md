@@ -6,6 +6,13 @@
 
 ## New Features
 
+### 🎵 224 Hymns of the Faith (v61)
+- **Search → Hymns grows from 98 to 224 hymns**: more of the old gospel hymns (*Hiding in Thee*, *Be Not Dismayed Whate'er Betide*, *Beulah Land*, *In the Garden*, *Brighten the Corner Where You Are*), the great hymns of the church (*A Mighty Fortress Is Our God*, *Abide with Me*, *The Church's One Foundation*, *Immortal, Invisible*, *And Can It Be?*, *How Firm a Foundation*) and the Christmas carols (*Silent Night*, *O Come, All Ye Faithful*, *The First Noel*, *What Child Is This?*, *We Three Kings*), each with every stanza, its refrain and the Scriptures behind it (every reference checked against the KJV text)
+- **Only public-domain words**: every new hymn's words were published before 1928. Modern worship songs and anything still under copyright were left out on purpose, as were Marian hymns and the Coptic saints' songs found in the same collections. Christmas carols of older Catholic origin are included, since their words are about the Lord's birth
+- **The hymns you already know have not moved**: a hymn is opened by its number in notes and shared links, so the 98 keep theirs and the new ones follow. The list gathers them under the same nine sections
+- Sources (all open): h1rdr3v2/open-hymnal-json, josmithua/song-data (Believers Hymn Book, Sacred Songs for Singing Saints), pathawks/Christmas-Songs (CC0) and michaelfarah27/HymnsXMLFiles, each hymn's source noted in tools/hymns/texts.json. Authors and years were set by hand (the open files have few); the words are lightly cleaned of typing slips and are worth a proofreading beside a hymnal
+- Tips & Help, the Hymns tool's tip and What's New say 224
+
 ### 🧭 Any Pace, Listening Counts, Share a Link (v60)
 - **🧭 Make your own plan: any pace**. Under the 1–5 buttons, **More chapters a day, or finish in so many days** takes any number of chapters a day (the New Testament at 9 a day), or a number of days to finish in, and the chapters are spread evenly over them (the whole Bible in 182 days is 6–7 a day; the Old Testament in 31 days is 29–30). The plan stores its days as custom.days beside per, so an older copy of the app still reads it (at per a day)
 - **Listening counts as reading**: a chapter heard through on the Scourby audio Bible, in Chapter Play (auto-play included) or Book Play, counts just as one read to its end: the calendar, the 🔥 streak, the book in the Reading Journey and every plan it is in, whether or not the page was scrolled. Only time really listened counts: skips and drags along the bar are jumps, and at least half the chapter must be heard (unless Chapter Play took up where it left off)
