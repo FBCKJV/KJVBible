@@ -8058,7 +8058,6 @@ function nbText(st){
     else if(n.textContent.trim()) out.push(n.textContent.replace(/\s+/g, ' ').trim());
   });
   walk(box);
-  out.push('', '— KJV Bible · Faith Baptist Church');
   return out.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 // Markdown form: # title, ## headings, - and 1. lists (indented for an outline),
@@ -8140,7 +8139,7 @@ function nbRich(st){
   // Headings as bold lines, not heading styles: Telegram takes bold free, but
   // large heading text needs its Premium; Docs and Word show them much the same
   box.querySelectorAll('h3').forEach(h => { const n = document.createElement('p'); n.innerHTML = `<b>${h.innerHTML}</b>`; h.replaceWith(n); });
-  return `<p><b>${nbEsc(st.t.toUpperCase())}</b></p>${box.innerHTML}<p><i>— KJV Bible · Faith Baptist Church</i></p>`;
+  return `<p><b>${nbEsc(st.t.toUpperCase())}</b></p>${box.innerHTML}`; // the study only, no signature line
 }
 // Put words on the clipboard with their formatting where the app pasted into
 // can take it, and plain text where it can't
