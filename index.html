@@ -1253,7 +1253,7 @@ body.scourby-open #reader-float-nav {
 .xref-mark:hover{opacity:1}
 
 #xref-pop{
-  position:fixed;bottom:70px;left:12px;right:12px;
+  position:fixed;bottom:70px;left:12px;right:calc(12px + var(--side-w,0px));
   background:var(--bg2);border:1px solid var(--gold-d);
   border-radius:12px;padding:14px 16px;z-index:260;
   display:none;box-shadow:0 8px 32px rgba(0,0,0,.5);
@@ -4341,12 +4341,16 @@ async function openPassage(book, ch, nums){
   S.book = book; S.ch = ch - 1; S.bookData = data;
   renderReader(); showScreen('reader');
   S._linkShown = true;
+  lightVerses(book, ch, nums);
+  if(S._newHere) setTimeout(() => showToast('📖 Shared with you — read on with Next ›'), 1500);
+}
+// Scroll to verses of the chapter just opened and outline them for a while
+function lightVerses(book, ch, nums){
   setTimeout(() => {
     const els = nums.map(v => document.querySelector(`[data-ref="${book} ${ch}:${v}"]`)).filter(Boolean);
     if(els[0]) els[0].scrollIntoView({behavior: 'smooth', block: 'center'});
     els.forEach(el => { el.classList.add('vlink'); setTimeout(() => el.classList.remove('vlink'), 6000); });
   }, 250);
-  if(S._newHere) setTimeout(() => showToast('📖 Shared with you — read on with Next ›'), 1500);
 }
 function linkRelease(){
   if(!S._linkHold) return;
@@ -5124,7 +5128,7 @@ function updateHeaderState(){
   sel.style.display    = S.screen==='reader'?'flex':'none';
   selAll.style.display = S.screen==='reader'?'flex':'none';
   document.getElementById('logo').textContent =
-    S.screen==='reader'?S.book:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
+    S.screen==='reader'?`${S.book} ${S.ch+1}`:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
 }
 
 /* ════ FETCH ════ */
@@ -12872,6 +12876,10 @@ function openXRefFull(){
     if(history.state && history.state.modal==='xref-pop') history.replaceState(st, '', '');
     else history.pushState(st, '', '');
     showScreen('reader', false);
+    // land on the verse itself, not the top of the chapter
+    const r = _xrefs[_xrefIdx], nums = [];
+    if(r) for(let v = r.v; v <= (r.vEnd || r.v); v++) nums.push(v);
+    lightVerses(_xrefBook, _xrefCh + 1, nums);
   });
 }
 

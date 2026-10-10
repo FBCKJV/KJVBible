@@ -431,6 +431,19 @@ check('notebook open on a wide screen: the select bar stays beside it', async (p
   assert(r.nb < 1600 && r.bar <= r.nb + 1 && r.btn <= r.nb, `select bar reaches ${r.bar} (buttons ${r.btn}) under the notebook at ${r.nb}`);
 });
 
+check('cross-reference: Open lands on the verse; the top shows the chapter', async p => {
+  await p.evaluate(() => jumpToRef('Zechariah 14:8')); await sleep(1200);
+  assert(await p.evaluate(() => document.getElementById('logo').textContent) === 'Zechariah 14', 'the top should say Zechariah 14');
+  await p.evaluate(() => { showXRef([{book: 'John', ch: 7, v: 38, ref: 'John 7:38'}]); }); await sleep(600);
+  await p.evaluate(() => openXRefFull()); await sleep(1500);
+  const r = await p.evaluate(() => { const el = document.querySelector('[data-ref="John 7:38"]'), b = el.getBoundingClientRect();
+    return {top: document.getElementById('logo').textContent, lit: el.classList.contains('vlink'), seen: b.top > 0 && b.bottom < innerHeight}; });
+  assert(r.top === 'John 7', `the top should say John 7, says ${r.top}`);
+  assert(r.lit && r.seen, `John 7:38 should be on screen and outlined (${JSON.stringify(r)})`);
+  await p.evaluate(() => nextCh()); await sleep(800);
+  assert(await p.evaluate(() => document.getElementById('logo').textContent) === 'John 8', 'Next should move the top to John 8');
+});
+
 check('screenshots (light and dark)', async (p, ctx, browser, base) => {
   fs.mkdirSync(SHOT_DIR, {recursive: true});
   for(const theme of ['dark', 'light']){
