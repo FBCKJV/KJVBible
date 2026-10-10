@@ -2494,7 +2494,7 @@ body.light #home-watermark{
       <div class="tips-section">
         <div class="tips-section-lbl">💡 Tips & Shortcuts</div>
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
-        <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
+        <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, <strong>📋 Copy</strong> it with its bold, italics and headings (paste into a Google Doc, an email or Telegram on a computer; each verse comes as its reference in bold and the words in italics), copy it as Markdown (for Claude or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
@@ -7993,8 +7993,8 @@ function nbRenderMenu(){
     + `<div class="nb-menu-acts">
       <button class="nb-tb" onclick="nbNew()">＋ New study</button>
       <button class="nb-tb" onclick="nbShare()">📤 Share as text</button>
-      <button class="nb-tb" onclick="nbCopy()">📋 Copy</button>
-      <button class="nb-tb" onclick="nbCopyMarkdown()" title="Headings, points, verses and slide breaks marked out — for Claude, Google Docs, Word or a slide maker">Ⓜ️ Copy as Markdown</button>
+      <button class="nb-tb" onclick="nbCopy()" title="Copies the study with its bold, italics and headings — paste into a Google Doc, an email or Telegram">📋 Copy</button>
+      <button class="nb-tb" onclick="nbCopyMarkdown()" title="Headings, points, verses and slide breaks marked out in symbols — for Claude or a slide maker. For Google Docs or Telegram, use 📋 Copy">Ⓜ️ Copy as Markdown</button>
       <button class="nb-tb" onclick="nbPrint()">🖨️ Print / PDF</button></div>`;
 }
 function nbSwitch(id){
@@ -8111,14 +8111,53 @@ function nbCopyMarkdown(){
   nbStore();
   navigator.clipboard?.writeText(nbMarkdown(nbActive())).then(() => showToast('Study copied as Markdown'), () => showToast('Could not copy'));
 }
+/* The study with its formatting, for pasting (v61.05): bold, italics,
+   underline, headings, lists and outlines come along into Google Docs, Word,
+   Gmail or Telegram on a computer. A verse is written plainly, the way it
+   reads anywhere: its reference in bold and the words in italics, with the
+   verse numbers of a passage in bold. The gold card stays in the notebook. */
+function nbRich(st){
+  const box = document.createElement('div');
+  box.innerHTML = nbClean(st.h);
+  const it = t => t.trim() ? `<i>${nbEsc(t)}</i>` : nbEsc(t);
+  box.querySelectorAll('blockquote').forEach(q => {
+    const r = q.querySelector('.nb-ref, .nb-hy-ref'), label = r ? r.textContent.replace(/^🎵\s*/, '').trim() : '';
+    if(r) r.remove();
+    const p = document.createElement('p');
+    if(q.classList.contains('nb-hy')){
+      // a hymn: its name, then its lines in italics
+      const lines = q.innerHTML.split(/<br\s*\/?>/i).map(h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.trim(); }).filter(Boolean);
+      p.innerHTML = (label ? `<b>🎵 ${nbEsc(label)}</b><br>` : '') + lines.map(l => `<i>${nbEsc(l)}</i>`).join('<br>');
+    } else {
+      const body = [...q.childNodes].map(c => c.nodeType === 3 ? it(c.textContent) : /^(B|STRONG)$/.test(c.tagName) ? `<b>${nbEsc(c.textContent)}</b>` : it(c.textContent)).join('');
+      p.innerHTML = (label ? `<b>${nbEsc(label)}</b> ` : '') + body.replace(/^\s+/, '');
+    }
+    q.replaceWith(p);
+  });
+  box.querySelectorAll('.nb-ref').forEach(r => { const b = document.createElement('b'); b.textContent = r.textContent; r.replaceWith(b); });
+  box.querySelectorAll('.nb-map, .nb-place').forEach(m => { const p = document.createElement('p'); p.textContent = (m.querySelector('span') || m).textContent.trim(); m.replaceWith(p); });
+  box.querySelectorAll('[contenteditable], [class], [data-ref], [data-map], [data-place], [data-hymn]').forEach(el => [...el.attributes].forEach(a => el.removeAttribute(a.name)));
+  box.querySelectorAll('h3').forEach(h => { const n = document.createElement('h2'); n.innerHTML = h.innerHTML; h.replaceWith(n); });
+  return `<h1>${nbEsc(st.t)}</h1>${box.innerHTML}<p><i>— KJV Bible · Faith Baptist Church</i></p>`;
+}
+// Put words on the clipboard with their formatting where the app pasted into
+// can take it, and plain text where it can't
+function copyRich(html, text, done){
+  const ok = () => showToast(done), fail = () => navigator.clipboard?.writeText(text).then(ok, () => showToast('Could not copy'));
+  if(window.ClipboardItem && navigator.clipboard && navigator.clipboard.write){
+    navigator.clipboard.write([new ClipboardItem({'text/html': new Blob([html], {type: 'text/html'}), 'text/plain': new Blob([text], {type: 'text/plain'})})]).then(ok, fail);
+  } else fail();
+}
 function nbShare(){
   nbStore();
-  const st = nbActive(), text = nbText(st);
-  shareText(st.t, text);
+  const st = nbActive();
+  if(onComputer()) nbCopy(); // a computer's share menu can't reach Docs or Gmail: copy it, formatting and all
+  else shareText(st.t, nbText(st));
 }
 function nbCopy(){
   nbStore();
-  navigator.clipboard?.writeText(nbText(nbActive())).then(() => showToast('Study copied'), () => showToast('Could not copy'));
+  const st = nbActive();
+  copyRich(nbRich(st), nbText(st), '📋 Study copied with its bold, italics and headings — paste it into a Google Doc, an email or Telegram');
 }
 // Print (or "Save as PDF" in the print dialog) — a clean page in the note font
 function nbPrint(){
@@ -13200,7 +13239,7 @@ const TOOL_TIPS = {
     ['🎦', '<strong>🎦 Present</strong> shows the study as slides: its name is the title slide, each heading starts a slide, and every verse you added gets a slide of its own'],
     ['📖', '<strong>Tap a verse reference</strong> in the study to read it; the study stays as it was'],
     ['📋', '<strong>Pasting a lesson</strong> from a web page or another app keeps its headings, lists, quotes, bold and italic'],
-    ['☰', '<strong>☰ Studies</strong> switches studies and starts new ones, and shares a study as text, copies it, copies it as Markdown (for Claude, Google Docs, Word or a slide maker) or prints it to PDF'],
+    ['☰', '<strong>☰ Studies</strong> switches studies and starts new ones, and shares a study as text, <strong>📋 copies</strong> it with its formatting (bold, italics, headings and lists paste into Google Docs, Word, an email or Telegram on a computer; verses come as a bold reference and italic words), copies it as Markdown (for Claude or a slide maker) or prints it to PDF'],
     ['☁️', 'Saved on this device as you type, and backed up with your restore code'],
   ]},
   present: {i:'🎦', t:'Present', tips:[
