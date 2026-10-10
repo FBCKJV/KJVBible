@@ -442,6 +442,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **A study shared as text keeps its paragraphs apart (v61.08)** — Share as text put each paragraph on its own line with no space between, so in Telegram they ran together. Now a blank line separates paragraphs, verses and lists (a list's points stay together)
 - **A copied or shared study ends with the study (v61.07)** — the “— KJV Bible · Faith Baptist Church” line is no longer added at the end
 - **A copied study pastes into Telegram without Premium (v61.06)** — the study's title and headings were copied as heading styles, which Telegram counts as rich formatting needing Telegram Premium. They are now bold lines (the title in capitals), so Telegram takes the whole study free with its bold and italics; Google Docs and Word show it much the same
 - **A study copies with its formatting (v61.05)** — 📋 Copy in the notebook (and Share on a computer) now puts the study on the clipboard with its bold, italics, underline, headings and lists, so it pastes as it looks into Google Docs, Word, Gmail or Telegram on a computer, instead of plain text or Markdown's ** and > marks. Each verse comes plainly: its reference in bold and the words in italics, a passage's verse numbers in bold; a hymn its name and lines. The gold verse card stays in the notebook. Plain-text places still get plain text; Copy as Markdown is unchanged (now described as for Claude or a slide maker)
