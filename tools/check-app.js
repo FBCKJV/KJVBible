@@ -421,6 +421,16 @@ check('share: links open a chapter or verses; a newcomer sees them first; Home',
   assert(!errs.length, 'page errors: ' + errs.join(' / '));
 });
 
+check('notebook open on a wide screen: the select bar stays beside it', async (p, ctx, browser, base) => {
+  const w = await browser.newContext({viewport: {width: 1600, height: 900}}), q = await openApp(w, base);
+  await q.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
+  await q.evaluate(() => { nbOpen(); }); await sleep(600);
+  await q.evaluate(() => { toggleSelectMode(); document.querySelectorAll('#verses .vblock')[2].click(); }); await sleep(500);
+  const r = await q.evaluate(() => { const nb = document.getElementById('nb-panel').getBoundingClientRect().left; return {nb, bar: document.getElementById('multibar').getBoundingClientRect().right, btn: Math.max(...[...document.querySelectorAll('.mbar-btns .mb')].map(b => b.getBoundingClientRect().right))}; });
+  await w.close();
+  assert(r.nb < 1600 && r.bar <= r.nb + 1 && r.btn <= r.nb, `select bar reaches ${r.bar} (buttons ${r.btn}) under the notebook at ${r.nb}`);
+});
+
 check('screenshots (light and dark)', async (p, ctx, browser, base) => {
   fs.mkdirSync(SHOT_DIR, {recursive: true});
   for(const theme of ['dark', 'light']){
