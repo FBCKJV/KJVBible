@@ -482,6 +482,7 @@ check('notebook: Copy carries bold, italics and headings; verses as bold referen
     assert(r.html.includes(want), `formatted copy is missing ${want}: ${r.html}`);
   assert(!/blockquote|contenteditable|class=|<h\d|>>|\*\*/.test(r.html), `formatted copy should be clean, with no heading styles (Telegram Premium): ${r.html}`);
   assert(r.text && r.text.includes('God our refuge'.toUpperCase()), 'the plain-text copy should still be there');
+  assert(/GOD OUR REFUGE\n\nWe are safe in Christ\.\n\n    “For God hath/.test(r.text), `shared text should keep a blank line between paragraphs: ${JSON.stringify(r.text)}`);
   assert(!/Faith Baptist Church/.test(r.html + r.text), 'a copied study should end with the study, no signature line');
 });
 

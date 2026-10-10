@@ -8043,11 +8043,14 @@ function nbText(st){
       } else if(/^(UL|OL)$/.test(c.tagName)) list(c, depth + 1);
     } };
   const walk = node => [...node.childNodes].forEach(n => {
-    if(n.nodeType === 3){ if(n.textContent.trim()) out.push(n.textContent.trim()); return; }
+    // a blank line between paragraphs, verses and lists, so they stay apart
+    // in a message (a list's own points stay together)
+    if(n.nodeType === 3){ if(n.textContent.trim()) out.push('', n.textContent.trim()); return; }
     const tag = n.tagName;
     if(tag === 'H3') out.push('', n.textContent.trim().toUpperCase());
-    else if(tag === 'UL' || tag === 'OL') list(n, 0);
+    else if(tag === 'UL' || tag === 'OL'){ out.push(''); list(n, 0); }
     else if(tag === 'BLOCKQUOTE'){
+      out.push('');
       const q = n.cloneNode(true), r = q.querySelector('.nb-ref, .nb-hy-ref');
       const label = r ? r.textContent.replace(/^🎵\s*/, '').trim() : '';
       if(r) r.remove();
@@ -8055,10 +8058,10 @@ function nbText(st){
       out.push('    “' + q.textContent.replace(/\s+/g, ' ').replace(/( \/ )+/g, ' / ').replace(/^ \/ | \/ $/g, '').trim() + '”' + (label ? ` (${label})` : ''));
     }
     else if(/^(P|DIV)$/.test(tag) && n.querySelector('ul,ol,blockquote,h3')) walk(n);
-    else if(n.textContent.trim()) out.push(n.textContent.replace(/\s+/g, ' ').trim());
+    else if(n.textContent.trim()) out.push('', n.textContent.replace(/\s+/g, ' ').trim());
   });
   walk(box);
-  return out.join('\n').replace(/\n{3,}/g, '\n\n');
+  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 // Markdown form: # title, ## headings, - and 1. lists (indented for an outline),
 // **bold** and *italic*, > verses with their reference, --- at each ✂ slide
