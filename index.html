@@ -62,6 +62,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 /* HEADER */
 #header{background:var(--bg2);border-bottom:1px solid var(--border);height:var(--nav-h);display:flex;align-items:center;gap:6px;padding:0 10px;flex-shrink:0;position:relative;z-index:10}
 #logo{font-family:'IM Fell English',serif;color:var(--gold);font-size:17px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:600px){#header.has-return #logo{visibility:hidden}} /* the way back to the chapter matters more than the name */
 .hbtn{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:5px 9px;font-size:12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
 .hbtn:hover,.hbtn.on{background:var(--bg3);color:var(--gold);border-color:var(--gold-d)}
 
@@ -153,7 +154,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 
 /* ─── MULTI-SELECT ACTION BAR ─── */
 #multibar{
-  position:fixed;bottom:60px;left:0;right:0;z-index:200;
+  position:fixed;bottom:60px;left:0;right:var(--side-w,0px);z-index:200;
   background:var(--bg2);border-top:1px solid var(--gold-d);
   padding:10px 12px;
   display:none;
@@ -1173,7 +1174,7 @@ sup.vsuper{font-size:10px;color:var(--gold-d);font-weight:700;margin-right:2px;v
 }
 #reader-float-nav {
   position:fixed;bottom:calc(60px + env(safe-area-inset-bottom,0px) + 8px);
-  left:0;right:0;display:none;
+  left:0;right:var(--side-w,0px);display:none;
   justify-content:space-between;
   padding:0 14px;pointer-events:none;z-index:90;
   opacity:1;transition:opacity .3s ease, bottom .2s ease;
@@ -1253,7 +1254,7 @@ body.scourby-open #reader-float-nav {
 .xref-mark:hover{opacity:1}
 
 #xref-pop{
-  position:fixed;bottom:70px;left:12px;right:12px;
+  position:fixed;bottom:70px;left:12px;right:calc(12px + var(--side-w,0px));
   background:var(--bg2);border:1px solid var(--gold-d);
   border-radius:12px;padding:14px 16px;z-index:260;
   display:none;box-shadow:0 8px 32px rgba(0,0,0,.5);
@@ -1477,7 +1478,7 @@ body.light #home-watermark{
 
 /* Inline input */
 /* ── Scourby Audio Player ── */
-#scourby-bar{display:none;position:fixed;bottom:60px;left:0;right:0;z-index:200;
+#scourby-bar{display:none;position:fixed;bottom:60px;left:0;right:var(--side-w,0px);z-index:200;
   background:var(--bg2);border-top:1px solid var(--border);
   border-bottom:1px solid var(--border);
   padding:8px 12px;align-items:center;gap:8px;
@@ -2084,6 +2085,7 @@ body.light #home-watermark{
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
     Home
   </button>
+  <button class="hbtn" id="btn-return" onclick="returnToChapter()" style="display:none" title="Back to the chapter you were reading"></button>
   <div id="logo">✝ Faith Baptist Church</div>
   <button class="hbtn" id="btn-select" onclick="toggleSelectMode()" style="display:none" title="Select verses">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -2494,6 +2496,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
+        <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
         <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, our doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
@@ -4341,12 +4344,16 @@ async function openPassage(book, ch, nums){
   S.book = book; S.ch = ch - 1; S.bookData = data;
   renderReader(); showScreen('reader');
   S._linkShown = true;
+  lightVerses(book, ch, nums);
+  if(S._newHere) setTimeout(() => showToast('📖 Shared with you — read on with Next ›'), 1500);
+}
+// Scroll to verses of the chapter just opened and outline them for a while
+function lightVerses(book, ch, nums){
   setTimeout(() => {
     const els = nums.map(v => document.querySelector(`[data-ref="${book} ${ch}:${v}"]`)).filter(Boolean);
     if(els[0]) els[0].scrollIntoView({behavior: 'smooth', block: 'center'});
     els.forEach(el => { el.classList.add('vlink'); setTimeout(() => el.classList.remove('vlink'), 6000); });
   }, 250);
-  if(S._newHere) setTimeout(() => showToast('📖 Shared with you — read on with Next ›'), 1500);
 }
 function linkRelease(){
   if(!S._linkHold) return;
@@ -4904,6 +4911,9 @@ function nextCh(){
 
 function showScreen(name, pushHistory=true){
   if(name !== 'search') captureSearchSpot();
+  // Leaving a chapter: keep its place, so 📖 at the top can take you back
+  if(S.screen === 'reader' && name !== 'reader' && S.book && S.bookData)
+    S._lastRead = {book: S.book, ch: S.ch, y: document.getElementById('screen-reader').scrollTop};
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.bn').forEach(b=>b.classList.remove('on'));
   document.getElementById('screen-'+name)?.classList.add('on');
@@ -5115,16 +5125,36 @@ window.addEventListener('popstate', e => {
     showScreen(state.screen, false);
   }
 });
+// 📖 John 7 at the top of Search, Plans, Notes or Home: back to the chapter
+// you were reading, at the verse you left it
+async function returnToChapter(){
+  const lr = S._lastRead;
+  if(!lr) return;
+  if(S.book !== lr.book || S.ch !== lr.ch || !S.bookData || !document.querySelector('#verses .vblock')){
+    const data = await fetchBook(lr.book);
+    if(!data) return;
+    S.book = lr.book; S.ch = lr.ch; S.bookData = data;
+    renderReader();
+  }
+  showScreen('reader');
+  const r = document.getElementById('screen-reader');
+  r.scrollTop = lr.y;
+  requestAnimationFrame(() => { r.scrollTop = lr.y; });
+}
 function updateHeaderState(){
   const back   = document.getElementById('btn-back');
   const sel    = document.getElementById('btn-select');
   const selAll = document.getElementById('btn-select-all');
   const show   = S.screen==='reader'||S.screen==='chapters';
   back.style.display   = show?'flex':'none';
+  const ret = document.getElementById('btn-return'), lr = S._lastRead;
+  ret.style.display = lr && !show ? 'flex' : 'none';
+  if(lr) ret.textContent = `📖 ${lr.book} ${lr.ch + 1}`;
+  document.getElementById('header').classList.toggle('has-return', !!lr && !show);
   sel.style.display    = S.screen==='reader'?'flex':'none';
   selAll.style.display = S.screen==='reader'?'flex':'none';
   document.getElementById('logo').textContent =
-    S.screen==='reader'?S.book:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
+    S.screen==='reader'?`${S.book} ${S.ch+1}`:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
 }
 
 /* ════ FETCH ════ */
@@ -6825,6 +6855,7 @@ function sideLayout(){
   }
   const was = document.body.classList.contains('side-open');
   document.body.style.paddingRight = w ? w + 'px' : '';
+  document.body.style.setProperty('--side-w', w + 'px'); // bars pinned to the window stop at the panel too
   document.body.classList.toggle('side-open', !!w);
   if(was !== !!w) splitRefresh();
 }
@@ -12871,6 +12902,10 @@ function openXRefFull(){
     if(history.state && history.state.modal==='xref-pop') history.replaceState(st, '', '');
     else history.pushState(st, '', '');
     showScreen('reader', false);
+    // land on the verse itself, not the top of the chapter
+    const r = _xrefs[_xrefIdx], nums = [];
+    if(r) for(let v = r.v; v <= (r.vEnd || r.v); v++) nums.push(v);
+    lightVerses(_xrefBook, _xrefCh + 1, nums);
   });
 }
 

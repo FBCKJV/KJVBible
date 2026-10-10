@@ -421,6 +421,42 @@ check('share: links open a chapter or verses; a newcomer sees them first; Home',
   assert(!errs.length, 'page errors: ' + errs.join(' / '));
 });
 
+check('notebook open on a wide screen: the select bar stays beside it', async (p, ctx, browser, base) => {
+  const w = await browser.newContext({viewport: {width: 1600, height: 900}}), q = await openApp(w, base);
+  await q.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
+  await q.evaluate(() => { nbOpen(); }); await sleep(600);
+  await q.evaluate(() => { toggleSelectMode(); document.querySelectorAll('#verses .vblock')[2].click(); }); await sleep(500);
+  const r = await q.evaluate(() => { const nb = document.getElementById('nb-panel').getBoundingClientRect().left; return {nb, bar: document.getElementById('multibar').getBoundingClientRect().right, btn: Math.max(...[...document.querySelectorAll('.mbar-btns .mb')].map(b => b.getBoundingClientRect().right))}; });
+  await w.close();
+  assert(r.nb < 1600 && r.bar <= r.nb + 1 && r.btn <= r.nb, `select bar reaches ${r.bar} (buttons ${r.btn}) under the notebook at ${r.nb}`);
+});
+
+check('cross-reference: Open lands on the verse; the top shows the chapter', async p => {
+  await p.evaluate(() => jumpToRef('Zechariah 14:8')); await sleep(1200);
+  assert(await p.evaluate(() => document.getElementById('logo').textContent) === 'Zechariah 14', 'the top should say Zechariah 14');
+  await p.evaluate(() => { showXRef([{book: 'John', ch: 7, v: 38, ref: 'John 7:38'}]); }); await sleep(600);
+  await p.evaluate(() => openXRefFull()); await sleep(1500);
+  const r = await p.evaluate(() => { const el = document.querySelector('[data-ref="John 7:38"]'), b = el.getBoundingClientRect();
+    return {top: document.getElementById('logo').textContent, lit: el.classList.contains('vlink'), seen: b.top > 0 && b.bottom < innerHeight}; });
+  assert(r.top === 'John 7', `the top should say John 7, says ${r.top}`);
+  assert(r.lit && r.seen, `John 7:38 should be on screen and outlined (${JSON.stringify(r)})`);
+  await p.evaluate(() => nextCh()); await sleep(800);
+  assert(await p.evaluate(() => document.getElementById('logo').textContent) === 'John 8', 'Next should move the top to John 8');
+});
+
+check('📖 at the top returns from Search to the chapter and place you left', async p => {
+  await p.evaluate(() => jumpToRef('John 7:38')); await sleep(1500);
+  const y = await p.evaluate(() => document.getElementById('screen-reader').scrollTop);
+  await p.evaluate(() => openSearchTab()); await sleep(600);
+  const btn = await p.evaluate(() => { const b = document.getElementById('btn-return'); return {shown: b.style.display !== 'none', text: b.textContent}; });
+  assert(btn.shown && btn.text === '📖 John 7', `Search should show 📖 John 7 at the top, shows ${JSON.stringify(btn)}`);
+  await p.click('#btn-return'); await sleep(800);
+  const r = await p.evaluate(() => ({screen: S.screen, book: S.book, ch: S.ch, y: document.getElementById('screen-reader').scrollTop, ret: document.getElementById('btn-return').style.display}));
+  assert(r.screen === 'reader' && r.book === 'John' && r.ch === 6, `should be back in John 7, is ${r.screen} ${r.book} ${r.ch}`);
+  assert(y > 200 && Math.abs(r.y - y) < 40, `should be back at the same place (${y}), is at ${r.y}`);
+  assert(r.ret === 'none', 'in the chapter the 📖 button gives way to Home');
+});
+
 check('screenshots (light and dark)', async (p, ctx, browser, base) => {
   fs.mkdirSync(SHOT_DIR, {recursive: true});
   for(const theme of ['dark', 'light']){
