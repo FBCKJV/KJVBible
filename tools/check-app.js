@@ -478,9 +478,9 @@ check('notebook: Copy carries bold, italics and headings; verses as bold referen
     return {html, text};
   });
   assert(r.html, 'Copy did not put formatted text on the clipboard');
-  for(const want of ['<h2>God our refuge</h2>', '<b>safe</b>', '<i>Christ</i>', '<b>1 Thessalonians 5:9</b> <i>For God hath not appointed us to wrath</i>', '<b>Zechariah 14:3–4</b> <b>3</b><i> Then shall the LORD go forth </i><b>4</b><i> And his feet shall stand</i>'])
+  for(const want of ['<p><b>God our refuge</b></p>', '<b>safe</b>', '<i>Christ</i>', '<b>1 Thessalonians 5:9</b> <i>For God hath not appointed us to wrath</i>', '<b>Zechariah 14:3–4</b> <b>3</b><i> Then shall the LORD go forth </i><b>4</b><i> And his feet shall stand</i>'])
     assert(r.html.includes(want), `formatted copy is missing ${want}: ${r.html}`);
-  assert(!/blockquote|contenteditable|class=|>>|\*\*/.test(r.html), `formatted copy should be clean: ${r.html}`);
+  assert(!/blockquote|contenteditable|class=|<h\d|>>|\*\*/.test(r.html), `formatted copy should be clean, with no heading styles (Telegram Premium): ${r.html}`);
   assert(r.text && r.text.includes('God our refuge'.toUpperCase()), 'the plain-text copy should still be there');
 });
 
