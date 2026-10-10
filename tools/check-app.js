@@ -465,6 +465,25 @@ check('📖 at the top returns from Search to the chapter and place you left', a
   assert(r.ret === 'none', 'in the chapter the 📖 button gives way to Home');
 });
 
+check('notebook: Copy carries bold, italics and headings; verses as bold reference + italic words', async p => {
+  const r = await p.evaluate(async () => {
+    nbOpen(); await new Promise(r => setTimeout(r, 300));
+    const st = nbActive();
+    document.getElementById('nb-ed').innerHTML = '<h3>God our refuge</h3><p>We are <b>safe</b> in <i>Christ</i>.</p>'; nbStore();
+    nbAddVerse('1 Thessalonians 5:9', 'For God hath not appointed us to wrath');
+    nbAppend('<blockquote class="nb-v">' + nbRefSpan('Zechariah 14:3', 'Zechariah 14:3–4') + '<b>3</b> Then shall the LORD go forth <b>4</b> And his feet shall stand</blockquote>', 'x');
+    let items = null; navigator.clipboard.write = async it => { items = it; };
+    nbCopy(); await new Promise(r => setTimeout(r, 100));
+    const html = items && await (await items[0].getType('text/html')).text(), text = items && await (await items[0].getType('text/plain')).text();
+    return {html, text};
+  });
+  assert(r.html, 'Copy did not put formatted text on the clipboard');
+  for(const want of ['<h2>God our refuge</h2>', '<b>safe</b>', '<i>Christ</i>', '<b>1 Thessalonians 5:9</b> <i>For God hath not appointed us to wrath</i>', '<b>Zechariah 14:3–4</b> <b>3</b><i> Then shall the LORD go forth </i><b>4</b><i> And his feet shall stand</i>'])
+    assert(r.html.includes(want), `formatted copy is missing ${want}: ${r.html}`);
+  assert(!/blockquote|contenteditable|class=|>>|\*\*/.test(r.html), `formatted copy should be clean: ${r.html}`);
+  assert(r.text && r.text.includes('God our refuge'.toUpperCase()), 'the plain-text copy should still be there');
+});
+
 check('screenshots (light and dark)', async (p, ctx, browser, base) => {
   fs.mkdirSync(SHOT_DIR, {recursive: true});
   for(const theme of ['dark', 'light']){
