@@ -394,7 +394,9 @@ check('share: links open a chapter or verses; a newcomer sees them first; Home',
   const links = await p.evaluate(() => ({one: passageLink('1 John', 3, [16]), some: passageLink('John', 3, [5, 3, 4, 8]), ch: passageLink('Song of Solomon', 2), span: verseSpan([1, 2, 3, 7, 9, 10], '–')}));
   assert(links.one.endsWith('#1+John+3:16') && links.some.endsWith('#John+3:3-5,8') && links.ch.endsWith('#Song+of+Solomon+2') && links.span === '1–3,7,9–10', JSON.stringify(links));
   // Several verses chosen on the card are shared with their link
-  await p.evaluate(() => { window.__shared = null; navigator.share = d => { window.__shared = d; return Promise.resolve(); }; jumpToRef('John 3:16'); });
+  // as a phone (its share menu)
+  await p.evaluate(() => { window.__shared = null; navigator.share = d => { window.__shared = d; return Promise.resolve(); };
+    const mm = window.__mm = window.matchMedia.bind(window); window.matchMedia = q => /pointer:fine/.test(q) ? {matches: false} : mm(q); jumpToRef('John 3:16'); });
   await sleep(1200);
   const sh = await p.evaluate(() => {
     const vs = [...document.querySelectorAll('#verses .vblock')];
@@ -406,6 +408,12 @@ check('share: links open a chapter or verses; a newcomer sees them first; Home',
   assert(sh.some && sh.some.url.endsWith('#John+3:3-5,8') && sh.some.title === 'John 3:3–5,8', `several verses: ${JSON.stringify(sh.some)}`);
   assert(sh.all && sh.all.url.endsWith('#John+3') && sh.all.title === 'John 3', `whole chapter: ${JSON.stringify(sh.all)}`);
   assert(sh.home === 'Home', `the button at the top should say Home, says ${sh.home}`);
+  // on a computer the text and link are copied instead, with a note
+  const pc = await p.evaluate(async () => { window.matchMedia = window.__mm; let got = null;
+    navigator.clipboard.writeText = t => { got = t; return Promise.resolve(); }; window.__shared = null;
+    S.selectedData = new Set([{ref: 'John 3:16', vnum: '16', txt: 'For God so loved the world'}]); multiShare();
+    await new Promise(r => setTimeout(r, 50)); return {got, shared: window.__shared, toast: document.getElementById('toast')?.textContent || ''}; });
+  assert(!pc.shared && pc.got && pc.got.includes('For God so loved') && pc.got.endsWith('#John+3:16'), `on a computer Share should copy the text and link: ${JSON.stringify(pc)}`);
   await p.click('#btn-back'); await sleep(300);
   assert(await p.evaluate(() => S.screen) === 'books', 'Home should go to Home');
   // Someone new opens a shared link
