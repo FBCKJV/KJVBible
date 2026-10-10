@@ -2497,6 +2497,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, copy it as Markdown (for Claude, Google Docs or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
+        <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
         <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, our doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
@@ -4369,11 +4370,18 @@ window.addEventListener('hashchange', () => { if(/^#[a-z]+=/.test(location.hash)
    The phone's own share sheet, or the link copied where there is none. */
 const SHARE_SUBS = ['word', 'person', 'place', 'name', 'topic', 'hymn', 'strongs'];
 const pageLink = (sub, key) => APP_URL + '#' + sub + '=' + encodeURIComponent(key);
-function sharePage(title, text, url){
-  if(navigator.share){ navigator.share({title, text: text ? text + '\n' : title, url}).catch(() => {}); return; }
-  const all = (text ? text : title) + '\n' + url;
-  if(navigator.clipboard) navigator.clipboard.writeText(all).then(() => showToast('🔗 Link copied — paste it to share'), () => showToast(url));
-  else showToast(url);
+function sharePage(title, text, url){ shareText(title, text || title, url); }
+/* Share words (and a link) the way the device does it best (v61.04). A phone
+   opens its share menu, which lists every app on it (Drive, Gmail, Messages…).
+   A computer's menu lists only programs installed on it — not Google Drive,
+   Gmail or Docs, which are websites there — so on a computer the text is
+   copied instead, ready to paste wherever it is going. */
+const onComputer = () => matchMedia('(hover:hover) and (pointer:fine)').matches;
+function shareText(title, text, url){
+  if(navigator.share && !onComputer()){ navigator.share(url ? {title, text: text + '\n', url} : {title, text}).catch(() => {}); return; }
+  const all = url ? (text ? text + '\n' : '') + url : text;
+  if(navigator.clipboard) navigator.clipboard.writeText(all).then(() => showToast('📋 Copied — paste it into an email, a message or a Google Doc'), () => showToast(url || 'Could not copy'));
+  else showToast(url || 'Could not copy');
 }
 function shareSub(){
   const v = S._subView;
@@ -8106,8 +8114,7 @@ function nbCopyMarkdown(){
 function nbShare(){
   nbStore();
   const st = nbActive(), text = nbText(st);
-  if(navigator.share) navigator.share({title: st.t, text}).catch(() => {});
-  else nbCopy();
+  shareText(st.t, text);
 }
 function nbCopy(){
   nbStore();
@@ -10784,8 +10791,7 @@ function colShare(id){
   const c = colLists().find(x => x.id === id);
   if(!c) return;
   const text = colText(c);
-  if(navigator.share) navigator.share({title: c.n, text}).catch(() => {});
-  else navigator.clipboard?.writeText(text).then(() => showToast('✅ List copied'));
+  shareText(c.n, text);
 }
 // One slide for the list's name, then each verse or passage
 function colPresent(id){
@@ -10931,11 +10937,7 @@ function exportNotesText(){
   });
   const text = 'My Bible Notes — '+new Date().toLocaleDateString()+'\n\n'
     + entries.map(([ref,note])=>ref+'\n'+note).join('\n\n');
-  if(navigator.share){
-    navigator.share({title:'My Bible Notes', text}).catch(()=>{});
-  } else {
-    navigator.clipboard?.writeText(text).then(()=>showToast('✅ Notes copied to clipboard'));
-  }
+  shareText('My Bible Notes', text);
 }
 /* Undo: a delete shows "Removed · Undo" for a few seconds */
 let _undo = null;
@@ -12927,8 +12929,7 @@ function showSharePop(){openPopover('share-pop');}
 function closeSharePop(e){if(e&&e.target!==document.getElementById('share-pop'))return;closePopover('share-pop');}
 function doShare(){
   const url=APP_URL;
-  if(navigator.share) navigator.share({title:'KJV Bible — Faith Baptist Church',url});
-  else navigator.clipboard?.writeText(url).then(()=>alert('Link copied!'));
+  shareText('KJV Bible — Faith Baptist Church', 'The KJV Bible app of Faith Baptist Church', url);
 }
 
 /* ════════════════════════════════

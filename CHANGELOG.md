@@ -442,6 +442,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Share on a computer copies instead (v61.04)** — a computer's share menu (Windows) lists only programs installed on it, never Google Drive, Gmail or Docs, so Share there was little use. On a computer, Share on a verse, verses, a study, a My Verses list, Notes, a page or the app now copies the words and link with a note to paste them; phones keep their full share menu. Picture cards and the backup file still use the share menu. Tips & Help says so
 - **The select bar stays beside an open notebook (v61.03)** — on a computer or tablet with the notebook open, the bar of buttons for selected verses ran under the notebook, hiding **Study** and **Share**. It now stops at the notebook's edge, as the page does; so do the audio player bar and the Prev / Next buttons
 - **A cross-reference opens on its verse (v61.03)** — **Open ↗** on a cross-reference card (Zechariah 14:8 → John 7:38) opened the chapter at the top; it now scrolls to the verse and outlines it. The card also stays beside an open notebook instead of running under it
 - **The top of the page shows the chapter (v61.03)** — beside Home it now reads *John 7*, not just *John*, and follows Next / Prev, so in a long chapter you can see where you are
