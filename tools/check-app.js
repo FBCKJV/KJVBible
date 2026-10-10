@@ -444,6 +444,19 @@ check('cross-reference: Open lands on the verse; the top shows the chapter', asy
   assert(await p.evaluate(() => document.getElementById('logo').textContent) === 'John 8', 'Next should move the top to John 8');
 });
 
+check('📖 at the top returns from Search to the chapter and place you left', async p => {
+  await p.evaluate(() => jumpToRef('John 7:38')); await sleep(1500);
+  const y = await p.evaluate(() => document.getElementById('screen-reader').scrollTop);
+  await p.evaluate(() => openSearchTab()); await sleep(600);
+  const btn = await p.evaluate(() => { const b = document.getElementById('btn-return'); return {shown: b.style.display !== 'none', text: b.textContent}; });
+  assert(btn.shown && btn.text === '📖 John 7', `Search should show 📖 John 7 at the top, shows ${JSON.stringify(btn)}`);
+  await p.click('#btn-return'); await sleep(800);
+  const r = await p.evaluate(() => ({screen: S.screen, book: S.book, ch: S.ch, y: document.getElementById('screen-reader').scrollTop, ret: document.getElementById('btn-return').style.display}));
+  assert(r.screen === 'reader' && r.book === 'John' && r.ch === 6, `should be back in John 7, is ${r.screen} ${r.book} ${r.ch}`);
+  assert(y > 200 && Math.abs(r.y - y) < 40, `should be back at the same place (${y}), is at ${r.y}`);
+  assert(r.ret === 'none', 'in the chapter the 📖 button gives way to Home');
+});
+
 check('screenshots (light and dark)', async (p, ctx, browser, base) => {
   fs.mkdirSync(SHOT_DIR, {recursive: true});
   for(const theme of ['dark', 'light']){
