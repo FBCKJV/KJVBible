@@ -500,6 +500,74 @@ check('Sword Drill: a verse just mastered rests a month before review', async p 
   assert(r.next > 30, `the second review should wait longer than a month, got ${r.next} days`);
 });
 
+check('Back in Sword Drill: a verse → the list → closed, never out of the app', async p => {
+  // Android's Back skips a step a page pushes by itself, so nothing may be pushed
+  // while Back is being handled: every step must come from a tap
+  await p.evaluate(() => {
+    window.__inPop = false; window.__pushedInPop = 0;
+    window.addEventListener('popstate', () => { window.__inPop = true; setTimeout(() => window.__inPop = false, 0); }, {capture: true});
+    const push = history.pushState.bind(history);
+    history.pushState = (...a) => { if(window.__inPop) window.__pushedInPop++; return push(...a); };
+  });
+  const state = () => p.evaluate(() => ({
+    open: document.getElementById('mem-overlay').classList.contains('on'),
+    verse: document.getElementById('mem-game').style.display === 'flex',
+    len: history.length, st: JSON.stringify(history.state)
+  }));
+  const home = await state();
+  const back = async () => { await p.evaluate(() => history.back()); await sleep(450); return state(); };
+
+  await p.evaluate(() => openMemorize()); await sleep(300);
+  await p.evaluate(() => startMem('Romans 3:23')); await sleep(700);
+  let s = await back();
+  assert(s.open && !s.verse, 'Back from a verse should show the list of verses');
+  s = await back();
+  assert(!s.open, 'Back from the list should close Sword Drill');
+  assert(s.st === home.st, `Back should land on the page Sword Drill opened from (${s.st} vs ${home.st})`);
+
+  // The buttons use up the same steps: ‹ Verses, then ✕ Close, leave nothing behind
+  await p.evaluate(() => openMemorize()); await sleep(300);
+  await p.evaluate(() => startMem('Romans 6:23')); await sleep(700);
+  await p.evaluate(() => memBackTap()); await sleep(450);
+  s = await state();
+  assert(s.open && !s.verse, '‹ Verses should show the list');
+  await p.evaluate(() => memCloseTap()); await sleep(450);
+  s = await state();
+  assert(!s.open && s.st === home.st, '✕ Close should close Sword Drill and use up its step');
+
+  // The certificate opened over Sword Drill closes first
+  await p.evaluate(() => openMemorize()); await sleep(300);
+  await p.evaluate(() => openSwordCertificate()); await sleep(400);
+  await back();
+  const cert = await p.evaluate(() => ({scr: document.getElementById('scr-overlay').classList.contains('on'), mem: document.getElementById('mem-overlay').classList.contains('on')}));
+  assert(!cert.scr && cert.mem, 'Back should close the certificate and leave Sword Drill open');
+  s = await back();
+  assert(!s.open, 'and Back again closes Sword Drill');
+
+  const pushed = await p.evaluate(() => window.__pushedInPop);
+  assert(!pushed, `${pushed} history step(s) were pushed while handling Back; Android skips those`);
+});
+
+check('Back closes the verse card maker and keeps the chapter', async p => {
+  await p.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
+  const before = await p.evaluate(() => S.book + ' ' + S.ch);
+  await p.evaluate(() => { const d = S.bookData.chapters[2].verses[15]; openVPop('John 3:16', d.text); }); await sleep(300);
+  await p.evaluate(() => singleScreenshot()); await sleep(600);
+  const shown = await p.evaluate(() => document.getElementById('scr-overlay').classList.contains('on') && !document.getElementById('vpop').classList.contains('on'));
+  assert(shown, '📸 from the verse card should open the card maker (and close the verse card)');
+  await p.evaluate(() => history.back()); await sleep(500);
+  const after = await p.evaluate(() => ({scr: document.getElementById('scr-overlay').classList.contains('on'), screen: S.screen, at: S.book + ' ' + S.ch}));
+  assert(!after.scr, 'Back should close the card maker');
+  assert(after.screen === 'reader' && after.at === before, `Back should stay in the chapter (${after.screen} ${after.at})`);
+  // ✕ Close uses up the same step
+  await p.evaluate(() => { const d = S.bookData.chapters[2].verses[15]; openVPop('John 3:16', d.text); }); await sleep(300);
+  await p.evaluate(() => singleScreenshot()); await sleep(600);
+  const st0 = await p.evaluate(() => history.state && history.state.modal);
+  await p.evaluate(() => closeScrOverlay()); await sleep(500);
+  const st1 = await p.evaluate(() => ({on: document.getElementById('scr-overlay').classList.contains('on'), modal: history.state && history.state.modal}));
+  assert(st0 === 'scr' && !st1.on && st1.modal !== 'scr', '✕ Close should close the card maker and use up its step');
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });

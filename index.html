@@ -2712,12 +2712,12 @@ body.light #home-watermark{
 <!-- VERSE MEMORY OVERLAY -->
 <div id="mem-overlay">
   <div id="mem-hdr">
-    <button id="mem-back" onclick="memBack()">&#8249; Verses</button>
+    <button id="mem-back" onclick="memBackTap()">&#8249; Verses</button>
     <div id="mem-hdr-center">
       <span id="mem-hdr-title">⚔ Sword Drill</span>
       <span id="mem-hdr-sub">Verse Memorization</span>
     </div>
-    <button id="mem-close-btn" onclick="closeMemorize()" title="Close Sword Drill">✕ Close</button>
+    <button id="mem-close-btn" onclick="memCloseTap()" title="Close Sword Drill">✕ Close</button>
   </div>
 
   <!-- Verse selection -->
@@ -2759,7 +2759,7 @@ body.light #home-watermark{
         <div class="mc-btns">
           <button class="mc-btn" onclick="memRestart()">↩ Again</button>
           <button class="mc-btn" id="mc-up" onclick="memStepUp()"></button>
-          <button class="mc-btn primary" onclick="memBack()">Choose Another</button>
+          <button class="mc-btn primary" onclick="memBackTap()">Choose Another</button>
         </div>
       </div>
     </div>
@@ -4417,7 +4417,7 @@ function shareMap(){
   const m = MAPS[S._mapOpen];
   if(m) sharePage(m.t, `🗺️ ${m.t} — ${m.d}\nFBC KJV Bible`, APP_URL + '#map=' + m.f);
 }
-function singleScreenshot(){S.scrVerses=[{ref:S.popRef,vnum:S.popRef.split(':')[1],txt:S.popTxt}];closePop();openScrOverlay(S.scrVerses,S.popRef);}
+function singleScreenshot(){S.scrVerses=[{ref:S.popRef,vnum:S.popRef.split(':')[1],txt:S.popTxt}];const ref=S.popRef;leaveVPopThen(()=>openScrOverlay(S.scrVerses,ref));}
 
 function refreshVBlock(ref){
   const el=document.querySelector(`[data-ref="${ref}"]`);if(!el)return;
@@ -4555,7 +4555,7 @@ function openScrOverlay(verses, refLabel){
   S.scrRef=refLabel;
   _syncCardStyleUI();
   renderCanvas(S.cardTheme);
-  document.getElementById('scr-overlay').classList.add('on');
+  scrOverlayShow();
   // Draw again once Crimson Pro is ready, so a first card isn't left in the stand-in face
   if(document.fonts && document.fonts.load)
     Promise.all([document.fonts.load(cardFont(400, 28)), document.fonts.load(cardFont(600, 28))])
@@ -4888,9 +4888,22 @@ function downloadScreenshot(btn){
   a.remove();
   flashSaved(btn);
 }
+// The card maker is a step in Back's history wherever it opens from, and
+// closing it (✕, a tap outside, or Back) uses that step up
+function scrOverlayShow(){
+  const ov = document.getElementById('scr-overlay');
+  if(ov.classList.contains('on')) return;
+  ov.classList.add('on');
+  // From the clipboard sheet (already hidden), the card takes over its step
+  if(history.state && history.state.modal === 'clip') history.replaceState({screen:S.screen, modal:'scr'}, '', '');
+  else history.pushState({screen:S.screen, modal:'scr'}, '', '');
+}
 function closeScrOverlay(e){
   const ov = document.getElementById('scr-overlay');
-  if(!e||e.target===ov){ ov.classList.remove('on'); ov.style.zIndex=''; }
+  if(e && e.target!==ov) return;
+  if(!ov.classList.contains('on')) return;
+  if(history.state && history.state.modal === 'scr') history.back();
+  else { ov.classList.remove('on'); ov.style.zIndex=''; }
 }
 
 /* ════ NAV ════ */
@@ -5043,6 +5056,13 @@ window.addEventListener('popstate', e => {
   // The full-screen map is on top of everything (even an open notebook): it closes first
   const _mapOv = document.getElementById('map-overlay');
   if(_mapOv && _mapOv.classList.contains('on')){ _mapOv.classList.remove('on'); document.getElementById('map-img').src = ''; return; }
+  // The card maker (verse image, several verses, the Sword Drill certificate)
+  // sits above any sheet it was opened from, so it closes first
+  const scrOv = document.getElementById('scr-overlay');
+  if(scrOv && scrOv.classList.contains('on')){ scrOv.classList.remove('on'); scrOv.style.zIndex=''; return; }
+  // Sword Drill: a verse → the list → closed (Add a Verse, over it, closes below)
+  const memOv = document.getElementById('mem-overlay');
+  if(memOv && memOv.classList.contains('on') && !document.getElementById('memadd-sheet').classList.contains('on')){ memPopstate(state); return; }
   // Close any open pop-over card first — Back dismisses the card instead of
   // navigating the page beneath it (each pushed a history entry when opened).
   // (and the verse card) — the most recently opened one, when several are open
@@ -13920,10 +13940,22 @@ function openMemorize(){
   hintMaybe('sword', 900);
   document.getElementById('mem-overlay').classList.add('on');
   document.getElementById('mem-close-btn').style.visibility='';
-  history.pushState({screen:'mem-overlay'},'','');
+  // One Back step for the list, and one more for a verse (startMem). They are
+  // pushed from a tap: Android's Back skips steps a page pushes by itself.
+  if(!(history.state && history.state.modal === 'mem-overlay')) history.pushState({screen:S.screen, modal:'mem-overlay'},'','');
   const ms = memGetMastery();
   memUpdateStreakDisplay(ms);
   renderMemSelect();
+}
+// The ✕ Close and ‹ Verses buttons use up the Back steps they stand for, so
+// the phone's Back and the buttons always agree
+function memCloseTap(){
+  const st = history.state || {};
+  if(st.modal === 'mem-overlay') history.go(st.mem === 'verse' ? -2 : -1); else closeMemorize();
+}
+function memBackTap(){
+  const st = history.state || {};
+  if(st.modal === 'mem-overlay' && st.mem === 'verse') history.back(); else memBack();
 }
 function closeMemorize(){
   memVoiceStop();
@@ -13944,25 +13976,17 @@ function memBack(){
   renderMemSelect(); // refresh status dots
 }
 
-/* ── POPSTATE HANDLER for mem overlay ── */
-(function(){
-  const origHandler = window.onpopstate;
-  window.addEventListener('popstate', function(e){
-    const overlay = document.getElementById('mem-overlay');
-    if(overlay && overlay.classList.contains('on')){
-      // If we're in the game view, go back to select; otherwise close overlay
-      const game = document.getElementById('mem-game');
-      if(game && game.style.display !== 'none'){
-        memBack();
-      } else {
-        closeMemorize();
-      }
-      // Re-push so the browser doesn't actually navigate away
-      history.pushState({screen:'mem-overlay'},'','');
-      return;
-    }
-  }, {capture:true});
-})();
+/* ── Back in Sword Drill: a verse → the list → closed ──
+   Each step was pushed when it opened; Back uses it up (nothing is pushed
+   again, as Android would skip a step pushed without a tap). Called from the
+   main Back handler with the step Back landed on. */
+function memPopstate(state){
+  const st = state || {};
+  if(st.modal !== 'mem-overlay'){ closeMemorize(); return; }          // below Sword Drill
+  const game = document.getElementById('mem-game');
+  if(st.mem !== 'verse' && game && game.style.display !== 'none') memBack(); // a verse → the list
+  // otherwise Back came down from a sheet above (it has closed): stay put
+}
 
 /* ── SELECT SCREEN ── */
 // Track which categories are collapsed (persisted in LS)
@@ -14233,6 +14257,8 @@ M.mode = (k => MEM_MODES[k] ? k : 'letters')(LS.get('kjv_mem_mode', 'letters'));
 const memNorm = w => w.toLowerCase().replace(/[’']/g, '').replace(/[^a-z]/g, '');
 
 async function startMem(refStr){
+  const st = history.state || {};
+  if(st.modal === 'mem-overlay' && st.mem !== 'verse') history.pushState({...st, mem:'verse'},'','');
   document.getElementById('mem-hdr-title').textContent=refStr;
   document.getElementById('mem-back').style.display='block';
   document.getElementById('mem-close-btn').style.visibility='hidden';
@@ -14698,7 +14724,7 @@ function generateCombinedCard(){
   closeClipboard();
   const canvas = document.getElementById('scr-canvas');
   drawCombinedCard(canvas);
-  document.getElementById('scr-overlay').classList.add('on');
+  scrOverlayShow();
 }
 
 function drawCombinedCard(canvas){
@@ -14786,8 +14812,7 @@ function openSwordCertificate(){
   drawSwordCertificate(canvas);
   const ov = document.getElementById('scr-overlay');
   ov.style.zIndex = '530'; // above mem-overlay (520)
-  ov.classList.add('on');
-  history.pushState({screen:S.screen, modal:'scr'}, '', '');
+  scrOverlayShow();
 }
 
 function drawSwordCertificate(canvas){
