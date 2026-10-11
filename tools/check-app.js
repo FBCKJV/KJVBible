@@ -500,6 +500,16 @@ check('Sword Drill: a verse just mastered rests a month before review', async p 
   assert(r.next > 30, `the second review should wait longer than a month, got ${r.next} days`);
 });
 
+check('verse card: photo controls show only for a photo you add', async p => {
+  const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
+  await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });
+  assert(!(await shown()), 'Top / Middle / Bottom and L / C / R should be hidden for a bundled scene');
+  await p.evaluate(() => { S.cardBg = null; renderCanvas(S.cardTheme); });
+  assert(!(await shown()), 'photo controls should be hidden on a plain colour card');
+  await p.evaluate(() => { const c = document.createElement('canvas'); c.width = c.height = 40; S.uploadImg = c; S.cardBg = 'upload'; renderCanvas(S.cardTheme); });
+  assert(await shown(), 'photo controls should show once a photo is added');
+});
+
 check('verse card: no quote marks, every line inside the margins, the church footer', async p => {
   for(const orient of ['landscape', 'portrait']){
     const r = await p.evaluate(async orient => {
