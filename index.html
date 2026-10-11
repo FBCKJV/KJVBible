@@ -2507,7 +2507,7 @@ body.light #home-watermark{
         <div class="tips-section-lbl">💡 Tips & Shortcuts</div>
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, <strong>📋 Copy</strong> it with its bold, italics and headings (paste into a Google Doc, an email or Telegram on a computer; each verse comes as its reference in bold and the words in italics), copy it as Markdown (for Claude or a slide maker), or print to PDF from ☰ Studies.</span></div>
-        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, a <strong>🎵 hymn</strong> built on the verse when there is one (tap it to read the hymn; its 📖 buttons bring you back), and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
@@ -3136,6 +3136,7 @@ body.light #home-watermark{
     </div>
     <div id="vpop-links" style="display:none"></div>
     <div id="vpop-tsk" style="display:none"></div>
+    <div id="vpop-hy" style="display:none"></div>
     <div id="vpop-sg" style="display:none"></div>
     <div class="hl-row" id="hl-row">
       <span class="hl-label">Highlight</span>
@@ -4258,6 +4259,7 @@ function openVPop(ref,txt){
   document.getElementById('vpop-name-def').style.display = 'none';
   fillVpopLinks(ref);
   fillVpopTreasury(ref);
+  fillVpopHymns(ref);
   fillVpopStrongs(ref);
 
   const vp = document.getElementById('vpop');
@@ -9840,6 +9842,43 @@ function sgRefList(s){
   return out;
 }
 
+/* ── On the verse card: 🎵 Hymns on this verse (a fold, shown only when a hymn stands on the verse) ──
+   Reads hymn-index.json (built by tools/build-hymns.js, ~17 KB), not the whole hymnal; the hymn's own page
+   loads when one is tapped, and Back from it returns to the chapter. */
+const HYMN_INDEX_VERSION = HYMNS_VERSION;
+function loadHymnIndex(){
+  return S._hyIdx ? Promise.resolve(S._hyIdx) : loadCachedJSON(`hymn-index.json?v=${HYMN_INDEX_VERSION}`).then(d => S._hyIdx = d);
+}
+// [hymn numbers] whose Scriptures include this verse (a range such as Psalm 104:1–5 covers each verse in it)
+function hymnsOnVerse(idx, ref){
+  const m = (ref || '').match(/^(.+) (\d+):(\d+)$/);
+  if(!m || !idx) return [];
+  const c = +m[2], v = +m[3];
+  return [...new Set(idx.r.filter(r => r[1] === m[1] && r[2] === c && v >= r[3] && v <= r[4]).map(r => r[0]))];
+}
+async function fillVpopHymns(ref){
+  const el = document.getElementById('vpop-hy');
+  if(!el) return;
+  el.style.display = 'none'; el.innerHTML = '';
+  const idx = await loadHymnIndex().catch(() => null);
+  if(S.popRef !== ref) return; // another verse opened meanwhile
+  const list = hymnsOnVerse(idx, ref);
+  if(!list.length) return;
+  const open = !!LS.get('kjv_hy_open', false);
+  el.innerHTML = `<button class="sg-fold${open ? ' on' : ''}" aria-expanded="${open}" onclick="event.stopPropagation();hyToggleFold()"><span class="vd-label">🎵 ${list.length === 1 ? 'A hymn' : list.length + ' hymns'} on this verse</span><span class="sg-arr">›</span></button><div id="hy-body">${open ? hyBody(list) : ''}</div>`;
+  el._list = list;
+  el.style.display = 'block';
+}
+const hyBody = list => list.map(i => { const h = S._hyIdx.h[i];
+  return `<button class="hy-row" onclick="event.stopPropagation();leaveVPopThen(()=>openHymn(${i}))"><div class="hy-t">${escapeHtml(h[0])}</div><div class="hy-a">${escapeHtml(h[1])}, ${h[2]} · tap to read it ›</div></button>`; }).join('');
+function hyToggleFold(){
+  const on = !LS.get('kjv_hy_open', false);
+  LS.set('kjv_hy_open', on);
+  const el = document.getElementById('vpop-hy'), f = el && el.querySelector('.sg-fold'), b = document.getElementById('hy-body');
+  if(f){ f.classList.toggle('on', on); f.setAttribute('aria-expanded', on); }
+  if(b) b.innerHTML = on && el._list ? hyBody(el._list) : '';
+}
+
 /* ── On the verse card: 🔤 Hebrew / Greek words (a fold, closed until opened) ── */
 function fillVpopStrongs(ref){
   const el = document.getElementById('vpop-sg');
@@ -13508,7 +13547,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
-  verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it.', at:'#pa-bm'},
+  verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share, and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
   plans:    {i:'📅', t:'Reading Plans', b:'Pick a plan and read <b>at your own pace</b> — you can run more than one. A chapter checks off when you reach the end of it, or hear it through on the 🔊 audio Bible, and your 🔥 streak grows each day you read.', at:'#plans-inner .pl-btn'},
@@ -15622,7 +15661,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v61';
+const WHATS_NEW_VERSION = 'v62';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -16578,6 +16617,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v62" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎵</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Hymns on the Verse</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          Tap a verse, and when a hymn is built on it, <strong>🎵 A hymn on this verse</strong> appears on the card, folded shut. Open it, tap the hymn to read every stanza, and its <strong>📖</strong> buttons or <strong>Back</strong> bring you straight back to the Scripture. Verses with no hymn show nothing extra.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v61" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎵</div>
       <div>
