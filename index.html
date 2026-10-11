@@ -2507,7 +2507,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
-        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats</span></div>
+        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats, each signed at the foot with the church's logo, name and fbckjv.app/KJVBible so others can find their way to the Word</span></div>
         <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
         <div class="tip-row"><span class="tip-ico">🎤</span><span class="tip-txt"><strong>Say it aloud in Sword Drill</strong> — in First Letters or Full Recall, tap 🎤 beside the box and say the verse at your own pace; each word fills in as you say it. A word the phone mishears is simply passed over, and 💡 still helps. Tap 🎤 again to stop</span></div>
         <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Chapters you have read</strong> show a ✓ in a book's chapter list. Read a book before the app counted? Tap <strong>✓ Mark chapters I read before</strong>, then the chapters — finish a book and it is celebrated and ticked off in your Reading Journey</span></div>
@@ -3218,7 +3218,6 @@ body.light #home-watermark{
       <button class="pc-btn" data-v="center" onclick="setCardAlign('center')" title="Center">C</button>
       <button class="pc-btn" data-v="right"  onclick="setCardAlign('right')"  title="Right justify">R</button>
     </div>
-    <button class="pc-btn" id="pc-wm" onclick="toggleCardWatermark()">✝ Logo</button>
     <div class="pc-hint">Pinch or drag the photo to zoom &amp; reposition</div>
   </div>
   <div id="scr-scroll"><canvas id="scr-canvas"></canvas></div>
@@ -3281,7 +3280,6 @@ const S={
   // live crop transform (zoom/offset are not persisted — reset per photo).
   textVPos:LS.get('kjv_card_vpos','center'),
   textAlign:LS.get('kjv_card_align','left'),
-  showWatermark:LS.get('kjv_card_wm',true),
   imgZoom:1, imgOffX:0, imgOffY:0,
   fontFamily:LS.get('kjv_ff','serif'),
   theme:LS.get('kjv_theme','dark'),
@@ -4491,12 +4489,14 @@ const CARD_SCENES = {
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
     const rnd=_srand(1337);
     for(let i=0;i<90;i++){ const x=rnd()*W, y=rnd()*H*0.8, r=rnd()*1.4+0.3;
-      ctx.globalAlpha=0.3+rnd()*0.7; ctx.fillStyle='#fff';
+      ctx.globalAlpha=0.2+rnd()*0.45; ctx.fillStyle='#fff';
       ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
     ctx.globalAlpha=1;
-    const moon=ctx.createRadialGradient(W*0.72,H*0.18,0,W*0.72,H*0.18,60);
+    // The moon keeps to the top corner, above the rule, clear of the verse
+    const mx=W*0.87, my=Math.min(56, H*0.1);
+    const moon=ctx.createRadialGradient(mx,my,0,mx,my,40);
     moon.addColorStop(0,'rgba(255,252,235,.95)'); moon.addColorStop(.6,'rgba(255,252,235,.5)'); moon.addColorStop(1,'rgba(255,252,235,0)');
-    ctx.fillStyle=moon; ctx.beginPath(); ctx.arc(W*0.72,H*0.18,44,0,7); ctx.fill();
+    ctx.fillStyle=moon; ctx.beginPath(); ctx.arc(mx,my,30,0,7); ctx.fill();
   },
 };
 
@@ -4540,9 +4540,9 @@ function drawPhotoBase(ctx, W, H, radius){
   } else {
     ctx.fillStyle='#1a1208'; ctx.fillRect(0,0,W,H);
   }
-  // Legibility scrim — darker top & bottom, lighter middle
+  // Legibility scrim: the verse sits in the middle, so the middle is never the lightest
   const sc=ctx.createLinearGradient(0,0,0,H);
-  sc.addColorStop(0,'rgba(0,0,0,.55)'); sc.addColorStop(.5,'rgba(0,0,0,.34)'); sc.addColorStop(1,'rgba(0,0,0,.64)');
+  sc.addColorStop(0,'rgba(0,0,0,.5)'); sc.addColorStop(.5,'rgba(0,0,0,.5)'); sc.addColorStop(1,'rgba(0,0,0,.66)');
   ctx.fillStyle=sc; ctx.fillRect(0,0,W,H);
   ctx.restore();
   ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5;
@@ -4555,6 +4555,10 @@ function openScrOverlay(verses, refLabel){
   _syncCardStyleUI();
   renderCanvas(S.cardTheme);
   document.getElementById('scr-overlay').classList.add('on');
+  // Draw again once Crimson Pro is ready, so a first card isn't left in the stand-in face
+  if(document.fonts && document.fonts.load)
+    Promise.all([document.fonts.load(cardFont(400, 28)), document.fonts.load(cardFont(600, 28))])
+      .then(() => { if(document.getElementById('scr-overlay').classList.contains('on')) renderCanvas(S.cardTheme); }).catch(() => {});
 }
 
 function renderCanvas(theme){
@@ -4570,8 +4574,8 @@ function renderCanvas(theme){
   const dpr     = Math.min(window.devicePixelRatio || 1, 2);
   const portrait = S.cardOrientation === 'portrait';
 
-  const paragraph = verses.map(v => v.txt).join(' ');
-  const bodyText  = verses.length === 1 ? `\u201c${paragraph}\u201d` : paragraph;
+  // One verse or several, the words stand alone, without quote marks
+  const bodyText  = verses.map(v => v.txt).join(' ');
 
   canvas.classList.toggle('editable', upload);   // enables grab cursor + touch-action:none
   if(portrait){
@@ -4587,33 +4591,28 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload){
   canvas.width = W * dpr; canvas.height = 800 * dpr;
   ctx.scale(dpr, dpr);
   const charCount = bodyText.length;
-  const BFONT = charCount > 500 ? 20 : charCount > 300 ? 22 : 26;
-  const lineH = BFONT * 1.72;
-  ctx.font = `italic ${BFONT}px Georgia, serif`;
+  const BFONT = charCount > 500 ? 22 : charCount > 300 ? 25 : 29;
+  const lineH = BFONT * 1.6;
+  ctx.font = cardFont(400, BFONT);   // measured in the very font it is drawn in
   const bodyLines = wrapText(ctx, bodyText, W - PAD * 2);
   const bodyH = bodyLines.length * lineH;
   const CROSS_Y = 44, REF_Y = 82, RULE1_Y = 104;
   const TEXT_Y  = RULE1_Y + BFONT + 18;
-  const RULE2_Y = TEXT_Y + bodyH + 22;
-  const KJV_Y   = RULE2_Y + 34;
-  const H       = KJV_Y + 54;
+  const RULE2_Y = TEXT_Y + bodyH - lineH + BFONT + 22;   // just under the last line
+  const FOOT_Y  = RULE2_Y + 44;   // middle of the logo-and-church footer
+  const H       = FOOT_Y + 42;
   canvas.width = W * dpr; canvas.height = H * dpr;
   canvas.style.width  = Math.min(W * 0.9, 400) + 'px';
   canvas.style.height = Math.min(H * 0.9, 400 * H / W) + 'px';
   ctx.resetTransform(); ctx.scale(dpr, dpr);
   if(photo) drawPhotoBase(ctx, W, H, 20); else drawCardBase(ctx, W, H, PAD, t, 20);
   S._cw = W; S._ch = H;   // recorded for the crop-gesture math
-  // Centered watermark — same approach as portrait (hidden on uploads if toggled off)
-  if((!upload || S.showWatermark) && _logoImg.complete && _logoImg.naturalWidth){
-    const ls = Math.min(W, H) * 0.60;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, photo ? true : t.dark, photo ? 0.14 : (t.dark ? 0.22 : 0.18));
-  }
-  if(photo){ ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6; ctx.shadowOffsetY=1; }
-  drawRef(ctx, W, REF_Y, 21, t);
+  if(photo){ ctx.shadowColor='rgba(0,0,0,.75)'; ctx.shadowBlur=10; ctx.shadowOffsetY=1; }
+  drawRef(ctx, W, REF_Y, 24, t);
   drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
   drawBody(ctx, bodyLines, PAD, W, TEXT_Y, lineH, BFONT, t, upload ? S.textAlign : 'left');
   drawRule(ctx, PAD, W - PAD, RULE2_Y, t);
-  drawKJV(ctx, W, KJV_Y, t);
+  drawCardFooter(ctx, W, FOOT_Y, t, photo);
   drawCorners(ctx, PAD, W, H, t);
 }
 
@@ -4626,51 +4625,40 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
   canvas.style.height = (dispW * H / W) + 'px';
   ctx.resetTransform(); ctx.scale(dpr, dpr);
 
-  // Font size based on text length
-  const charCount = bodyText.length;
-  const BFONT = charCount > 700 ? 16 : charCount > 400 ? 19 : charCount > 200 ? 23 : 27;
-  const lineH  = BFONT * 1.85;
-  ctx.font = `italic ${BFONT}px Georgia, serif`;
-  const bodyLines = wrapText(ctx, bodyText, W - PAD * 2);
-  const bodyH = bodyLines.length * lineH;
+  // The verse takes the largest size that fits between the rules (100 → 876),
+  // measured in the very font it is drawn in
+  const AREA_H = 700;
+  let BFONT = 38, lineH, bodyLines, bodyH;
+  for(;; BFONT--){
+    lineH = BFONT * 1.6;
+    ctx.font = cardFont(400, BFONT);
+    bodyLines = wrapText(ctx, bodyText, W - PAD * 2);
+    bodyH = bodyLines.length * lineH;
+    if(bodyH <= AREA_H || BFONT <= 14) break;
+  }
 
   // ── BG + border
   if(photo) drawPhotoBase(ctx, W, H, 24); else drawCardBase(ctx, W, H, PAD, t, 24);
   S._cw = W; S._ch = H;   // recorded for the crop-gesture math
 
-  // ── Logo — large watermark centred on card, tinted to card color, no box
-  // (hidden on uploads when the user turns it off)
-  if((!upload || S.showWatermark) && _logoImg.complete && _logoImg.naturalWidth){
-    const ls = 460;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, photo ? true : t.dark, photo ? 0.14 : (t.dark ? 0.22 : 0.28));
-  }
-
   // Drop shadow behind all text when over a photo/scene, for legibility.
-  if(photo){ ctx.shadowColor='rgba(0,0,0,.6)'; ctx.shadowBlur=6; ctx.shadowOffsetY=1; }
+  if(photo){ ctx.shadowColor='rgba(0,0,0,.75)'; ctx.shadowBlur=10; ctx.shadowOffsetY=1; }
 
   // ── TOP SECTION ──
   const TOP_PAD = 42;
 
   // Reference — bold, large, prominent
-  ctx.textAlign = 'center'; ctx.fillStyle = t.ref;
-  ctx.font = `700 32px Georgia, serif`;
   const REF_Y = TOP_PAD + 34;
-  ctx.fillText(S.scrRef, W / 2, REF_Y);
+  drawRef(ctx, W, REF_Y, 34, t);
 
   // Rule under reference
   const RULE2_Y = REF_Y + 24;
   drawRule(ctx, PAD, W - PAD, RULE2_Y, t);
 
   // ── BOTTOM SECTION ──
-  const RULE3_Y = H - 68;
+  const RULE3_Y = H - 84;
   drawRule(ctx, PAD, W - PAD, RULE3_Y, t);
-
-  ctx.textAlign = 'center'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
-  ctx.font = `400 13px Georgia, serif`;
-  ctx.fillText('King James Version', W / 2, H - 42);
-  ctx.font = `400 12px Georgia, serif`;
-  ctx.fillText(CARD_CHURCH, W / 2, H - 24);
-  ctx.globalAlpha = 1;
+  drawCardFooter(ctx, W, H - 42, t, photo);
 
   // ── BODY — positioned within the space between the two rule pairs.
   // Uploads may place the verse Top / Middle / Bottom; everything else stays centred.
@@ -4697,7 +4685,7 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
 // ── Shared drawing helpers ──
 /* Logo watermark — transparent PNG, white silhouette on any background.
    Transparent areas of the logo show the card background through. */
-function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha){
+function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha, tint){
   if(!img.complete || !img.naturalWidth) return;
   const off = document.createElement('canvas');
   off.width = size; off.height = size;
@@ -4706,14 +4694,17 @@ function drawLogoWatermark(ctx, img, x, y, size, isDark, alpha){
   try{
     const id = oc.getImageData(0, 0, size, size);
     const px = id.data;
+    const hx = /^#([0-9a-f]{6})$/i.exec(tint || '');
+    const [tr, tg, tb] = hx ? [0, 2, 4].map(i => parseInt(hx[1].substr(i, 2), 16)) : [255, 255, 255];
     // All opaque logo pixels → white. Transparent pixels stay transparent (card bg shows through).
     for(let i=0;i<px.length;i+=4){
-      if(px[i+3]>10){ px[i]=255; px[i+1]=255; px[i+2]=255; }
+      if(px[i+3]>10){ px[i]=tr; px[i+1]=tg; px[i+2]=tb; }
     }
     oc.putImageData(id,0,0);
   }catch(e){}
   ctx.save();
   ctx.globalAlpha = alpha;
+  ctx.shadowColor = 'transparent';
   ctx.drawImage(off, x, y);
   ctx.restore();
 }
@@ -4726,10 +4717,30 @@ function drawCardBase(ctx, W, H, PAD, t, radius){
   ctx.strokeStyle = t.border; ctx.lineWidth = 1.5;
   rr(ctx, 2, 2, W - 4, H - 4, radius - 1); ctx.stroke();
 }
-function drawRef(ctx, W, y, size, t){
+// The card is drawn in the app's own Scripture face, so every phone draws it
+// alike (Android has no Georgia); Georgia stands in until Crimson Pro loads.
+function cardFont(weight, size){ return `${weight} ${size}px 'Crimson Pro', Georgia, serif`; }
+function drawRef(ctx, W, y, size, t, ref = S.scrRef){
   ctx.textAlign = 'center'; ctx.fillStyle = t.ref;
-  ctx.font = `700 ${size}px Georgia, serif`;
-  ctx.fillText(S.scrRef, W / 2, y);
+  ctx.font = cardFont(600, size);
+  ctx.fillText(ref, W / 2, y);
+}
+// Footer: a small church logo beside the church's name, with the app's address
+// centred beneath it, a step quieter than the verse
+function drawCardFooter(ctx, W, cy, t, photo){
+  const logo = _logoImg.complete && _logoImg.naturalWidth;
+  const LS = 44, GAP = 14;
+  ctx.font = cardFont(600, 17); const nw = ctx.measureText(CARD_CHURCH).width;
+  ctx.font = cardFont(400, 15); const uw = ctx.measureText(CARD_URL).width;
+  const tw = Math.max(nw, uw), total = (logo ? LS + GAP : 0) + tw;
+  const x0 = W / 2 - total / 2, mid = x0 + (logo ? LS + GAP : 0) + tw / 2;
+  if(logo) drawLogoWatermark(ctx, _logoImg, x0, cy - LS / 2, LS, photo ? true : t.dark, photo ? 0.6 : 0.5, photo ? null : t.ref);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = t.ref; ctx.globalAlpha = photo ? 0.85 : 0.75;
+  ctx.font = cardFont(600, 17); ctx.fillText(CARD_CHURCH, mid, cy - 3);
+  ctx.fillStyle = t.text; ctx.globalAlpha = photo ? 0.7 : 0.6;
+  ctx.font = cardFont(400, 15); ctx.fillText(CARD_URL, mid, cy + 16);
+  ctx.globalAlpha = 1;
 }
 function drawRule(ctx, x1, x2, y, t){
   ctx.strokeStyle = t.border; ctx.lineWidth = 1; ctx.globalAlpha = 0.55;
@@ -4738,25 +4749,18 @@ function drawRule(ctx, x1, x2, y, t){
 }
 function drawBody(ctx, lines, PAD, W, y, lineH, size, t, align){
   ctx.fillStyle = t.text;
-  ctx.font = `400 ${size}px Georgia, serif`;
+  ctx.font = cardFont(400, size);
   align = align || 'left';
   ctx.textAlign = align;
   const x = align === 'center' ? W / 2 : align === 'right' ? W - PAD : PAD;
   lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineH));
 }
 const CARD_CHURCH = 'Faith Baptist Church of Plymouth County';
-function drawKJV(ctx, W, y, t){
-  ctx.textAlign = 'center'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
-  ctx.font = `400 13px Georgia, serif`;
-  ctx.fillText('King James Version', W / 2, y);
-  ctx.font = `400 12px Georgia, serif`;
-  ctx.fillText(CARD_CHURCH, W / 2, y + 18);
-  ctx.globalAlpha = 1;
-}
+const CARD_URL = 'fbckjv.app/KJVBible';
 function drawCorners(ctx, PAD, W, H, t){
-  ctx.font = '13px serif'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.38;
-  [[PAD - 8, 26, 'left'], [W - PAD + 8, 26, 'right'],
-   [PAD - 8, H - 14, 'left'], [W - PAD + 8, H - 14, 'right']
+  ctx.font = '19px serif'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
+  [[PAD - 12, 30, 'left'], [W - PAD + 12, 30, 'right'],
+   [PAD - 12, H - 14, 'left'], [W - PAD + 12, H - 14, 'right']
   ].forEach(([x, y, a]) => { ctx.textAlign = a; ctx.fillText('✦', x, y); });
   ctx.globalAlpha = 1;
 }
@@ -4829,11 +4833,9 @@ function _syncPhotoControls(){
   const vg=document.getElementById('pc-vpos'); if(vg) vg.style.display = (S.cardOrientation==='portrait') ? 'flex' : 'none';
   document.querySelectorAll('#pc-vpos .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textVPos));
   document.querySelectorAll('#pc-align .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textAlign));
-  const wm=document.getElementById('pc-wm'); if(wm) wm.classList.toggle('on', S.showWatermark);
 }
 function setCardVPos(v){ S.textVPos=v; LS.set('kjv_card_vpos',v); renderCanvas(S.cardTheme); }
 function setCardAlign(v){ S.textAlign=v; LS.set('kjv_card_align',v); renderCanvas(S.cardTheme); }
-function toggleCardWatermark(){ S.showWatermark=!S.showWatermark; LS.set('kjv_card_wm',S.showWatermark); renderCanvas(S.cardTheme); }
 
 // Pinch-to-zoom + drag-to-reposition on the uploaded photo. Active only in
 // upload mode; converts screen movement to card-space via the display scale.
@@ -14703,18 +14705,18 @@ function drawCombinedCard(canvas){
   const dpr = Math.min(window.devicePixelRatio||1, 2);
   const ctx = canvas.getContext('2d');
   const t   = CARD_THEMES[S.cardTheme||'dark'];
-  const FONT = 20, LH = FONT * 1.8;
+  const FONT = 22, LH = FONT * 1.6;
 
-  // Pre-measure all verse blocks
-  ctx.font = `italic ${FONT}px Georgia,serif`;
+  // Pre-measure all verse blocks, in the very font they are drawn in
+  ctx.font = cardFont(400, FONT);
   const blocks = S.clipboard.map(v => ({
     ref:   v.ref,
     lines: wrapText(ctx, v.txt, W - PAD*2),
   }));
-  const blockH   = b => b.lines.length * LH + 70; // text + ref header
+  const blockH   = b => (b.lines.length - 1) * LH + FONT + 70; // ref header + text
   const dividerH = 36;
   const totalBodyH = blocks.reduce((s,b)=>s+blockH(b),0) + (blocks.length-1)*dividerH;
-  const H = PAD + 30 + 16 + 8 + totalBodyH + 50;
+  const H = PAD + 22 + totalBodyH + 96;
 
   canvas.width  = W * dpr;
   canvas.height = H * dpr;
@@ -14723,69 +14725,31 @@ function drawCombinedCard(canvas){
   canvas.style.height = (dispW * H / W) + 'px';
   ctx.resetTransform(); ctx.scale(dpr, dpr);
 
-  // BG
-  const grd = ctx.createLinearGradient(0,0,W,H);
-  grd.addColorStop(0,t.bg1); grd.addColorStop(1,t.bg2);
-  ctx.fillStyle=grd; rr(ctx,0,0,W,H,20); ctx.fill();
-  ctx.strokeStyle=t.border; ctx.lineWidth=1.5;
-  rr(ctx,2,2,W-4,H-4,19); ctx.stroke();
-
-  // Logo watermark
-  if(_logoImg.complete && _logoImg.naturalWidth){
-    const ls = Math.min(W,H)*0.35;
-    drawLogoWatermark(ctx, _logoImg, W/2-ls/2, H/2-ls/2, ls, t.dark, t.dark ? 0.18 : 0.28);
-  }
-
-  // Church name
-  let y = PAD + 16;
-  ctx.textAlign='center'; ctx.fillStyle=t.ref; ctx.globalAlpha=0.5;
-  ctx.font='400 13px Georgia,serif';
-  ctx.fillText('Faith Baptist Church', W/2, y); ctx.globalAlpha=1;
-
-  y += 14;
-  ctx.strokeStyle=t.border; ctx.lineWidth=1; ctx.globalAlpha=0.5;
-  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
-  ctx.globalAlpha=1;
-  y += 20;
+  drawCardBase(ctx, W, H, PAD, t, 20);
+  let y = PAD + 22;
 
   // Draw each verse block
   blocks.forEach((b, i) => {
-    // Reference
-    ctx.textAlign='center'; ctx.fillStyle=t.ref;
-    ctx.font=`700 22px Georgia,serif`;
-    ctx.fillText(b.ref, W/2, y); y += 26;
+    drawRef(ctx, W, y, 24, t, b.ref); y += 18;
+    drawRule(ctx, PAD, W - PAD, y, t); y += FONT + 16;
 
-    // Rule under ref
-    ctx.strokeStyle=t.border; ctx.lineWidth=1; ctx.globalAlpha=0.4;
-    ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
-    ctx.globalAlpha=1; y += FONT + 4;
-
-    // Verse text
-    ctx.textAlign='left'; ctx.fillStyle=t.body||t.ref;
-    ctx.font=`italic ${FONT}px Georgia,serif`;
-    b.lines.forEach(line => {
-      ctx.fillText(line, PAD, y); y += LH;
-    });
-    y += 10;
+    ctx.textAlign='left'; ctx.fillStyle=t.text;
+    ctx.font=cardFont(400, FONT);
+    b.lines.forEach((line, j) => { ctx.fillText(line, PAD, y); if(j < b.lines.length - 1) y += LH; });
+    y += 36;
 
     // Divider ornament between verses
     if(i < blocks.length - 1){
-      ctx.textAlign='center'; ctx.fillStyle=t.ref; ctx.globalAlpha=0.4;
+      ctx.textAlign='center'; ctx.fillStyle=t.ref; ctx.globalAlpha=0.5;
       ctx.font=`12px serif`;
-      ctx.fillText('· ✦ ·', W/2, y + 12);
+      ctx.fillText('· ✦ ·', W/2, y);
       ctx.globalAlpha=1; y += dividerH;
     }
   });
 
-  // Bottom rule + KJV
-  y += 8;
-  ctx.strokeStyle=t.border; ctx.lineWidth=1; ctx.globalAlpha=0.4;
-  ctx.beginPath(); ctx.moveTo(PAD,y); ctx.lineTo(W-PAD,y); ctx.stroke();
-  ctx.globalAlpha=1; y += 18;
-  ctx.textAlign='center'; ctx.fillStyle=t.ref; ctx.globalAlpha=0.35;
-  ctx.font='400 12px Georgia,serif';
-  ctx.fillText('King James Version · Faith Baptist Church', W/2, y);
-  ctx.globalAlpha=1;
+  // Bottom rule + the church's footer
+  drawRule(ctx, PAD, W - PAD, y, t);
+  drawCardFooter(ctx, W, y + 44, t, false);
 
   // Corners
   drawCorners(ctx, PAD, W, H, t);
