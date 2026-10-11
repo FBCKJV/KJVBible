@@ -435,6 +435,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .hy-ch .hy-add{float:right;margin-left:8px}
 .hy-n{flex-shrink:0;width:18px;text-align:right;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--gold);padding-top:4px}
 .hy-ch{margin:-4px 0 16px 28px;padding:6px 0 6px 12px;border-left:2px solid var(--gold-d);font-family:'Crimson Pro',serif;font-size:16.5px;line-height:1.55;font-style:italic;color:var(--text-d)}
+/* A hymn's verse, tapped to make a card, add to a study or share */
+.hy-st,.hy-ch{cursor:pointer;border-radius:8px;transition:background .15s}
+.hy-st.sel,.hy-ch.sel{background:rgba(201,148,58,.18);box-shadow:0 0 0 1px var(--gold);}
+.hy-st.sel{padding:4px 6px 4px 0}
+#hybar{position:fixed;bottom:60px;left:0;right:var(--side-w,0px);z-index:200;background:var(--bg2);border-top:1px solid var(--gold-d);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));display:none;flex-direction:column;gap:8px;box-shadow:0 -8px 30px rgba(0,0,0,.4);animation:slideup .2s ease}
+#hybar.on{display:flex}
+#hymn-view:has(#hybar.on){padding-bottom:150px} /* the last verse can scroll clear of the bar */
+#hybar-count{font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);flex:1}
 .hy-ch-l{font-family:'Inter',sans-serif;font-style:normal;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-m);margin-bottom:2px}
 .hy-refs{margin:2px 0 16px}
 /* First mention + follow the thread */
@@ -2508,7 +2516,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
-        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats, each signed at the foot with the church's logo, name and fbckjv.app/KJVBible so others can find their way to the Word</span></div>
+        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats, each signed at the foot with the church's logo, name and fbckjv.app/KJVBible so others can find their way to the Word. A hymn makes a card too: tap its verses (or the refrain) and choose <strong>📸 Card</strong></span></div>
         <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
         <div class="tip-row"><span class="tip-ico">🎤</span><span class="tip-txt"><strong>Say it aloud in Sword Drill</strong> — in First Letters or Full Recall, tap 🎤 beside the box and say the verse at your own pace; each word fills in as you say it. A word the phone mishears is simply passed over, and 💡 still helps. Tap 🎤 again to stop</span></div>
         <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Chapters you have read</strong> show a ✓ in a book's chapter list. Read a book before the app counted? Tap <strong>✓ Mark chapters I read before</strong>, then the chapters — finish a book and it is celebrated and ticked off in your Reading Journey</span></div>
@@ -4550,9 +4558,10 @@ function drawPhotoBase(ctx, W, H, radius){
   rr(ctx, 2, 2, W-4, H-4, radius-1); ctx.stroke();
 }
 
-function openScrOverlay(verses, refLabel){
+function openScrOverlay(verses, refLabel, hymn = null){
   S.scrVerses=verses;
   S.scrRef=refLabel;
+  S.scrHymn=hymn;   // {title, by, blocks:[{lines, refrain}]} for a hymn card, else null
   _syncCardStyleUI();
   renderCanvas(S.cardTheme);
   scrOverlayShow();
@@ -4564,7 +4573,7 @@ function openScrOverlay(verses, refLabel){
 
 function renderCanvas(theme){
   const verses = S.scrVerses || [];
-  if(!verses.length) return;
+  if(!verses.length && !S.scrHymn) return;   // a hymn card carries S.scrHymn instead
   // Photo mode: an uploaded photo or a bundled scene is the background.
   // Text switches to the high-contrast PHOTO_T palette so it reads over any image.
   const photo   = !!S.cardBg && (S.cardBg === 'upload' ? !!S.uploadImg : !!CARD_SCENES[S.cardBg]);
@@ -4591,15 +4600,17 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload){
   const W = 800, PAD = 60;
   canvas.width = W * dpr; canvas.height = 800 * dpr;
   ctx.scale(dpr, dpr);
-  const charCount = bodyText.length;
-  const BFONT = charCount > 500 ? 22 : charCount > 300 ? 25 : 29;
-  const lineH = BFONT * 1.6;
-  ctx.font = cardFont(400, BFONT);   // measured in the very font it is drawn in
-  const bodyLines = wrapText(ctx, bodyText, W - PAD * 2);
-  const bodyH = bodyLines.length * lineH;
-  const CROSS_Y = 44, REF_Y = 82, RULE1_Y = 104;
-  const TEXT_Y  = RULE1_Y + BFONT + 18;
-  const RULE2_Y = TEXT_Y + bodyH - lineH + BFONT + 22;   // just under the last line
+  const hy = S.scrHymn;
+  const align = upload ? cardAlign() : (hy ? 'center' : 'left');
+  const n = hy ? hy.blocks.reduce((a, b) => a + b.lines.length, 0) : bodyText.length;
+  const BFONT = hy ? (n <= 6 ? 28 : n <= 10 ? 25 : n <= 16 ? 22 : 20)
+                   : (n > 500 ? 22 : n > 300 ? 25 : 29);
+  let body = cardBody(ctx, bodyText, BFONT, W, PAD, t, align);   // measured in the very font it is drawn in
+  // A hymn's line reads best whole: a little smaller rather than broken
+  for(let s = BFONT - 1; hy && body.wraps && s >= 18; s--) body = cardBody(ctx, bodyText, s, W, PAD, t, align);
+  const REF_Y = 82, BY_Y = REF_Y + 28, RULE1_Y = hy ? BY_Y + 18 : 104;
+  const TEXT_TOP = RULE1_Y + 18;
+  const RULE2_Y = TEXT_TOP + body.h + 22;   // just under the last line
   const FOOT_Y  = RULE2_Y + 44;   // middle of the logo-and-church footer
   const H       = FOOT_Y + 42;
   canvas.width = W * dpr; canvas.height = H * dpr;
@@ -4609,9 +4620,10 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload){
   if(photo) drawPhotoBase(ctx, W, H, 20); else drawCardBase(ctx, W, H, PAD, t, 20);
   S._cw = W; S._ch = H;   // recorded for the crop-gesture math
   if(photo){ ctx.shadowColor='rgba(0,0,0,.75)'; ctx.shadowBlur=10; ctx.shadowOffsetY=1; }
-  drawRef(ctx, W, REF_Y, 24, t);
+  drawRef(ctx, W, REF_Y, 24, t, S.scrRef, PAD);
+  if(hy) drawByline(ctx, W, BY_Y, 15, t, hy.by);
   drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
-  drawBody(ctx, bodyLines, PAD, W, TEXT_Y, lineH, BFONT, t, upload ? S.textAlign : 'left');
+  body.draw(TEXT_TOP);
   drawRule(ctx, PAD, W - PAD, RULE2_Y, t);
   drawCardFooter(ctx, W, FOOT_Y, t, photo);
   drawCorners(ctx, PAD, W, H, t);
@@ -4628,15 +4640,16 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
 
   // The verse takes the largest size that fits between the rules (100 → 876),
   // measured in the very font it is drawn in
-  const AREA_H = 700;
-  let BFONT = 38, lineH, bodyLines, bodyH;
+  const hy = S.scrHymn;
+  const align = upload ? cardAlign() : (hy ? 'center' : 'left');
+  const AREA_H = hy ? 660 : 700;   // a hymn gives a little room to its author line
+  let BFONT = hy ? 36 : 38, body;
   for(;; BFONT--){
-    lineH = BFONT * 1.6;
-    ctx.font = cardFont(400, BFONT);
-    bodyLines = wrapText(ctx, bodyText, W - PAD * 2);
-    bodyH = bodyLines.length * lineH;
-    if(bodyH <= AREA_H || BFONT <= 14) break;
+    body = cardBody(ctx, bodyText, BFONT, W, PAD, t, align);
+    // fits the space (and, for a hymn, keeps each line whole down to 22px)
+    if(BFONT <= 14 || (body.h <= AREA_H && !(hy && body.wraps && BFONT > 22))) break;
   }
+  const bodyH = body.h;
 
   // ── BG + border
   if(photo) drawPhotoBase(ctx, W, H, 24); else drawCardBase(ctx, W, H, PAD, t, 24);
@@ -4650,10 +4663,11 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
 
   // Reference — bold, large, prominent
   const REF_Y = TOP_PAD + 34;
-  drawRef(ctx, W, REF_Y, 34, t);
+  drawRef(ctx, W, REF_Y, 34, t, S.scrRef, PAD);
+  if(hy) drawByline(ctx, W, REF_Y + 32, 19, t, hy.by);
 
-  // Rule under reference
-  const RULE2_Y = REF_Y + 24;
+  // Rule under reference (and a hymn's author line)
+  const RULE2_Y = hy ? REF_Y + 52 : REF_Y + 24;
   drawRule(ctx, PAD, W - PAD, RULE2_Y, t);
 
   // ── BOTTOM SECTION ──
@@ -4667,17 +4681,11 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
   const textAreaBottom = RULE3_Y - 16;
   const textAreaH      = textAreaBottom - textAreaTop;
   const vpos = upload ? S.textVPos : 'center';
-  let TEXT_Y;
-  if(vpos === 'top'){
-    TEXT_Y = textAreaTop + BFONT * 0.9;
-  } else if(vpos === 'bottom'){
-    TEXT_Y = Math.max(textAreaTop + BFONT, textAreaBottom - bodyH + BFONT * 0.8);
-  } else {
-    const rawTY = textAreaTop + (textAreaH - bodyH) / 2 + BFONT * 0.8;
-    TEXT_Y = Math.max(textAreaTop + BFONT, rawTY); // never overlap reference
-  }
-
-  drawBody(ctx, bodyLines, PAD, W, TEXT_Y, lineH, BFONT, t, upload ? S.textAlign : 'left');
+  let top;
+  if(vpos === 'top') top = textAreaTop;
+  else if(vpos === 'bottom') top = Math.max(textAreaTop, textAreaBottom - bodyH);
+  else top = Math.max(textAreaTop, textAreaTop + (textAreaH - bodyH) / 2); // never over the reference
+  body.draw(top);
 
   // ── Corner ornaments
   drawCorners(ctx, PAD, W, H, t);
@@ -4721,10 +4729,56 @@ function drawCardBase(ctx, W, H, PAD, t, radius){
 // The card is drawn in the app's own Scripture face, so every phone draws it
 // alike (Android has no Georgia); Georgia stands in until Crimson Pro loads.
 function cardFont(weight, size){ return `${weight} ${size}px 'Crimson Pro', Georgia, serif`; }
-function drawRef(ctx, W, y, size, t, ref = S.scrRef){
+// The reference (or a hymn's title), made smaller if it would not fit the width
+function drawRef(ctx, W, y, size, t, ref = S.scrRef, pad = 40){
   ctx.textAlign = 'center'; ctx.fillStyle = t.ref;
   ctx.font = cardFont(600, size);
+  while(size > 14 && ctx.measureText(ref).width > W - 2 * pad){ size--; ctx.font = cardFont(600, size); }
   ctx.fillText(ref, W / 2, y);
+}
+// A hymn's author and year, quietly under its title
+function drawByline(ctx, W, y, size, t, by){
+  ctx.textAlign = 'center'; ctx.fillStyle = t.text; ctx.globalAlpha = 0.7;
+  ctx.font = cardFont('italic 400', size); ctx.fillText(by, W / 2, y);
+  ctx.globalAlpha = 1;
+}
+// Text alignment on a photo you add: the verse and the hymn keep their own
+function cardAlign(){ return S.scrHymn ? (S.hymnAlign || 'center') : S.textAlign; }
+// The body of a card, laid out at one size: h is its height from the top of
+// the first line to the foot of the last, and draw(top) puts it on the card.
+// A verse is one paragraph; a hymn keeps each line of its stanzas, with the
+// refrain in italic under a small label.
+function cardBody(ctx, bodyText, size, W, PAD, t, align){
+  const maxW = W - PAD * 2, x = align === 'center' ? W / 2 : align === 'right' ? W - PAD : PAD;
+  const hy = S.scrHymn;
+  if(!hy){
+    ctx.font = cardFont(400, size);
+    const lines = wrapText(ctx, bodyText, maxW), lineH = size * 1.6;
+    return {h: (lines.length - 1) * lineH + size, draw: top => drawBody(ctx, lines, PAD, W, top + size, lineH, size, t, align)};
+  }
+  const lineH = size * 1.45, rows = [];
+  let wraps = 0;   // lines too long for the card, broken in two
+  hy.blocks.forEach((b, i) => {
+    if(i) rows.push({h: size * 0.8});
+    if(b.refrain) rows.push({lbl: 'REFRAIN', h: size * 0.9});
+    ctx.font = cardFont((b.refrain ? 'italic ' : '') + '400', size);
+    b.lines.forEach(l => { const ws = wrapText(ctx, l, maxW); wraps += ws.length - 1; ws.forEach(w => rows.push({t: w, it: b.refrain, h: lineH})); });
+  });
+  const h = rows.reduce((a, r) => a + r.h, 0) - (lineH - size);
+  return {h, wraps, draw: top => {
+    let y = top;
+    ctx.textAlign = align;
+    for(const r of rows){
+      if(r.lbl){
+        ctx.fillStyle = t.ref; ctx.globalAlpha = 0.85; ctx.font = cardFont(600, Math.round(size * 0.48));
+        ctx.fillText(r.lbl, x, y + size * 0.55); ctx.globalAlpha = 1;
+      } else if(r.t){
+        ctx.fillStyle = t.text; ctx.font = cardFont((r.it ? 'italic ' : '') + '400', size);
+        ctx.fillText(r.t, x, y + size);
+      }
+      y += r.h;
+    }
+  }};
 }
 // Footer: a small church logo beside the church's name, with the app's address
 // centred beneath it, a step quieter than the verse
@@ -4833,10 +4887,14 @@ function _syncPhotoControls(){
   if(!up) return;
   const vg=document.getElementById('pc-vpos'); if(vg) vg.style.display = (S.cardOrientation==='portrait') ? 'flex' : 'none';
   document.querySelectorAll('#pc-vpos .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textVPos));
-  document.querySelectorAll('#pc-align .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textAlign));
+  document.querySelectorAll('#pc-align .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===cardAlign()));
 }
 function setCardVPos(v){ S.textVPos=v; LS.set('kjv_card_vpos',v); renderCanvas(S.cardTheme); }
-function setCardAlign(v){ S.textAlign=v; LS.set('kjv_card_align',v); renderCanvas(S.cardTheme); }
+function setCardAlign(v){
+  if(S.scrHymn) S.hymnAlign = v;   // a hymn's lines keep their own alignment (centred unless changed)
+  else { S.textAlign=v; LS.set('kjv_card_align',v); }
+  renderCanvas(S.cardTheme); _syncPhotoControls();
+}
 
 // Pinch-to-zoom + drag-to-reposition on the uploaded photo. Active only in
 // upload mode; converts screen movement to card-space via the display scale.
@@ -7730,6 +7788,47 @@ async function openTimelineAt(id){
    tools/hymns/list.js and texts.json.
    Hymn: [title, author, year, section, [[label, jumpRef], …], stanzas, chorus] */
 const HYMNS_VERSION = '2026-10-09b'; // bump whenever tools/build-hymns.js is re-run
+/* ── A hymn's verses, tapped: 📸 a card, 📝＋ a study, 📤 share ──
+   Tap a verse (or the refrain) to light it; tap more to take several together. */
+function hyTap(e, el){
+  if(e.target.closest('button, a')) return;                 // its own 📝＋
+  const sel = window.getSelection();
+  if(sel && !sel.isCollapsed) return;                       // picking out lines to copy
+  el.classList.toggle('sel');
+  hySync();
+}
+function hyPicked(){
+  const h = S._hymns && S._subView && S._subView.sub === 'hymn' && S._hymns[+S._subView.key];
+  if(!h) return {h: null, items: []};
+  const items = [...document.querySelectorAll('#hymn-view [data-hy].sel')].map(el => el.dataset.hy)
+    .map(k => k === 'r' ? {k, lines: h[6], refrain: true} : {k: +k, lines: h[5][+k], refrain: false});
+  return {h, items};
+}
+function hySync(){
+  const {items} = hyPicked(), bar = document.getElementById('hybar');
+  if(!bar) return;
+  bar.classList.toggle('on', items.length > 0);
+  const v = items.filter(i => !i.refrain).length, r = items.length - v;
+  document.getElementById('hybar-count').textContent =
+    [v ? `${v} verse${v > 1 ? 's' : ''}` : '', r ? 'the refrain' : ''].filter(Boolean).join(' and ');
+}
+function hyClear(){ document.querySelectorAll('#hymn-view [data-hy].sel').forEach(el => el.classList.remove('sel')); hySync(); }
+function hyCard(){
+  const {h, items} = hyPicked();
+  if(!h || !items.length) return;
+  openScrOverlay([], h[0], {title: h[0], by: `${h[1]}, ${h[2]}`, blocks: items.map(i => ({lines: i.lines, refrain: i.refrain}))});
+}
+function hyStudy(){
+  const {items} = hyPicked();
+  items.forEach(i => nbAddHymn(i.k));
+  hyClear();
+}
+function hyShare(){
+  const {h, items} = hyPicked();
+  if(!h || !items.length) return;
+  const text = `🎵 ${h[0]}\n\n` + items.map(i => (i.refrain ? i.lines.map(l => '  ' + l) : i.lines).join('\n')).join('\n\n') + `\n\n— ${h[1]}, ${h[2]}`;
+  shareText(h[0], text, pageLink('hymn', S._subView.key));
+}
 SUBVIEWS.hymn = { mode:'hymns', browse:'hymns-browse', view:'hymn-view', open:(k, push, y) => openHymn(+k, push, y) };
 function loadHymns(){ return loadCachedJSON(`hymns.json?v=${HYMNS_VERSION}`).then(d => S._hymns = d.h); }
 async function renderHymns(){
@@ -7776,16 +7875,25 @@ async function openHymn(i, pushHistory=true, scrollY=0){
   enterSubView('hymn', String(i), pushHistory);
   const [t, a, y, sec, refs, stanzas, chorus, song] = h;
   const addBtn = n => `<button class="hy-add" onclick="nbAddHymn(${n})" onmousedown="event.preventDefault()" title="Add this ${n === "'r'" ? 'refrain' : 'verse'} to your study" aria-label="Add to study">📝＋</button>`;
-  const chorusHTML = chorus.length ? `<div class="hy-ch">${addBtn("'r'")}<div class="hy-ch-l">Refrain</div>${chorus.map(escapeHtml).join('<br>')}</div>` : '';
+  const chorusHTML = chorus.length ? `<div class="hy-ch" data-hy="r" onclick="hyTap(event, this)">${addBtn("'r'")}<div class="hy-ch-l">Refrain</div>${chorus.map(escapeHtml).join('<br>')}</div>` : '';
   document.getElementById('hymn-view').innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> Back</button>
     <div class="dv-title">${escapeHtml(t)}</div>
     <div class="hy-by">${escapeHtml(a)}, ${y} · ${escapeHtml(sec)}</div>
     <button class="nb-add" onclick="nbAddHymn()" onmousedown="event.preventDefault()" title="Adds the lines you have selected, or the first verse and refrain">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>${song ? `<a class="nb-add hy-listen" href="${hymnListenURL(song)}" target="_blank" rel="noopener" title="Hear it sung in the FBC Hymns app">🎧 Listen</a>` : ''}
     <div class="vl-chips hy-refs">${refs.map(([label, r]) => `<button class="vl-chip" onclick="jumpToRef('${r.replace(/'/g, "\\'")}')">📖 ${escapeHtml(label)}</button>`).join('')}</div>
-    ${stanzas.map((st, n) => `<div class="hy-st"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div>${addBtn(n)}</div>` + (n === 0 ? chorusHTML : '')).join('')}
-    <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.${song ? ' 🎧 Listen opens a recording in the FBC Hymns app, with these words to follow.' : ''}</div>`;
+    ${stanzas.map((st, n) => `<div class="hy-st" data-hy="${n}" onclick="hyTap(event, this)"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div>${addBtn(n)}</div>` + (n === 0 ? chorusHTML : '')).join('')}
+    <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.${song ? ' 🎧 Listen opens a recording in the FBC Hymns app, with these words to follow.' : ''}</div>
+    <div id="hybar">
+      <div id="multibar-info"><span id="hybar-count"></span><button class="mbar-cancel" onclick="hyClear()">✕ Clear</button></div>
+      <div class="mbar-btns" style="grid-template-columns:repeat(3,1fr)">
+        <button class="mb primary" onclick="hyCard()">📸<span>Card</span></button>
+        <button class="mb" onclick="hyStudy()">📝＋<span>Study</span></button>
+        <button class="mb" onclick="hyShare()">📤<span>Share</span></button>
+      </div>
+    </div>`;
   document.getElementById('screen-search').scrollTop = scrollY || 0;
+  hintMaybe('hymn', 1200);
 }
 
 /* ════ STUDY NOTEBOOK ════
@@ -13354,6 +13462,7 @@ const TOOL_TIPS = {
     ['🎵', '<strong>224 hymns of the faith</strong> whose words are in the public domain — the old gospel hymns, the great hymns of the church and the Christmas and Easter carols — each with the Scriptures behind it. Tap a 📖 reference to read it'],
     ['🎧', '<strong>🎧 Listen</strong> on a hymn (marked 🎧 in the list) opens it sung in the FBC Hymns app, with the words to follow. In the <strong>Psalms</strong>, <strong>🎧 Sung</strong> under the chapter title does the same for that Psalm'],
     ['📝＋', '<strong>📝＋ Add to Study</strong> puts a hymn in your notebook'],
+    ['📸', '<strong>Tap a verse</strong> of a hymn (or the refrain), and more if you like, then <strong>📸 Card</strong> makes a picture of those words to share, in any of the card styles'],
   ]},
   doctrine: {i:'📑', t:'Doctrines', tips:[
     ['📑', '<strong>Faith Baptist Church’s positions</strong> on salvation, the Godhead, baptism, last things and more — open a topic to see its supporting KJV verses'],
@@ -13409,6 +13518,7 @@ const HINTS = {
   say:      {i:'🔊', t:'Hear it said', b:'Tap <b>🔊 Hear it</b> to hear a name or word said aloud — tap it again to hear it slowly. Hard names are written the way they sound, with the strong part in capitals: <b>meh-FIB-oh-sheth</b>.', at:'.say-btn'},
   strongstool: {i:'🔤', t:'Hebrew & Greek', b:'Type an English word such as <b>mercy</b> to see the Hebrew and Greek words the KJV renders by it, or a number like <b>G26</b>. Tap a word for its meaning and every verse it is in.', at:'#strongs-input', tt:'strongs'},
   strongs:  {i:'🔤', t:'Follow a word', b:'Every verse this word is in is listed below, its English in bold. Tap a rendering such as <b>mercy</b> or <b>kindness</b> to see only those verses.', at:'#strongs-view .sg-r', tt:'strongs'},
+  hymn:     {i:'🎵', t:'Share a hymn', b:'<b>Tap a verse</b> of the hymn (or the refrain) to light it, and tap more to take them together. Then <b>📸 Card</b> makes a picture of it to share, <b>📝＋ Study</b> adds it to your notes, or <b>📤 Share</b> sends the words.', at:'#hymn-view .hy-st'},
   sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and once you master it, it rests a month before it comes back for review — badges mark your progress. In First Letters and Full Recall you can tap <b>🎤</b> and say the verse aloud.', at:null},
 };
 const HINT_GAP = 8000; // at least this long between two hints
