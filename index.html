@@ -3218,7 +3218,6 @@ body.light #home-watermark{
       <button class="pc-btn" data-v="center" onclick="setCardAlign('center')" title="Center">C</button>
       <button class="pc-btn" data-v="right"  onclick="setCardAlign('right')"  title="Right justify">R</button>
     </div>
-    <button class="pc-btn" id="pc-wm" onclick="toggleCardWatermark()">✝ Logo</button>
     <div class="pc-hint">Pinch or drag the photo to zoom &amp; reposition</div>
   </div>
   <div id="scr-scroll"><canvas id="scr-canvas"></canvas></div>
@@ -3281,7 +3280,6 @@ const S={
   // live crop transform (zoom/offset are not persisted — reset per photo).
   textVPos:LS.get('kjv_card_vpos','center'),
   textAlign:LS.get('kjv_card_align','left'),
-  showWatermark:LS.get('kjv_card_wm',true),
   imgZoom:1, imgOffX:0, imgOffY:0,
   fontFamily:LS.get('kjv_ff','serif'),
   theme:LS.get('kjv_theme','dark'),
@@ -4614,7 +4612,7 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload){
   drawRule(ctx, PAD, W - PAD, RULE1_Y, t);
   drawBody(ctx, bodyLines, PAD, W, TEXT_Y, lineH, BFONT, t, upload ? S.textAlign : 'left');
   drawRule(ctx, PAD, W - PAD, RULE2_Y, t);
-  drawCardFooter(ctx, W, FOOT_Y, t, photo, !upload || S.showWatermark);
+  drawCardFooter(ctx, W, FOOT_Y, t, photo);
   drawCorners(ctx, PAD, W, H, t);
 }
 
@@ -4660,7 +4658,7 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
   // ── BOTTOM SECTION ──
   const RULE3_Y = H - 84;
   drawRule(ctx, PAD, W - PAD, RULE3_Y, t);
-  drawCardFooter(ctx, W, H - 42, t, photo, !upload || S.showWatermark);
+  drawCardFooter(ctx, W, H - 42, t, photo);
 
   // ── BODY — positioned within the space between the two rule pairs.
   // Uploads may place the verse Top / Middle / Bottom; everything else stays centred.
@@ -4722,30 +4720,26 @@ function drawCardBase(ctx, W, H, PAD, t, radius){
 // The card is drawn in the app's own Scripture face, so every phone draws it
 // alike (Android has no Georgia); Georgia stands in until Crimson Pro loads.
 function cardFont(weight, size){ return `${weight} ${size}px 'Crimson Pro', Georgia, serif`; }
-// The reference, with a quiet KJV after it, centred as one line
 function drawRef(ctx, W, y, size, t, ref = S.scrRef){
-  const kSize = Math.round(size * 0.62), gap = size * 0.35;
-  ctx.font = cardFont(600, size); const rw = ctx.measureText(ref).width;
-  ctx.font = cardFont(600, kSize); const kw = ctx.measureText('KJV').width;
-  const x0 = W / 2 - (rw + gap + kw) / 2;
-  ctx.textAlign = 'left'; ctx.fillStyle = t.ref;
-  ctx.font = cardFont(600, size); ctx.fillText(ref, x0, y);
-  ctx.globalAlpha = 0.75; ctx.font = cardFont(600, kSize);
-  ctx.fillText('KJV', x0 + rw + gap, y); ctx.globalAlpha = 1;
+  ctx.textAlign = 'center'; ctx.fillStyle = t.ref;
+  ctx.font = cardFont(600, size);
+  ctx.fillText(ref, W / 2, y);
 }
-// Footer: a small church logo beside the church's name and the app's address
-function drawCardFooter(ctx, W, cy, t, photo, showLogo){
-  const logo = showLogo && _logoImg.complete && _logoImg.naturalWidth;
+// Footer: a small church logo beside the church's name, with the app's address
+// centred beneath it, a step quieter than the verse
+function drawCardFooter(ctx, W, cy, t, photo){
+  const logo = _logoImg.complete && _logoImg.naturalWidth;
   const LS = 44, GAP = 14;
   ctx.font = cardFont(600, 17); const nw = ctx.measureText(CARD_CHURCH).width;
   ctx.font = cardFont(400, 15); const uw = ctx.measureText(CARD_URL).width;
   const tw = Math.max(nw, uw), total = (logo ? LS + GAP : 0) + tw;
-  const x0 = W / 2 - total / 2, tx = x0 + (logo ? LS + GAP : 0);
-  if(logo) drawLogoWatermark(ctx, _logoImg, x0, cy - LS / 2, LS, photo ? true : t.dark, photo ? 0.85 : 0.7, photo ? null : t.ref);
-  ctx.textAlign = logo ? 'left' : 'center';
-  const x = logo ? tx : W / 2;
-  ctx.fillStyle = t.ref; ctx.font = cardFont(600, 17); ctx.fillText(CARD_CHURCH, x, cy - 3);
-  ctx.fillStyle = t.text; ctx.globalAlpha = 0.8; ctx.font = cardFont(400, 15); ctx.fillText(CARD_URL, x, cy + 16);
+  const x0 = W / 2 - total / 2, mid = x0 + (logo ? LS + GAP : 0) + tw / 2;
+  if(logo) drawLogoWatermark(ctx, _logoImg, x0, cy - LS / 2, LS, photo ? true : t.dark, photo ? 0.6 : 0.5, photo ? null : t.ref);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = t.ref; ctx.globalAlpha = photo ? 0.85 : 0.75;
+  ctx.font = cardFont(600, 17); ctx.fillText(CARD_CHURCH, mid, cy - 3);
+  ctx.fillStyle = t.text; ctx.globalAlpha = photo ? 0.7 : 0.6;
+  ctx.font = cardFont(400, 15); ctx.fillText(CARD_URL, mid, cy + 16);
   ctx.globalAlpha = 1;
 }
 function drawRule(ctx, x1, x2, y, t){
@@ -4764,9 +4758,9 @@ function drawBody(ctx, lines, PAD, W, y, lineH, size, t, align){
 const CARD_CHURCH = 'Faith Baptist Church of Plymouth County';
 const CARD_URL = 'fbckjv.app/KJVBible';
 function drawCorners(ctx, PAD, W, H, t){
-  ctx.font = '13px serif'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.38;
-  [[PAD - 8, 26, 'left'], [W - PAD + 8, 26, 'right'],
-   [PAD - 8, H - 14, 'left'], [W - PAD + 8, H - 14, 'right']
+  ctx.font = '19px serif'; ctx.fillStyle = t.ref; ctx.globalAlpha = 0.45;
+  [[PAD - 12, 30, 'left'], [W - PAD + 12, 30, 'right'],
+   [PAD - 12, H - 14, 'left'], [W - PAD + 12, H - 14, 'right']
   ].forEach(([x, y, a]) => { ctx.textAlign = a; ctx.fillText('✦', x, y); });
   ctx.globalAlpha = 1;
 }
@@ -4839,11 +4833,9 @@ function _syncPhotoControls(){
   const vg=document.getElementById('pc-vpos'); if(vg) vg.style.display = (S.cardOrientation==='portrait') ? 'flex' : 'none';
   document.querySelectorAll('#pc-vpos .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textVPos));
   document.querySelectorAll('#pc-align .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textAlign));
-  const wm=document.getElementById('pc-wm'); if(wm) wm.classList.toggle('on', S.showWatermark);
 }
 function setCardVPos(v){ S.textVPos=v; LS.set('kjv_card_vpos',v); renderCanvas(S.cardTheme); }
 function setCardAlign(v){ S.textAlign=v; LS.set('kjv_card_align',v); renderCanvas(S.cardTheme); }
-function toggleCardWatermark(){ S.showWatermark=!S.showWatermark; LS.set('kjv_card_wm',S.showWatermark); renderCanvas(S.cardTheme); }
 
 // Pinch-to-zoom + drag-to-reposition on the uploaded photo. Active only in
 // upload mode; converts screen movement to card-space via the display scale.
@@ -14757,7 +14749,7 @@ function drawCombinedCard(canvas){
 
   // Bottom rule + the church's footer
   drawRule(ctx, PAD, W - PAD, y, t);
-  drawCardFooter(ctx, W, y + 44, t, false, true);
+  drawCardFooter(ctx, W, y + 44, t, false);
 
   // Corners
   drawCorners(ctx, PAD, W, H, t);

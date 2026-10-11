@@ -531,7 +531,7 @@ check('verse card: no quote marks, every line inside the margins, the church foo
     assert(!r.loose.length, `${orient}: lines were broken in a different face than they are drawn in: ${r.loose.join(' | ')}`);
     assert(!r.over.length, `${orient}: lines run past the right margin: ${r.over.join(' | ')}`);
     assert(r.footer.includes('fbckjv.app/KJVBible') && r.footer.includes('Faith Baptist Church of Plymouth County'), `${orient}: the footer should carry the church's name and fbckjv.app/KJVBible`);
-    assert(r.footer.includes('KJV') && !r.footer.includes('King James Version'), `${orient}: KJV belongs beside the reference, not in the footer`);
+    assert(!r.footer.some(t => /^KJV$|King James Version/.test(t)), `${orient}: the address names the KJV; the card needn't say it again`);
   }
 });
 
