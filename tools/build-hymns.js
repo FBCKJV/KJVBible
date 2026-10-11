@@ -47,4 +47,13 @@ const out = { h: LIST.map(([t, a, y, c, refs]) => {
   }), tx.v.map(s => s.map(curly)), tx.ch.map(curly), ...(RECORDINGS[t] ? [RECORDINGS[t]] : [])];
 }) };
 fs.writeFileSync(path.join(root, 'hymns.json'), JSON.stringify(out));
+// hymn-index.json: a small list of which verses each hymn stands on, so the verse card can offer
+// "🎵 Hymns on this verse" without loading every hymn's words.
+//   { h: [[title, author, year], …], r: [[hymn number, book, chapter, first verse, last verse], …] }
+const index = { h: out.h.map(h => [h[0], h[1], h[2]]), r: [] };
+out.h.forEach((h, i) => h[4].forEach(([label, jump]) => {
+  const m = jump.match(/^(.+) (\d+):(\d+)$/), e = label.match(/:(\d+)\u2013(\d+)$/);
+  index.r.push([i, m[1], +m[2], +m[3], e ? +e[2] : +m[3]]);
+}));
+fs.writeFileSync(path.join(root, 'hymn-index.json'), JSON.stringify(index));
 console.log(`${out.h.length} hymns in ${new Set(out.h.map(h => h[3])).size} sections`);

@@ -6,6 +6,12 @@
 
 ## New Features
 
+### 🎵 Hymns on the Verse (v62)
+- **On the verse card**: when a hymn stands on the verse you tapped, a fold, **🎵 A hymn on this verse** (or *2 hymns*), appears above the Hebrew & Greek fold. It stays shut until opened (and stays open or shut as you left it, per device); a verse no hymn is built on shows nothing, so a plain reader never sees it. Tap a hymn to read every stanza; the 📖 buttons on the hymn, or Back, return to the chapter
+- A range such as *Psalm 104:1–5* covers each verse in it. Today 259 verses are tied to a hymn (each hymn lists the one to three verses it stands on); more can be added to tools/hymns/list.js
+- New file **hymn-index.json** (~17 KB), written by tools/build-hymns.js beside hymns.json: each hymn's title, author and year, and the verses it stands on, so the card never has to load the whole hymnal
+- Tips & Help, the verse hint and What's New mention it
+
 ### 🎵 224 Hymns of the Faith (v61)
 - **Search → Hymns grows from 98 to 224 hymns**: more of the old gospel hymns (*Hiding in Thee*, *Be Not Dismayed Whate'er Betide*, *Beulah Land*, *In the Garden*, *Brighten the Corner Where You Are*), the great hymns of the church (*A Mighty Fortress Is Our God*, *Abide with Me*, *The Church's One Foundation*, *Immortal, Invisible*, *And Can It Be?*, *How Firm a Foundation*) and the Christmas carols (*Silent Night*, *O Come, All Ye Faithful*, *The First Noel*, *What Child Is This?*, *We Three Kings*), each with every stanza, its refrain and the Scriptures behind it (every reference checked against the KJV text)
 - **Only public-domain words**: every new hymn's words were published before 1928. Modern worship songs and anything still under copyright were left out on purpose, as were Marian hymns and the Coptic saints' songs found in the same collections. Christmas carols of older Catholic origin are included, since their words are about the Lord's birth

@@ -244,6 +244,31 @@ check('hymns: the grown hymnal, grouped by section, old numbers unchanged', asyn
   assert(!r.dup, r.dup + ' duplicate titles');
 });
 
+check('verse card: 🎵 a hymn on the verse opens it; a verse with none shows nothing', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    LS.set('kjv_hy_open', true);
+    await jumpToRef('Isaiah 6:3'); await wait(1500);
+    openVPop('Isaiah 6:3', 'Holy, holy, holy, is the LORD of hosts'); await wait(1500);
+    const fold = document.getElementById('vpop-hy');
+    const shown = fold.style.display !== 'none', text = fold.textContent;
+    const row = fold.querySelector('.hy-row'); if(row) row.click();
+    await wait(2000);
+    const opened = (document.querySelector('#hymn-view .dv-title') || {}).textContent;
+    history.back(); await wait(1500);
+    const back = {screen: S.screen, book: S.book, ch: S.ch};
+    await jumpToRef('Genesis 1:1'); await wait(1200);
+    openVPop('Genesis 1:1', 'In the beginning God created the heaven and the earth.'); await wait(1500);
+    const none = document.getElementById('vpop-hy').style.display === 'none';
+    LS.set('kjv_hy_open', false);
+    return {shown, text, opened, none, back};
+  });
+  assert(r.shown && /Holy, Holy, Holy/.test(r.text), 'no hymn fold on Isaiah 6:3: ' + r.text);
+  assert(r.opened === 'Holy, Holy, Holy', 'tapping the hymn opened ' + r.opened);
+  assert(r.none, 'a hymn fold shows on Genesis 1:1');
+  assert(r.back.book === 'Isaiah' && r.back.ch === 5, 'Back from the hymn left ' + JSON.stringify(r.back));
+});
+
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
   await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
   const r = await p.evaluate(async () => {
