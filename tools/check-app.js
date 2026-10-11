@@ -500,6 +500,41 @@ check('Sword Drill: a verse just mastered rests a month before review', async p 
   assert(r.next > 30, `the second review should wait longer than a month, got ${r.next} days`);
 });
 
+check('verse card: no quote marks, every line inside the margins, the church footer', async p => {
+  for(const orient of ['landscape', 'portrait']){
+    const r = await p.evaluate(async orient => {
+      const drawn = [], C = CanvasRenderingContext2D.prototype, orig = C.fillText;
+      C.fillText = function(txt, x, y){ drawn.push({txt: String(txt), w: this.measureText(txt).width, x, align: this.textAlign, ctx: this, font: this.font}); return orig.apply(this, arguments); };
+      S.cardOrientation = orient; S.cardBg = null; S.cardTheme = 'light';
+      openScrOverlay([{vnum: '3', txt: 'So he carried me away in the spirit into the wilderness: and I saw a woman sit upon a scarlet coloured beast, full of names of blasphemy, having seven heads and ten horns.'}], 'Revelation 17:3');
+      drawn.length = 0;   // only the render below
+      renderCanvas('light');
+      C.fillText = orig;
+      const W = S._cw, PAD = orient === 'portrait' ? 52 : 60;
+      const body = drawn.filter(d => d.align === 'left' && d.x === PAD);
+      // Each line but the last should be full: in the font it is drawn in, the next
+      // word would not have fitted (lines measured in another face fail this)
+      const loose = body.slice(0, -1).filter((d, i) => {
+        d.ctx.font = d.font;
+        return d.ctx.measureText(d.txt + ' ' + body[i + 1].txt.split(' ')[0]).width <= W - 2 * PAD;
+      }).map(d => d.txt);
+      return {
+        loose,
+        quotes: drawn.some(d => /[“”"]/.test(d.txt)),
+        over: body.filter(d => d.x + d.w > W - PAD + 0.5).map(d => d.txt),
+        lines: body.length,
+        footer: drawn.map(d => d.txt).filter(t => /fbckjv\.app|Faith Baptist|King James Version|KJV/.test(t))
+      };
+    }, orient);
+    assert(r.lines > 1, `${orient}: the verse should be drawn in lines`);
+    assert(!r.quotes, `${orient}: the card should have no quote marks`);
+    assert(!r.loose.length, `${orient}: lines were broken in a different face than they are drawn in: ${r.loose.join(' | ')}`);
+    assert(!r.over.length, `${orient}: lines run past the right margin: ${r.over.join(' | ')}`);
+    assert(r.footer.includes('fbckjv.app/KJVBible') && r.footer.includes('Faith Baptist Church of Plymouth County'), `${orient}: the footer should carry the church's name and fbckjv.app/KJVBible`);
+    assert(r.footer.includes('KJV') && !r.footer.includes('King James Version'), `${orient}: KJV belongs beside the reference, not in the footer`);
+  }
+});
+
 check('readable in every theme: verse numbers, small print and the Romans Road', async p => {
   // Text against what is behind it, as WCAG measures it: 4.5 to 1 for ordinary text
   const measure = () => {
