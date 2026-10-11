@@ -2532,7 +2532,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>Notes tab</strong> — everything you have marked or written: <strong>My Verses</strong> (your own named lists), <strong>Highlights</strong>, verse <strong>Notes</strong> and your <strong>Studies</strong> from the 📝 notebook (tap one to open it, or ＋ New study). The search box looks through all of them</span></div>
         <div class="tip-row"><span class="tip-ico">🏠</span><span class="tip-txt"><strong>Home</strong> — a card for each bottom tab under the books: Search &amp; Study Tools (type in the box, or open the arrow for every tool), Reading Plans and Notes. An arrow that turns folds a card open; <strong>›</strong> goes to its page. Home remembers which cards you left open. <strong>Swipe the Verse of the Day</strong> left or right to put it away until tomorrow; the Old Testament, New Testament and Romans Road come right under it</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
-        <div class="tip-row"><span class="tip-ico">⚔️</span><span class="tip-txt"><strong>Sword Drill</strong> (home screen) hides verses in your heart with fill-in-the-blank memory, spaced review and badges — add any verse you like under <strong>Custom Verses</strong>, send selected verses (press and hold) or a verse from a My Verses list with <strong>⚔️ Drill</strong>, and in First Letters or Full Recall tap <strong>🎤</strong> to say it aloud</span></div>
+        <div class="tip-row"><span class="tip-ico">⚔️</span><span class="tip-txt"><strong>Sword Drill</strong> (home screen) hides verses in your heart with fill-in-the-blank memory and badges; a verse you master comes back for review a month later, then at longer and longer spans — add any verse you like under <strong>Custom Verses</strong>, send selected verses (press and hold) or a verse from a My Verses list with <strong>⚔️ Drill</strong>, and in First Letters or Full Recall tap <strong>🎤</strong> to say it aloud</span></div>
       </div>
 
       <div class="tips-section">
@@ -13386,7 +13386,7 @@ const HINTS = {
   say:      {i:'🔊', t:'Hear it said', b:'Tap <b>🔊 Hear it</b> to hear a name or word said aloud — tap it again to hear it slowly. Hard names are written the way they sound, with the strong part in capitals: <b>meh-FIB-oh-sheth</b>.', at:'.say-btn'},
   strongstool: {i:'🔤', t:'Hebrew & Greek', b:'Type an English word such as <b>mercy</b> to see the Hebrew and Greek words the KJV renders by it, or a number like <b>G26</b>. Tap a word for its meaning and every verse it is in.', at:'#strongs-input', tt:'strongs'},
   strongs:  {i:'🔤', t:'Follow a word', b:'Every verse this word is in is listed below, its English in bold. Tap a rendering such as <b>mercy</b> or <b>kindness</b> to see only those verses.', at:'#strongs-view .sg-r', tt:'strongs'},
-  sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and come back when it is due for review — badges mark your progress. In First Letters and Full Recall you can tap <b>🎤</b> and say the verse aloud.', at:null},
+  sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and once you master it, it rests a month before it comes back for review — badges mark your progress. In First Letters and Full Recall you can tap <b>🎤</b> and say the verse aloud.', at:null},
 };
 const HINT_GAP = 8000; // at least this long between two hints
 function hintsOn(){ return !LS.get('kjv_hints_off', false); }
@@ -13824,7 +13824,9 @@ function memGetStats(ms){
 // verse is "due" once its stage's interval has elapsed since lastReview.
 // Completing a due verse in Challenge mode advances the stage (longer wait);
 // a Guided run refreshes the clock without advancing.
-const MEM_REVIEW_INTERVALS = [1, 3, 7, 30]; // days between reviews per stage
+// A verse just mastered (three stars and a badge) is given a month's rest
+// before its first review; each review cleared after that widens the gap.
+const MEM_REVIEW_INTERVALS = [30, 60, 90, 180]; // days between reviews per stage
 
 function memReviewIntervalDays(rec){
   return MEM_REVIEW_INTERVALS[Math.min(rec.srsStage||0, MEM_REVIEW_INTERVALS.length-1)];

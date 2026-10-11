@@ -486,6 +486,20 @@ check('notebook: Copy carries bold, italics and headings; verses as bold referen
   assert(!/Faith Baptist Church/.test(r.html + r.text), 'a copied study should end with the study, no signature line');
 });
 
+check('Sword Drill: a verse just mastered rests a month before review', async p => {
+  const r = await p.evaluate(() => {
+    memRecordComplete('Psalm 119:11', 'challenge', 30);
+    const rec = memGetMastery().refs['Psalm 119:11'], day = 86400000, t = rec.lastReview;
+    const out = {tomorrow: memIsDue(rec, t + day), week: memIsDue(rec, t + 7*day), month: memIsDue(rec, t + 30*day)};
+    // Clearing that review climbs to a longer rest
+    rec.srsStage = 1; out.next = memReviewIntervalDays(rec);
+    return out;
+  });
+  assert(!r.tomorrow && !r.week, 'a verse just mastered should not be due the next day or week');
+  assert(r.month, 'a mastered verse should be due for review after a month');
+  assert(r.next > 30, `the second review should wait longer than a month, got ${r.next} days`);
+});
+
 check('readable in every theme: verse numbers, small print and the Romans Road', async p => {
   // Text against what is behind it, as WCAG measures it: 4.5 to 1 for ordinary text
   const measure = () => {
