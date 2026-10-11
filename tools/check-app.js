@@ -500,6 +500,37 @@ check('Sword Drill: a verse just mastered rests a month before review', async p 
   assert(r.next > 30, `the second review should wait longer than a month, got ${r.next} days`);
 });
 
+check('hymn cards: tap verses of a hymn, 📸 Card, its lines kept and centred', async p => {
+  const i = await p.evaluate(async () => { const H = await loadHymns(); return H.findIndex(h => h[6].length); });
+  await p.evaluate(async i => { showScreen('search'); await openHymn(i); }, i); await sleep(500);
+  const bar = () => p.evaluate(() => ({on: document.getElementById('hybar').classList.contains('on'), txt: document.getElementById('hybar-count').textContent}));
+  assert(!(await bar()).on, 'the hymn bar should be hidden until a verse is tapped');
+  await p.click('#hymn-view .hy-st'); await p.click('#hymn-view .hy-ch'); await sleep(200);
+  let b = await bar();
+  assert(b.on && b.txt === '1 verse and the refrain', `tapping a verse and the refrain should show the bar (${b.txt})`);
+  const r = await p.evaluate(async () => {
+    const drawn = [], C = CanvasRenderingContext2D.prototype, orig = C.fillText;
+    C.fillText = function(txt, x){ drawn.push({txt: String(txt), x, w: this.measureText(txt).width, align: this.textAlign}); return orig.apply(this, arguments); };
+    S.cardOrientation = 'landscape'; S.cardBg = null;
+    hyCard();
+    drawn.length = 0; renderCanvas(S.cardTheme);
+    C.fillText = orig;
+    const h = S._hymns[+S._subView.key], W = S._cw;
+    const body = drawn.filter(d => d.align === 'center' && d.x === W / 2);
+    return {open: document.getElementById('scr-overlay').classList.contains('on'), ref: S.scrRef, title: h[0],
+      by: drawn.some(d => d.txt === `${h[1]}, ${h[2]}`), label: drawn.some(d => d.txt === 'REFRAIN'),
+      lines: [...h[5][0], ...h[6]].every(l => body.some(d => d.txt === l)),
+      over: body.filter(d => d.x + d.w / 2 > W - 60 + 0.5 || d.x - d.w / 2 < 60 - 0.5).map(d => d.txt)};
+  });
+  assert(r.open && r.ref === r.title, '📸 Card should open the card maker with the hymn title at the top');
+  assert(r.by, 'the card should carry the author and year under the title');
+  assert(r.label && r.lines, 'the verse and the refrain should be drawn line for line, the refrain under its label');
+  assert(!r.over.length, `hymn lines run outside the margins: ${r.over.join(' | ')}`);
+  await p.evaluate(() => history.back()); await sleep(400);
+  await p.evaluate(() => hyClear()); await sleep(150);
+  assert(!(await bar()).on, '✕ Clear should put the bar away');
+});
+
 check('Back in Sword Drill: a verse → the list → closed, never out of the app', async p => {
   // Android's Back skips a step a page pushes by itself, so nothing may be pushed
   // while Back is being handled: every step must come from a tap
