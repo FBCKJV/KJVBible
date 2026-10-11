@@ -486,6 +486,39 @@ check('notebook: Copy carries bold, italics and headings; verses as bold referen
   assert(!/Faith Baptist Church/.test(r.html + r.text), 'a copied study should end with the study, no signature line');
 });
 
+check('readable in every theme: verse numbers, small print and the Romans Road', async p => {
+  // Text against what is behind it, as WCAG measures it: 4.5 to 1 for ordinary text
+  const measure = () => {
+    const parse = s => { const a = s.match(/[\d.]+/g).map(Number); return {r: a[0], g: a[1], b: a[2], a: a.length > 3 ? a[3] : 1}; };
+    const over = (f, b) => ({r: f.r*f.a + b.r*(1-f.a), g: f.g*f.a + b.g*(1-f.a), b: f.b*f.a + b.b*(1-f.a), a: 1});
+    const lum = c => [c.r, c.g, c.b].map(v => (v /= 255) <= .03928 ? v/12.92 : ((v+.055)/1.055) ** 2.4).reduce((s, v, i) => s + v*[.2126, .7152, .0722][i], 0);
+    const bgOf = el => { const st = [];
+      for(let e = el; e; e = e.parentElement){ const cs = getComputedStyle(e); let c = parse(cs.backgroundColor);
+        const g = (cs.backgroundImage.match(/rgba?\([^)]+\)/g) || []).map(parse);
+        if(g.length){ const m = {r:0, g:0, b:0, a:0}; g.forEach(k => { for(const x in m) m[x] += k[x]/g.length; }); c = c.a ? over(m, c) : m; }
+        if(c.a){ st.push(c); if(c.a >= 1) break; } }
+      return st.reduceRight((b, c) => over(c, b), {r:255, g:255, b:255, a:1}); };
+    const bad = [];
+    for(const sel of ['#screen-reader .vnum', '.rr-ref', '.rr-theme', '.rr-preview', '#rr-title', '.book-meta', '#vod-ref', '.bn']){
+      const el = [...document.querySelectorAll(sel)].find(e => e.getClientRects().length);
+      if(!el) continue;
+      const bg = bgOf(el), fg = over(parse(getComputedStyle(el).color), bg);
+      const [x, y] = [lum(fg), lum(bg)], ratio = (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
+      if(ratio < 4.5) bad.push(`${sel} ${ratio.toFixed(2)}`);
+    }
+    return bad;
+  };
+  for(const theme of ['dark', 'light', 'sepia']){
+    await p.evaluate(t => { setTheme(t); showScreen('books'); document.getElementById('rr-steps')?.classList.add('open'); }, theme);
+    await sleep(500);
+    const home = await p.evaluate(measure);
+    await p.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
+    const reader = await p.evaluate(measure);
+    const bad = [...home, ...reader];
+    assert(!bad.length, `${theme}: too faint to read: ${bad.join(', ')}`);
+  }
+});
+
 check('screenshots (light and dark)', async (p, ctx, browser, base) => {
   fs.mkdirSync(SHOT_DIR, {recursive: true});
   for(const theme of ['dark', 'light']){
