@@ -3679,7 +3679,7 @@ async function loadVOD(){
     const data=await fetchBook(r.b);if(!data)return;
     const v=data.chapters[r.c-1].verses[r.v-1];
     document.getElementById('vod-txt').textContent=`"${v.text}"`;
-    document.getElementById('vod-ref').textContent=`${r.b} ${r.c}:${r.v} (KJV)`;
+    document.getElementById('vod-ref').textContent=refShow(`${r.b} ${r.c}:${r.v}`)+' (KJV)';
     vodMeta={book:r.b,ch:r.c-1,v:r.v,data};
   }catch(e){}
 }
@@ -3763,12 +3763,12 @@ function contBannerInner(){
   const cur = hist[0];
   const prior = hist.slice(1, 6); // up to 5 previously-read chapters
   const svg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
-  let html = `<div class="cont-top"><div class="cont-main" onclick="continueReading()" role="button" tabindex="0"><div class="cont-ico">${svg}</div><div style="flex:1;min-width:0"><div class="cont-lbl">Continue Reading</div><div class="cont-ref">${cur.book} — Chapter ${cur.ch+1}</div></div></div>`;
+  let html = `<div class="cont-top"><div class="cont-main" onclick="continueReading()" role="button" tabindex="0"><div class="cont-ico">${svg}</div><div style="flex:1;min-width:0"><div class="cont-lbl">Continue Reading</div><div class="cont-ref">${cur.book === 'Psalms' ? 'Psalm ' + (cur.ch+1) : cur.book + ' — Chapter ' + (cur.ch+1)}</div></div></div>`;
   if(prior.length) html += `<button class="cont-toggle" onclick="toggleContHistory(event)" aria-label="Recently read" aria-expanded="false">${HW_CHEV}</button>`;
   html += `</div>`;
   if(prior.length){
     html += `<div class="cont-history">` + prior.map(e =>
-      `<div class="cont-hrow" onclick="openHistoryChapter('${e.book.replace(/'/g,"\\'")}',${e.ch})" role="button" tabindex="0"><span class="hbook">${e.book} — Chapter ${e.ch+1}</span><span class="hgo">&#8250;</span></div>`
+      `<div class="cont-hrow" onclick="openHistoryChapter('${e.book.replace(/'/g,"\\'")}',${e.ch})" role="button" tabindex="0"><span class="hbook">${e.book === 'Psalms' ? 'Psalm ' + (e.ch+1) : e.book + ' — Chapter ' + (e.ch+1)}</span><span class="hgo">&#8250;</span></div>`
     ).join('') + `</div>`;
   }
   return html;
@@ -3984,9 +3984,9 @@ function renderReader(){
   if(!S.bookData)return;
   exitSelectMode();
   const ch=S.bookData.chapters[S.ch];
-  document.getElementById('reader-loc').textContent=`${S.book} ${S.ch+1}`;
+  document.getElementById('reader-loc').textContent=refShow(`${S.book} ${S.ch+1}`);
   document.getElementById('ch-title').textContent=S.book;
-  document.getElementById('ch-sub-text').textContent=`Chapter ${S.ch+1}`;
+  document.getElementById('ch-sub-text').textContent=S.book === 'Psalms' ? `Psalm ${S.ch+1}` : `Chapter ${S.ch+1}`;
   // Show chapter play button if this book has timestamps
   const _chBtn = document.getElementById('ch-play-btn');
   if(_chBtn){
@@ -4199,6 +4199,10 @@ function getSelectedSorted(){
   return [...S.selectedData].sort((a,b)=>parseInt(a.vnum)-parseInt(b.vnum));
 }
 
+// How a reference is shown: one Psalm is "Psalm 47" or "Psalm 23:1", several
+// keep the plural ("Psalms 23–24"), as the KJV prints them. Stored references
+// (highlights, notes, lists) keep the book's own name, "Psalms".
+const refShow = s => String(s == null ? '' : s).replace(/\bPsalms (?=\d+(?::|\b(?!\s*[–\-,]\s*\d)))/g, 'Psalm ');
 // The reference for verses as chosen: a run is a span, a gap a comma, another
 // chapter or book follows after a semicolon — "John 3:16–17, 36"
 function passageLabel(items){
@@ -4209,7 +4213,7 @@ function passageLabel(items){
     const key = m[1] + ' ' + m[2], g = groups[groups.length - 1];
     if(g && g.key === key) g.nums.push(+m[3]); else groups.push({key, nums: [+m[3]]});
   });
-  return groups.map(g => g.nums ? `${g.key}:${verseSpan(g.nums, '–').replace(/,/g, ', ')}` : g.txt).join('; ');
+  return refShow(groups.map(g => g.nums ? `${g.key}:${verseSpan(g.nums, '–').replace(/,/g, ', ')}` : g.txt).join('; '));
 }
 // Their words in one flow; where verses are not next to each other an ellipsis joins them
 function joinVerseText(items){
@@ -4319,7 +4323,7 @@ function multiScreenshot(){
 function openVPop(ref,txt){
   hintMaybe(hintSeen('verse') ? 'vword' : 'verse', 650);
   S.popRef=ref;S.popTxt=txt;
-  document.getElementById('vpop-ref').textContent=ref;
+  document.getElementById('vpop-ref').textContent=refShow(ref);
   updateHLPicker();updateBMBtn();
   document.getElementById('note-area-wrap').classList.remove('on');
   // Tap any word of the verse for its meaning (Webster 1828, with the KJV note on top)
@@ -4394,7 +4398,10 @@ function vpopNameItems(ref, txt){
     if(!items.has(k)){ const at = txt.search(new RegExp(`(^|[^A-Za-z])${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`)); items.set(k, {name: label, at: at < 0 ? 1e6 : at, people: [], places: []}); }
     if(kind) items.get(k)[kind].push(id);
   };
-  if(S._people) peopleInVerse(ref).forEach(id => { const p = S._people[id]; if(p) add(placeNameInVerse(p, txt), 'people', id); });
+  // A person only when the verse uses one of their names (3 John 1:1 says "The
+  // elder", so John, its writer, is not listed; Simon is, where it says "Peter")
+  const named = (p, t) => [p.n, ...(p.a || [])].some(nm => /^[A-Z]/.test(nm) && new RegExp(`(^|[^A-Za-z])${nm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-z])`).test(t));
+  if(S._people) peopleInVerse(ref).forEach(id => { const p = S._people[id]; if(p && named(p, txt)) add(placeNameInVerse(p, txt), 'people', id); });
   if(S._places) placesInVerse(ref).forEach(id => {
     const pl = S._places[id], label = placeNameInVerse(pl, txt), it = items.get(namesNorm(label));
     // a name the dataset splits into several sites shows once
@@ -4458,8 +4465,8 @@ function openNote(){document.getElementById('note-area').value=S.notes[S.popRef]
 function cancelNote(){document.getElementById('note-area-wrap').classList.remove('on');}
 function saveNote(){const t=document.getElementById('note-area').value.trim();if(t)S.notes[S.popRef]=t;else delete S.notes[S.popRef];LS.set('kjv_notes',S.notes);fbSyncSoon();cancelNote();refreshVBlock(S.popRef);}
 function openNoteChip(e,ref){e.stopPropagation();openVPop(ref,document.querySelector(`[data-ref="${ref}"] .vtxt`).textContent);setTimeout(openNote,50);}
-function copyVerse(){const t=`${S.popRef}  ${S.popTxt}`;navigator.clipboard?.writeText(t);}
-function shareVerse(){ sharePage(S.popRef, `${S.popRef}  ${S.popTxt}`, verseLink(S.popRef)); }
+function copyVerse(){const t=`${refShow(S.popRef)}  ${S.popTxt}`;navigator.clipboard?.writeText(t);}
+function shareVerse(){ sharePage(refShow(S.popRef), `${refShow(S.popRef)}  ${S.popTxt}`, verseLink(S.popRef)); }
 // Deep link to a verse — a URL that opens the app straight to this verse.
 // Canonical location of the live app. Share links and the share-app QR point
 // here so people always land on the current build (the app is served at the
@@ -4591,7 +4598,7 @@ function shareMap(){
   const m = MAPS[S._mapOpen];
   if(m) sharePage(m.t, `🗺️ ${m.t} — ${m.d}\nFBC KJV Bible`, APP_URL + '#map=' + m.f);
 }
-function singleScreenshot(){S.scrVerses=[{ref:S.popRef,vnum:S.popRef.split(':')[1],txt:S.popTxt}];const ref=S.popRef;leaveVPopThen(()=>openScrOverlay(S.scrVerses,ref));}
+function singleScreenshot(){S.scrVerses=[{ref:S.popRef,vnum:S.popRef.split(':')[1],txt:S.popTxt}];const ref=refShow(S.popRef);leaveVPopThen(()=>openScrOverlay(S.scrVerses,ref));}
 
 function refreshVBlock(ref){
   const el=document.querySelector(`[data-ref="${ref}"]`);if(!el)return;
@@ -5430,12 +5437,12 @@ function updateHeaderState(){
   back.style.display   = show?'flex':'none';
   const ret = document.getElementById('btn-return'), lr = S._lastRead;
   ret.style.display = lr && !show ? 'flex' : 'none';
-  if(lr) ret.textContent = `📖 ${lr.book} ${lr.ch + 1}`;
+  if(lr) ret.textContent = '📖 ' + refShow(`${lr.book} ${lr.ch + 1}`);
   document.getElementById('header').classList.toggle('has-return', !!lr && !show);
   sel.style.display    = S.screen==='reader'?'flex':'none';
   selAll.style.display = S.screen==='reader'?'flex':'none';
   document.getElementById('logo').textContent =
-    S.screen==='reader'?`${S.book} ${S.ch+1}`:S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
+    S.screen==='reader'?refShow(`${S.book} ${S.ch+1}`):S.screen==='chapters'?S.book:'✝ Faith Baptist Church';
 }
 
 /* ════ FETCH ════ */
@@ -9386,7 +9393,7 @@ async function presRender(){
   const ch = d.chapters[PRES.ch], vs = ch.verses.slice(PRES.v, PRES.v + presPer());
   const a = vs[0].verse, z = vs[vs.length - 1].verse;
   const refEl = document.getElementById('pres-ref'), txt = document.getElementById('pres-txt');
-  refEl.textContent = `${PRES.book} ${PRES.ch + 1}:${a}${z !== a ? '–' + z : ''}`;
+  refEl.textContent = refShow(`${PRES.book} ${PRES.ch + 1}:${a}${z !== a ? '–' + z : ''}`);
   PRES.parts = null;
   if(PRES.classroom){
     // Split a long verse into screens that each fit at the classroom minimum
@@ -9409,7 +9416,7 @@ async function presRender(){
     PRES.part = 0;
     txt.innerHTML = vs.map(v => (vs.length > 1 ? `<sup>${v.verse}</sup>` : '') + escapeHtml(v.text)).join(' ');
   }
-  document.getElementById('pres-pos').textContent = `${PRES.book} ${PRES.ch + 1} · ${a} of ${ch.verses.length}`;
+  document.getElementById('pres-pos').textContent = `${refShow(PRES.book + ' ' + (PRES.ch + 1))} · ${a} of ${ch.verses.length}`;
   document.getElementById('pres-count').textContent = PRES.count === 1 ? '1 verse' : PRES.count + ' verses';
   presFit();
 }
@@ -11343,7 +11350,7 @@ function renderColList(el, c){
     ${c.items.map((it, i) => `<div class="col-item pick ${pick.includes(i) ? 'on' : ''}" onclick="colPickToggle(${i})">
       <div class="col-tick">${pick.includes(i) ? '✓' : ''}</div>
       <div class="col-it-main">
-        <div class="sv-ref">${escapeHtml(it.r)}</div>
+        <div class="sv-ref">${escapeHtml(refShow(it.r))}</div>
         <div class="col-it-t">${escapeHtml(it.t || '')}</div>
       </div></div>`).join('')}
     <div class="col-pickbar">
@@ -11368,7 +11375,7 @@ function renderColList(el, c){
     <button class="col-pickgo" onclick="colPickStart()">📸 Screenshot — pick up to 3 verses</button>` : `<div class="empty-msg" style="padding:24px 0">Empty for now.<br>While reading, tap a verse → 🔖 Save → ${escapeHtml(c.n)}.</div>`}
     ${c.items.map((it, i) => `<div class="col-item">
       <div class="col-it-main" onclick="jumpToRef('${it.a.replace(/'/g, "\\'")}')">
-        <div class="sv-ref">${escapeHtml(it.r)}</div>
+        <div class="sv-ref">${escapeHtml(refShow(it.r))}</div>
         <div class="col-it-t">${escapeHtml(it.t || '')}</div>
       </div>
       <div class="col-it-ctl">
@@ -11561,7 +11568,7 @@ function renderHLPanel(){
   const entries=entries0.filter(([, c]) => !f || c === f).map(([ref,c])=>{
     const prev=hlPreview(ref);
     return {ref,text:prev+' '+hlName(c),
-      card:`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref} <span style="opacity:.6;font-size:9px">${escapeHtml(hlName(c))}</span></div><div class="sv-prev">${prev}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`};
+      card:`<div class="sv-card"><div class="sv-dot" style="background:${HL_COL[c]}"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${refShow(ref)} <span style="opacity:.6;font-size:9px">${escapeHtml(hlName(c))}</span></div><div class="sv-prev">${prev}</div></div><button class="sv-del" onclick="delHL('${ref.replace(/'/g,"\\'")}')">✕</button></div>`};
   });
   const {html,count:n}=groupByBook(entries);
   el.innerHTML = chips + acts + (n ? html : `<div class="empty-msg">No highlights match &ldquo;${escapeHtml(savedQuery())}&rdquo;.</div>`);
@@ -11587,7 +11594,7 @@ function renderNTPanel(){
   if(!entries0.length){el.innerHTML='<div class="empty-msg">No notes yet.<br>Tap a verse → Note to write one.</div>';return;}
   const exportBtn='<button onclick="exportNotesText()" style="width:100%;margin-bottom:10px;background:var(--surface);border:1px solid var(--border);color:var(--gold);border-radius:8px;padding:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:\'Inter\',sans-serif">📤 Share My Notes as Text</button>';
   const entries=entries0.map(([ref,note])=>({ref,text:note,
-    card:`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${ref}</div><div class="sv-prev">${escapeHtml(note)}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`}));
+    card:`<div class="sv-card"><div class="sv-dot" style="background:var(--accent)"></div><div class="sv-info" onclick="jumpToRef('${ref.replace(/'/g,"\\'")}')"><div class="sv-ref">${refShow(ref)}</div><div class="sv-prev">${escapeHtml(note)}</div></div><button class="sv-del" onclick="delNote('${ref.replace(/'/g,"\\'")}')">✕</button></div>`}));
   const {html,count}=groupByBook(entries);
   el.innerHTML = exportBtn + (count ? html : `<div class="empty-msg">No notes match &ldquo;${escapeHtml(savedQuery())}&rdquo;.</div>`);
 }
@@ -11984,7 +11991,7 @@ function planDayLabel(planId, dayIdx){
   });
   return Object.entries(groups).map(([bi,chs]) => {
     const b = BOOKS[parseInt(bi)];
-    return chs.length === 1 ? `${b} ${chs[0]}` : `${b} ${chs[0]}–${chs[chs.length-1]}`;
+    return refShow(chs.length === 1 ? `${b} ${chs[0]}` : `${b} ${chs[0]}–${chs[chs.length-1]}`);
   }).join(', ');
 }
 

@@ -823,7 +823,7 @@ check('screenshot: gaps read 16, 36 and join with …; dragging picks nothing; a
   assert(await p.evaluate(() => S._colShot.length) === 3, 'a list screenshot should hold at most 3 verses');
   await p.evaluate(() => colPickMake('cx')); await sleep(900);
   const made = await p.evaluate(() => ({on: document.getElementById('scr-overlay').classList.contains('on'), ref: S.scrRef, n: S.scrVerses.length}));
-  assert(made.on && made.n === 3 && made.ref === 'John 3:16; Romans 5:8; Psalms 23:1', 'the screenshot should carry the 3 picked verses: ' + JSON.stringify(made));
+  assert(made.on && made.n === 3 && made.ref === 'John 3:16; Romans 5:8; Psalm 23:1', 'the screenshot should carry the 3 picked verses: ' + JSON.stringify(made));
 });
 
 check('verse card: one Names row — a person under the verse\'s name, a place, each with its meaning and way on', async p => {
@@ -968,6 +968,22 @@ check('Present: a reference not in the Bible says so; Sword Drill streak shows o
   await p.evaluate(() => history.back()); await sleep(400);
   const n = await p.evaluate(() => { memUpdateStreakDisplay({streak: 9, streakLast: '2020-01-01'}); const a = document.getElementById('mgs-num'); return a ? a.textContent : '0'; });
   assert(n === '0', 'an old Sword Drill streak should show 0, not ' + n);
+});
+
+check('names only when the verse says them (3 John 1:1); one Psalm reads "Psalm 47"', async p => {
+  await p.evaluate(() => jumpToRef('3 John 1:1')); await sleep(1200);
+  await p.evaluate(() => { const el = document.querySelector('.vblock[data-ref="3 John 1:1"]'); openVPop('3 John 1:1', el.dataset.txt); }); await sleep(1800);
+  const names = await p.evaluate(() => [...document.querySelectorAll('#vpop-names .vd-word')].map(x => x.textContent));
+  assert(!names.includes('John') && names.includes('Gaius'), '3 John 1:1 names Gaius, not John: ' + names.join());
+  await p.evaluate(() => history.back()); await sleep(400);
+  await p.evaluate(() => jumpToRef('Psalms 47:1')); await sleep(1200);
+  const r = await p.evaluate(() => ({loc: document.getElementById('reader-loc').textContent, sub: document.getElementById('ch-sub-text').textContent,
+    one: refShow('Psalms 23:1'), many: refShow('Psalms 23–24'), lbl: passageLabel([{ref: 'Psalms 47:1'}, {ref: 'Psalms 47:2'}])}));
+  assert(r.loc === 'Psalm 47' && r.sub === 'Psalm 47' && r.one === 'Psalm 23:1' && r.many === 'Psalms 23–24' && r.lbl === 'Psalm 47:1–2', 'Psalm labels: ' + JSON.stringify(r));
+  await p.evaluate(() => { const el = document.querySelector('.vblock[data-ref="Psalms 47:1"]'); openVPop('Psalms 47:1', el.dataset.txt); setHL('y'); }); await sleep(400);
+  const k = await p.evaluate(() => ({card: document.getElementById('vpop-ref').textContent, key: Object.keys(S.highlights).includes('Psalms 47:1')}));
+  assert(k.card === 'Psalm 47:1' && k.key, 'the card shows Psalm 47:1 while the highlight is kept under Psalms 47:1: ' + JSON.stringify(k));
+  await p.evaluate(() => { setHL(null); history.back(); }); await sleep(400);
 });
 
 check('verse card: photo controls show only for a photo you add', async p => {
