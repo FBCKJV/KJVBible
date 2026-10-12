@@ -166,7 +166,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #multibar.on{display:flex}
 @keyframes slideup{from{transform:translateY(40px);opacity:0}}
 
-#multibar-info{display:flex;align-items:center;gap:10px}
+#multibar-info{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 #multibar-count{
   font-family:'IM Fell English',serif;font-size:15px;color:var(--gold);flex:1;
 }
@@ -878,6 +878,8 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 #vpop.on{display:flex}
 #vpop-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:700px;display:flex;flex-direction:column;gap:10px;animation:su .22s ease;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto}
 @keyframes su{from{transform:translateY(50px);opacity:0}}
+#vpop-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:3;background:var(--bg2);margin:-18px -18px 0;padding:12px 18px 8px;flex-shrink:0}
+#vpop-x{padding:8px 14px;font-size:13px}
 #vpop-ref{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 #vpop-txt{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);line-height:1.7}
 .hl-row{display:flex;gap:8px;align-items:center}
@@ -2114,7 +2116,7 @@ body.light #home-watermark{
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     All
   </button>
-  <div id="clip-badge" onclick="openClipboard()" title="Verse card clipboard"><span>📋</span><span id="clip-badge-n">0</span></div>
+  <div id="clip-badge" onclick="openClipboard()" title="Verses waiting for a screenshot"><span>📸</span><span id="clip-badge-n">0</span></div>
   <button id="nb-btn" class="hbtn" onclick="nbToggle()" title="My study notebook" aria-label="Study notebook">📝</button>
   <div id="streak-badge" onclick="showStreakInfo()" title="Reading streak">🔥<span id="streak-num">0</span></div>
   <button class="hbtn" onclick="openSettings()" title="Settings">
@@ -2516,6 +2518,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, <strong>📋 Copy</strong> it with its bold, italics and headings (paste into a Google Doc, an email or Telegram on a computer; each verse comes as its reference in bold and the words in italics), copy it as Markdown (for Claude or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, a <strong>🧭 When &amp; where</strong> fold when the verse is a timeline event or a stop on a journey, a <strong>🎵 hymn</strong> built on the verse when there is one (tap it to read the hymn; its 📖 buttons bring you back), and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
+        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Several verses, one screenshot</strong> — <strong>Screenshot</strong> in the press-and-hold bar pictures verses side by side in a chapter. To gather verses from different places, tap each verse and choose <strong>Add to Screenshot</strong> (up to 3); the 📸 count at the top opens them to make the picture, and the press-and-hold bar shows how many are waiting.</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
@@ -3019,13 +3022,13 @@ body.light #home-watermark{
 <div id="clip-overlay" onclick="if(event.target===this)closeClipboard()">
   <div id="clip-inner">
     <div id="clip-hdr">
-      <div id="clip-hdr-title">📋 Verse Card</div>
+      <div id="clip-hdr-title">📸 Screenshot Verses</div>
       <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer" onclick="closeClipboard()">✕</button>
     </div>
     <div id="clip-body"></div>
     <div id="clip-foot">
       <button id="clip-clear-btn" onclick="clearClipboard()">Clear</button>
-      <button id="clip-gen-btn" onclick="generateCombinedCard()" disabled>📸 Generate Card</button>
+      <button id="clip-gen-btn" onclick="generateCombinedCard()" disabled>📸 Make Screenshot</button>
     </div>
   </div>
 </div>
@@ -3083,6 +3086,7 @@ body.light #home-watermark{
     <div id="multibar-count">0 verses selected</div>
     <div id="multibar-ref"></div>
     <button class="mbar-cancel" onclick="exitSelectMode()">✕ Cancel</button>
+    <button class="mbar-cancel" id="mb-clip" onclick="openClipboard()" style="display:none;order:5;margin-right:auto"></button>
   </div>
   <div class="mbar-btns">
     <button class="mb" id="mb-selall" onclick="toggleSelectAll()">
@@ -3124,7 +3128,10 @@ body.light #home-watermark{
 <div id="vpop" onclick="closePop(event)">
   <div class="pane-grip" data-pane="vpop" title="Drag to resize · double-tap to reset"></div>
   <div id="vpop-inner">
-    <div id="vpop-ref"></div>
+    <div id="vpop-head">
+      <div id="vpop-ref"></div>
+      <button class="mbar-cancel" id="vpop-x" onclick="closePop()" aria-label="Close">✕ Close</button>
+    </div>
     <div id="vpop-txt"></div>
     <div id="vpop-dict-row"><div class="vd-label">📖 Words in this verse</div><div id="vpop-dict-words"></div></div>
     <div id="vpop-dict-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
@@ -3178,7 +3185,7 @@ body.light #home-watermark{
       </button>
       <button class="pa" id="vpop-clip-btn" onclick="addToClipboard(S.popRef,S.popTxt)">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-        Add to Card
+        Add to Screenshot
       </button>
       <button class="pa" onclick="nbAddVerse(S.popRef,S.popTxt)">📝 Add to Study</button>
       <button class="pa" onclick="leaveVPopThen(() => presOpen(S.popRef))">🎦 Present</button>
@@ -3193,10 +3200,6 @@ body.light #home-watermark{
       <button class="pa" onclick="copyVerseLink()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         Link
-      </button>
-      <button class="pa" onclick="closePop()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        Close
       </button>
     </div>
   </div>
@@ -4007,6 +4010,14 @@ function enterSelectMode(){
   hint.classList.add('show');
   setTimeout(()=>hint.classList.remove('show'),2200);
 }
+
+// A tap on the blank part of the page (not a verse, button or link) puts the
+// long-press bar away, as a tap behind the verse card closes the card.
+document.getElementById('screen-reader').addEventListener('click', e => {
+  if(!S.selectMode) return;
+  if(e.target.closest('.vblock, button, a, input, #reader-loc, #parallel-strip, #reader-float-nav, .ch-map')) return;
+  exitSelectMode();
+});
 
 function toggleSelectMode(){
   if(S.selectMode) exitSelectMode();
@@ -13757,7 +13768,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
-  verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it.', at:'#pa-bm'},
+  verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it. <b>Add to Screenshot</b> gathers up to 3 verses, from anywhere, onto one picture.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share, and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
   plans:    {i:'📅', t:'Reading Plans', b:'Pick a plan and read <b>at your own pace</b> — you can run more than one. A chapter checks off when you reach the end of it, or hear it through on the 🔊 audio Bible, and your 🔥 streak grows each day you read.', at:'#plans-inner .pl-btn'},
@@ -15003,19 +15014,24 @@ function updateClipBadge(){
   if(badge){ badge.classList.toggle('on', n > 0); if(num) num.textContent = n; }
   const gen = document.getElementById('clip-gen-btn');
   if(gen) gen.disabled = n < 1;
+  const chip = document.getElementById('mb-clip');
+  if(chip){ chip.style.display = n ? '' : 'none'; chip.textContent = `📸 ${n} waiting`; }
 }
 
 function addToClipboard(ref, txt){
   if(S.clipboard.find(v => v.ref === ref)){
-    showToast('Already in card'); return;
+    showToast('Already waiting for the screenshot'); return;
   }
   if(S.clipboard.length >= 3){
-    showToast('Max 3 verses — remove one first'); return;
+    showToast('Up to 3 verses — take one out first'); return;
   }
   S.clipboard.push({ref, txt});
   updateClipBadge();
   updateVpopClipBtn();
-  showToast(`${ref} added to card`);
+  if(!LS.get('kjv_clip_hint', false)){
+    LS.set('kjv_clip_hint', true);
+    showToast(`${ref} added — gather up to 3 verses from anywhere, then tap 📸 at the top to make one screenshot`);
+  } else showToast(`${ref} added to the screenshot`);
   closePop();
 }
 
@@ -15024,7 +15040,7 @@ function updateVpopClipBtn(){
   if(!btn) return;
   const already = S.clipboard.find(v => v.ref === S.popRef);
   btn.style.opacity = already ? '0.5' : '1';
-  btn.title = already ? 'Already in card' : 'Add to verse card';
+  btn.title = already ? 'Already waiting for the screenshot' : 'Add to a screenshot of several verses';
 }
 
 function openClipboard(){
@@ -15060,7 +15076,7 @@ function renderClipBody(){
   const el = document.getElementById('clip-body');
   if(!el) return;
   if(S.clipboard.length === 0){
-    el.innerHTML = '<div id="clip-add-hint">Tap a verse → <strong>Add to Card</strong><br>to build a combined verse card (max 3)</div>';
+    el.innerHTML = '<div id="clip-add-hint">Tap a verse → <strong>Add to Screenshot</strong><br>to gather up to 3 verses, from anywhere, onto one screenshot</div>';
     return;
   }
   el.innerHTML = S.clipboard.map((v, i) => `

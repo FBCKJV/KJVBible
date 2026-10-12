@@ -771,6 +771,32 @@ check('Back closes the verse card maker and keeps the chapter', async p => {
   assert(st0 === 'scr' && !st1.on && st1.modal !== 'scr', '✕ Close should close the card maker and use up its step');
 });
 
+check('verse card: ✕ Close at the top right; a tap on blank page puts the long-press bar away', async p => {
+  await p.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
+  await p.evaluate(() => { const d = S.bookData.chapters[2].verses[15]; openVPop('John 3:16', d.text); }); await sleep(400);
+  const x = await p.evaluate(() => { const b = document.getElementById('vpop-x').getBoundingClientRect(), c = document.getElementById('vpop-inner').getBoundingClientRect(); return {top: b.top - c.top, right: c.right - b.right}; });
+  assert(x.top < 60 && x.right < 40, `✕ Close should sit at the card's top right (${JSON.stringify(x)})`);
+  await p.evaluate(() => document.getElementById('vpop-x').click()); await sleep(500);
+  assert(await p.evaluate(() => !document.getElementById('vpop').classList.contains('on')), '✕ Close should close the verse card');
+  await p.evaluate(() => { enterSelectMode(); }); await sleep(200);
+  await p.evaluate(() => document.getElementById('ch-title').click()); await sleep(200);
+  assert(await p.evaluate(() => !S.selectMode), 'a tap on blank page should put the long-press bar away');
+  await p.evaluate(() => { enterSelectMode(); document.querySelector('#verses .vblock').click(); }); await sleep(200);
+  assert(await p.evaluate(() => S.selectMode), 'a tap on a verse should keep the long-press bar');
+  await p.evaluate(() => exitSelectMode());
+});
+
+check('Add to Screenshot: tray badge, chip in the long-press bar', async p => {
+  await p.evaluate(() => { LS.set('kjv_clip_hint', false); S.clipboard = []; updateClipBadge(); jumpToRef('John 3:16'); }); await sleep(1200);
+  await p.evaluate(() => { const d = S.bookData.chapters[2].verses[15]; openVPop('John 3:16', d.text); }); await sleep(300);
+  assert(await p.evaluate(() => /Add to Screenshot/.test(document.querySelector('.pop-actions').textContent)), 'the verse card should say Add to Screenshot');
+  await p.evaluate(() => addToClipboard(S.popRef, S.popTxt)); await sleep(400);
+  const st = await p.evaluate(() => { enterSelectMode(); const c = document.getElementById('mb-clip'); return {chip: c.style.display !== 'none' && c.textContent, badge: document.getElementById('clip-badge-n').textContent, title: document.getElementById('clip-hdr-title').textContent}; });
+  assert(st.chip && /1 waiting/.test(st.chip) && st.badge === '1', `the long-press bar should show 1 waiting (${JSON.stringify(st)})`);
+  await p.evaluate(() => { exitSelectMode(); S.clipboard = []; updateClipBadge(); });
+  assert(await p.evaluate(() => document.getElementById('mb-clip').style.display === 'none'), 'the chip should hide when nothing is waiting');
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });
