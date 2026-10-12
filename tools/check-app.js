@@ -860,6 +860,26 @@ check('verse card: Cross-references fold, open at first, remembers being shut', 
   await p.evaluate(() => history.back()); await sleep(400);
 });
 
+check('verse card: tap a word of the verse for its meaning; KJV note on top; root word for a thin form', async p => {
+  const card = async ref => { await p.evaluate(r => jumpToRef(r), ref); await sleep(1200); await p.evaluate(r => { const el = document.querySelector(`.vblock[data-ref="${r}"]`); openVPop(r, el.dataset.txt); }, ref); await sleep(1200); };
+  const tap = async w => { await p.evaluate(w => [...document.querySelectorAll('#vpop-txt .vw')].find(x => x.textContent === w).click(), w); await sleep(1500); };
+  const def = () => p.evaluate(() => ({on: document.getElementById('vpop-dict-def').style.display === 'block', note: document.getElementById('vpop-def-text').textContent, web: document.getElementById('vpop-def-webster').textContent}));
+  await card('Romans 11:5');
+  assert(await p.evaluate(() => !document.querySelector('#vpop-txt .vw') || ![...document.querySelectorAll('#vpop-txt .vw')].some(x => x.textContent === 'the')), 'small words should not be tappable');
+  await tap('election');
+  let d = await def();
+  assert(d.on && /singled out by God/.test(d.note) && /Webster 1828/.test(d.web), 'election: the KJV note on top of Webster: ' + JSON.stringify(d));
+  await tap('election');
+  assert(!(await def()).on, 'a second tap puts the meaning away');
+  await p.evaluate(() => history.back()); await sleep(400);
+  await card('Mark 9:2'); await tap('transfigured');
+  d = await def();
+  assert(/transfigure\)/.test(d.web) && /outward form/.test(d.web), 'a thin form gives the root word: ' + d.web);
+  await tap('Peter');
+  assert(await p.evaluate(() => document.getElementById('vpop-name-def').style.display === 'block' && document.getElementById('vpop-nm-word').textContent === 'Peter'), 'a name opens its place in the Names row');
+  await p.evaluate(() => history.back()); await sleep(400);
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });
