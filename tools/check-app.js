@@ -354,6 +354,38 @@ check('person, place and journey stop lead to one another; Back returns each tim
   assert(r.stop && /^place:/.test(r.fromStop), `the journey stop (${r.stop}) did not open its place: ${r.fromStop}`);
 });
 
+check('classic maps: every passage is real; verses, journeys and places open, Back closes the map first', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), bad = [];
+    for(const [f, L] of Object.entries(MAP_LINKS)){
+      if(!MAPS.some(m => m.f === f)) bad.push('no map ' + f);
+      for(const ref of L.refs) for(const v of mapRefVerses(ref)){
+        const m = v.match(/^(.+) (\d+):(\d+)$/), d = await fetchBook(m[1]), ch = d && d.chapters[+m[2] - 1];
+        if(!ch || !ch.verses.some(x => +x.verse === +m[3])) bad.push(v);
+      }
+      const J = await loadJourneys(); for(const id of L.jr) if(!J.some(j => j.id === id)) bad.push('no journey ' + id);
+    }
+    LS.set('kjv_mapmore_open', true);
+    showScreen('search'); switchSearchMode('maps'); await wait(800);
+    const i = MAPS.findIndex(m => m.f === 'exodus-sinai');
+    openMap(i); await wait(2500);
+    const chips = [...document.querySelectorAll('#mm-body .mm-chip')].map(b => b.textContent);
+    const hasPlace = chips.some(c => /📍/.test(c)), hasJr = chips.some(c => /🧭/.test(c));
+    document.querySelector('#mm-body .mm-chip').click(); await wait(2000);
+    const verse = {screen: S.screen, book: S.book, ch: S.ch + 1, map: document.getElementById('map-overlay').classList.contains('on')};
+    openMap(i); await wait(2500);
+    [...document.querySelectorAll('#mm-body .mm-chip')].find(b => /📍/.test(b.textContent)).click(); await wait(2500);
+    const place = {sub: S._subView && S._subView.sub, map: document.getElementById('map-overlay').classList.contains('on')};
+    history.back(); await wait(1500);
+    LS.set('kjv_mapmore_open', false);
+    return {bad, chips, hasPlace, hasJr, verse, place, after: {screen: S.screen, map: document.getElementById('map-overlay').classList.contains('on')}};
+  });
+  assert(!r.bad.length, 'map links that do not exist: ' + r.bad.join(', '));
+  assert(r.hasPlace && r.hasJr, 'the Exodus map lacks places or journeys: ' + r.chips.join(' | '));
+  assert(r.verse.screen === 'reader' && r.verse.book === 'Exodus' && r.verse.ch === 12 && !r.verse.map, 'the first passage did not open Exodus 12: ' + JSON.stringify(r.verse));
+  assert(r.place.sub === 'place' && !r.place.map, 'a place chip did not open the place page: ' + JSON.stringify(r.place));
+});
+
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
   await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
   const r = await p.evaluate(async () => {

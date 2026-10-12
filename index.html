@@ -765,6 +765,12 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 .map-zbtn:active{background:rgba(255,255,255,.2)}
 #map-scroll{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;display:flex;align-items:flex-start;justify-content:center}
 #map-img{display:block;width:100%;height:auto;image-rendering:auto}
+#map-more{flex-shrink:0;border-top:1px solid rgba(255,255,255,.12);color:#f0e6d0;padding:0 12px calc(4px + env(safe-area-inset-bottom,0px))}
+#map-more .mm-fold{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:none;color:#e8c77a;font:600 14px Inter,sans-serif;padding:12px 2px;cursor:pointer}
+#map-more .mm-fold .sg-arr{transition:transform .2s}#map-more .mm-fold.on .sg-arr{transform:rotate(90deg)}
+#map-more .mm-body{max-height:42vh;overflow:auto;padding-bottom:6px}
+#map-more .mm-h{font:600 11px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:rgba(240,230,208,.7);margin:8px 0 6px}
+#map-more .mm-chip{display:inline-block;margin:0 6px 8px 0;padding:8px 12px;border-radius:16px;border:1px solid rgba(232,199,122,.45);background:rgba(255,255,255,.06);color:#f0e6d0;font:15px 'Crimson Pro',serif;cursor:pointer}
 .sv-card:active{background:var(--bg3)}
 .sv-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .sv-info{flex:1}
@@ -2407,6 +2413,7 @@ body.light #home-watermark{
       <button class="map-zbtn" onclick="closeMap()" aria-label="Close">✕</button>
     </div>
     <div id="map-scroll"><img id="map-img" alt=""></div>
+    <div id="map-more" onclick="event.stopPropagation()"></div>
   </div>
 
   <!-- READING PLANS -->
@@ -2533,8 +2540,8 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Search → Hebrew &amp; Greek</strong> is Strong's — every word of the KJV tied to the Hebrew or Greek it translates. Type an English word (<em>mercy</em>), a Hebrew or Greek word (<em>agape</em>) or a number (<em>G26</em>). A word's page lists every verse it is in; tap a rendering to see only those verses. While reading, tap a verse and open <strong>🔤 Hebrew words</strong> at the bottom of the card</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
         <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it. <strong>In the story</strong> lists the people named there and its events on the timeline; on a journey's map, tap a stop's name to open the place</span></div>
-        <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. <strong>In the story</strong> gathers the places, journeys and timeline events of their life, and <strong>🔤 Hebrew &amp; Greek</strong> shows the name in the original. Tap a verse while reading to see the people in it</span></div>
-        <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> shows every Bible place on one map — tap a place to see what happened there. The classic atlas maps are below it. All of it works offline. In the reader, <strong>📍 Where</strong> maps the places in the chapter</span></div>
+        <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was (and any place of that name), their family, and every verse that names them. <strong>In the story</strong> gathers the places, journeys and timeline events of their life, and <strong>🔤 Hebrew &amp; Greek</strong> shows the name in the original. Tap a verse while reading to see the people in it</span></div>
+        <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> shows every Bible place on one map — tap a place to see what happened there. The classic atlas maps are below it; under each, <strong>📖 Verses, places &amp; journeys</strong> leads to the passages, journeys and places it shows. All of it works offline. In the reader, <strong>📍 Where</strong> maps the places in the chapter</span></div>
         <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The 🔥 flame</strong> in the header is your reading streak. It grows each day you read a chapter to the end — however you reached it: from a book, a plan, Search, <strong>Next</strong> or a link — and a 🛡️ shield, earned every 7 days, covers a missed day. <strong>Tap 🔥</strong> for your streak, a <strong>calendar of the days you read</strong> (tap a day to open the chapters you read) and your <strong>badges</strong>. A book read right through is ticked off in your Reading Journey</span></div>
         <div class="tip-row"><span class="tip-ico">✍️</span><span class="tip-txt"><strong>✍️ Reading Journal</strong> — at the end of every chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts. Tap the chapter in it to read it again; present, share or print it like any study</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — run Bible in a Year, NT in 30 Days and Proverbs in a Month, one or several at once, each at your own pace. A chapter checks off once you have read to the end of it; <strong>✓ Mark read</strong> is for a day read from a printed Bible. Your next reading of each plan is on Home; <strong>⋯</strong> pauses, starts over or removes a plan</span></div>
@@ -7200,7 +7207,7 @@ async function openNamePage(key, pushHistory=true, scrollY=0){
     <div class="dv-title">${escapeHtml(e.name)}</div>
     ${sayRow(e.name, 'name')}
     ${e.meaning ? `<div class="dv-desc">“${escapeHtml(e.meaning)}”</div>` : ''}
-    <button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
+    <button class="nb-add nb-share" onclick="shareSub()">📤 Share</button><button class="nb-add nb-share" onclick="strongsSearchFor('${escapeHtml(e.name).replace(/'/g, "\\'")}')">🔤 In Hebrew &amp; Greek</button>
     ${jesus ? `<div tabindex="0" class="rc ref-jump" onclick="openNaveTopic('JESUS, THE CHRIST')"><div class="rc-ref">✝ Jesus Christ</div><div class="rc-txt" style="opacity:.75">The Lord Jesus Christ — see the topic “Jesus, the Christ” for His life, ministry and titles</div></div>` : ''}
     ${e.people.length ? `<div class="pp-h">${e.people.length} ${jesus ? 'other ' : ''}${e.people.length === 1 ? 'person' : 'people'} named ${escapeHtml(e.name)}</div>` : ''}
     ${e.people.map(id => {
@@ -10258,6 +10265,61 @@ function renderMaps(){
   ).join('');
   el.dataset.done='1';
 }
+/* ── A classic map leads on: its passages, the journeys drawn on it, and the places those passages name ──
+   Hand-chosen for each map; every reference is checked against the KJV text by tools/check-app.js. */
+const MAP_LINKS = {
+  'table-of-nations':  {refs:['Genesis 10:1-5', 'Genesis 10:32', 'Genesis 11:1-9'], jr:[]},
+  'exodus-sinai':      {refs:['Exodus 12:37', 'Exodus 14:21-22', 'Exodus 19:1-2', 'Numbers 33:1-2'], jr:['exodus']},
+  'twelve-tribes':     {refs:['Joshua 13:7', 'Joshua 14:1-2', 'Joshua 18:10'], jr:[]},
+  'david-solomon':     {refs:['2 Samuel 8:3', '1 Kings 4:21', '1 Kings 4:24-25'], jr:['david']},
+  'divided-kingdom':   {refs:['1 Kings 12:16-20', '1 Kings 12:28-29'], jr:['elijah']},
+  'assyria':           {refs:['Genesis 11:31', '2 Kings 17:6', '2 Kings 25:11'], jr:['abraham', 'jacob', 'jonah', 'captivity', 'return']},
+  'palestine-nt':      {refs:['Luke 3:1', 'Matthew 4:25'], jr:['childhood']},
+  'journeys-of-christ':{refs:['Matthew 4:23', 'Luke 8:1'], jr:['ministry', 'passion']},
+  'jerusalem':         {refs:['Psalms 48:12-13', 'Psalms 125:2', 'Nehemiah 3:1'], jr:['passion']},
+  'pauls-journeys':    {refs:['Acts 13:2-4', 'Acts 16:9-10', 'Acts 27:1'], jr:['paul0', 'paul1', 'paul2', 'paul3', 'rome']},
+};
+// "Genesis 10:1-5" → ["Genesis 10:1", …, "Genesis 10:5"]
+const mapRefVerses = r => { const m = r.match(/^(.+ \d+):(\d+)(?:-(\d+))?$/); const out = []; for(let v = +m[2]; v <= +(m[3] || m[2]); v++) out.push(`${m[1]}:${v}`); return out; };
+function leaveMapThen(fn){
+  const ov = document.getElementById('map-overlay');
+  if(ov && ov.classList.contains('on') && history.state && history.state.modal === 'map'){
+    const after = () => { window.removeEventListener('popstate', after); setTimeout(fn, 0); };
+    window.addEventListener('popstate', after);
+    history.back();
+  } else { if(ov) ov.classList.remove('on'); fn(); }
+}
+async function renderMapMore(i){
+  const el = document.getElementById('map-more'), m = MAPS[i], L = m && MAP_LINKS[m.f];
+  if(!el) return;
+  el.innerHTML = '';
+  if(!L) return;
+  const open = !!LS.get('kjv_mapmore_open', false);
+  el.innerHTML = `<button class="mm-fold${open ? ' on' : ''}" aria-expanded="${open}" onclick="mapMoreToggle()"><span>📖 Verses, places &amp; journeys</span><span class="sg-arr">›</span></button><div class="mm-body" id="mm-body"></div>`;
+  if(open) await fillMapMore(i);
+}
+async function fillMapMore(i){
+  const body = document.getElementById('mm-body'), L = MAP_LINKS[MAPS[i].f];
+  if(!body) return;
+  const lbl = r => r.replace('-', '–').replace(/^Psalms /, 'Psalm ');
+  const [list] = await Promise.all([loadJourneys().catch(() => []), ensureNameIndex().catch(() => null)]);
+  if(S._mapOpen !== i || !document.getElementById('mm-body')) return;
+  const places = new Map();
+  for(const r of L.refs) for(const v of mapRefVerses(r)) for(const id of placesInVerse(v)) places.set(id, (places.get(id) || 0) + 1);
+  const jr = L.jr.map(id => (list || []).find(j => j.id === id)).filter(Boolean);
+  const pl = [...places.entries()].sort((a, b) => b[1] - a[1]).slice(0, 12).filter(([id]) => S._places && S._places[id]);
+  body.innerHTML = `<div class="mm-h">Read about it</div>${L.refs.map(r => `<button class="mm-chip" onclick="leaveMapThen(()=>jumpToRef('${mapRefVerses(r)[0]}'))">📖 ${escapeHtml(lbl(r))}</button>`).join('')}`
+    + (jr.length ? `<div class="mm-h">Journeys on this map</div>${jr.map(j => `<button class="mm-chip" onclick="leaveMapThen(()=>openJourney('${j.id}'))">🧭 ${escapeHtml(j.t)}</button>`).join('')}` : '')
+    + (pl.length ? `<div class="mm-h">Places named in these verses</div>${pl.map(([id]) => `<button class="mm-chip" onclick="leaveMapThen(()=>openPlace('${id}'))">📍 ${escapeHtml(S._places[id].n)}</button>`).join('')}` : '');
+}
+function mapMoreToggle(){
+  const on = !LS.get('kjv_mapmore_open', false);
+  LS.set('kjv_mapmore_open', on);
+  const f = document.querySelector('#map-more .mm-fold'), b = document.getElementById('mm-body');
+  if(f){ f.classList.toggle('on', on); f.setAttribute('aria-expanded', on); }
+  if(on) fillMapMore(S._mapOpen); else if(b) b.innerHTML = '';
+}
+
 let _mapZoom=1;
 function openMap(i){
   const m=MAPS[i]; if(!m) return;
@@ -10270,6 +10332,7 @@ function openMap(i){
   document.getElementById('map-scroll').scrollTop=0;
   document.getElementById('map-overlay').classList.add('on');
   history.pushState({screen:S.screen, modal:'map'}, '', '');
+  renderMapMore(i);
 }
 function closeMap(e){
   if(e && e.target && e.target.id!=='map-overlay') return; // ignore clicks on the image/bar
@@ -13534,7 +13597,7 @@ const TOOL_TIPS = {
     ['🗺️', '<strong>Every Bible place on one map</strong> — tap a place to see what happened there; pinch or use + / − to zoom and drag to look around'],
     ['🧭', '<strong>🧭 Journeys</strong> follow Abraham, the Exodus, Paul and others stop by stop, each stop a verse with its date on the timeline'],
     ['⚖️', '<strong>Disputed sites</strong> such as mount Sinai, Ur, Golgotha, Ai and Sodom show both views, on the journeys and on the place pages'],
-    ['📜', '<strong>📜 Classic maps</strong> are 19th-century atlas plates; open one full screen and tap 📝 to add it to your study, or 📤 to send it to someone'],
+    ['📜', '<strong>📜 Classic maps</strong> are 19th-century atlas plates; open one full screen and tap 📝 to add it to your study, or 📤 to send it to someone. Below it, <strong>📖 Verses, places &amp; journeys</strong> opens the passages it shows, the journeys drawn on it and the places those verses name'],
     ['📖', 'In the reader, <strong>📍 Where</strong> maps the places in the chapter, and a <strong>🧭</strong> button opens a journey that passes through it'],
     ['📶', 'Maps work offline once they have loaded'],
   ]},
