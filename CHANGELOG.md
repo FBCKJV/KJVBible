@@ -448,6 +448,31 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Before sharing widely: a sweep for bugs (v62.16)**
+  - **Your notes are safer.**
+    - A phone with no room left can no longer undo a newer edit made on another device.
+    - Sword Drill progress, your own drill verses and the books you have read now merge between devices, verse by verse, instead of the last phone to sync winning.
+    - An older backup file can no longer take your streak's date backwards.
+    - A full phone says so on restore.
+    - The notebook no longer says *Saved* when it was not.
+  - **Back does what you expect.**
+    - While picking verses, Back puts the bar away and keeps the chapter.
+    - Back closes the Copy sheet and What's New.
+    - ✕ on Tips & Help, the chapter list and the screenshot tray no longer leave a Back press that does nothing.
+    - A pop-up over a map closes before the map.
+    - A study you closed stays closed.
+    - Back while picking verses in a list returns to the list.
+  - **Screenshots:**
+    - The style buttons on a screenshot of several verses keep that card.
+    - A long passage in portrait makes the card taller instead of running off it.
+    - The long-press bar and Add to Study read *John 3:1, 5* for a gap.
+  - **Elsewhere:**
+    - Present's *Go to* says when a chapter or verse is not there, instead of freezing.
+    - Reading plan names are shown as typed.
+    - The Sword Drill streak counts your own days, not world time.
+    - The Verse of the Day turns at midnight all year.
+  - **Privacy:** a plain-words **🔒 Privacy** page in Settings → About.
+  - **Doctrine:** the doctrines are labelled *the primary doctrines of the faith*.
 - **Tips & Help catch up (v62.15)** — the verse card's tip, the Dictionary and Names tool tips, the reading hint and the *Hear it* tip now describe today's card: tap any word of the verse for its meaning, the one 📛 Names row, the Cross-references fold, ✕ Close at the top or a tap outside. Picking verses now says *Tap more verses to add them · tap a blank spot when done* (it used to say *long-press was detected!*, even after the Select button on a computer). Checked on a wide screen, beside an open notebook, and on a tablet
 - **A plain ✕ on a word's meaning (v62.14)** — the meaning that opens under a tapped word closes with a small **✕** at its top right, like the other panels, instead of *✕ Put away*
 - **Tap a word of the verse (v62.13)** — on the verse card, any word of the verse (all but the smallest) opens its meaning just below: our church's KJV note on top where there is one, then Webster's 1828, and **Full dictionary entry →**. A thin entry for a form gives the root word's instead (*transfigured* → *transfigure*). A name opens its place in the Names row. This replaces the **📖 Words in this verse** row, which offered only 100 chosen words. A first-use hint and Tips & Help show it. The church's notes on **election** and **elect** now say what the Election doctrine says: being singled out by God for a special purpose, privilege, or service, never God choosing who will believe, and always with conditions, responsibilities and warnings. **Predestinate** now reads *God's planned purpose for all believers*

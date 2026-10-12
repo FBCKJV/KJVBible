@@ -948,6 +948,20 @@ check('backup: Sword Drill progress, own verses and books read merge; a full pho
   assert(!r.staleNewer, 'a copy that could not be written must not later count as a newer edit');
 });
 
+check('Present: a reference not in the Bible says so; Sword Drill streak shows only while alive', async p => {
+  const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.evaluate(() => presOpen('John 3:16')); await sleep(1200);
+  const before = await p.evaluate(() => [PRES.book, PRES.ch, PRES.v].join());
+  for(const ref of ['Jude 2:1', 'John 22', 'John 3:99']){
+    await p.evaluate(r => { presGotoOpen(); document.getElementById('pres-goto-in').value = r; return presGoto(); }, ref); await sleep(500);
+  }
+  const after = await p.evaluate(() => [PRES.book, PRES.ch, PRES.v].join());
+  assert(!errs.length && before === after, 'a reference that is not there should leave the slide as it was: ' + JSON.stringify({errs, before, after}));
+  await p.evaluate(() => history.back()); await sleep(400);
+  const n = await p.evaluate(() => { memUpdateStreakDisplay({streak: 9, streakLast: '2020-01-01'}); const a = document.getElementById('mgs-num'); return a ? a.textContent : '0'; });
+  assert(n === '0', 'an old Sword Drill streak should show 0, not ' + n);
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });

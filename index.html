@@ -3663,7 +3663,7 @@ async function jumpRR(bookName, chIdx, verseNum){
 let vodMeta=null;
 async function loadVOD(){
   const d=new Date(),start=new Date(d.getFullYear(),0,0),
-        doy=Math.floor((d-start)/86400000); // day of year 1-366
+        doy=Math.round((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/864e5); // day of year 1-366, by the calendar
   const r=VOD[(doy-1)%VOD.length];
   try{
     const data=await fetchBook(r.b);if(!data)return;
@@ -9318,9 +9318,13 @@ function presGotoOpen(){
   f.classList.add('on'); inp.value = ''; setTimeout(() => inp.focus(), 30);
 }
 function presGotoClose(){ document.getElementById('pres-goto').classList.remove('on'); document.getElementById('pres-goto-in').blur(); }
-function presGoto(){
+async function presGoto(){
   const v = document.getElementById('pres-goto-in').value.trim(), r = v && parseReference(v);
   if(!r || !r.book){ showToast('Type a reference such as John 3:16 or Rom 8'); return; }
+  const d = await fetchBook(r.book).catch(() => null), ch = d && d.chapters[r.chIdx];
+  if(!d){ showToast('That book could not load — check your connection'); return; }
+  if(!ch){ showToast(`${r.book} has only ${d.chapters.length} chapter${d.chapters.length === 1 ? '' : 's'}`); return; }
+  if(r.verse && r.verse > ch.verses.length){ showToast(`${r.book} ${r.chIdx + 1} has only ${ch.verses.length} verses`); return; }
   PRES.book = r.book; PRES.ch = r.chIdx; PRES.v = Math.max(0, (r.verse || 1) - 1); PRES.part = 0; PRES.mode = 'bible';
   presGotoClose(); presApplyLook(); presRender();
 }
@@ -12215,7 +12219,7 @@ function planEndBar(){
     const go = nx && !(nx.bi === bi && nx.ci === ci)
       ? `<button class="peb-go" onclick="openPlanChapter(${nx.bi},${nx.ci})">${nx.day !== day ? 'Day ' + (nx.day + 1) + ': ' : 'Next: '}${BOOKS[nx.bi]} ${nx.ci + 1} ›</button>`
       : `<button class="peb-go" onclick="showScreen('plans')">Plans ›</button>`;
-    return `<div class="peb-row ${read ? 'read' : ''}"><div class="peb-txt"><div class="peb-name">${def.icon} ${def.name}</div><div class="peb-st">${status}</div></div>${go}</div>`;
+    return `<div class="peb-row ${read ? 'read' : ''}"><div class="peb-txt"><div class="peb-name">${def.icon} ${escapeHtml(def.name)}</div><div class="peb-st">${status}</div></div>${go}</div>`;
   }).join('') + journal;
 }
 // ✍️ The Reading Journal: one study, a dated heading per chapter written about,
@@ -12288,7 +12292,7 @@ function renderPlansScreen(){
     h += `<div class="pl-sec">Paused</div>` + paused.map(p => {
       const def = PLAN_DEFS[p.plan], n = planDaysDone(p);
       return `<div class="pl-card pl-paused">
-        <div class="pl-top">${planRing(n / def.days * 100, 42)}<div class="pl-tt"><div class="pl-name">${def.icon} ${def.name}</div><div class="pl-sub">${n} of ${def.days} days · paused</div></div>
+        <div class="pl-top">${planRing(n / def.days * 100, 42)}<div class="pl-tt"><div class="pl-name">${def.icon} ${escapeHtml(def.name)}</div><div class="pl-sub">${n} of ${def.days} days · paused</div></div>
         <button class="pl-more" onclick="planMenu('${p.id}')" aria-label="More">⋯</button></div>
         <button class="pl-btn" onclick="planSetStatus('${p.id}','active')">▶ Resume</button></div>`;
     }).join('');
@@ -12307,7 +12311,7 @@ function renderPlansScreen(){
   if(finished.length){
     h += `<div class="pl-sec">Finished</div>` + finished.map(p => {
       const def = PLAN_DEFS[p.plan], took = planDaysBetween(p.start, p.fin);
-      return `<div class="pl-fin"><span class="pl-fin-ico">🏆</span><div class="pl-tt"><div class="pl-name">${def.name}</div>
+      return `<div class="pl-fin"><span class="pl-fin-ico">🏆</span><div class="pl-tt"><div class="pl-name">${escapeHtml(def.name)}</div>
         <div class="pl-sub">${planDateLbl(p.start)}${p.start !== '?' ? ' – ' : ''}${planDateLbl(p.fin)}${took ? ` · ${took} day${took === 1 ? '' : 's'}` : ''}</div></div>
         ${running.has(p.plan) ? '' : `<button class="pl-mini" onclick="startPlan('${p.plan}')">Read again</button>`}</div>`;
     }).join('');
@@ -12329,7 +12333,7 @@ function planCard(p){
   const open = _plOpen.has(p.id);
   return `<div class="pl-card pl-active">
     <div class="pl-top">${planRing(n / def.days * 100)}
-      <div class="pl-tt"><div class="pl-name">${def.icon} ${def.name}</div>
+      <div class="pl-tt"><div class="pl-name">${def.icon} ${escapeHtml(def.name)}</div>
         <div class="pl-sub">${n} of ${def.days} days${p.start && p.start !== '?' ? ' · since ' + planDateLbl(p.start) : ''}</div></div>
       <button class="pl-more" onclick="planMenu('${p.id}')" aria-label="More">⋯</button></div>
     <div class="pl-next">
@@ -12431,7 +12435,7 @@ function updateHomePlans(){
     const def = PLAN_DEFS[p.plan], cur = planCurDay(p), nx = planNextChapter(p);
     const reads = getPlanDayReadings(p.plan, cur), nRead = reads.filter(([b, c]) => planChKey(b, c) in p.chs).length;
     return `<div class="hw-row">${planRing(planDaysDone(p) / def.days * 100, 40)}
-      <span class="hw-tt"><span class="hw-sm">${def.name} · ${planDaysDone(p)} of ${def.days} days</span><span class="hw-big">Day ${cur + 1} — ${planDayLabel(p.plan, cur)}${reads.length > 1 && nRead ? ` <span class="hw-sm" style="display:inline">· ${nRead} of ${reads.length}</span>` : ''}</span></span>
+      <span class="hw-tt"><span class="hw-sm">${escapeHtml(def.name)} · ${planDaysDone(p)} of ${def.days} days</span><span class="hw-big">Day ${cur + 1} — ${planDayLabel(p.plan, cur)}${reads.length > 1 && nRead ? ` <span class="hw-sm" style="display:inline">· ${nRead} of ${reads.length}</span>` : ''}</span></span>
       ${nx ? `<button class="hw-read" onclick="openPlanChapter(${nx.bi},${nx.ci})">Read</button>` : ''}</div>`;
   }).join('') + `<button class="hw-more" onclick="showScreen('plans')">All plans ›</button></div>`;
 }
@@ -14462,9 +14466,9 @@ function memRecordComplete(ref, mode, elapsed){
   ms.refs[ref]=existing;
 
   // Update mem streak
-  const today = new Date().toISOString().slice(0,10);
+  const today = todayStr();   // the person's own day, not UTC
   if(ms.streakLast !== today){
-    const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    const yesterday = yesterdayStr();
     ms.streak = (ms.streakLast === yesterday) ? (ms.streak||0)+1 : 1;
     ms.streakLast = today;
   }
@@ -14487,7 +14491,8 @@ function memRecordComplete(ref, mode, elapsed){
 
 /* ── MEMORY STREAK DISPLAY ── */
 function memUpdateStreakDisplay(ms){
-  const n = (ms && ms.streak) || 0;
+  // a streak shows only while it is alive (drilled today or yesterday)
+  const n = (ms && (ms.streakLast === todayStr() || ms.streakLast === yesterdayStr()) && ms.streak) || 0;
   const el = document.getElementById('mgs-num');
   const dl = document.getElementById('mgs-days');
   if(el) el.textContent = n;
