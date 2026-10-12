@@ -797,6 +797,35 @@ check('Add to Screenshot: tray badge, chip in the long-press bar', async p => {
   assert(await p.evaluate(() => document.getElementById('mb-clip').style.display === 'none'), 'the chip should hide when nothing is waiting');
 });
 
+check('screenshot: gaps read 16, 36 and join with …; dragging picks nothing; a list picks up to 3', async p => {
+  await p.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
+  const lab = await p.evaluate(() => [passageLabel([{ref:'John 3:16'},{ref:'John 3:17'},{ref:'John 3:36'}]), passageLabel([{ref:'John 3:16'},{ref:'Romans 5:8'}]), joinVerseText([{ref:'John 3:16',txt:'A'},{ref:'John 3:17',txt:'B'},{ref:'John 3:36',txt:'C'}])]);
+  assert(lab[0] === 'John 3:16–17, 36', 'gaps should read as chosen: ' + lab[0]);
+  assert(lab[1] === 'John 3:16; Romans 5:8', 'other books follow a semicolon: ' + lab[1]);
+  assert(lab[2] === 'A B … C', 'non-adjacent verses join with an ellipsis: ' + lab[2]);
+  // a finger that drags over a verse picks none; a still tap picks it when the finger lifts
+  const fire = (n, type, x, y) => p.evaluate(([n, type, x, y]) => { const el = document.querySelector('#verses .vblock:nth-child(' + n + ')'), t = new Touch({identifier: 1, target: el, clientX: x, clientY: y});
+    el.dispatchEvent(new TouchEvent(type, {bubbles: true, cancelable: true, touches: type === 'touchend' ? [] : [t], changedTouches: [t]})); }, [n, type, x, y]);
+  await p.evaluate(() => enterSelectMode()); await sleep(100);
+  await fire(2, 'touchstart', 100, 300); await fire(2, 'touchmove', 100, 360); await fire(2, 'touchend', 100, 360);
+  assert(await p.evaluate(() => S.selected.size) === 0, 'dragging over a verse should not pick it');
+  await fire(3, 'touchstart', 100, 300); await fire(3, 'touchend', 100, 300); await sleep(100);
+  assert(await p.evaluate(() => S.selected.size) === 1, 'a still tap should pick the verse when the finger lifts');
+  await p.evaluate(() => exitSelectMode());
+  // My Verses: tap up to 3 verses of a list, one screenshot
+  await p.evaluate(() => { LS.set('kjv_hints_off', true);
+    const it = (r, t) => ({r, a: r, t}); colSave({list: [{id: 'cx', n: 'Comfort', u: 1, items: [it('John 3:16', 'For God so loved the world'), it('Romans 5:8', 'But God commendeth his love'), it('Psalms 23:1', 'The LORD is my shepherd'), it('Isaiah 41:10', 'Fear thou not')]}]});
+    showScreen('saved'); colOpen('cx'); });
+  await sleep(500);
+  assert(await p.evaluate(() => !!document.querySelector('.col-pickgo')), 'a list should offer 📸 Screenshot');
+  await p.evaluate(() => colPickStart()); await sleep(200);
+  for(let i = 0; i < 4; i++) await p.evaluate(i => colPickToggle(i), i);
+  assert(await p.evaluate(() => S._colPick.length) === 3, 'a list screenshot should hold at most 3 verses');
+  await p.evaluate(() => colPickMake('cx')); await sleep(900);
+  const made = await p.evaluate(() => ({on: document.getElementById('scr-overlay').classList.contains('on'), ref: S.scrRef, n: S.scrVerses.length}));
+  assert(made.on && made.n === 3 && made.ref === 'John 3:16; Romans 5:8; Psalms 23:1', 'the screenshot should carry the 3 picked verses: ' + JSON.stringify(made));
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });

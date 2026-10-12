@@ -717,6 +717,16 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 .col-sort{background:none;border:none;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;padding:0}
 .mb-emo{font-size:15px;line-height:16px}
 .col-acts button{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:9px;padding:8px 2px;font-size:11.5px;font-weight:600;cursor:pointer}
+.col-pickgo{display:block;width:100%;margin:0 0 12px;background:none;border:1px dashed var(--border);color:var(--text-d);border-radius:9px;padding:9px;font-size:12.5px;font-weight:600;cursor:pointer}
+.col-item.pick{flex-direction:row;align-items:flex-start;gap:12px;cursor:pointer}
+.col-item.pick.on{border-color:var(--gold);background:var(--bg3)}
+.col-tick{flex:0 0 26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--bg);margin-top:2px}
+.col-item.pick.on .col-tick{background:var(--gold);border-color:var(--gold)}
+.col-pickbar{position:sticky;bottom:8px;z-index:5;display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--gold-d);border-radius:12px;padding:10px 12px;box-shadow:0 -4px 18px rgba(0,0,0,.25)}
+.col-pickbar .cp-n{flex:1;font-family:'IM Fell English',serif;font-size:15px;color:var(--gold)}
+.col-pickbar button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.col-pickbar button.go{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.col-pickbar button:disabled{opacity:.4}
 .col-item{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
 .col-it-main{flex:1;min-width:0;cursor:pointer}
 .col-it-t{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);line-height:1.45;margin-top:2px}
@@ -2549,6 +2559,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">✍️</span><span class="tip-txt"><strong>✍️ Reading Journal</strong> — at the end of every chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts. Tap the chapter in it to read it again; present, share or print it like any study</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — run Bible in a Year, NT in 30 Days and Proverbs in a Month, one or several at once, each at your own pace. A chapter checks off once you have read to the end of it; <strong>✓ Mark read</strong> is for a day read from a printed Bible. Your next reading of each plan is on Home; <strong>⋯</strong> pauses, starts over or removes a plan</span></div>
         <div class="tip-row"><span class="tip-ico">🔖</span><span class="tip-txt"><strong>My Verses</strong> — tap a verse, then <strong>🔖 Save</strong>, and put it in a list you name: a doctrine you often explain, verses for comfort, a lesson. A verse can be in any number of lists. In <strong>Notes → My Verses</strong>, open a list to put its verses in your order (↑ ↓ or ⇅ Bible order), make a picture of one with <strong>📸 Card</strong>, memorize one with <strong>⚔️ Drill</strong>, <strong>Share</strong> it, <strong>Present</strong> it as slides or add it to a study. A doctrine page can be saved as a list with <strong>🔖 Save to My Verses</strong>. Your old bookmarks are in a list called Bookmarks</span></div>
+        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>A screenshot from a list</strong> — open a My Verses list and tap <strong>📸 Screenshot</strong>, then tap up to 3 verses (from any books) and <strong>Make Screenshot</strong>. When you press and hold verses in a chapter and skip some, the screenshot reads <strong>John 3:16, 36</strong> and joins the words with <strong>…</strong>. To scroll while picking verses, just drag: a verse is picked when you lift your finger from a still tap.</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>Notes tab</strong> — everything you have marked or written: <strong>My Verses</strong> (your own named lists), <strong>Highlights</strong>, verse <strong>Notes</strong> and your <strong>Studies</strong> from the 📝 notebook (tap one to open it, or ＋ New study). The search box looks through all of them</span></div>
         <div class="tip-row"><span class="tip-ico">🏠</span><span class="tip-txt"><strong>Home</strong> — a card for each bottom tab under the books: Search &amp; Study Tools (type in the box, or open the arrow for every tool), Reading Plans and Notes. An arrow that turns folds a card open; <strong>›</strong> goes to its page. Home remembers which cards you left open. <strong>Swipe the Verse of the Day</strong> left or right to put it away until tomorrow; the Old Testament, New Testament and Romans Road come right under it</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
@@ -3967,21 +3978,35 @@ function renderReader(){
     d.innerHTML=inner;
 
     /* touch/click handling */
-    let pressTimer=null;
+    // While picking, a verse is chosen when a finger lifts from a still tap — not
+    // the moment it touches — so scrolling the chapter never picks verses by accident
+    let pressTimer=null, tapAt=null, held=false;
+    const stopPress=()=>{ if(pressTimer){clearTimeout(pressTimer);pressTimer=null;} };
     d.addEventListener('touchstart',e=>{
-      if(S.selectMode){toggleVerseSelect(d);return;}
+      held=false;
+      const t=e.touches[0];
+      if(S.selectMode){ tapAt={x:t.clientX,y:t.clientY,t:Date.now()}; return; }
       pressTimer=setTimeout(()=>{
-        pressTimer=null;
+        pressTimer=null; held=true;
         enterSelectMode();
         toggleVerseSelect(d);
       },480);
     },{passive:true});
     d.addEventListener('touchend',e=>{
-      if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}
+      stopPress();
+      if(held){ held=false; if(e.cancelable) e.preventDefault(); return; }   // the long-press already picked it
+      const tap=tapAt; tapAt=null;
+      if(S.selectMode && tap && Date.now()-tap.t<600 && !e.target.closest('.vnote-chip')){
+        if(e.cancelable) e.preventDefault();   // no second tap from the browser
+        toggleVerseSelect(d);
+      }
     });
     d.addEventListener('touchmove',e=>{
-      if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}
+      stopPress();
+      const t=e.touches[0];
+      if(tapAt && (Math.abs(t.clientX-tapAt.x)>8 || Math.abs(t.clientY-tapAt.y)>8)) tapAt=null;
     },{passive:true});
+    d.addEventListener('touchcancel',()=>{ stopPress(); tapAt=null; held=false; });
     d.addEventListener('click',e=>{
       if(e.target.classList.contains('vnote-chip'))return;
       if(S.selectMode){toggleVerseSelect(d);return;}
@@ -4121,12 +4146,30 @@ function getSelectedSorted(){
   return [...S.selectedData].sort((a,b)=>parseInt(a.vnum)-parseInt(b.vnum));
 }
 
+// The reference for verses as chosen: a run is a span, a gap a comma, another
+// chapter or book follows after a semicolon — "John 3:16–17, 36"
+function passageLabel(items){
+  const groups = [];
+  items.forEach(v => {
+    const m = (v.ref || '').match(/^(.+) (\d+):(\d+)/);
+    if(!m){ groups.push({txt: v.ref || ''}); return; }
+    const key = m[1] + ' ' + m[2], g = groups[groups.length - 1];
+    if(g && g.key === key) g.nums.push(+m[3]); else groups.push({key, nums: [+m[3]]});
+  });
+  return groups.map(g => g.nums ? `${g.key}:${verseSpan(g.nums, '–').replace(/,/g, ', ')}` : g.txt).join('; ');
+}
+// Their words in one flow; where verses are not next to each other an ellipsis joins them
+function joinVerseText(items){
+  let out = '', prev = null;
+  items.forEach(v => {
+    const m = (v.ref || '').match(/^(.+) (\d+):(\d+)/), cur = m ? {k: m[1] + ' ' + m[2], n: +m[3]} : null;
+    if(prev) out += (!cur || (prev.k === cur.k && cur.n === prev.n + 1)) ? ' ' : ' … ';
+    out += v.txt; prev = cur || prev;
+  });
+  return out;
+}
 function getMultiRef(){
-  const sorted=getSelectedSorted();
-  if(!sorted.length)return'';
-  if(sorted.length===1)return sorted[0].ref;
-  const base=sorted[0].ref.replace(/:.*$/,'');
-  return `${base}:${sorted[0].vnum}–${sorted[sorted.length-1].vnum}`;
+  return passageLabel(getSelectedSorted());
 }
 
 function multiCopy(){
@@ -4145,10 +4188,7 @@ function multiCopy(){
 }
 
 function buildBlockText(sorted, first, last){
-  const ref = sorted.length === 1
-    ? first.ref
-    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
-  return `${ref}\n${sorted.map(v=>v.txt).join(' ')}`;
+  return `${passageLabel(sorted)}\n${joinVerseText(sorted)}`;
 }
 
 function buildNumberedText(sorted, first, last){
@@ -4161,9 +4201,7 @@ function showCopyFormatPicker(sorted, first, last){
   const existing = document.getElementById('copy-fmt-sheet');
   if(existing) existing.remove();
 
-  const ref = sorted.length === 1
-    ? first.ref
-    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
+  const ref = passageLabel(sorted);
   const previewTrad = `${ref}\n${first.vnum}  ${first.txt.substring(0,40)}...\n${sorted.length>1?last.vnum+'  '+last.txt.substring(0,30)+'...':''}`;
   const previewBlock = `${ref}\n${sorted.map(v=>v.txt).join(' ').substring(0,70)}...`;
 
@@ -4608,7 +4646,7 @@ function renderCanvas(theme){
   const portrait = S.cardOrientation === 'portrait';
 
   // One verse or several, the words stand alone, without quote marks
-  const bodyText  = verses.map(v => v.txt).join(' ');
+  const bodyText  = joinVerseText(verses);
 
   canvas.classList.toggle('editable', upload);   // enables grab cursor + touch-action:none
   if(portrait){
@@ -11114,7 +11152,7 @@ function renderBMPanel(){
   if(!el) return;
   const lists = colLists(), open = S._colOpen && lists.find(c => c.id === S._colOpen);
   if(open) return renderColList(el, open);
-  S._colOpen = null;
+  S._colOpen = null; S._colPick = null;
   const q = savedQuery();
   const newRow = `<form class="col-newrow" onsubmit="event.preventDefault();colNewFromTab()"><input id="col-tab-new" placeholder="New list name…" autocomplete="off" aria-label="New list name"><button>＋ New list</button></form>`;
   if(!lists.length){
@@ -11138,13 +11176,30 @@ function colNewFromTab(){
   colOpen(id);
 }
 function colOpen(id){
-  S._colOpen = id;
+  S._colOpen = id; S._colPick = null;
   history.pushState({screen: 'saved', col: id}, '', '');
   switchTab('bm');
   document.getElementById('screen-saved').scrollTop = 0;
 }
 function renderColList(el, c){
-  const n = c.items.length;
+  const n = c.items.length, pick = S._colPick;
+  if(pick){
+    el.innerHTML = `
+    <button class="dv-back" onclick="colPickCancel()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> ${escapeHtml(c.n)}</button>
+    <div class="col-sub">Tap up to 3 verses for one screenshot</div>
+    ${c.items.map((it, i) => `<div class="col-item pick ${pick.includes(i) ? 'on' : ''}" onclick="colPickToggle(${i})">
+      <div class="col-tick">${pick.includes(i) ? '✓' : ''}</div>
+      <div class="col-it-main">
+        <div class="sv-ref">${escapeHtml(it.r)}</div>
+        <div class="col-it-t">${escapeHtml(it.t || '')}</div>
+      </div></div>`).join('')}
+    <div class="col-pickbar">
+      <span class="cp-n">${pick.length} of 3 chosen</span>
+      <button onclick="colPickCancel()">✕ Cancel</button>
+      <button class="go" onclick="colPickMake('${c.id}')" ${pick.length ? '' : 'disabled'}>📸 Make Screenshot</button>
+    </div>`;
+    return;
+  }
   el.innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> My Verses</button>
     <div class="col-head">
@@ -11156,7 +11211,8 @@ function renderColList(el, c){
       <button onclick="colShare('${c.id}')">📤 Share</button>
       <button onclick="colPresent('${c.id}')">🎦 Present</button>
       <button onclick="colToStudy('${c.id}')">📝＋ Study</button>
-    </div>` : `<div class="empty-msg" style="padding:24px 0">Empty for now.<br>While reading, tap a verse → 🔖 Save → ${escapeHtml(c.n)}.</div>`}
+    </div>
+    <button class="col-pickgo" onclick="colPickStart()">📸 Screenshot — pick up to 3 verses</button>` : `<div class="empty-msg" style="padding:24px 0">Empty for now.<br>While reading, tap a verse → 🔖 Save → ${escapeHtml(c.n)}.</div>`}
     ${c.items.map((it, i) => `<div class="col-item">
       <div class="col-it-main" onclick="jumpToRef('${it.a.replace(/'/g, "\\'")}')">
         <div class="sv-ref">${escapeHtml(it.r)}</div>
@@ -11209,16 +11265,39 @@ async function colDelete(id){
   else { S._colOpen = null; colAfterChange(); }
   showUndo(`List deleted · ${gone.n}`, () => { const d2 = colData(); gone.u = Date.now(); d2.list.unshift(gone); colSave(d2); colAfterChange(); });
 }
-// 📸 A verse card (the screenshot designer) for one verse or passage of a list
-async function colCard(id, i){
-  const c = colLists().find(x => x.id === id), it = c && c.items[i];
-  if(!it) return;
+// The verses of one list item (a verse or a passage), ready for the screenshot designer
+async function colItemVerses(it){
   const p = parseReference(it.a), d = p && p.book && await fetchBook(p.book);
   const ch = d && d.chapters[p.chIdx];
   const from = p ? (p.verse || 1) : 1, to = it.e || from;
   const verses = ch ? ch.verses.filter(v => +v.verse >= from && +v.verse <= to).map(v => ({ref: `${p.book} ${p.chIdx + 1}:${v.verse}`, vnum: String(v.verse), txt: v.text})) : [];
   if(!verses.length){ verses.push({ref: it.a, vnum: String(from), txt: it.t || ''}); }
-  openScrOverlay(verses, it.r);
+  return verses;
+}
+// 📸 A screenshot (the designer) for one verse or passage of a list
+async function colCard(id, i){
+  const c = colLists().find(x => x.id === id), it = c && c.items[i];
+  if(!it) return;
+  openScrOverlay(await colItemVerses(it), it.r);
+}
+// 📸 Up to 3 verses of a list on one screenshot, picked in the order you tap them
+function colPickStart(){ S._colPick = []; renderBMPanel(); }
+function colPickCancel(){ S._colPick = null; renderBMPanel(); }
+function colPickToggle(i){
+  const a = S._colPick; if(!a) return;
+  const k = a.indexOf(i);
+  if(k >= 0) a.splice(k, 1);
+  else if(a.length >= 3){ showToast('Up to 3 verses on a screenshot'); return; }
+  else a.push(i);
+  renderBMPanel();
+}
+async function colPickMake(id){
+  const c = colLists().find(x => x.id === id), pick = S._colPick;
+  if(!c || !pick || !pick.length) return;
+  let verses = [];
+  for(const i of pick) if(c.items[i]) verses = verses.concat(await colItemVerses(c.items[i]));
+  S._colPick = null; renderBMPanel();
+  openScrOverlay(verses, passageLabel(verses));
 }
 function colText(c){
   return c.n + '\n\n' + c.items.map(it => `${it.r}\n${it.t || ''}`).join('\n\n') + '\n\n— Faith Baptist Church KJV Bible';
@@ -13769,7 +13848,7 @@ const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it. <b>Add to Screenshot</b> gathers up to 3 verses, from anywhere, onto one picture.', at:'#pa-bm'},
-  mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share, and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
+  mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share (<b>📸 Screenshot</b> under the buttons puts up to 3 verses on one), and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
   plans:    {i:'📅', t:'Reading Plans', b:'Pick a plan and read <b>at your own pace</b> — you can run more than one. A chapter checks off when you reach the end of it, or hear it through on the 🔊 audio Bible, and your 🔥 streak grows each day you read.', at:'#plans-inner .pl-btn'},
   notes:    {i:'📝', t:'Your Notes', b:'Everything you have kept is here: <b>My Verses</b> (lists you name), your <b>Highlights</b>, verse <b>Notes</b> and your <b>Studies</b>. The box at the top searches all of it.', at:'#tab-bm'},
