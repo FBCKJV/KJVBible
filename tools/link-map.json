@@ -145,6 +145,11 @@
   "My Verses": [
    "🔖 Save to My Verses"
   ],
+  "Hymns": [
+   "🎵 Wonderful Grace of Jesus",
+   "🎵 Amazing Grace",
+   "🎵 Grace! ’Tis a Charming Sound"
+  ],
   "Scripture": [
    "📝＋Ephesians 2:8–9 8For by grace are ye ",
    "📝＋Romans 3:24 Being justified freely by",
@@ -158,10 +163,8 @@
   "Share": [
    "📤 Share"
   ],
-  "? toggleNaveLine": [
-   "General Scriptures Concerning 81⌄",
-   "Enjoined 48⌄",
-   "Exemplified 149⌄"
+  "Hymns": [
+   "🎵 “faith” in 25 hymns ›"
   ],
   "Topics (Nave)": [
    "→ See Faith, Trial of",
@@ -337,6 +340,9 @@
   ],
   "Hebrew & Greek": [
    "🔤 The Hebrew & Greek behind “grace” ›"
+  ],
+  "Hymns": [
+   "🎵 “grace” in 55 hymns ›"
   ]
  },
  "Strong's word": {
@@ -358,6 +364,9 @@
   ],
   "Dictionary": [
    "📖 “love” in Webster’s 1828 ›"
+  ],
+  "Hymns": [
+   "🎵 “love” in 104 hymns ›"
   ]
  },
  "Concordance word": {
@@ -372,7 +381,7 @@
    "📝＋Genesis 32:5And I have oxen, and asse"
   ]
  },
- "Hymn": {
+ "Hymn (Amazing Grace)": {
   "Study": [
    "📝＋ Add to Study",
    "📝＋"
@@ -380,14 +389,12 @@
   "Share": [
    "📤 Share"
   ],
-  "Scripture": [
-   "📖 Isaiah 6:3",
-   "📖 Revelation 4:8"
+  "Doctrines": [
+   "✝ Grace — Unmerited Favour"
   ],
-  "? hyTap": [
-   "1Holy, holy, holy, Lord God Almighty!Ear",
-   "2Holy, holy, holy, though the darkness h",
-   "3Holy, holy, holy, Lord God Almighty!All"
+  "Scripture": [
+   "📖 Ephesians 2:8",
+   "📖 1 Chronicles 17:16"
   ]
  }
 }

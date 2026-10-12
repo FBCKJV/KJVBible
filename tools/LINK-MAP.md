@@ -8,8 +8,8 @@ Written by `node tools/map-links.js`: each tool's page opened on a real entry in
 | Verse card (Genesis 12:1) | Scripture · Cross-references · People · Hebrew & Greek · Study · My Verses · Notes · Card · Present · Share |
 | Verse card (Genesis 28:19) | Scripture · Cross-references · Places · Hebrew & Greek · Study · My Verses · Notes · Card · Present · Share |
 | Verse card (John 3:16) | Scripture · Cross-references · Hebrew & Greek · Doctrines · Hymns · Study · My Verses · Notes · Card · Present · Share |
-| Doctrine verses | Scripture · Study · My Verses |
-| Topic (Nave) | Topics (Nave) · Study · Share |
+| Doctrine verses | Scripture · Hymns · Study · My Verses |
+| Topic (Nave) | Topics (Nave) · Hymns · Study · Share |
 | Treasury (cross-refs) | Scripture · Cross-references · Study |
 | Name (Hitchcock) | Places · Hebrew & Greek · Search the Bible · Share |
 | Person | Scripture · People · Places · Hebrew & Greek · Timeline · Journeys · Search the Bible · Study · Share |
@@ -17,7 +17,7 @@ Written by `node tools/map-links.js`: each tool's page opened on a real entry in
 | Timeline event | Scripture · Journeys · Maps · Study |
 | Journey | Scripture · Places · Timeline · Journeys · Present |
 | Classic map | Scripture · Places · Journeys · Study · Share |
-| Dictionary word | Scripture · Hebrew & Greek · Concordance · Study · Share |
-| Strong's word | Scripture · Dictionary · Hebrew & Greek · Study · Share |
+| Dictionary word | Scripture · Hebrew & Greek · Hymns · Concordance · Study · Share |
+| Strong's word | Scripture · Dictionary · Hebrew & Greek · Hymns · Study · Share |
 | Concordance word | Scripture · Concordance |
-| Hymn | Scripture · Study · Share |
+| Hymn (Amazing Grace) | Scripture · Doctrines · Study · Share |

@@ -386,6 +386,36 @@ check('classic maps: every passage is real; verses, journeys and places open, Ba
   assert(r.place.sub === 'place' && !r.place.map, 'a place chip did not open the place page: ' + JSON.stringify(r.place));
 });
 
+check('hymns and the study tools: a word offers its hymns, a hymn its doctrines, a doctrine its hymns', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), txt = id => (document.getElementById(id) || {}).textContent || '';
+    showScreen('search'); switchSearchMode('dict'); await wait(800);
+    await openWord('grace'); await wait(3000);
+    const word = txt('wd-hymns');
+    document.querySelector('#wd-hymns button').click(); await wait(2000);
+    const list = document.querySelectorAll('#hymns-list .hy-row').length, mode = (document.querySelector('.smode.on') || {}).id;
+    history.back(); await wait(1500);
+    const back = {sub: S._subView && S._subView.sub + ':' + S._subView.key, shown: getComputedStyle(document.getElementById('word-view')).display};
+    // whole words: "art" must not count "heart"
+    const H = await loadHymns(), art = hyHas(hyNorm('art'), true);
+    const artWrong = H.some(h => [...h[5].flat(), ...h[6]].some(l => art(l) && !/\bart\b/i.test(l.replace(/[’']/g, ''))));
+    const ag = H.findIndex(h => h[0] === 'Amazing Grace');
+    showScreen('search'); switchSearchMode('hymns'); await wait(800);
+    await openHymn(ag); await wait(1500);
+    const docs = [...document.querySelectorAll('#hymn-view .hy-docs button')].map(b => b.textContent);
+    document.querySelector('#hymn-view .hy-docs button').click(); await wait(3000);
+    const dvHymns = txt('dv-hymns');
+    return {word, list, mode, back, artWrong, docs, dvHymns};
+  });
+  assert(/🎵 “grace” in \d+ hymns/.test(r.word), 'the Dictionary’s grace offers no hymns: ' + r.word);
+  const n = +r.word.match(/in (\d+) hymns/)[1];
+  assert(r.mode === 'smode-hymns' && r.list === n, `the hymns list shows ${r.list} rows for ${n} (${r.mode})`);
+  assert(r.back.sub === 'word:grace' && r.back.shown === 'block', 'Back did not return to the word: ' + JSON.stringify(r.back));
+  assert(!r.artWrong, 'a whole-word search matched inside a word');
+  assert(r.docs.some(d => /Grace/.test(d)), 'Amazing Grace names no doctrine: ' + r.docs.join(' | '));
+  assert(/Amazing Grace/.test(r.dvHymns), 'the doctrine does not list Amazing Grace: ' + r.dvHymns);
+});
+
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
   await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
   const r = await p.evaluate(async () => {
