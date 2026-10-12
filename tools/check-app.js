@@ -844,6 +844,22 @@ check('verse card: one Names row — a person under the verse\'s name, a place, 
   await p.evaluate(() => history.back()); await sleep(400);
 });
 
+check('verse card: Cross-references fold, open at first, remembers being shut', async p => {
+  const open = async () => { await p.evaluate(() => { const el = document.querySelector('.vblock[data-ref="Mark 9:2"]'); openVPop('Mark 9:2', el.dataset.txt); }); await sleep(1500); };
+  const shown = () => p.evaluate(() => { const b = document.getElementById('xr-body'); return !!b && b.style.display !== 'none' && !!b.querySelector('.xr-row'); });
+  await p.evaluate(() => jumpToRef('Mark 9:2')); await sleep(1200);
+  await open();
+  assert(await shown(), 'cross-references should be open the first time');
+  await p.evaluate(() => document.querySelector('#vpop-tsk .sg-fold').click()); await sleep(200);
+  assert(!(await shown()), 'a tap on the heading should fold them away');
+  await p.evaluate(() => history.back()); await sleep(400);
+  await open();
+  assert(!(await shown()), 'the next card should stay folded');
+  await p.evaluate(() => document.querySelector('#vpop-tsk .sg-fold').click()); await sleep(200);
+  assert(await shown(), 'a second tap opens them again');
+  await p.evaluate(() => history.back()); await sleep(400);
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });
