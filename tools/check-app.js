@@ -126,6 +126,14 @@ check('versions agree (sw.js and What\'s New)', async () => {
   assert(html.includes(`data-wn="${wn}"`), `no What's New item for ${wn}`);
 }, {noPage: true});
 
+check('hymn and verse indexes match their sources (rebuild if this fails)', async () => {
+  const {execFileSync} = require('child_process');
+  for(const b of ['build-hymns.js', 'build-verse-index.js']){
+    try{ execFileSync(process.execPath, [path.join(__dirname, b), '--check'], {stdio: 'pipe'}); }
+    catch(e){ throw new Error(String(e.stdout || e.message).trim()); }
+  }
+}, {noPage: true});
+
 check('reading: a chapter read to the end keeps the streak', async (p, ctx) => {
   await p.evaluate(() => { const y = new Date(Date.now() - 864e5);
     LS.set('kjv_streak', 5); LS.set('kjv_streak_last', `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`);
@@ -294,7 +302,7 @@ check('the trail back: verse → card → Strong\'s → another chapter, then Ba
   assert(r.person.screen === 'search' && r.person.sub === 'person:Adam_1', 'Back from a verse should return to the person page: ' + JSON.stringify(r.person));
 });
 
-check('verse card: 📍 When & where opens the timeline or a journey, Back returns to the chapter', async p => {
+check('verse card: 🧭 When & where opens the timeline or a journey, Back returns to the chapter', async p => {
   const r = await p.evaluate(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, book: S.book, ch: S.ch + 1, vpop: document.getElementById('vpop').classList.contains('on')});
     LS.set('kjv_when_open', true);

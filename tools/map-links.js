@@ -4,11 +4,11 @@
 //   node tools/map-links.js            prints the map and writes tools/link-map.json and tools/LINK-MAP.md
 //   node tools/map-links.js person     only the stations whose name has "person"
 //
-// For each station (a tool's page, opened on a real entry) it taps every link
-// on the page in a phone-sized browser and records where the tap lands (the
-// function the app called: another tool, the chapter, the verse card, a map…)
-// (Back is checked separately, as whole journeys, in tools/check-app.js.) The result is
-// what a reader can actually do, not what the code looks like it can do.
+// For each station (a tool's page, opened on a real entry in a phone-sized
+// browser) it reads every link on the page and names where it goes by the
+// function it calls (another tool, the chapter, a map, a study…). It is what
+// a reader is offered on the page, not what the code looks like it can do.
+// Back is checked as whole journeys in tools/check-app.js ("the trail back").
 // Same Playwright/Chromium setup as tools/check-app.js.
 
 const fs = require('fs');
@@ -34,17 +34,7 @@ const serve = () => new Promise(r => {
 });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// The functions that carry a reader somewhere; each tap is named by the first one it calls
-const NAV = {
-  jumpToRef:'Scripture', openPassage:'Scripture', jumpToCh:'Scripture', openHistoryChapter:'Scripture', jumpRR:'Scripture',
-  openVPop:'Verse card', openHymn:'Hymn', openStrongs:"Strong's", openWord:'Dictionary', openNaveTopic:'Topic (Nave)', openNaveTopicAt:'Topic (Nave)',
-  openTreasury:'Treasury', openPerson:'Person', openPlace:'Place', openNamePage:'Name', openTimelineAt:'Timeline', openTimelinePane:'Timeline',
-  openJourney:'Journey', openMap:'Map', openWhereMap:'Map', openChapterMap:'Map', showDoctrineVerses:'Doctrine', openDoctrineFromSearch:'Doctrine',
-  openConcordWord:'Concordance', nbAddHymn:'Study (add)', nbAddVerse:'Study (add)', nbAdd:'Study (add)', openScrOverlay:'Card', shareSub:'Share', showSharePop:'Share',
-  openMemorize:'Sword Drill', openPersonFromVerse:'Person', openPlaceFromVerse:'Place', openWordFromVerse:'Dictionary', openDoctrineFromVerse:'Doctrine', openTreasuryFromVerse:'Treasury',
-};
-
-// Stations: a tool's page opened on a real entry. `sel` picks what to tap (all links inside it).
+// Stations: a tool's page opened on a real entry. `sel` picks whose links are read (buttons, links and tappable rows inside it).
 const STATIONS = [
   {name:'Chapter (Genesis 12)',  open:`jumpToRef('Genesis 12:1')`, sel:'#screen-reader .ch-map, #screen-reader #ch-jr button, #screen-reader #ch-jr a'},
   {name:'Verse card (Genesis 12:1)', open:`jumpToRef('Genesis 12:1').then(()=>openVPop('Genesis 12:1','Now the LORD had said unto Abram, Get thee out of thy country, and from thy kindred, and from thy father\\'s house, unto a land that I will shew thee:'))`, sel:'#vpop button, #vpop a', wait:2500},
@@ -65,22 +55,12 @@ const STATIONS = [
   {name:'Hymn',                 open:`(showScreen('search'), switchSearchMode('hymns'), openHymn(0))`, sel:'#hymn-view button, #hymn-view a'},
 ];
 
-const PAGE_FUNCS = JSON.stringify(Object.keys(NAV));
 async function openApp(ctx, base){
   const p = await ctx.newPage(); p._errors = [];
   p.on('pageerror', e => p._errors.push(e.message));
   const wn = (fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').match(/WHATS_NEW_VERSION = '([^']+)'/) || [])[1];
   await p.addInitScript(([wn]) => { localStorage.setItem('kjv_rc', 'MAPPER'); localStorage.setItem('kjv_whatsnew', wn); localStorage.setItem('kjv_hints_off', 'true'); }, [wn]);
   await p.goto(base + '/index.html'); await sleep(2200);
-  // log every navigation call
-  await p.evaluate(names => {
-    window.__nav = [];
-    names.forEach(n => { const o = window[n]; if(typeof o !== 'function') return;
-      window[n] = function(...a){ window.__nav.push([n, a.map(x => typeof x === 'string' ? x.slice(0, 40) : typeof x === 'number' ? x : '').join(',')]); return o.apply(this, a); }; });
-    window.__sig = () => JSON.stringify({scr: S.screen, sub: S._subView ? S._subView.sub + ':' + S._subView.key : '', ref: S.book + ' ' + S.ch,
-      vpop: document.getElementById('vpop').classList.contains('on'),
-      ov: [...document.querySelectorAll('.on,[style*="display: block"],[style*="display:block"]')].map(e => e.id).filter(Boolean).slice(0, 30).join(',')});
-  }, JSON.parse(PAGE_FUNCS));
   return p;
 }
 
@@ -117,7 +97,6 @@ const QUIET = new Set(['setHL','hlNameSheet','cancelNote','closePop','sayIt','to
       const t = (e.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40);
       return {fn: fns[0] || (/🗺/.test(t) ? 'openMap' : /📅/.test(t) ? 'openTimelineAt' : /🎧/.test(t) ? 'openHymn' : '') || (e.dataset.ref || /^\d? ?[A-Za-z. ]+ \d+:\d+/.test(t) ? 'jumpToRef' : ''), t};
     }), [sel, !!st.hidden]);
-    if(!links.length) console.log('  (nothing matched ' + sel + '; screen ' + await p.evaluate(() => S.screen + ' / topics-panel ' + document.getElementById('topics-panel').style.display + ' / topic-view ' + document.getElementById('topic-view').style.display + ' len ' + document.getElementById('topic-view').innerHTML.length) + ')');
     const by = {};
     links.forEach(l => { const k = TOOL[l.fn] || (QUIET.has(l.fn) || !l.fn ? null : '? ' + l.fn); if(!k) return; (by[k] = by[k] || new Set()).add(l.t); });
     out[st.name] = Object.fromEntries(Object.entries(by).map(([k, v]) => [k, [...v].slice(0, 3)]));

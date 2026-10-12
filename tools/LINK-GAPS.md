@@ -4,7 +4,7 @@ Read with [LINK-MAP.md](LINK-MAP.md) (what each page links to, written by `node 
 
 Ranked by how much understanding they add for someone reading a verse, and how little they cost a plain reader (CLAUDE.md, tests 1–4).
 
-1. **The verse card has no "when and where".** The chapter header offers 📅 era, 🧭 journey and 📍 Where for the whole chapter, but a verse that *is* a timeline event ("The Flood", Genesis 6:8) or a journey stop ("Bethel", Genesis 28:19) does not say so on its card. Fix: one fold, closed until opened and hidden when nothing applies, like 🎵 and 🔤: "📅 On the timeline: …  🧭 Abraham's journey, stop 2". Timeline events carry a verse (`e[5]`) and journey stops carry one (`r`).
+1. ~~**The verse card has no "when and where".**~~ **Done in v62.01:** the card's **🧭 When & where** fold opens the timeline event or the journey stop a verse belongs to (275 verses; `verse-index.json` from `tools/build-verse-index.js`).
 2. **A Person page leads only to Scripture and other people.** It names the man's Hebrew word but does not link it to Strong's, and does not link the places or events of his life. Fix: the Hebrew/Greek name opens Strong's; "Journeys" and "On the timeline" chips when his verses fall in them.
 3. **A Place page does not say who lived or was there**, and has no timeline link. Fix: "People named here" (from the same verse lists) and a 📅 chip.
 4. **A journey stop does not open its Place page**, and a stop has no way to the people in its verse.

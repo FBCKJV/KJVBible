@@ -4,6 +4,7 @@
 // whole timeline and every journey. Run after changing timeline.json or journeys.json:
 //
 //   node tools/build-verse-index.js
+//   node tools/build-verse-index.js --check   (only says whether verse-index.json is up to date)
 //
 // Emits ../verse-index.json: { "Genesis 28:19": { t: [[event id, title, year]], j: [[journey id, journey title, stop number, stop name, place id]] } }
 // (an event id is "tl-<era>-<event>", as in the Timeline; a stop number counts from 0, as openJourney(id, stop) takes it).
@@ -17,6 +18,12 @@ const out = {};
 const at = ref => out[ref] || (out[ref] = {});
 T.forEach((era, i) => era.e.forEach((e, k) => { (at(e[5]).t = at(e[5]).t || []).push([`tl-${i}-${k}`, e[1], e[0]]); }));
 J.forEach(j => j.s.forEach((s, k) => { (at(s.r).j = at(s.r).j || []).push([j.id, j.t, k, s.n, s.p || '']); }));
+// --check: say whether verse-index.json matches timeline.json and journeys.json, and write nothing
+if(process.argv.includes('--check')){
+  const same = fs.readFileSync(path.join(root, 'verse-index.json'), 'utf8') === JSON.stringify(out);
+  console.log(same ? 'verse-index.json is up to date' : 'verse-index.json is out of date: run node tools/build-verse-index.js');
+  process.exit(same ? 0 : 1);
+}
 fs.writeFileSync(path.join(root, 'verse-index.json'), JSON.stringify(out));
 const refs = Object.keys(out);
 console.log(`${refs.length} verses: ${refs.filter(r => out[r].t).length} timeline events, ${refs.filter(r => out[r].j).length} with journey stops`);
