@@ -2507,7 +2507,7 @@ body.light #home-watermark{
         <div class="tips-section-lbl">💡 Tips & Shortcuts</div>
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, <strong>📋 Copy</strong> it with its bold, italics and headings (paste into a Google Doc, an email or Telegram on a computer; each verse comes as its reference in bold and the words in italics), copy it as Markdown (for Claude or a slide maker), or print to PDF from ☰ Studies.</span></div>
-        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, a <strong>🎵 hymn</strong> built on the verse when there is one (tap it to read the hymn; its 📖 buttons bring you back), and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a <strong>Note</strong>, add it to a study, <strong>🎦 Present</strong> it or make a picture card. Below the verse are its hard words, the <strong>people, places and doctrines</strong> in it, its <strong>🔗 cross-references</strong>, a <strong>📍 When &amp; where</strong> fold when the verse is a timeline event or a stop on a journey, a <strong>🎵 hymn</strong> built on the verse when there is one (tap it to read the hymn; its 📖 buttons bring you back), and — folded at the bottom — <strong>🔤 Hebrew words</strong> (Greek in the New Testament): tap to open them</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
@@ -3136,6 +3136,7 @@ body.light #home-watermark{
     </div>
     <div id="vpop-links" style="display:none"></div>
     <div id="vpop-tsk" style="display:none"></div>
+    <div id="vpop-when" style="display:none"></div>
     <div id="vpop-hy" style="display:none"></div>
     <div id="vpop-sg" style="display:none"></div>
     <div class="hl-row" id="hl-row">
@@ -4259,6 +4260,7 @@ function openVPop(ref,txt){
   document.getElementById('vpop-name-def').style.display = 'none';
   fillVpopLinks(ref);
   fillVpopTreasury(ref);
+  fillVpopWhen(ref);
   fillVpopHymns(ref);
   fillVpopStrongs(ref);
 
@@ -9840,6 +9842,37 @@ function sgRefList(s){
     for(const v of vs.split(',')) out.push([b, c, +v]);
   }
   return out;
+}
+
+/* ── On the verse card: 📍 When & where (a fold, shown only when the verse is a timeline event or a journey stop) ──
+   Reads verse-index.json (built by tools/build-verse-index.js, ~21 KB), not the timeline and every journey. */
+const VERSE_INDEX_VERSION = '2026-10-12';
+function loadVerseIndex(){
+  return S._vxIdx ? Promise.resolve(S._vxIdx) : loadCachedJSON(`verse-index.json?v=${VERSE_INDEX_VERSION}`).then(d => S._vxIdx = d);
+}
+async function fillVpopWhen(ref){
+  const el = document.getElementById('vpop-when');
+  if(!el) return;
+  el.style.display = 'none'; el.innerHTML = '';
+  const idx = await loadVerseIndex().catch(() => null);
+  if(S.popRef !== ref) return; // another verse opened meanwhile
+  const hit = idx && idx[ref];
+  if(!hit) return;
+  const open = !!LS.get('kjv_when_open', false);
+  el.innerHTML = `<button class="sg-fold${open ? ' on' : ''}" aria-expanded="${open}" onclick="event.stopPropagation();whenToggleFold()"><span class="vd-label">📍 When &amp; where</span><span class="sg-arr">›</span></button><div id="when-body">${open ? whenBody(hit) : ''}</div>`;
+  el._hit = hit;
+  el.style.display = 'block';
+}
+const whenBody = hit => [
+  ...(hit.t || []).map(([id, title, year]) => `<button class="hy-row" onclick="event.stopPropagation();leaveVPopThen(()=>openTimelineAt('${id}'))"><div class="hy-t">📅 ${escapeHtml(title)}</div><div class="hy-a">${tlYearText(year)} · see it on the timeline ›</div></button>`),
+  ...(hit.j || []).map(([id, title, k, stop]) => `<button class="hy-row" onclick="event.stopPropagation();leaveVPopThen(()=>openJourney('${id}',${k}))"><div class="hy-t">🧭 ${escapeHtml(stop)}</div><div class="hy-a">${escapeHtml(title)}, stop ${k + 1} · follow it on the map ›</div></button>`),
+].join('');
+function whenToggleFold(){
+  const on = !LS.get('kjv_when_open', false);
+  LS.set('kjv_when_open', on);
+  const el = document.getElementById('vpop-when'), f = el && el.querySelector('.sg-fold'), b = document.getElementById('when-body');
+  if(f){ f.classList.toggle('on', on); f.setAttribute('aria-expanded', on); }
+  if(b) b.innerHTML = on && el._hit ? whenBody(el._hit) : '';
 }
 
 /* ── On the verse card: 🎵 Hymns on this verse (a fold, shown only when a hymn stands on the verse) ──

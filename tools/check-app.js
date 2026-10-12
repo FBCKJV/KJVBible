@@ -294,6 +294,31 @@ check('the trail back: verse → card → Strong\'s → another chapter, then Ba
   assert(r.person.screen === 'search' && r.person.sub === 'person:Adam_1', 'Back from a verse should return to the person page: ' + JSON.stringify(r.person));
 });
 
+check('verse card: 📍 When & where opens the timeline or a journey, Back returns to the chapter', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, book: S.book, ch: S.ch + 1, vpop: document.getElementById('vpop').classList.contains('on')});
+    LS.set('kjv_when_open', true);
+    const card = async (ref, txt) => { await jumpToRef(ref); await wait(1500); openVPop(ref, txt); await wait(1800); const el = document.getElementById('vpop-when'); return {shown: el.style.display !== 'none', text: el.textContent, row: el.querySelector('.hy-row')}; };
+    const flood = await card('Genesis 6:8', 'But Noah found grace in the eyes of the LORD.');
+    flood.row.click(); await wait(2000);
+    const tl = {screen: S.screen, sub: (document.querySelector('.tl-ev.here, #tl-panel .here') || {}).id || '', url: location.href.length > 0};
+    history.back(); await wait(1500); const afterTl = at();
+    const bethel = await card('Genesis 28:19', 'And he called the name of that place Bethel');
+    const jrow = [...document.querySelectorAll('#vpop-when .hy-row')].find(x => /🧭/.test(x.textContent)); jrow.click(); await wait(2500);
+    const jr = {overlay: document.getElementById('wm-overlay').classList.contains('on'), jr: !!(S._jr && S._jr.j), title: S._jr && S._jr.j && S._jr.j.t};
+    history.back(); await wait(1500); const afterJr = at();
+    const none = await card('Genesis 1:2', 'And the earth was without form, and void;');
+    LS.set('kjv_when_open', false);
+    return {flood: {shown: flood.shown, text: flood.text}, tl, afterTl, bethel: {shown: bethel.shown, text: bethel.text}, jr, afterJr, none: none.shown};
+  });
+  assert(r.flood.shown && /The Flood/.test(r.flood.text), 'Genesis 6:8 has no timeline row: ' + r.flood.text);
+  assert(r.afterTl.screen === 'reader' && r.afterTl.book === 'Genesis' && r.afterTl.ch === 6, 'Back from the timeline left ' + JSON.stringify(r.afterTl));
+  assert(r.bethel.shown && /Bethel/.test(r.bethel.text), 'Genesis 28:19 has no journey row: ' + r.bethel.text);
+  assert(r.jr.overlay && r.jr.jr, 'the journey did not open: ' + JSON.stringify(r.jr));
+  assert(r.afterJr.screen === 'reader' && r.afterJr.book === 'Genesis' && r.afterJr.ch === 28, 'Back from the journey left ' + JSON.stringify(r.afterJr));
+  assert(!r.none, 'a fold shows on Genesis 1:2');
+});
+
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
   await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
   const r = await p.evaluate(async () => {
