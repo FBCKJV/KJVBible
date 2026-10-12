@@ -871,6 +871,8 @@ check('verse card: tap a word of the verse for its meaning; KJV note on top; roo
   assert(d.on && /singled out by God/.test(d.note) && /Webster 1828/.test(d.web), 'election: the KJV note on top of Webster: ' + JSON.stringify(d));
   await tap('election');
   assert(!(await def()).on, 'a second tap puts the meaning away');
+  await tap('election'); await p.evaluate(() => document.getElementById('vpop-def-x').click()); await sleep(200);
+  assert(!(await def()).on && !(await p.evaluate(() => document.querySelector('#vpop-txt .vw.on'))), '✕ closes the meaning');
   await p.evaluate(() => history.back()); await sleep(400);
   await card('Mark 9:2'); await tap('transfigured');
   d = await def();
