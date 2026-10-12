@@ -882,6 +882,16 @@ check('verse card: tap a word of the verse for its meaning; KJV note on top; roo
   await p.evaluate(() => history.back()); await sleep(400);
 });
 
+check('privacy: Settings → Privacy opens, says what is kept, and Back closes it alone', async p => {
+  await p.evaluate(() => openSettings()); await sleep(400);
+  await p.evaluate(() => [...document.querySelectorAll('.set-link')].find(x => /Privacy/.test(x.textContent)).click()); await sleep(300);
+  const t = await p.evaluate(() => document.getElementById('privacy-sheet').classList.contains('on') && document.getElementById('privacy-inner').textContent);
+  assert(t && /restore code/.test(t) && /no advertising/.test(t), 'the Privacy page should open and explain the backup');
+  await p.evaluate(() => history.back()); await sleep(400);
+  const st = await p.evaluate(() => ({priv: document.getElementById('privacy-sheet').classList.contains('on'), set: document.getElementById('settings-sheet').classList.contains('on')}));
+  assert(!st.priv && st.set, 'Back should close Privacy and leave Settings open: ' + JSON.stringify(st));
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });

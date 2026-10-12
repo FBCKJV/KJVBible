@@ -1318,6 +1318,14 @@ body.scourby-open #reader-float-nav {
 .set-link span{color:var(--text-m)}
 #share-pop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:20px}
 #share-pop.on{display:flex}
+#privacy-sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:700;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px}
+#privacy-sheet.on{display:flex}
+#privacy-inner{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:18px 18px 16px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;animation:su .25s ease;font-size:14px;line-height:1.6;color:var(--text)}
+#privacy-inner h3{font-family:'IM Fell English',serif;font-weight:400;font-size:20px;color:var(--gold);margin:0 0 6px}
+#privacy-inner h4{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m);margin:14px 0 4px}
+#privacy-inner p,#privacy-inner li{margin:0 0 6px}
+#privacy-inner ul{padding-left:18px;margin:0 0 6px}
+#privacy-close{display:block;width:100%;margin-top:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:11px;font-size:14px;cursor:pointer}
 #share-inner{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:380px;width:100%;animation:su .25s ease}
 #share-inner img{border-radius:10px;max-width:100%;box-shadow:0 8px 30px rgba(0,0,0,.4)}
 #share-title{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);text-align:center}
@@ -2480,6 +2488,31 @@ body.light #home-watermark{
 </div>
 
 <!-- SHARE POPUP -->
+<div id="privacy-sheet" onclick="if(event.target===this)closePopover('privacy-sheet')">
+  <div id="privacy-inner" role="dialog" aria-label="Privacy">
+    <h3>🔒 Your privacy</h3>
+    <p>This app keeps what you write between you and the Lord. There are no accounts, no names or email addresses, no advertising, and nothing is ever sold.</p>
+    <h4>On this phone</h4>
+    <p>Your highlights, notes, My Verses lists, studies, plans, streak and Sword Drill progress are kept on this phone or computer.</p>
+    <h4>Your restore code backup</h4>
+    <p>So you can move to a new phone, the app saves a copy of what you keep to a Google Firebase database, under a 6-letter <b>restore code</b> made up at random. The copy carries no name or email. Anyone who has your code can restore your notes, so keep it to yourself. You can also keep your own copy with <b>Save backup file</b> in Settings.</p>
+    <h4>Reading reminders</h4>
+    <p>Only if you turn on a reminder, the OneSignal service keeps the time you chose and your next reading, so it can send the reminder. Turn it off in Settings at any time.</p>
+    <h4>Counting visits</h4>
+    <p>GoatCounter counts how many times the app is opened, without cookies and without knowing who you are.</p>
+    <h4>Loading the app</h4>
+    <ul>
+      <li>The Bible text and the app's files come from GitHub.</li>
+      <li>The audio Bible streams from Cloudflare.</li>
+      <li>The lettering comes from Google Fonts.</li>
+    </ul>
+    <p>Like any website, these services see your device's internet address when they send a file.</p>
+    <h4>Removing it all</h4>
+    <p>To remove everything from this phone, clear this site's data in your browser's settings. To have your restore code backup removed, ask at Faith Baptist Church of Plymouth County.</p>
+    <button id="privacy-close" onclick="closePopover('privacy-sheet')">✕ Close</button>
+  </div>
+</div>
+
 <div id="share-pop" onclick="closeSharePop(event)">
   <div id="share-inner">
     <div id="share-title">✝ Share our KJV Bible App</div>
@@ -2539,7 +2572,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Names in this verse</strong> — on the verse card, every person and place the verse names sits in one row. Tap a name for what it means (Hitchcock’s Bible Names), then <strong>👤</strong> opens the person’s story or <strong>📍</strong> where the place was; <strong>🗺️ Show on map</strong> pins the places.</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap any word of the verse, or a name under <strong>📛 Names in this verse</strong>, for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
-        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, our doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
+        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, the doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
         <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
@@ -2553,10 +2586,10 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
         <div class="tip-row"><span class="tip-ico">❝</span><span class="tip-txt"><strong>Search for an exact phrase</strong> — put it in quotes, like <em>"god so loved"</em>. Put a minus before a word to leave it out: <em>love -god</em>. Switch between <em>Best match</em> and <em>Bible order</em> above the results</span></div>
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
-        <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
+        <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has the primary doctrines of the faith on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
-        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a word of the verse</strong> on its card for what it means — Webster’s 1828, with our church’s KJV note on top where there is one, and <strong>Full dictionary entry →</strong> for the rest. A name opens its meaning and the person or place. Tap the word again, or ✕, to close it.</span></div>
-        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with our church's KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a word of the verse</strong> on its card for what it means — Webster’s 1828, with the KJV note on top where there is one, and <strong>Full dictionary entry →</strong> for the rest. A name opens its meaning and the person or place. Tap the word again, or ✕, to close it.</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with the KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
         <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Search → Hebrew &amp; Greek</strong> is Strong's — every word of the KJV tied to the Hebrew or Greek it translates. Type an English word (<em>mercy</em>), a Hebrew or Greek word (<em>agape</em>) or a number (<em>G26</em>). A word's page lists every verse it is in; tap a rendering to see only those verses. While reading, tap a verse and open <strong>🔤 Hebrew words</strong> at the bottom of the card</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
         <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it. <strong>In the story</strong> lists the people named there and its events on the timeline; on a journey's map, tap a stop's name to open the place</span></div>
@@ -2736,6 +2769,7 @@ body.light #home-watermark{
       <div class="tips-section">
         <div class="tips-section-lbl">ℹ️ About</div>
         <div class="set-row"><div class="set-lbl">Version</div><div class="set-ctrl" id="settings-version" style="color:var(--text-m)">—</div></div>
+        <button class="set-link" onclick="openPopover('privacy-sheet')">🔒 Privacy — what is kept, and where<span>›</span></button>
         <a class="set-link" href="kjv/index.html" style="text-decoration:none">📜 The King James Bible as web pages — a page for every chapter, to share with anyone<span>›</span></a>
         <div class="set-row col"><div class="set-lbl" style="font-size:12px;color:var(--text-m);line-height:1.6">
           Bible name meanings from <strong>Hitchcock's Bible Names Dictionary</strong> (Roswell D. Hitchcock, 1869 — public domain), compiled via the <strong>BibleData</strong> project (Brady Stephenson).<br>
@@ -5157,7 +5191,7 @@ function updateContinueBanner(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay','tl-panel'];
+const POPOVER_IDS = ['privacy-sheet','mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay','tl-panel'];
 // Order the cards were opened in: on a wide screen several can be open side
 // by side (the verse card beside the notebook), and Back closes the newest
 let LAYER_SEQ = 0;
@@ -7689,7 +7723,7 @@ function fillVpopLinks(ref){
     const docs = doctrineIndex().get(ref) || [];
     if(!docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
     el.innerHTML =
-      (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
+      (docs.length ? `<div class="vd-label">📑 Cited in the primary doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
         `<button class="vl-chip" onclick="event.stopPropagation();openDoctrineFromVerse(${ci},${ti})">${escapeHtml(DOCTRINES[ci].topics[ti].name)}</button>`).join('')}</div>` : '');
     el.style.display = 'block';
   };
@@ -8662,7 +8696,7 @@ function nbAddMap(){
    opened, then to the hub, then out of Search. Coming back to Search from
    the bottom bar starts at the hub, with a card to continue where you were. */
 const SEARCH_TOOLS = [
-  {m:'doctrine', i:'📑', n:'Doctrines',   d:'What our church believes'},
+  {m:'doctrine', i:'📑', n:'Doctrines',   d:'The primary doctrines of the faith'},
   {m:'topics',   i:'📚', n:'Topics',      d:"Nave's 5,300 Bible topics"},
   {m:'dict',     i:'📖', n:'Dictionary',  d:"Webster's 1828 + KJV notes"},
   {m:'concord',  i:'📜', n:'Concordance', d:'Every word of the KJV'},
@@ -11256,7 +11290,7 @@ function renderColList(el, c){
         <div class="col-it-t">${escapeHtml(it.t || '')}</div>
       </div></div>`).join('')}
     <div class="col-pickbar">
-      <span class="cp-n">${pick.length} of 3 chosen</span>
+      <span class="cp-n">${pick.length} of 3</span>
       <button onclick="colPickCancel()">✕ Cancel</button>
       <button class="go" onclick="colPickMake('${c.id}')" ${pick.length ? '' : 'disabled'}>📸 Make Screenshot</button>
     </div>`;
@@ -13823,9 +13857,9 @@ const TOOL_TIPS = {
     ['❝', 'In Search, quotes find an exact phrase (<em>"god so loved"</em>), a minus leaves a word out (<em>love -god</em>), and you can sort by Best match or Bible order'],
   ]},
   dict: {i:'📖', t:'Dictionary', tips:[
-    ['📖', '<strong>Webster’s 1828</strong> with our church’s KJV notes on top — type any word, or browse the KJV word list'],
+    ['📖', '<strong>Webster’s 1828</strong> with the KJV notes on top — type any word, or browse the KJV word list'],
     ['⭐', 'A word shows its <strong>first mention in Scripture</strong> and how many verses use it; the references in an entry are links'],
-    ['📝', 'While reading, <strong>tap a verse</strong>, then <strong>tap any word</strong> of it for its meaning — our KJV note on top where there is one, then Webster’s; “Full dictionary entry →” opens it here, and Back returns to the verse'],
+    ['📝', 'While reading, <strong>tap a verse</strong>, then <strong>tap any word</strong> of it for its meaning — the KJV note on top where there is one, then Webster’s; “Full dictionary entry →” opens it here, and Back returns to the verse'],
     ['🔊', '<strong>🔊 Hear it</strong> says the word aloud (tap again for slowly); old words like <em>shew</em>, <em>divers</em> and <em>victuals</em> show how to say them'],
     ['📤', '<strong>📤 Share</strong> sends the word, its meaning and a link that opens this page in the app'],
     ['🔤', '<strong>🔤 The Hebrew &amp; Greek behind …</strong> under a word shows the original words the KJV renders by it, with Strong’s numbers'],
@@ -13909,7 +13943,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save, screenshot or drill them together; tap more verses to add them (scroll freely, a drag picks nothing), and tap a blank spot or <b>✕ Cancel</b> when done. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
-  vword:    {i:'📖', t:'What does this word mean?', b:'<b>Tap any word</b> of the verse for its meaning — Webster’s 1828, with our church’s KJV note on top where there is one. Tap it again, or ✕, to close it.', at:'#vpop-txt'},
+  vword:    {i:'📖', t:'What does this word mean?', b:'<b>Tap any word</b> of the verse for its meaning — Webster’s 1828, with the KJV note on top where there is one. Tap it again, or ✕, to close it.', at:'#vpop-txt'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it. <b>Add to Screenshot</b> gathers up to 3 verses, from anywhere, onto one picture.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share (<b>📸 Screenshot</b> under the buttons puts up to 3 verses on one), and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
@@ -17335,7 +17369,7 @@ function closeSettings(e){
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Webster&rsquo;s 1828 Dictionary</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          <strong>Search &rarr; Dictionary</strong> now holds Noah Webster&rsquo;s <strong>1828</strong> dictionary &mdash; 62,000 words defined as they were understood near the King James era, with tappable Scripture references. Our church&rsquo;s <strong>KJV notes</strong> sit right on top of each entry &mdash; now including <em>baptism</em>, <em>the elect</em> and <em>predestination</em>. Tap a verse while reading to see its hard words, then open the full entry.
+          <strong>Search &rarr; Dictionary</strong> now holds Noah Webster&rsquo;s <strong>1828</strong> dictionary &mdash; 62,000 words defined as they were understood near the King James era, with tappable Scripture references. The <strong>KJV notes</strong> sit right on top of each entry &mdash; now including <em>baptism</em>, <em>the elect</em> and <em>predestination</em>. Tap a verse while reading to see its hard words, then open the full entry.
         </div>
       </div>
     </div>
