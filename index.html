@@ -1019,7 +1019,7 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 .ld-txt{font-family:'Crimson Pro',serif;font-style:italic;color:var(--text-d);font-size:13px}
 
 /* HINT TOOLTIP */
-#select-hint{position:fixed;top:calc(var(--nav-h)+10px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--gold-d);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--gold);z-index:150;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s}
+#select-hint{position:fixed;top:calc(var(--nav-h)+10px);left:calc((100vw - var(--side-w,0px)) / 2);transform:translateX(-50%);max-width:calc(100vw - var(--side-w,0px) - 24px);overflow:hidden;text-overflow:ellipsis;background:var(--bg2);border:1px solid var(--gold-d);border-radius:20px;padding:6px 14px;font-size:12px;color:var(--gold);z-index:150;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s}
 #select-hint.show{opacity:1}
 
 ::-webkit-scrollbar{width:4px}
@@ -1318,6 +1318,14 @@ body.scourby-open #reader-float-nav {
 .set-link span{color:var(--text-m)}
 #share-pop{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:20px}
 #share-pop.on{display:flex}
+#privacy-sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:700;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px);padding:16px}
+#privacy-sheet.on{display:flex}
+#privacy-inner{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:18px 18px 16px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;animation:su .25s ease;font-size:14px;line-height:1.6;color:var(--text)}
+#privacy-inner h3{font-family:'IM Fell English',serif;font-weight:400;font-size:20px;color:var(--gold);margin:0 0 6px}
+#privacy-inner h4{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-m);margin:14px 0 4px}
+#privacy-inner p,#privacy-inner li{margin:0 0 6px}
+#privacy-inner ul{padding-left:18px;margin:0 0 6px}
+#privacy-close{display:block;width:100%;margin-top:12px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:11px;font-size:14px;cursor:pointer}
 #share-inner{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:380px;width:100%;animation:su .25s ease}
 #share-inner img{border-radius:10px;max-width:100%;box-shadow:0 8px 30px rgba(0,0,0,.4)}
 #share-title{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);text-align:center}
@@ -2480,6 +2488,31 @@ body.light #home-watermark{
 </div>
 
 <!-- SHARE POPUP -->
+<div id="privacy-sheet" onclick="if(event.target===this)closePopover('privacy-sheet')">
+  <div id="privacy-inner" role="dialog" aria-label="Privacy">
+    <h3>🔒 Your privacy</h3>
+    <p>This app keeps what you write between you and the Lord. There are no accounts, no names or email addresses, no advertising, and nothing is ever sold.</p>
+    <h4>On this phone</h4>
+    <p>Your highlights, notes, My Verses lists, studies, plans, streak and Sword Drill progress are kept on this phone or computer.</p>
+    <h4>Your restore code backup</h4>
+    <p>So you can move to a new phone, the app saves a copy of what you keep to a Google Firebase database, under a 6-letter <b>restore code</b> made up at random. The copy carries no name or email. Anyone who has your code can restore your notes, so keep it to yourself. You can also keep your own copy with <b>Save backup file</b> in Settings.</p>
+    <h4>Reading reminders</h4>
+    <p>Only if you turn on a reminder, the OneSignal service keeps the time you chose and your next reading, so it can send the reminder. Turn it off in Settings at any time.</p>
+    <h4>Counting visits</h4>
+    <p>GoatCounter counts how many times the app is opened, without cookies and without knowing who you are.</p>
+    <h4>Loading the app</h4>
+    <ul>
+      <li>The Bible text and the app's files come from GitHub.</li>
+      <li>The audio Bible streams from Cloudflare.</li>
+      <li>The lettering comes from Google Fonts.</li>
+    </ul>
+    <p>Like any website, these services see your device's internet address when they send a file.</p>
+    <h4>Removing it all</h4>
+    <p>To remove everything from this phone, clear this site's data in your browser's settings. To have your restore code backup removed, ask at Faith Baptist Church of Plymouth County.</p>
+    <button id="privacy-close" onclick="closePopover('privacy-sheet')">✕ Close</button>
+  </div>
+</div>
+
 <div id="share-pop" onclick="closeSharePop(event)">
   <div id="share-inner">
     <div id="share-title">✝ Share our KJV Bible App</div>
@@ -2539,7 +2572,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Names in this verse</strong> — on the verse card, every person and place the verse names sits in one row. Tap a name for what it means (Hitchcock’s Bible Names), then <strong>👤</strong> opens the person’s story or <strong>📍</strong> where the place was; <strong>🗺️ Show on map</strong> pins the places.</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap any word of the verse, or a name under <strong>📛 Names in this verse</strong>, for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
-        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, our doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
+        <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, the doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
         <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
@@ -2553,10 +2586,10 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
         <div class="tip-row"><span class="tip-ico">❝</span><span class="tip-txt"><strong>Search for an exact phrase</strong> — put it in quotes, like <em>"god so loved"</em>. Put a minus before a word to leave it out: <em>love -god</em>. Switch between <em>Best match</em> and <em>Bible order</em> above the results</span></div>
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
-        <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
+        <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has the primary doctrines of the faith on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
-        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a word of the verse</strong> on its card for what it means — Webster’s 1828, with our church’s KJV note on top where there is one, and <strong>Full dictionary entry →</strong> for the rest. A name opens its meaning and the person or place. Tap the word again, or ✕, to close it.</span></div>
-        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with our church's KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a word of the verse</strong> on its card for what it means — Webster’s 1828, with the KJV note on top where there is one, and <strong>Full dictionary entry →</strong> for the rest. A name opens its meaning and the person or place. Tap the word again, or ✕, to close it.</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with the KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
         <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Search → Hebrew &amp; Greek</strong> is Strong's — every word of the KJV tied to the Hebrew or Greek it translates. Type an English word (<em>mercy</em>), a Hebrew or Greek word (<em>agape</em>) or a number (<em>G26</em>). A word's page lists every verse it is in; tap a rendering to see only those verses. While reading, tap a verse and open <strong>🔤 Hebrew words</strong> at the bottom of the card</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
         <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it. <strong>In the story</strong> lists the people named there and its events on the timeline; on a journey's map, tap a stop's name to open the place</span></div>
@@ -2736,6 +2769,7 @@ body.light #home-watermark{
       <div class="tips-section">
         <div class="tips-section-lbl">ℹ️ About</div>
         <div class="set-row"><div class="set-lbl">Version</div><div class="set-ctrl" id="settings-version" style="color:var(--text-m)">—</div></div>
+        <button class="set-link" onclick="openPopover('privacy-sheet')">🔒 Privacy — what is kept, and where<span>›</span></button>
         <a class="set-link" href="kjv/index.html" style="text-decoration:none">📜 The King James Bible as web pages — a page for every chapter, to share with anyone<span>›</span></a>
         <div class="set-row col"><div class="set-lbl" style="font-size:12px;color:var(--text-m);line-height:1.6">
           Bible name meanings from <strong>Hitchcock's Bible Names Dictionary</strong> (Roswell D. Hitchcock, 1869 — public domain), compiled via the <strong>BibleData</strong> project (Brady Stephenson).<br>
@@ -2934,11 +2968,11 @@ body.light #home-watermark{
 </div>
 
 <!-- CHAPTER PICKER -->
-<div id="ch-picker" onclick="if(event.target===this)closeChPicker()">
+<div id="ch-picker" onclick="if(event.target===this)chPickerDismiss()">
   <div id="ch-picker-inner">
     <div id="ch-picker-hdr">
       <div id="ch-picker-book"></div>
-      <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;padding:0 4px" onclick="closeChPicker()">✕</button>
+      <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer;padding:0 4px" onclick="chPickerDismiss()">✕</button>
     </div>
     <div id="ch-grid"></div>
     <div id="cp-audio-row" style="display:none;padding:10px 14px 4px;border-top:1px solid var(--border);margin-top:6px">
@@ -3037,11 +3071,11 @@ body.light #home-watermark{
 </div>
 
 <!-- VERSE CLIPBOARD -->
-<div id="clip-overlay" onclick="if(event.target===this)closeClipboard()">
+<div id="clip-overlay" onclick="if(event.target===this)clipDismiss()">
   <div id="clip-inner">
     <div id="clip-hdr">
       <div id="clip-hdr-title">📸 Screenshot Verses</div>
-      <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer" onclick="closeClipboard()">✕</button>
+      <button style="background:none;border:none;color:var(--text-m);font-size:20px;cursor:pointer" onclick="clipDismiss()">✕</button>
     </div>
     <div id="clip-body"></div>
     <div id="clip-foot">
@@ -3103,7 +3137,7 @@ body.light #home-watermark{
   <div id="multibar-info">
     <div id="multibar-count">0 verses selected</div>
     <div id="multibar-ref"></div>
-    <button class="mbar-cancel" onclick="exitSelectMode()">✕ Cancel</button>
+    <button class="mbar-cancel" onclick="exitSelectMode(true)">✕ Cancel</button>
     <button class="mbar-cancel" id="mb-clip" onclick="openClipboard()" style="display:none;order:5;margin-right:auto"></button>
   </div>
   <div class="mbar-btns">
@@ -3287,7 +3321,7 @@ const BIBLE_CACHE = 'kjv-bible-v1';
 const BOOKS=["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
 const CH_COUNTS=[50,40,27,36,34,24,21,4,31,24,22,25,29,36,10,13,10,42,150,31,12,8,66,52,5,48,12,14,3,9,1,4,7,3,3,3,2,14,4,28,16,24,21,28,16,16,13,6,6,4,4,5,3,6,4,3,1,13,5,5,3,5,1,1,1,22];
 const bookFile=n=>n.replace(/ /g,'')+'.json';
-const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){lsFull(e)}}};
+const LS={get:(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){lsFull(e);return false}}};
 
 // Escapes user-supplied text (search queries, notes) before it is placed into
 // innerHTML — anything rendered via innerHTML that didn't originate from our
@@ -3629,7 +3663,7 @@ async function jumpRR(bookName, chIdx, verseNum){
 let vodMeta=null;
 async function loadVOD(){
   const d=new Date(),start=new Date(d.getFullYear(),0,0),
-        doy=Math.floor((d-start)/86400000); // day of year 1-366
+        doy=Math.round((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,0))/864e5); // day of year 1-366, by the calendar
   const r=VOD[(doy-1)%VOD.length];
   try{
     const data=await fetchBook(r.b);if(!data)return;
@@ -4035,6 +4069,8 @@ function enterSelectMode(){
   document.getElementById('verses').classList.add('select-mode');
   document.getElementById('btn-select').classList.add('on');
   document.getElementById('multibar').classList.add('on');
+  // Back puts the bar away and keeps the chapter
+  if(!(history.state && history.state.modal==='select')) history.pushState({...(history.state || {screen:'reader'}), modal:'select'}, '', '');
   updateMultiBar();
   // show hint briefly
   const hint=document.getElementById('select-hint');
@@ -4048,11 +4084,11 @@ function enterSelectMode(){
 document.getElementById('screen-reader').addEventListener('click', e => {
   if(!S.selectMode) return;
   if(e.target.closest('.vblock, button, a, input, #reader-loc, #parallel-strip, #reader-float-nav, .ch-map')) return;
-  exitSelectMode();
+  exitSelectMode(true);
 });
 
 function toggleSelectMode(){
-  if(S.selectMode) exitSelectMode();
+  if(S.selectMode) exitSelectMode(true);
   else enterSelectMode();
 }
 
@@ -4097,7 +4133,9 @@ function toggleSelectAll(){
   }
 }
 
-function exitSelectMode(){
+function exitSelectMode(consume){
+  // consume: put away by ✕ Cancel or a tap, so its Back step goes too
+  if(consume && S.selectMode && history.state && history.state.modal==='select'){ S._popSkip = true; history.back(); }
   S.selectMode=false;
   S.selected.clear();S.selectedData=[];
   document.getElementById('verses').classList.remove('select-mode');
@@ -4141,9 +4179,7 @@ function updateMultiBar(){
   // Reference range label
   if(n > 0){
     const sorted = [...S.selectedData].sort((a,b) => parseInt(a.vnum) - parseInt(b.vnum));
-    const base = sorted[0].ref.replace(/:.*$/, '');
-    const label = n === 1 ? sorted[0].ref : `${base}:${sorted[0].vnum}–${sorted[sorted.length-1].vnum}`;
-    document.getElementById('multibar-ref').textContent = label;
+    document.getElementById('multibar-ref').textContent = passageLabel(sorted);
   } else {
     document.getElementById('multibar-ref').textContent = '';
   }
@@ -4218,24 +4254,29 @@ function showCopyFormatPicker(sorted, first, last){
   sheet.innerHTML = `
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;width:100%;max-width:700px;padding:20px 18px 32px;animation:su .22s ease">
       <div style="font-family:'IM Fell English',serif;font-size:17px;color:var(--gold);margin-bottom:14px;text-align:center">Copy Format</div>
-      <button onclick="document.getElementById('copy-fmt-sheet').remove();doCopy(buildNumberedText(window._cfSorted,window._cfFirst,window._cfLast))"
+      <button onclick="copyFmtClose();doCopy(buildNumberedText(window._cfSorted,window._cfFirst,window._cfLast))"
         style="display:block;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 16px;font-size:14px;cursor:pointer;text-align:left;margin-bottom:8px">
         <div style="font-weight:600;color:var(--gold);margin-bottom:4px">📋 Traditional (numbered verses)</div>
         <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif;white-space:pre-line">${previewTrad}</div>
       </button>
-      <button onclick="document.getElementById('copy-fmt-sheet').remove();doCopy(buildBlockText(window._cfSorted,window._cfFirst,window._cfLast))"
+      <button onclick="copyFmtClose();doCopy(buildBlockText(window._cfSorted,window._cfFirst,window._cfLast))"
         style="display:block;width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:12px 16px;font-size:14px;cursor:pointer;text-align:left;margin-bottom:12px">
         <div style="font-weight:600;color:var(--gold);margin-bottom:4px">📄 Block text (flowing paragraph)</div>
         <div style="font-size:12px;color:var(--text-m);font-family:'Crimson Pro',serif;white-space:pre-line">${previewBlock}</div>
       </button>
-      <button onclick="document.getElementById('copy-fmt-sheet').remove()"
+      <button onclick="copyFmtClose()"
         style="display:block;width:100%;background:none;border:1px solid var(--border);color:var(--text-m);border-radius:10px;padding:10px;font-size:13px;cursor:pointer">
         Cancel
       </button>
     </div>`;
   window._cfSorted = sorted; window._cfFirst = first; window._cfLast = last;
   document.body.appendChild(sheet);
-  sheet.addEventListener('click', e=>{ if(e.target===sheet) sheet.remove(); });
+  sheet.addEventListener('click', e=>{ if(e.target===sheet) copyFmtClose(); });
+  history.pushState({screen:S.screen, modal:'copyfmt'}, '', '');   // Back closes it
+}
+function copyFmtClose(){
+  if(history.state && history.state.modal==='copyfmt') history.back();
+  else { const el = document.getElementById('copy-fmt-sheet'); if(el) el.remove(); }
 }
 
 function doCopy(txt){
@@ -4319,7 +4360,7 @@ function vpopWords(txt){
     const t = document.getElementById('vpop-def-text');
     t.textContent = '';
     lookupWord(word.toLowerCase()).then(r => {
-      if(!sp.classList.contains('on')) return;
+      if(!sp.isConnected || !sp.classList.contains('on')) return;   // another verse or word since
       t.textContent = r ? (r.note ? 'In the KJV: ' + r.note : '') : `Webster’s 1828 has no entry for “${word}”.`;
     });
     vpopWebster(word.toLowerCase());
@@ -4674,6 +4715,7 @@ function drawPhotoBase(ctx, W, H, radius){
 }
 
 function openScrOverlay(verses, refLabel, hymn = null){
+  S.scrCombined = false;
   S.scrVerses=verses;
   S.scrRef=refLabel;
   S.scrHymn=hymn;   // {title, by, blocks:[{lines, refrain}]} for a hymn card, else null
@@ -4687,6 +4729,7 @@ function openScrOverlay(verses, refLabel, hymn = null){
 }
 
 function renderCanvas(theme){
+  if(S.scrCombined){ drawCombinedCard(document.getElementById('scr-canvas')); return; }
   const verses = S.scrVerses || [];
   if(!verses.length && !S.scrHymn) return;   // a hymn card carries S.scrHymn instead
   // Photo mode: an uploaded photo or a bundled scene is the background.
@@ -4746,7 +4789,8 @@ function renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload){
 
 function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
   // 9:16 portrait — TikTok / Instagram Stories / Reels
-  const W = 540, H = 960, PAD = 52;
+  const W = 540, PAD = 52;
+  let H = 960;
   canvas.width = W * dpr; canvas.height = H * dpr;
   const dispW = 200;
   canvas.style.width  = dispW + 'px';
@@ -4763,6 +4807,13 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
     body = cardBody(ctx, bodyText, BFONT, W, PAD, t, align);
     // fits the space (and, for a hymn, keeps each line whole down to 22px)
     if(BFONT <= 14 || (body.h <= AREA_H && !(hy && body.wraps && BFONT > 22))) break;
+  }
+  // Still too long at the smallest size: the card grows taller rather than cut the words off
+  if(body.h > AREA_H){
+    H += Math.ceil(body.h - AREA_H);
+    canvas.height = H * dpr; canvas.style.height = (dispW * H / W) + 'px';
+    ctx.resetTransform(); ctx.scale(dpr, dpr);
+    body = cardBody(ctx, bodyText, BFONT, W, PAD, t, align);
   }
   const bodyH = body.h;
 
@@ -5157,7 +5208,7 @@ function updateContinueBanner(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay','tl-panel'];
+const POPOVER_IDS = ['privacy-sheet','mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay','tl-panel'];
 // Order the cards were opened in: on a wide screen several can be open side
 // by side (the verse card beside the notebook), and Back closes the newest
 let LAYER_SEQ = 0;
@@ -5223,12 +5274,19 @@ function closePopover(id){
 // ── Android / browser back button handler ──
 window.addEventListener('popstate', e => {
   const state = e.state;
+  // A step already put away by its own button
+  if(S._popSkip){ S._popSkip = false; return; }
+  const _cf = document.getElementById('copy-fmt-sheet');
+  if(_cf){ _cf.remove(); return; }
+  const _wn = document.getElementById('whatsnew-modal');
+  if(_wn && _wn.style.display === 'flex'){ dismissWhatsNew(); return; }
 
   // Back to a study that stepped aside for a reference (phone): it comes back
   if(state && state.modal === 'nb-panel' && S._nbUnder && !document.getElementById('nb-panel').classList.contains('on')){ nbComeBack(); return; }
   // The full-screen map is on top of everything (even an open notebook): it closes first
   const _mapOv = document.getElementById('map-overlay');
-  if(_mapOv && _mapOv.classList.contains('on')){ _mapOv.classList.remove('on'); document.getElementById('map-img').src = ''; return; }
+  const _overMap = () => POPOVER_IDS.some(id => { const el = document.getElementById(id); return el && el.classList.contains('on') && !isSidePanel(el) && (+el.dataset.t || 0) > (+_mapOv.dataset.t || 0); });
+  if(_mapOv && _mapOv.classList.contains('on') && !_overMap()){ _mapOv.classList.remove('on'); document.getElementById('map-img').src = ''; return; }
   // The card maker (verse image, several verses, the Sword Drill certificate)
   // sits above any sheet it was opened from, so it closes first
   const scrOv = document.getElementById('scr-overlay');
@@ -5274,6 +5332,9 @@ window.addEventListener('popstate', e => {
     return;
   }
 
+  // Picking verses: Back puts the bar away and stays in the chapter
+  if(S.selectMode){ exitSelectMode(); return; }
+  if(state && state.modal === 'select'){ history.back(); return; }   // a picking step left behind
   if(!state){ 
     if(S.screen !== 'books') showScreen('books', false);
     history.pushState({screen:'books'}, '', '');
@@ -5326,6 +5387,7 @@ window.addEventListener('popstate', e => {
     }
   } else if(state.screen === 'saved'){
     S._colOpen = state.col || null;
+    if(!state.pick) S._colShot = null;   // Back from picking verses for a screenshot
     showScreen('saved', false);
     if(state.col) switchTab('bm');
   } else {
@@ -7689,7 +7751,7 @@ function fillVpopLinks(ref){
     const docs = doctrineIndex().get(ref) || [];
     if(!docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
     el.innerHTML =
-      (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
+      (docs.length ? `<div class="vd-label">📑 Cited in the primary doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
         `<button class="vl-chip" onclick="event.stopPropagation();openDoctrineFromVerse(${ci},${ti})">${escapeHtml(DOCTRINES[ci].topics[ti].name)}</button>`).join('')}</div>` : '');
     el.style.display = 'block';
   };
@@ -8129,7 +8191,7 @@ async function openHymn(i, pushHistory=true, scrollY=0){
    appended to the end of the active study. */
 const NB_KEY = 'kjv_studies';
 function nbData(){ return S._nb || (S._nb = LS.get(NB_KEY, null) || {active: null, list: []}); }
-function nbSave(){ LS.set(NB_KEY, nbData()); fbSyncSoon(); if(S.screen === 'saved') renderSTPanel(); }
+function nbSave(){ const ok = LS.set(NB_KEY, nbData()); fbSyncSoon(); if(S.screen === 'saved') renderSTPanel(); return ok; }
 function nbActive(){
   const d = nbData();
   return d.list.find(x => x.id === d.active) || d.list[0] || nbCreate('My Study');
@@ -8188,6 +8250,7 @@ function nbToggle(){
   nbOpen();
 }
 function nbOpen(){
+  S._nbUnder = null;   // opened afresh: Back no longer brings back an earlier stepped-aside study
   const st = nbActive();
   document.getElementById('nb-title').value = st.t;
   document.getElementById('nb-ed').innerHTML = nbClean(st.h);
@@ -8207,8 +8270,8 @@ function nbStore(){
   const st = nbActive(), ed = document.getElementById('nb-ed');
   // Only a real change counts as an edit (sync merges by the time of the last edit)
   if(S._nbLoaded === st.id){ const h = nbClean(ed.innerHTML); if(h !== st.h){ st.h = h; st.u = Date.now(); } S._nbShown = h; }
-  nbSave();
-  document.getElementById('nb-status').textContent = 'Saved on this device' + nbWords();
+  const ok = nbSave();
+  document.getElementById('nb-status').textContent = (ok ? 'Saved on this device' : '⚠️ Not saved — this phone is full') + nbWords();
 }
 function nbTitleInput(v){
   const st = nbActive();
@@ -8570,7 +8633,7 @@ function nbAddSelection(){
   const sel = (S.selectedData || []).slice().sort((a, b) => +a.vnum - +b.vnum);
   if(!sel.length){ showToast('Select some verses first'); return; }
   const first = sel[0].ref;
-  const label = sel.length > 1 ? `${first}–${sel[sel.length - 1].vnum}` : first;
+  const label = passageLabel(sel);
   const body = sel.map(v => (sel.length > 1 ? `<b>${nbEsc(v.vnum)}</b> ` : '') + nbEsc(v.txt)).join(' ');
   nbAppend(`<blockquote class="nb-v">${nbRefSpan(first, label)}${body}</blockquote>`, label);
   exitSelectMode();
@@ -8662,7 +8725,7 @@ function nbAddMap(){
    opened, then to the hub, then out of Search. Coming back to Search from
    the bottom bar starts at the hub, with a card to continue where you were. */
 const SEARCH_TOOLS = [
-  {m:'doctrine', i:'📑', n:'Doctrines',   d:'What our church believes'},
+  {m:'doctrine', i:'📑', n:'Doctrines',   d:'The primary doctrines of the faith'},
   {m:'topics',   i:'📚', n:'Topics',      d:"Nave's 5,300 Bible topics"},
   {m:'dict',     i:'📖', n:'Dictionary',  d:"Webster's 1828 + KJV notes"},
   {m:'concord',  i:'📜', n:'Concordance', d:'Every word of the KJV'},
@@ -9255,9 +9318,13 @@ function presGotoOpen(){
   f.classList.add('on'); inp.value = ''; setTimeout(() => inp.focus(), 30);
 }
 function presGotoClose(){ document.getElementById('pres-goto').classList.remove('on'); document.getElementById('pres-goto-in').blur(); }
-function presGoto(){
+async function presGoto(){
   const v = document.getElementById('pres-goto-in').value.trim(), r = v && parseReference(v);
   if(!r || !r.book){ showToast('Type a reference such as John 3:16 or Rom 8'); return; }
+  const d = await fetchBook(r.book).catch(() => null), ch = d && d.chapters[r.chIdx];
+  if(!d){ showToast('That book could not load — check your connection'); return; }
+  if(!ch){ showToast(`${r.book} has only ${d.chapters.length} chapter${d.chapters.length === 1 ? '' : 's'}`); return; }
+  if(r.verse && r.verse > ch.verses.length){ showToast(`${r.book} ${r.chIdx + 1} has only ${ch.verses.length} verses`); return; }
   PRES.book = r.book; PRES.ch = r.chIdx; PRES.v = Math.max(0, (r.verse || 1) - 1); PRES.part = 0; PRES.mode = 'bible';
   presGotoClose(); presApplyLook(); presRender();
 }
@@ -10498,7 +10565,7 @@ function openMap(i){
   img.style.width='100%';
   img.src=`maps/${m.f}.jpg`;
   document.getElementById('map-scroll').scrollTop=0;
-  document.getElementById('map-overlay').classList.add('on');
+  { const mo = document.getElementById('map-overlay'); mo.classList.add('on'); mo.dataset.t = ++LAYER_SEQ; }
   history.pushState({screen:S.screen, modal:'map'}, '', '');
   renderMapMore(i);
 }
@@ -11214,7 +11281,7 @@ function renderBMPanel(){
   if(!el) return;
   const lists = colLists(), open = S._colOpen && lists.find(c => c.id === S._colOpen);
   if(open) return renderColList(el, open);
-  S._colOpen = null; S._colPick = null;
+  S._colOpen = null; S._colShot = null;
   const q = savedQuery();
   const newRow = `<form class="col-newrow" onsubmit="event.preventDefault();colNewFromTab()"><input id="col-tab-new" placeholder="New list name…" autocomplete="off" aria-label="New list name"><button>＋ New list</button></form>`;
   if(!lists.length){
@@ -11238,13 +11305,13 @@ function colNewFromTab(){
   colOpen(id);
 }
 function colOpen(id){
-  S._colOpen = id; S._colPick = null;
+  S._colOpen = id; S._colShot = null;
   history.pushState({screen: 'saved', col: id}, '', '');
   switchTab('bm');
   document.getElementById('screen-saved').scrollTop = 0;
 }
 function renderColList(el, c){
-  const n = c.items.length, pick = S._colPick;
+  const n = c.items.length, pick = S._colShot;
   if(pick){
     el.innerHTML = `
     <button class="dv-back" onclick="colPickCancel()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> ${escapeHtml(c.n)}</button>
@@ -11256,7 +11323,7 @@ function renderColList(el, c){
         <div class="col-it-t">${escapeHtml(it.t || '')}</div>
       </div></div>`).join('')}
     <div class="col-pickbar">
-      <span class="cp-n">${pick.length} of 3 chosen</span>
+      <span class="cp-n">${pick.length} of 3</span>
       <button onclick="colPickCancel()">✕ Cancel</button>
       <button class="go" onclick="colPickMake('${c.id}')" ${pick.length ? '' : 'disabled'}>📸 Make Screenshot</button>
     </div>`;
@@ -11343,10 +11410,10 @@ async function colCard(id, i){
   openScrOverlay(await colItemVerses(it), it.r);
 }
 // 📸 Up to 3 verses of a list on one screenshot, picked in the order you tap them
-function colPickStart(){ S._colPick = []; renderBMPanel(); }
-function colPickCancel(){ S._colPick = null; renderBMPanel(); }
+function colPickStart(){ S._colShot = []; history.pushState({screen:'saved', col:S._colOpen, pick:1}, '', ''); renderBMPanel(); }
+function colPickCancel(){ if(history.state && history.state.pick) history.back(); else { S._colShot = null; renderBMPanel(); } }
 function colPickToggle(i){
-  const a = S._colPick; if(!a) return;
+  const a = S._colShot; if(!a) return;
   const k = a.indexOf(i);
   if(k >= 0) a.splice(k, 1);
   else if(a.length >= 3){ showToast('Up to 3 verses on a screenshot'); return; }
@@ -11354,11 +11421,13 @@ function colPickToggle(i){
   renderBMPanel();
 }
 async function colPickMake(id){
-  const c = colLists().find(x => x.id === id), pick = S._colPick;
+  const c = colLists().find(x => x.id === id), pick = S._colShot;
   if(!c || !pick || !pick.length) return;
   let verses = [];
   for(const i of pick) if(c.items[i]) verses = verses.concat(await colItemVerses(c.items[i]));
-  S._colPick = null; renderBMPanel();
+  S._colShot = null; renderBMPanel();
+  // the picking step is done: use it up before the card maker takes a step of its own
+  if(history.state && history.state.pick){ S._popSkip = true; history.back(); await new Promise(r => setTimeout(r, 80)); }
   openScrOverlay(verses, passageLabel(verses));
 }
 function colText(c){
@@ -12150,7 +12219,7 @@ function planEndBar(){
     const go = nx && !(nx.bi === bi && nx.ci === ci)
       ? `<button class="peb-go" onclick="openPlanChapter(${nx.bi},${nx.ci})">${nx.day !== day ? 'Day ' + (nx.day + 1) + ': ' : 'Next: '}${BOOKS[nx.bi]} ${nx.ci + 1} ›</button>`
       : `<button class="peb-go" onclick="showScreen('plans')">Plans ›</button>`;
-    return `<div class="peb-row ${read ? 'read' : ''}"><div class="peb-txt"><div class="peb-name">${def.icon} ${def.name}</div><div class="peb-st">${status}</div></div>${go}</div>`;
+    return `<div class="peb-row ${read ? 'read' : ''}"><div class="peb-txt"><div class="peb-name">${def.icon} ${escapeHtml(def.name)}</div><div class="peb-st">${status}</div></div>${go}</div>`;
   }).join('') + journal;
 }
 // ✍️ The Reading Journal: one study, a dated heading per chapter written about,
@@ -12223,7 +12292,7 @@ function renderPlansScreen(){
     h += `<div class="pl-sec">Paused</div>` + paused.map(p => {
       const def = PLAN_DEFS[p.plan], n = planDaysDone(p);
       return `<div class="pl-card pl-paused">
-        <div class="pl-top">${planRing(n / def.days * 100, 42)}<div class="pl-tt"><div class="pl-name">${def.icon} ${def.name}</div><div class="pl-sub">${n} of ${def.days} days · paused</div></div>
+        <div class="pl-top">${planRing(n / def.days * 100, 42)}<div class="pl-tt"><div class="pl-name">${def.icon} ${escapeHtml(def.name)}</div><div class="pl-sub">${n} of ${def.days} days · paused</div></div>
         <button class="pl-more" onclick="planMenu('${p.id}')" aria-label="More">⋯</button></div>
         <button class="pl-btn" onclick="planSetStatus('${p.id}','active')">▶ Resume</button></div>`;
     }).join('');
@@ -12242,7 +12311,7 @@ function renderPlansScreen(){
   if(finished.length){
     h += `<div class="pl-sec">Finished</div>` + finished.map(p => {
       const def = PLAN_DEFS[p.plan], took = planDaysBetween(p.start, p.fin);
-      return `<div class="pl-fin"><span class="pl-fin-ico">🏆</span><div class="pl-tt"><div class="pl-name">${def.name}</div>
+      return `<div class="pl-fin"><span class="pl-fin-ico">🏆</span><div class="pl-tt"><div class="pl-name">${escapeHtml(def.name)}</div>
         <div class="pl-sub">${planDateLbl(p.start)}${p.start !== '?' ? ' – ' : ''}${planDateLbl(p.fin)}${took ? ` · ${took} day${took === 1 ? '' : 's'}` : ''}</div></div>
         ${running.has(p.plan) ? '' : `<button class="pl-mini" onclick="startPlan('${p.plan}')">Read again</button>`}</div>`;
     }).join('');
@@ -12264,7 +12333,7 @@ function planCard(p){
   const open = _plOpen.has(p.id);
   return `<div class="pl-card pl-active">
     <div class="pl-top">${planRing(n / def.days * 100)}
-      <div class="pl-tt"><div class="pl-name">${def.icon} ${def.name}</div>
+      <div class="pl-tt"><div class="pl-name">${def.icon} ${escapeHtml(def.name)}</div>
         <div class="pl-sub">${n} of ${def.days} days${p.start && p.start !== '?' ? ' · since ' + planDateLbl(p.start) : ''}</div></div>
       <button class="pl-more" onclick="planMenu('${p.id}')" aria-label="More">⋯</button></div>
     <div class="pl-next">
@@ -12366,7 +12435,7 @@ function updateHomePlans(){
     const def = PLAN_DEFS[p.plan], cur = planCurDay(p), nx = planNextChapter(p);
     const reads = getPlanDayReadings(p.plan, cur), nRead = reads.filter(([b, c]) => planChKey(b, c) in p.chs).length;
     return `<div class="hw-row">${planRing(planDaysDone(p) / def.days * 100, 40)}
-      <span class="hw-tt"><span class="hw-sm">${def.name} · ${planDaysDone(p)} of ${def.days} days</span><span class="hw-big">Day ${cur + 1} — ${planDayLabel(p.plan, cur)}${reads.length > 1 && nRead ? ` <span class="hw-sm" style="display:inline">· ${nRead} of ${reads.length}</span>` : ''}</span></span>
+      <span class="hw-tt"><span class="hw-sm">${escapeHtml(def.name)} · ${planDaysDone(p)} of ${def.days} days</span><span class="hw-big">Day ${cur + 1} — ${planDayLabel(p.plan, cur)}${reads.length > 1 && nRead ? ` <span class="hw-sm" style="display:inline">· ${nRead} of ${reads.length}</span>` : ''}</span></span>
       ${nx ? `<button class="hw-read" onclick="openPlanChapter(${nx.bi},${nx.ci})">Read</button>` : ''}</div>`;
   }).join('') + `<button class="hw-more" onclick="showScreen('plans')">All plans ›</button></div>`;
 }
@@ -13823,9 +13892,9 @@ const TOOL_TIPS = {
     ['❝', 'In Search, quotes find an exact phrase (<em>"god so loved"</em>), a minus leaves a word out (<em>love -god</em>), and you can sort by Best match or Bible order'],
   ]},
   dict: {i:'📖', t:'Dictionary', tips:[
-    ['📖', '<strong>Webster’s 1828</strong> with our church’s KJV notes on top — type any word, or browse the KJV word list'],
+    ['📖', '<strong>Webster’s 1828</strong> with the KJV notes on top — type any word, or browse the KJV word list'],
     ['⭐', 'A word shows its <strong>first mention in Scripture</strong> and how many verses use it; the references in an entry are links'],
-    ['📝', 'While reading, <strong>tap a verse</strong>, then <strong>tap any word</strong> of it for its meaning — our KJV note on top where there is one, then Webster’s; “Full dictionary entry →” opens it here, and Back returns to the verse'],
+    ['📝', 'While reading, <strong>tap a verse</strong>, then <strong>tap any word</strong> of it for its meaning — the KJV note on top where there is one, then Webster’s; “Full dictionary entry →” opens it here, and Back returns to the verse'],
     ['🔊', '<strong>🔊 Hear it</strong> says the word aloud (tap again for slowly); old words like <em>shew</em>, <em>divers</em> and <em>victuals</em> show how to say them'],
     ['📤', '<strong>📤 Share</strong> sends the word, its meaning and a link that opens this page in the app'],
     ['🔤', '<strong>🔤 The Hebrew &amp; Greek behind …</strong> under a word shows the original words the KJV renders by it, with Strong’s numbers'],
@@ -13909,7 +13978,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save, screenshot or drill them together; tap more verses to add them (scroll freely, a drag picks nothing), and tap a blank spot or <b>✕ Cancel</b> when done. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
-  vword:    {i:'📖', t:'What does this word mean?', b:'<b>Tap any word</b> of the verse for its meaning — Webster’s 1828, with our church’s KJV note on top where there is one. Tap it again, or ✕, to close it.', at:'#vpop-txt'},
+  vword:    {i:'📖', t:'What does this word mean?', b:'<b>Tap any word</b> of the verse for its meaning — Webster’s 1828, with the KJV note on top where there is one. Tap it again, or ✕, to close it.', at:'#vpop-txt'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it. <b>Add to Screenshot</b> gathers up to 3 verses, from anywhere, onto one picture.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share (<b>📸 Screenshot</b> under the buttons puts up to 3 verses on one), and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
@@ -14058,8 +14127,10 @@ function showTips(){
   history.pushState({screen: S.screen, modal:'tips'}, '', '');
 }
 function closeTips(e){
-  if(!e||e.target===document.getElementById('tips-sheet'))
-    document.getElementById('tips-sheet').classList.remove('on');
+  if(e && e.target!==document.getElementById('tips-sheet')) return;
+  // through history, so the next Back is not spent on an empty step
+  if(history.state && history.state.modal==='tips') history.back();
+  else document.getElementById('tips-sheet').classList.remove('on');
 }
 
 function renderInstallGuide(){
@@ -14395,9 +14466,9 @@ function memRecordComplete(ref, mode, elapsed){
   ms.refs[ref]=existing;
 
   // Update mem streak
-  const today = new Date().toISOString().slice(0,10);
+  const today = todayStr();   // the person's own day, not UTC
   if(ms.streakLast !== today){
-    const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+    const yesterday = yesterdayStr();
     ms.streak = (ms.streakLast === yesterday) ? (ms.streak||0)+1 : 1;
     ms.streakLast = today;
   }
@@ -14420,7 +14491,8 @@ function memRecordComplete(ref, mode, elapsed){
 
 /* ── MEMORY STREAK DISPLAY ── */
 function memUpdateStreakDisplay(ms){
-  const n = (ms && ms.streak) || 0;
+  // a streak shows only while it is alive (drilled today or yesterday)
+  const n = (ms && (ms.streakLast === todayStr() || ms.streakLast === yesterdayStr()) && ms.streak) || 0;
   const el = document.getElementById('mgs-num');
   const dl = document.getElementById('mgs-days');
   if(el) el.textContent = n;
@@ -15194,6 +15266,9 @@ function openClipboard(){
 function closeClipboard(){
   document.getElementById('clip-overlay').classList.remove('on');
 }
+function clipDismiss(){
+  if(history.state && history.state.modal==='clip') history.back(); else closeClipboard();
+}
 
 function clearClipboard(){
   S.clipboard = [];
@@ -15240,6 +15315,8 @@ function generateCombinedCard(){
   if(S.clipboard.length === 0) return;
   closeClipboard();
   const canvas = document.getElementById('scr-canvas');
+  // The card maker's style buttons redraw this card, not the one made before
+  S.scrCombined = true; S.scrVerses = S.clipboard.slice(); S.scrRef = passageLabel(S.clipboard); S.scrHymn = null;
   drawCombinedCard(canvas);
   scrOverlayShow();
 }
@@ -16057,11 +16134,13 @@ function showWhatsNewIfNeeded(){
   if(S._hintOpen){ LS.set('kjv_hints_seen', (LS.get('kjv_hints_seen', []) || []).filter(k => k !== S._hintOpen)); hintClose(); }
   clearTimeout(S._hintTimer);
   modal.style.display = 'flex';
+  history.pushState({screen:S.screen, modal:'whatsnew'}, '', '');   // Back puts it away
 }
 function dismissWhatsNew(){
   localStorage.setItem('kjv_whatsnew', WHATS_NEW_VERSION);
   const modal = document.getElementById('whatsnew-modal');
   if(modal) modal.style.display = 'none';
+  if(history.state && history.state.modal==='whatsnew'){ S._popSkip = true; history.back(); }
   if(S.screen === 'books') hintMaybe('home', 900);
 }
 
@@ -16179,6 +16258,21 @@ MERGE_STORES.kjv_plans = {tag:'pl',
   items: v => Object.fromEntries(((v && v.list) || []).filter(p => p && p.id).map(p => [p.id, p])),
   build: (m, prev, meta) => ({list: syncOrder(m, ((prev && prev.list) || []).map(p => p && p.id), meta)}),
   combine: planCombine};
+// Sword Drill: each verse's progress; two copies of one verse keep the better of each
+MERGE_STORES.kjv_mem_mastery = {tag:'mm',
+  items: v => (v && v.refs && typeof v.refs === 'object') ? {...v.refs} : {},
+  build: (m, prev) => ({...((prev && typeof prev === 'object' && !Array.isArray(prev)) ? prev : {streak:0, streakLast:'', badges:[]}), refs: m}),
+  combine: (a, b) => {
+    const lo = (x, y) => x == null ? y : y == null ? x : Math.min(x, y);
+    return {...b, ...a, mastered: !!(a.mastered || b.mastered), timesCompleted: Math.max(a.timesCompleted || 0, b.timesCompleted || 0),
+      bestTimeChallenge: lo(a.bestTimeChallenge, b.bestTimeChallenge), bestTimeGuided: lo(a.bestTimeGuided, b.bestTimeGuided)};
+  }};
+// A list of names kept as a plain array (the stored form does not change)
+const syncNameList = {
+  items: v => Object.fromEntries((Array.isArray(v) ? v : []).filter(x => typeof x === 'string').map(x => [x, true])),
+  build: (m, prev) => { const p = (Array.isArray(prev) ? prev : []).filter(x => x in m); return [...p, ...Object.keys(m).filter(x => !p.includes(x))]; }};
+MERGE_STORES.kjv_mem_custom = {tag:'mc', ...syncNameList};
+MERGE_STORES.kjv_books_read = {tag:'br', ...syncNameList};
 const SYNC_META = 'kjv_sync_meta', SYNC_BASE = 'kjv_sync_base';
 const SYNC_TOMB_DAYS = 400; // a deletion is remembered this long
 
@@ -16254,11 +16348,13 @@ function syncAdopt(vals, rmeta){
     if(vals[key] === undefined && !(rmeta && rmeta[st.tag])) continue;
     const lv = LS.get(key, null);
     const r = syncMergeStore(st, lv, meta[st.tag], vals[key], rmeta && rmeta[st.tag]);
-    meta[st.tag] = r.meta;
     const nv = JSON.stringify(r.value);
     if(localStorage.getItem(key) !== nv && !(lv === null && !Object.keys(st.items(r.value)).length)){
-      try{ localStorage.setItem(key, nv); changed.push(key); }catch(e){ lsFull(e); }
+      // Not written (phone full): leave this store as it was, so the next sync
+      // does not mistake the old copy here for a newer edit
+      try{ localStorage.setItem(key, nv); changed.push(key); }catch(e){ lsFull(e); continue; }
     }
+    meta[st.tag] = r.meta;
     base[st.tag] = syncHashes(st.items(r.value));
   }
   LS.set(SYNC_META, meta); LS.set(SYNC_BASE, base);
@@ -16447,7 +16543,7 @@ async function fbSyncRun(code){
       });
       if(merged) syncAdopt(merged.vals, merged.meta);
       if(bumps && Object.keys(bumps).length){
-        Object.entries(bumps).forEach(([k,v]) => localStorage.setItem(k, v));
+        Object.entries(bumps).forEach(([k,v]) => { try{ localStorage.setItem(k, v); }catch(e){ lsFull(e); } });
         // Refresh in-memory streak state + header badge from the adopted values.
         try{ loadStreak(); }catch(e){}
       }
@@ -16679,7 +16775,13 @@ function applySyncData(data, {protect=true} = {}){
         return; // keep the larger local value, skip overwrite, don't count it
       }
     }
-    localStorage.setItem(k, incoming);
+    // The day of the last reading: an older copy never takes the streak back
+    if(protect && (k === 'kjv_streak_last' || k === 'kjv_streak_ts')){
+      const cur = syncParse(localStorage.getItem(k)), inc = syncParse(incoming);
+      const n = x => k === 'kjv_streak_ts' ? (parseInt(x) || 0) : (x ? Date.parse(x) || 0 : 0);
+      if(n(cur) > n(inc)) return;
+    }
+    try{ localStorage.setItem(k, incoming); }catch(e){ lsFull(e); throw e; }
     count++;
   });
   return count;
@@ -16778,6 +16880,10 @@ function openChPicker(){
 
 function closeChPicker(){
   document.getElementById('ch-picker').classList.remove('on');
+}
+// ✕ or a tap outside: close through history, so the next Back goes on from here
+function chPickerDismiss(){
+  if(history.state && history.state.modal==='ch-picker') history.back(); else closeChPicker();
 }
 
 // The picker's own history entry becomes the chosen chapter, so one Back
@@ -17335,7 +17441,7 @@ function closeSettings(e){
       <div>
         <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Webster&rsquo;s 1828 Dictionary</div>
         <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
-          <strong>Search &rarr; Dictionary</strong> now holds Noah Webster&rsquo;s <strong>1828</strong> dictionary &mdash; 62,000 words defined as they were understood near the King James era, with tappable Scripture references. Our church&rsquo;s <strong>KJV notes</strong> sit right on top of each entry &mdash; now including <em>baptism</em>, <em>the elect</em> and <em>predestination</em>. Tap a verse while reading to see its hard words, then open the full entry.
+          <strong>Search &rarr; Dictionary</strong> now holds Noah Webster&rsquo;s <strong>1828</strong> dictionary &mdash; 62,000 words defined as they were understood near the King James era, with tappable Scripture references. The <strong>KJV notes</strong> sit right on top of each entry &mdash; now including <em>baptism</em>, <em>the elect</em> and <em>predestination</em>. Tap a verse while reading to see its hard words, then open the full entry.
         </div>
       </div>
     </div>

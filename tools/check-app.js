@@ -820,7 +820,7 @@ check('screenshot: gaps read 16, 36 and join with …; dragging picks nothing; a
   assert(await p.evaluate(() => !!document.querySelector('.col-pickgo')), 'a list should offer 📸 Screenshot');
   await p.evaluate(() => colPickStart()); await sleep(200);
   for(let i = 0; i < 4; i++) await p.evaluate(i => colPickToggle(i), i);
-  assert(await p.evaluate(() => S._colPick.length) === 3, 'a list screenshot should hold at most 3 verses');
+  assert(await p.evaluate(() => S._colShot.length) === 3, 'a list screenshot should hold at most 3 verses');
   await p.evaluate(() => colPickMake('cx')); await sleep(900);
   const made = await p.evaluate(() => ({on: document.getElementById('scr-overlay').classList.contains('on'), ref: S.scrRef, n: S.scrVerses.length}));
   assert(made.on && made.n === 3 && made.ref === 'John 3:16; Romans 5:8; Psalms 23:1', 'the screenshot should carry the 3 picked verses: ' + JSON.stringify(made));
@@ -880,6 +880,86 @@ check('verse card: tap a word of the verse for its meaning; KJV note on top; roo
   await tap('Peter');
   assert(await p.evaluate(() => document.getElementById('vpop-name-def').style.display === 'block' && document.getElementById('vpop-nm-word').textContent === 'Peter'), 'a name opens its place in the Names row');
   await p.evaluate(() => history.back()); await sleep(400);
+});
+
+check('privacy: Settings → Privacy opens, says what is kept, and Back closes it alone', async p => {
+  await p.evaluate(() => openSettings()); await sleep(400);
+  await p.evaluate(() => [...document.querySelectorAll('.set-link')].find(x => /Privacy/.test(x.textContent)).click()); await sleep(300);
+  const t = await p.evaluate(() => document.getElementById('privacy-sheet').classList.contains('on') && document.getElementById('privacy-inner').textContent);
+  assert(t && /restore code/.test(t) && /no advertising/.test(t), 'the Privacy page should open and explain the backup');
+  await p.evaluate(() => history.back()); await sleep(400);
+  const st = await p.evaluate(() => ({priv: document.getElementById('privacy-sheet').classList.contains('on'), set: document.getElementById('settings-sheet').classList.contains('on')}));
+  assert(!st.priv && st.set, 'Back should close Privacy and leave Settings open: ' + JSON.stringify(st));
+});
+
+check('Back: picking verses, the copy sheet, Tips ✕, the list picker each take one step', async p => {
+  await p.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
+  const at = () => p.evaluate(() => ({screen: S.screen, sel: S.selectMode, ch: S.book + ' ' + S.ch}));
+  // Back while picking puts the bar away and stays in the chapter
+  await p.evaluate(() => { enterSelectMode(); toggleVerseSelect(document.querySelectorAll('#verses .vblock')[1]); }); await sleep(200);
+  await p.evaluate(() => history.back()); await sleep(500);
+  let a = await at();
+  assert(a.screen === 'reader' && !a.sel && a.ch === 'John 2', 'Back while picking should keep the chapter: ' + JSON.stringify(a));
+  // ✕ Cancel uses up its step: the next Back leaves the chapter as it would have
+  const before = await p.evaluate(() => history.length);
+  await p.evaluate(() => { enterSelectMode(); }); await sleep(200);
+  await p.evaluate(() => exitSelectMode(true)); await sleep(500);
+  a = await at();
+  assert(a.screen === 'reader' && !a.sel && (await p.evaluate(() => !(history.state && history.state.modal === 'select'))), 'Cancel should leave no picking step behind');
+  // the Copy Format sheet closes on Back
+  await p.evaluate(() => { enterSelectMode(); const v = document.querySelectorAll('#verses .vblock'); toggleVerseSelect(v[1]); toggleVerseSelect(v[2]); multiCopy(); }); await sleep(300);
+  assert(await p.evaluate(() => !!document.getElementById('copy-fmt-sheet')), 'the copy sheet should open');
+  await p.evaluate(() => history.back()); await sleep(500);
+  a = await at();
+  assert(await p.evaluate(() => !document.getElementById('copy-fmt-sheet')) && a.screen === 'reader' && a.sel, 'Back should close the copy sheet and keep the picking: ' + JSON.stringify(a));
+  await p.evaluate(() => exitSelectMode(true)); await sleep(400);
+  // Tips ✕ uses up its step
+  await p.evaluate(() => showTips()); await sleep(300);
+  await p.evaluate(() => closeTips()); await sleep(400);
+  assert(await p.evaluate(() => !(history.state && history.state.modal === 'tips') && !document.getElementById('tips-sheet').classList.contains('on')), 'Tips ✕ should leave no step behind');
+  // Back while picking list verses returns to the list, not all lists
+  await p.evaluate(() => { const it = (r, t) => ({r, a: r, t}); colSave({list: [{id: 'cx', n: 'Comfort', u: 1, items: [it('John 3:16', 'For God so loved the world')]}]}); showScreen('saved'); colOpen('cx'); }); await sleep(400);
+  await p.evaluate(() => colPickStart()); await sleep(200);
+  await p.evaluate(() => history.back()); await sleep(500);
+  const l = await p.evaluate(() => ({open: S._colOpen, pick: S._colShot, list: !!document.querySelector('.col-pickgo')}));
+  assert(l.open === 'cx' && !l.pick && l.list, 'Back from picking should show the list again: ' + JSON.stringify(l));
+});
+
+check('backup: Sword Drill progress, own verses and books read merge; a full phone keeps the newer edit', async p => {
+  const r = await p.evaluate(() => {
+    const st = MERGE_STORES.kjv_mem_mastery, now = Date.now();
+    const A = {refs: {'John 3:16': {mastered: true, timesCompleted: 3, bestTimeChallenge: 40}}, streak: 2, streakLast: '', badges: []};
+    const B = {refs: {'Psalms 23:1': {mastered: true, timesCompleted: 1}, 'John 3:16': {mastered: false, timesCompleted: 5, bestTimeChallenge: 30}}, streak: 1, streakLast: '', badges: []};
+    const m = syncMergeStore(st, A, {'John 3:16': [now, 0]}, B, {'Psalms 23:1': [now, 0], 'John 3:16': [now, 0]}).value;
+    const c = syncMergeStore(MERGE_STORES.kjv_books_read, ['Ruth', 'John'], {Ruth: [now, 0], John: [now, 0]}, ['Mark'], {Mark: [now, 0]}).value;
+    // a full phone: the merged copy cannot be written, so nothing is marked merged
+    localStorage.setItem('kjv_studies', JSON.stringify({active: 'a', list: [{id: 'a', t: 'Old', h: 'old', u: 1}]}));
+    syncStamp();
+    const set = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(k, v){ if(k === 'kjv_studies') throw new DOMException('full', 'QuotaExceededError'); return set.call(this, k, v); };
+    syncAdopt({kjv_studies: {active: 'a', list: [{id: 'a', t: 'New', h: 'new', u: 2}]}}, {st: {a: [now - 1000, 0]}});
+    Storage.prototype.setItem = set;
+    const meta = syncStamp().st.a;
+    return {refs: Object.keys(m.refs).sort(), j: m.refs['John 3:16'], books: c.slice().sort(), staleNewer: meta[0] > now - 1000};
+  });
+  assert(r.refs.join() === 'John 3:16,Psalms 23:1', 'both phones\' verses should be kept: ' + r.refs);
+  assert(r.j.mastered && r.j.timesCompleted === 5 && r.j.bestTimeChallenge === 30, 'one verse on two phones keeps the better of each: ' + JSON.stringify(r.j));
+  assert(r.books.join() === 'John,Mark,Ruth', 'books read from both phones: ' + r.books);
+  assert(!r.staleNewer, 'a copy that could not be written must not later count as a newer edit');
+});
+
+check('Present: a reference not in the Bible says so; Sword Drill streak shows only while alive', async p => {
+  const errs = []; p.on('pageerror', e => errs.push(e.message));
+  await p.evaluate(() => presOpen('John 3:16')); await sleep(1200);
+  const before = await p.evaluate(() => [PRES.book, PRES.ch, PRES.v].join());
+  for(const ref of ['Jude 2:1', 'John 22', 'John 3:99']){
+    await p.evaluate(r => { presGotoOpen(); document.getElementById('pres-goto-in').value = r; return presGoto(); }, ref); await sleep(500);
+  }
+  const after = await p.evaluate(() => [PRES.book, PRES.ch, PRES.v].join());
+  assert(!errs.length && before === after, 'a reference that is not there should leave the slide as it was: ' + JSON.stringify({errs, before, after}));
+  await p.evaluate(() => history.back()); await sleep(400);
+  const n = await p.evaluate(() => { memUpdateStreakDisplay({streak: 9, streakLast: '2020-01-01'}); const a = document.getElementById('mgs-num'); return a ? a.textContent : '0'; });
+  assert(n === '0', 'an old Sword Drill streak should show 0, not ' + n);
 });
 
 check('verse card: photo controls show only for a photo you add', async p => {
