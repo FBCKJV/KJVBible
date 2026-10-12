@@ -2,7 +2,7 @@
 
 Drafted for each hymn: the verses its words **quote or clearly echo**. 1035 verses for 222 of the 224 hymns. Every verse below was checked against the app's own KJV text, every quoted line is really in the hymn, and none repeats a verse the hymn already lists.
 
-**Reviewed 12 October 2026: all kept except Psalm 145:10 (Holy, Holy, Holy) and John 20:20 (Crown Him with Many Crowns), struck on the review page.**
+**Reviewed 12 October 2026: all kept.** (Psalm 145:10 on Holy, Holy, Holy and John 20:20 on Crown Him with Many Crowns were struck at first, then kept as close echoes.)
 
 **How to review.** Each verse shows the hymn line that echoes it and the KJV words.
 - **Ticked** `[x]` (849): the hymn and the verse share words. They go in unless you untick them.
@@ -15,7 +15,7 @@ Points the drafters raised for a pastor's eye: *Rock of Ages* → Isaiah 26:4 (t
 ### 0. Holy, Holy, Holy — Reginald Heber
 Already: Isaiah 6:3 · Revelation 4:8
 
-- [ ] **Psalm 145:10** — “All Thy works shall praise Thy name, in earth, and sky, and sea!” — “All thy works shall praise thee”  
+- [x] **Psalm 145:10** — “All Thy works shall praise Thy name, in earth, and sky, and sea!” — “All thy works shall praise thee”  
   > All thy works shall praise thee, O LORD; and thy saints shall bless thee.
 - [x] **Revelation 15:4** — “Only Thou art holy; there is none beside Thee,” — “for thou only art holy”  
   > Who shall not fear thee, O Lord, and glorify thy name? for thou only art holy: for all nations shall come and worship before thee; for thy judgments are made manifest.
@@ -51,7 +51,7 @@ Already: Revelation 19:12
 
 - [x] **Revelation 7:17** — “the Lamb upon his throne.” — “the Lamb which is in the midst of the throne”  
   > For the Lamb which is in the midst of the throne shall feed them, and shall lead them unto living fountains of waters: and God shall wipe away all tears from their eyes.
-- [ ] **John 20:20** — “behold his hands and side,” — “he shewed unto them his hands and his side”  
+- [x] **John 20:20** — “behold his hands and side,” — “he shewed unto them his hands and his side”  
   > And when he had so said, he shewed unto them his hands and his side. Then were the disciples glad, when they saw the LORD.
 - [x] **1 Peter 1:12** — “at mysteries so bright.” — *image* — “which things the angels desire to look into”  
   > Unto whom it was revealed, that not unto themselves, but unto us they did minister the things, which are now reported unto you by them that have preached the gospel unto you with the Holy Ghost sent down from heaven; which things the angels desire to look…

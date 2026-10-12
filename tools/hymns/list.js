@@ -14,10 +14,10 @@
 // The words are in tools/hymns/texts.json, keyed by title.
 module.exports = [
   // ── Praise and Worship
-  ['Holy, Holy, Holy', 'Reginald Heber', 1826, 'Praise and Worship', 'Isaiah 6:3; Revelation 4:8; Revelation 15:4; 1 Samuel 2:2'],
+  ['Holy, Holy, Holy', 'Reginald Heber', 1826, 'Praise and Worship', 'Isaiah 6:3; Revelation 4:8; Revelation 15:4; 1 Samuel 2:2; Psalm 145:10'],
   ['O Worship the King', 'Robert Grant', 1833, 'Praise and Worship', 'Psalm 104:1-5; Daniel 7:9; Psalm 18:11; Psalm 145:9; Psalm 103:14'],
   ["All Hail the Power of Jesus' Name", 'Edward Perronet', 1779, 'Praise and Worship', 'Philippians 2:9-11; Revelation 19:16; Isaiah 62:3; Revelation 7:11; Revelation 5:9; Deuteronomy 32:3'],
-  ['Crown Him with Many Crowns', 'Matthew Bridges', 1851, 'Praise and Worship', 'Revelation 19:12; Revelation 7:17; 1 Peter 1:12; 1 Timothy 6:15'],
+  ['Crown Him with Many Crowns', 'Matthew Bridges', 1851, 'Praise and Worship', 'Revelation 19:12; Revelation 7:17; 1 Peter 1:12; 1 Timothy 6:15; John 20:20'],
   ['O for a Thousand Tongues to Sing', 'Charles Wesley', 1739, 'Praise and Worship', 'Psalm 35:28; Psalm 146:7; 1 John 1:7; John 19:1'],
   ['To God Be the Glory', 'Fanny J. Crosby', 1875, 'Praise and Worship', 'Galatians 1:5; John 3:16; 1 Samuel 12:24; Acts 20:28; Acts 10:43; John 14:6; 1 John 3:2'],
   ['Praise Him! Praise Him!', 'Fanny J. Crosby', 1869, 'Praise and Worship', 'Psalm 150:6; Isaiah 40:11; 1 Corinthians 15:55; Revelation 11:15; Isaiah 63:1; Revelation 5:12'],
