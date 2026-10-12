@@ -11,12 +11,12 @@ Written by `node tools/map-links.js`: each tool's page opened on a real entry in
 | Doctrine verses | Scripture · Study · My Verses |
 | Topic (Nave) | Topics (Nave) · Study · Share |
 | Treasury (cross-refs) | Scripture · Cross-references · Study |
-| Name (Hitchcock) | People · Search the Bible · Share |
+| Name (Hitchcock) | Places · Hebrew & Greek · Search the Bible · Share |
 | Person | Scripture · People · Places · Hebrew & Greek · Timeline · Journeys · Search the Bible · Study · Share |
 | Place | People · Places · Hebrew & Greek · Journeys · Search the Bible · Study · Share |
 | Timeline event | Scripture · Journeys · Maps · Study |
 | Journey | Scripture · Places · Timeline · Journeys · Present |
-| Classic map | Journeys · Maps |
+| Classic map | Scripture · Places · Journeys · Study · Share |
 | Dictionary word | Scripture · Hebrew & Greek · Concordance · Study · Share |
 | Strong's word | Scripture · Dictionary · Hebrew & Greek · Study · Share |
 | Concordance word | Scripture · Concordance |

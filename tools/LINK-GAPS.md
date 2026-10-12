@@ -8,8 +8,8 @@ Ranked by how much understanding they add for someone reading a verse, and how l
 2. ~~**A Person page leads only to Scripture and other people.**~~ **Done in v62.02:** *In the story* (📅 timeline, 🧭 journeys, 📍 places named with them) and *🔤 in Hebrew & Greek*.
 3. ~~**A Place page does not say who was there.**~~ **Done in v62.02:** *In the story* (👤 people named there, 📅 timeline) and *🔤 in Hebrew & Greek*.
 4. ~~**A journey stop does not open its Place page.**~~ **Done in v62.02:** the stop's name opens the place. (A stop still has no way to the people in its verse; the place's page now lists them.)
-5. **A Hitchcock Name page** leads to the person but not the place of the same name.
-6. **The classic maps lead only to journeys.** No way from a map to its places or verses.
+5. ~~**A Hitchcock Name page leads to the person but not the place.**~~ Not a gap: the page already lists every person *and* place of the name (the first map read Abraham, which names no place). v62.03 adds *🔤 In Hebrew & Greek*.
+6. ~~**The classic maps lead only to journeys.**~~ **Done in v62.03:** under each map, *📖 Verses, places & journeys* (hand-chosen passages, the journeys drawn on it, and the places those passages name).
 7. **A hymn leads only to Scripture.** A doctrine or topic it teaches (for example "Faith Alone") could be offered. Also: only 259 verses have a hymn on the verse card; most hymns echo more verses than the one to three listed.
 8. **Dictionary, Strong's and Topics never lead to hymns** (the verse card now does).
 

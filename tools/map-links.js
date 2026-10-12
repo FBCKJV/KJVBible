@@ -43,12 +43,12 @@ const STATIONS = [
   {name:'Doctrine verses',      open:`(showScreen('search'), switchSearchMode('doctrine'), showDoctrineVerses(0,0))`, wait:2500, sel:'#doctrine-panel button, #doctrine-panel a'},
   {name:'Topic (Nave)',         open:`(showScreen('search'), switchSearchMode('topics'), openNaveTopic('FAITH'))`, sel:'#topic-view button, #topic-view a', hidden:true, pre:3500, wait:3000},
   {name:'Treasury (cross-refs)',open:`(showScreen('search'), switchSearchMode('topics'), openTreasury(tskKey('Genesis 1:1')))`, sel:'#xref-view button, #xref-view a', wait:2500},
-  {name:'Name (Hitchcock)',     open:`(showScreen('search'), switchSearchMode('names'), openNamePage('abraham'))`, sel:'#name-view button, #name-view a'},
+  {name:'Name (Hitchcock)',     open:`(showScreen('search'), switchSearchMode('names'), openNamePage('bethel'))`, sel:'#name-view button, #name-view a'},
   {name:'Person',               open:`(showScreen('search'), switchSearchMode('names'), openPerson('David_1'))`, sel:'#person-view button, #person-view a', wait:3000},
   {name:'Place',                open:`(showScreen('search'), switchSearchMode('names'), openPlace('a64f355'))`, sel:'#place-view button, #place-view a'},
   {name:'Timeline event',       open:`(showScreen('search'), switchSearchMode('timeline'), openTimelineAt('tl-1-0'))`, sel:'#tl-pane button, #tl-pane a, #timeline-panel button, #timeline-panel a'},
   {name:'Journey',              open:`(showScreen('search'), switchSearchMode('journeys'), openJourney('abraham'))`, sel:'#wm-overlay button, #wm-overlay a', wait:3000},
-  {name:'Classic map',          open:`(showScreen('search'), switchSearchMode('maps'), openMap(0))`, sel:'#maps-panel button, #maps-panel a, #map-view button, #map-view a'},
+  {name:'Classic map',          open:`(LS.set('kjv_mapmore_open', true), showScreen('search'), switchSearchMode('maps'), openMap(1))`, sel:'#map-overlay button, #map-overlay a', wait:3000},
   {name:'Dictionary word',      open:`(showScreen('search'), switchSearchMode('dict'), openWord('grace'))`, sel:'#word-view button, #word-view a'},
   {name:"Strong's word",        open:`(showScreen('search'), switchSearchMode('strongs'), openStrongs('G26'))`, sel:'#strongs-view button, #strongs-view a'},
   {name:'Concordance word',     open:`(showScreen('search'), switchSearchMode('concord'), openConcordWord('grace'))`, sel:'#concord-panel button, #concord-panel a'},
@@ -72,13 +72,13 @@ const TOOL = {
   showVpopDictList:'Dictionary', showVpopNameList:'Names', openWordFromVerse:'Dictionary', openWord:'Dictionary', openDoctrineFromVerse:'Doctrines',
   hyToggleFold:'Hymns', openHymn:'Hymns', sgToggleFold:"Hebrew & Greek", sgFilter:"Hebrew & Greek", strongsSearchFor:"Hebrew & Greek", openStrongs:"Hebrew & Greek",
   openJourney:'Journeys', jrView:'Journeys', jrGo:'Journeys', openChapterMap:'Maps', tlMap:'Maps', openWhereMap:'Maps', openMap:'Maps',
-  vpopShowMap:'Maps', jrPlace:'Places', jrTimeline:'Timeline', openTimelineAt:'Timeline', openNaveTopicAt:'Topics (Nave)', openNaveTopic:'Topics (Nave)',
+  vpopShowMap:'Maps', jrPlace:'Places', nbAddMap:'Study', shareMap:'Share', jrTimeline:'Timeline', openTimelineAt:'Timeline', openNaveTopicAt:'Topics (Nave)', openNaveTopic:'Topics (Nave)',
   concordSearch:'Concordance', selectConcordLetter:'Concordance', toggleConcordWord:'Concordance', placeSearch:'Search the Bible', namesSearch:'Search the Bible',
   nbAddVerse:'Study', nbAddHymn:'Study', nbAddPerson:'Study', nbAddPlace:'Study', nbAddWord:'Study', nbAddStrongs:'Study', nbAddEvent:'Study', nbAddDoctrine:'Study', nbAddTopic:'Study', hyStudy:'Study',
   toggleBM:'My Verses', colFromDoctrine:'My Verses', openNote:'Notes', saveNote:'Notes', singleScreenshot:'Card', addToClipboard:'Card', hyCard:'Card', presOpen:'Present', presFromReader:'Present', jrPresent:'Present',
   shareVerse:'Share', copyVerseLink:'Share', copyVerse:'Share', shareSub:'Share', hyShare:'Share',
 };
-const QUIET = new Set(['setHL','hlNameSheet','cancelNote','closePop','sayIt','toolTips','closePopover','docBackToList','toggleTreasuryLine','togglePersonVerses','togglePlaceVerses','wdShowAll','sgShowVerses','hyClear','hyTap','toggleNaveLine','renderConcordHits','leaveVPopThen']);
+const QUIET = new Set(['setHL','hlNameSheet','cancelNote','closePop','sayIt','toolTips','closePopover','docBackToList','toggleTreasuryLine','togglePersonVerses','togglePlaceVerses','wdShowAll','sgShowVerses','hyClear','hyTap','toggleNaveLine','mapZoom','closeMap','mapMoreToggle','toolTips','renderConcordHits','leaveVPopThen']);
 (async () => {
   const {chromium} = loadPlaywright();
   const server = await serve(), base = `http://127.0.0.1:${server.address().port}`;
@@ -93,7 +93,7 @@ const QUIET = new Set(['setHL','hlNameSheet','cancelNote','closePop','sayIt','to
     const sel = st.sel + ', ' + st.sel.split(',').map(x => x.trim().replace(/ (button|a)$/, ' [onclick]')).join(', ');
     const links = await p.evaluate(([sel, hidden]) => [...document.querySelectorAll(sel)].filter(e => hidden || (e.getBoundingClientRect().width && e.getBoundingClientRect().height)).map(e => {
       const oc = (e.getAttribute('onclick') || '').replace(/event\.stopPropagation\(\);?/g, '');
-      const fns = [...oc.matchAll(/\b([a-zA-Z]+)\(/g)].map(x => x[1]).filter(f => !['event','preventDefault','history','back','then','if','leaveVPopThen','stopPropagation'].includes(f));
+      const fns = [...oc.matchAll(/\b([a-zA-Z]+)\(/g)].map(x => x[1]).filter(f => !['event','preventDefault','history','back','then','if','leaveVPopThen','leaveMapThen','stopPropagation'].includes(f));
       const t = (e.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40);
       return {fn: fns[0] || (/🗺/.test(t) ? 'openMap' : /📅/.test(t) ? 'openTimelineAt' : /🎧/.test(t) ? 'openHymn' : '') || (e.dataset.ref || /^\d? ?[A-Za-z. ]+ \d+:\d+/.test(t) ? 'jumpToRef' : ''), t};
     }), [sel, !!st.hidden]);
