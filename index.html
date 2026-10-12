@@ -717,6 +717,16 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 .col-sort{background:none;border:none;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;padding:0}
 .mb-emo{font-size:15px;line-height:16px}
 .col-acts button{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:9px;padding:8px 2px;font-size:11.5px;font-weight:600;cursor:pointer}
+.col-pickgo{display:block;width:100%;margin:0 0 12px;background:none;border:1px dashed var(--border);color:var(--text-d);border-radius:9px;padding:9px;font-size:12.5px;font-weight:600;cursor:pointer}
+.col-item.pick{flex-direction:row;align-items:flex-start;gap:12px;cursor:pointer}
+.col-item.pick.on{border-color:var(--gold);background:var(--bg3)}
+.col-tick{flex:0 0 26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--bg);margin-top:2px}
+.col-item.pick.on .col-tick{background:var(--gold);border-color:var(--gold)}
+.col-pickbar{position:sticky;bottom:8px;z-index:5;display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--gold-d);border-radius:12px;padding:10px 12px;box-shadow:0 -4px 18px rgba(0,0,0,.25)}
+.col-pickbar .cp-n{flex:1;font-family:'IM Fell English',serif;font-size:15px;color:var(--gold)}
+.col-pickbar button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:9px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.col-pickbar button.go{background:var(--gold);color:var(--bg);border-color:var(--gold)}
+.col-pickbar button:disabled{opacity:.4}
 .col-item{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
 .col-it-main{flex:1;min-width:0;cursor:pointer}
 .col-it-t{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);line-height:1.45;margin-top:2px}
@@ -876,9 +886,9 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 /* SINGLE VERSE POPUP */
 #vpop{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 #vpop.on{display:flex}
-#vpop-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:700px;display:flex;flex-direction:column;gap:10px;animation:su .22s ease;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto}
+#vpop-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:0 18px 18px;width:100%;max-width:700px;display:flex;flex-direction:column;gap:10px;animation:su .22s ease;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto}
 @keyframes su{from{transform:translateY(50px);opacity:0}}
-#vpop-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:3;background:var(--bg2);margin:-18px -18px 0;padding:12px 18px 8px;flex-shrink:0}
+#vpop-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:3;background:var(--bg2);margin:0 -18px;padding:16px 18px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
 #vpop-x{padding:8px 14px;font-size:13px}
 #vpop-ref{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 #vpop-txt{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);line-height:1.7}
@@ -2521,6 +2531,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Several verses, one screenshot</strong> — <strong>Screenshot</strong> in the press-and-hold bar pictures verses side by side in a chapter. To gather verses from different places, tap each verse and choose <strong>Add to Screenshot</strong> (up to 3); the 📸 count at the top opens them to make the picture, and the press-and-hold bar shows how many are waiting.</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
+        <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Names in this verse</strong> — on the verse card, every person and place the verse names sits in one row. Tap a name for what it means (Hitchcock’s Bible Names), then <strong>👤</strong> opens the person’s story or <strong>📍</strong> where the place was; <strong>🗺️ Show on map</strong> pins the places.</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
         <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, our doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
@@ -2549,6 +2560,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">✍️</span><span class="tip-txt"><strong>✍️ Reading Journal</strong> — at the end of every chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts. Tap the chapter in it to read it again; present, share or print it like any study</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — run Bible in a Year, NT in 30 Days and Proverbs in a Month, one or several at once, each at your own pace. A chapter checks off once you have read to the end of it; <strong>✓ Mark read</strong> is for a day read from a printed Bible. Your next reading of each plan is on Home; <strong>⋯</strong> pauses, starts over or removes a plan</span></div>
         <div class="tip-row"><span class="tip-ico">🔖</span><span class="tip-txt"><strong>My Verses</strong> — tap a verse, then <strong>🔖 Save</strong>, and put it in a list you name: a doctrine you often explain, verses for comfort, a lesson. A verse can be in any number of lists. In <strong>Notes → My Verses</strong>, open a list to put its verses in your order (↑ ↓ or ⇅ Bible order), make a picture of one with <strong>📸 Card</strong>, memorize one with <strong>⚔️ Drill</strong>, <strong>Share</strong> it, <strong>Present</strong> it as slides or add it to a study. A doctrine page can be saved as a list with <strong>🔖 Save to My Verses</strong>. Your old bookmarks are in a list called Bookmarks</span></div>
+        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>A screenshot from a list</strong> — open a My Verses list and tap <strong>📸 Screenshot</strong>, then tap up to 3 verses (from any books) and <strong>Make Screenshot</strong>. When you press and hold verses in a chapter and skip some, the screenshot reads <strong>John 3:16, 36</strong> and joins the words with <strong>…</strong>. To scroll while picking verses, just drag: a verse is picked when you lift your finger from a still tap.</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>Notes tab</strong> — everything you have marked or written: <strong>My Verses</strong> (your own named lists), <strong>Highlights</strong>, verse <strong>Notes</strong> and your <strong>Studies</strong> from the 📝 notebook (tap one to open it, or ＋ New study). The search box looks through all of them</span></div>
         <div class="tip-row"><span class="tip-ico">🏠</span><span class="tip-txt"><strong>Home</strong> — a card for each bottom tab under the books: Search &amp; Study Tools (type in the box, or open the arrow for every tool), Reading Plans and Notes. An arrow that turns folds a card open; <strong>›</strong> goes to its page. Home remembers which cards you left open. <strong>Swipe the Verse of the Day</strong> left or right to put it away until tomorrow; the Old Testament, New Testament and Romans Road come right under it</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Reading Journey</strong> (bottom of Plans) — track and share which of the 66 books you've read</span></div>
@@ -3148,6 +3160,7 @@ body.light #home-watermark{
       <div id="vpop-nm-say"></div>
       <div id="vpop-nm-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
       <div id="vpop-nm-mean" style="font-size:11px;color:var(--text-m);margin-top:6px;font-style:italic">Meaning from Hitchcock's Bible Names Dictionary (1869)</div>
+      <div id="vpop-nm-go" class="vl-chips" style="margin-top:8px"></div>
     </div>
     <div id="vpop-links" style="display:none"></div>
     <div id="vpop-tsk" style="display:none"></div>
@@ -3183,8 +3196,7 @@ body.light #home-watermark{
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         Screenshot
       </button>
-      <button class="pa" id="vpop-clip-btn" onclick="addToClipboard(S.popRef,S.popTxt)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+      <button class="pa" id="vpop-clip-btn" style="text-align:center;line-height:1.2" onclick="addToClipboard(S.popRef,S.popTxt)">
         Add to Screenshot
       </button>
       <button class="pa" onclick="nbAddVerse(S.popRef,S.popTxt)">📝 Add to Study</button>
@@ -3967,21 +3979,35 @@ function renderReader(){
     d.innerHTML=inner;
 
     /* touch/click handling */
-    let pressTimer=null;
+    // While picking, a verse is chosen when a finger lifts from a still tap — not
+    // the moment it touches — so scrolling the chapter never picks verses by accident
+    let pressTimer=null, tapAt=null, held=false;
+    const stopPress=()=>{ if(pressTimer){clearTimeout(pressTimer);pressTimer=null;} };
     d.addEventListener('touchstart',e=>{
-      if(S.selectMode){toggleVerseSelect(d);return;}
+      held=false;
+      const t=e.touches[0];
+      if(S.selectMode){ tapAt={x:t.clientX,y:t.clientY,t:Date.now()}; return; }
       pressTimer=setTimeout(()=>{
-        pressTimer=null;
+        pressTimer=null; held=true;
         enterSelectMode();
         toggleVerseSelect(d);
       },480);
     },{passive:true});
     d.addEventListener('touchend',e=>{
-      if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}
+      stopPress();
+      if(held){ held=false; if(e.cancelable) e.preventDefault(); return; }   // the long-press already picked it
+      const tap=tapAt; tapAt=null;
+      if(S.selectMode && tap && Date.now()-tap.t<600 && !e.target.closest('.vnote-chip')){
+        if(e.cancelable) e.preventDefault();   // no second tap from the browser
+        toggleVerseSelect(d);
+      }
     });
     d.addEventListener('touchmove',e=>{
-      if(pressTimer){clearTimeout(pressTimer);pressTimer=null;}
+      stopPress();
+      const t=e.touches[0];
+      if(tapAt && (Math.abs(t.clientX-tapAt.x)>8 || Math.abs(t.clientY-tapAt.y)>8)) tapAt=null;
     },{passive:true});
+    d.addEventListener('touchcancel',()=>{ stopPress(); tapAt=null; held=false; });
     d.addEventListener('click',e=>{
       if(e.target.classList.contains('vnote-chip'))return;
       if(S.selectMode){toggleVerseSelect(d);return;}
@@ -4121,12 +4147,30 @@ function getSelectedSorted(){
   return [...S.selectedData].sort((a,b)=>parseInt(a.vnum)-parseInt(b.vnum));
 }
 
+// The reference for verses as chosen: a run is a span, a gap a comma, another
+// chapter or book follows after a semicolon — "John 3:16–17, 36"
+function passageLabel(items){
+  const groups = [];
+  items.forEach(v => {
+    const m = (v.ref || '').match(/^(.+) (\d+):(\d+)/);
+    if(!m){ groups.push({txt: v.ref || ''}); return; }
+    const key = m[1] + ' ' + m[2], g = groups[groups.length - 1];
+    if(g && g.key === key) g.nums.push(+m[3]); else groups.push({key, nums: [+m[3]]});
+  });
+  return groups.map(g => g.nums ? `${g.key}:${verseSpan(g.nums, '–').replace(/,/g, ', ')}` : g.txt).join('; ');
+}
+// Their words in one flow; where verses are not next to each other an ellipsis joins them
+function joinVerseText(items){
+  let out = '', prev = null;
+  items.forEach(v => {
+    const m = (v.ref || '').match(/^(.+) (\d+):(\d+)/), cur = m ? {k: m[1] + ' ' + m[2], n: +m[3]} : null;
+    if(prev) out += (!cur || (prev.k === cur.k && cur.n === prev.n + 1)) ? ' ' : ' … ';
+    out += v.txt; prev = cur || prev;
+  });
+  return out;
+}
 function getMultiRef(){
-  const sorted=getSelectedSorted();
-  if(!sorted.length)return'';
-  if(sorted.length===1)return sorted[0].ref;
-  const base=sorted[0].ref.replace(/:.*$/,'');
-  return `${base}:${sorted[0].vnum}–${sorted[sorted.length-1].vnum}`;
+  return passageLabel(getSelectedSorted());
 }
 
 function multiCopy(){
@@ -4145,10 +4189,7 @@ function multiCopy(){
 }
 
 function buildBlockText(sorted, first, last){
-  const ref = sorted.length === 1
-    ? first.ref
-    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
-  return `${ref}\n${sorted.map(v=>v.txt).join(' ')}`;
+  return `${passageLabel(sorted)}\n${joinVerseText(sorted)}`;
 }
 
 function buildNumberedText(sorted, first, last){
@@ -4161,9 +4202,7 @@ function showCopyFormatPicker(sorted, first, last){
   const existing = document.getElementById('copy-fmt-sheet');
   if(existing) existing.remove();
 
-  const ref = sorted.length === 1
-    ? first.ref
-    : `${first.ref.replace(/:.*$/,'')}:${first.vnum}–${last.vnum}`;
+  const ref = passageLabel(sorted);
   const previewTrad = `${ref}\n${first.vnum}  ${first.txt.substring(0,40)}...\n${sorted.length>1?last.vnum+'  '+last.txt.substring(0,30)+'...':''}`;
   const previewBlock = `${ref}\n${sorted.map(v=>v.txt).join(' ').substring(0,70)}...`;
 
@@ -4254,28 +4293,8 @@ function openVPop(ref,txt){
   }
   document.getElementById('vpop-dict-def').style.display = 'none';
 
-  // Bible names in this verse (people & places, with their meanings)
-  const nRow  = document.getElementById('vpop-name-row');
-  const nWrap = document.getElementById('vpop-names');
-  const nNames = getVerseNames(txt);
-  if(nNames.length && nRow && nWrap){
-    nWrap.innerHTML = nNames.map((n,i)=>`<span class="vd-word" data-idx="${i}">${n.name}</span>`).join('');
-    nWrap._names = nNames;
-    nWrap.onclick = e => {
-      const sp = e.target.closest('.vd-word');
-      if(!sp) return;
-      e.stopPropagation();
-      const n = nWrap._names[parseInt(sp.dataset.idx)];
-      document.getElementById('vpop-nm-word').textContent = n.name;
-      document.getElementById('vpop-nm-text').textContent = n.meaning;
-      vpopSay('vpop-nm-say', n.name, 'name');
-      nRow.style.display = 'none';
-      document.getElementById('vpop-name-def').style.display = 'block';
-    };
-    nRow.style.display = 'block';
-  } else if(nRow){
-    nRow.style.display = 'none';
-  }
+  // Names in this verse: people and places, each with its meaning (one row)
+  fillVpopNames(ref, txt);
   document.getElementById('vpop-name-def').style.display = 'none';
   fillVpopLinks(ref);
   fillVpopTreasury(ref);
@@ -4298,6 +4317,66 @@ function showVpopDictList(){
 function showVpopNameList(){
   document.getElementById('vpop-name-row').style.display = 'block';
   document.getElementById('vpop-name-def').style.display = 'none';
+}
+// One row for every name in the verse. A person or a place from the verse's own
+// records, under the name the verse uses (Simon reads "Peter"), and any other
+// name Hitchcock knows. Tapping a name shows its meaning (Hitchcock) and the
+// way on to the person's story or the place's site.
+function vpopNameItems(ref, txt){
+  const items = new Map();
+  const add = (label, kind, id) => {
+    const k = namesNorm(label);
+    if(!k) return;
+    if(!items.has(k)){ const at = txt.search(new RegExp(`(^|[^A-Za-z])${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`)); items.set(k, {name: label, at: at < 0 ? 1e6 : at, people: [], places: []}); }
+    if(kind) items.get(k)[kind].push(id);
+  };
+  if(S._people) peopleInVerse(ref).forEach(id => { const p = S._people[id]; if(p) add(placeNameInVerse(p, txt), 'people', id); });
+  if(S._places) placesInVerse(ref).forEach(id => {
+    const pl = S._places[id], label = placeNameInVerse(pl, txt), it = items.get(namesNorm(label));
+    // a name the dataset splits into several sites shows once
+    if(!it || !it.places.some(x => S._places[x].n === pl.n)) add(label, 'places', id);
+  });
+  getVerseNames(txt).forEach(n => add(n.name));
+  return [...items.values()].sort((a, b) => a.at - b.at).map(it => {
+    const h = S._nameLookup && S._nameLookup[namesNorm(it.name)];
+    return {...it, meaning: h ? h.meaning : ''};
+  });
+}
+function fillVpopNames(ref, txt){
+  const nRow = document.getElementById('vpop-name-row'), nWrap = document.getElementById('vpop-names');
+  if(!nRow || !nWrap) return;
+  document.getElementById('vpop-name-def').style.display = 'none';
+  const render = () => {
+    if(S.popRef !== ref) return;   // another verse opened meanwhile
+    const list = vpopNameItems(ref, txt);
+    nWrap._names = list;
+    if(!list.length){ nWrap.innerHTML = ''; nRow.style.display = 'none'; return; }
+    const mapped = list.some(n => n.places.some(id => S._places[id].ll));
+    nWrap.innerHTML = list.map((n, i) => `<span class="vd-word" data-idx="${i}">${escapeHtml(n.name)}</span>`).join('')
+      + (mapped ? `<div><button class="vl-chip wm-show" onclick="event.stopPropagation();vpopShowMap(this)">🗺️ Show on map</button><div id="vpop-map"></div></div>` : '');
+    if(document.getElementById('vpop-name-def').style.display !== 'block') nRow.style.display = 'block';
+  };
+  nWrap.onclick = e => {
+    const sp = e.target.closest('.vd-word');
+    if(!sp) return;
+    e.stopPropagation();
+    const n = nWrap._names[parseInt(sp.dataset.idx)];
+    document.getElementById('vpop-nm-word').textContent = n.name;
+    document.getElementById('vpop-nm-text').textContent = n.meaning;
+    document.getElementById('vpop-nm-mean').style.display = n.meaning ? '' : 'none';
+    document.getElementById('vpop-nm-go').innerHTML =
+        n.people.map(id => `<button class="vl-chip" onclick="event.stopPropagation();openPersonFromVerse('${id}')">👤 ${escapeHtml(personBrief(S._people[id]) ? personName(id) + ' · ' + clip(personBrief(S._people[id]), 40) : personName(id) + '’s story')} ›</button>`).join('')
+      + n.places.map(id => `<button class="vl-chip" onclick="event.stopPropagation();openPlaceFromVerse('${id}')">📍 Where ${escapeHtml(n.name)} was ›</button>`).join('');
+    vpopSay('vpop-nm-say', n.name, 'name');
+    nRow.style.display = 'none';
+    document.getElementById('vpop-name-def').style.display = 'block';
+  };
+  render();
+  const waits = [];
+  if(!S._people) waits.push(loadPeople().catch(() => {}));
+  if(!S._places) waits.push(loadPlaces().catch(() => {}));
+  if(!S._nameLookup) waits.push(loadBibleNames().catch(() => {}));
+  if(waits.length) Promise.all(waits).then(render);
 }
 
 function closePop(e){
@@ -4608,7 +4687,7 @@ function renderCanvas(theme){
   const portrait = S.cardOrientation === 'portrait';
 
   // One verse or several, the words stand alone, without quote marks
-  const bodyText  = verses.map(v => v.txt).join(' ');
+  const bodyText  = joinVerseText(verses);
 
   canvas.classList.toggle('editable', upload);   // enables grab cursor + touch-action:none
   if(portrait){
@@ -7593,24 +7672,15 @@ function fillVpopLinks(ref){
   if(!el) return;
   const render = () => {
     if(S.popRef !== ref) return; // another verse opened meanwhile
-    const people = peopleInVerse(ref);
-    // one chip per place name (a name the dataset splits into several sites shows once)
-    const places = placesInVerse(ref).filter((id, i, arr) => arr.findIndex(x => S._places[x].n === S._places[id].n) === i);
+    // the people and places named are in the Names row (fillVpopNames)
     const docs = doctrineIndex().get(ref) || [];
-    if(!people.length && !places.length && !docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
+    if(!docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
     el.innerHTML =
-      (people.length ? `<div class="vd-label">👤 People in this verse</div><div class="vl-chips">${people.map(id =>
-        `<button class="vl-chip" onclick="event.stopPropagation();openPersonFromVerse('${id}')">${escapeHtml(personName(id))}</button>`).join('')}</div>` : '')
-      + (places.length ? `<div class="vd-label">📍 Places in this verse</div><div class="vl-chips">${places.map(id =>
-        `<button class="vl-chip" onclick="event.stopPropagation();openPlaceFromVerse('${id}')">${escapeHtml(placeNameInVerse(S._places[id], S.popTxt || ''))}</button>`).join('')}</div>`
-        + (places.some(id => S._places[id].ll) ? `<button class="vl-chip wm-show" onclick="event.stopPropagation();vpopShowMap(this)">🗺️ Show on map</button><div id="vpop-map"></div>` : '') : '')
-      + (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
+      (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
         `<button class="vl-chip" onclick="event.stopPropagation();openDoctrineFromVerse(${ci},${ti})">${escapeHtml(DOCTRINES[ci].topics[ti].name)}</button>`).join('')}</div>` : '');
     el.style.display = 'block';
   };
   render();
-  if(!S._people) loadPeople().then(render).catch(() => {});
-  if(!S._places) loadPlaces().then(render).catch(() => {});
 }
 function openDoctrineFromVerse(ci, ti){
   leaveVPopThen(() => {
@@ -11114,7 +11184,7 @@ function renderBMPanel(){
   if(!el) return;
   const lists = colLists(), open = S._colOpen && lists.find(c => c.id === S._colOpen);
   if(open) return renderColList(el, open);
-  S._colOpen = null;
+  S._colOpen = null; S._colPick = null;
   const q = savedQuery();
   const newRow = `<form class="col-newrow" onsubmit="event.preventDefault();colNewFromTab()"><input id="col-tab-new" placeholder="New list name…" autocomplete="off" aria-label="New list name"><button>＋ New list</button></form>`;
   if(!lists.length){
@@ -11138,13 +11208,30 @@ function colNewFromTab(){
   colOpen(id);
 }
 function colOpen(id){
-  S._colOpen = id;
+  S._colOpen = id; S._colPick = null;
   history.pushState({screen: 'saved', col: id}, '', '');
   switchTab('bm');
   document.getElementById('screen-saved').scrollTop = 0;
 }
 function renderColList(el, c){
-  const n = c.items.length;
+  const n = c.items.length, pick = S._colPick;
+  if(pick){
+    el.innerHTML = `
+    <button class="dv-back" onclick="colPickCancel()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> ${escapeHtml(c.n)}</button>
+    <div class="col-sub">Tap up to 3 verses for one screenshot</div>
+    ${c.items.map((it, i) => `<div class="col-item pick ${pick.includes(i) ? 'on' : ''}" onclick="colPickToggle(${i})">
+      <div class="col-tick">${pick.includes(i) ? '✓' : ''}</div>
+      <div class="col-it-main">
+        <div class="sv-ref">${escapeHtml(it.r)}</div>
+        <div class="col-it-t">${escapeHtml(it.t || '')}</div>
+      </div></div>`).join('')}
+    <div class="col-pickbar">
+      <span class="cp-n">${pick.length} of 3 chosen</span>
+      <button onclick="colPickCancel()">✕ Cancel</button>
+      <button class="go" onclick="colPickMake('${c.id}')" ${pick.length ? '' : 'disabled'}>📸 Make Screenshot</button>
+    </div>`;
+    return;
+  }
   el.innerHTML = `
     <button class="dv-back" onclick="history.back()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg> My Verses</button>
     <div class="col-head">
@@ -11156,7 +11243,8 @@ function renderColList(el, c){
       <button onclick="colShare('${c.id}')">📤 Share</button>
       <button onclick="colPresent('${c.id}')">🎦 Present</button>
       <button onclick="colToStudy('${c.id}')">📝＋ Study</button>
-    </div>` : `<div class="empty-msg" style="padding:24px 0">Empty for now.<br>While reading, tap a verse → 🔖 Save → ${escapeHtml(c.n)}.</div>`}
+    </div>
+    <button class="col-pickgo" onclick="colPickStart()">📸 Screenshot — pick up to 3 verses</button>` : `<div class="empty-msg" style="padding:24px 0">Empty for now.<br>While reading, tap a verse → 🔖 Save → ${escapeHtml(c.n)}.</div>`}
     ${c.items.map((it, i) => `<div class="col-item">
       <div class="col-it-main" onclick="jumpToRef('${it.a.replace(/'/g, "\\'")}')">
         <div class="sv-ref">${escapeHtml(it.r)}</div>
@@ -11209,16 +11297,39 @@ async function colDelete(id){
   else { S._colOpen = null; colAfterChange(); }
   showUndo(`List deleted · ${gone.n}`, () => { const d2 = colData(); gone.u = Date.now(); d2.list.unshift(gone); colSave(d2); colAfterChange(); });
 }
-// 📸 A verse card (the screenshot designer) for one verse or passage of a list
-async function colCard(id, i){
-  const c = colLists().find(x => x.id === id), it = c && c.items[i];
-  if(!it) return;
+// The verses of one list item (a verse or a passage), ready for the screenshot designer
+async function colItemVerses(it){
   const p = parseReference(it.a), d = p && p.book && await fetchBook(p.book);
   const ch = d && d.chapters[p.chIdx];
   const from = p ? (p.verse || 1) : 1, to = it.e || from;
   const verses = ch ? ch.verses.filter(v => +v.verse >= from && +v.verse <= to).map(v => ({ref: `${p.book} ${p.chIdx + 1}:${v.verse}`, vnum: String(v.verse), txt: v.text})) : [];
   if(!verses.length){ verses.push({ref: it.a, vnum: String(from), txt: it.t || ''}); }
-  openScrOverlay(verses, it.r);
+  return verses;
+}
+// 📸 A screenshot (the designer) for one verse or passage of a list
+async function colCard(id, i){
+  const c = colLists().find(x => x.id === id), it = c && c.items[i];
+  if(!it) return;
+  openScrOverlay(await colItemVerses(it), it.r);
+}
+// 📸 Up to 3 verses of a list on one screenshot, picked in the order you tap them
+function colPickStart(){ S._colPick = []; renderBMPanel(); }
+function colPickCancel(){ S._colPick = null; renderBMPanel(); }
+function colPickToggle(i){
+  const a = S._colPick; if(!a) return;
+  const k = a.indexOf(i);
+  if(k >= 0) a.splice(k, 1);
+  else if(a.length >= 3){ showToast('Up to 3 verses on a screenshot'); return; }
+  else a.push(i);
+  renderBMPanel();
+}
+async function colPickMake(id){
+  const c = colLists().find(x => x.id === id), pick = S._colPick;
+  if(!c || !pick || !pick.length) return;
+  let verses = [];
+  for(const i of pick) if(c.items[i]) verses = verses.concat(await colItemVerses(c.items[i]));
+  S._colPick = null; renderBMPanel();
+  openScrOverlay(verses, passageLabel(verses));
 }
 function colText(c){
   return c.n + '\n\n' + c.items.map(it => `${it.r}\n${it.t || ''}`).join('\n\n') + '\n\n— Faith Baptist Church KJV Bible';
@@ -13769,7 +13880,7 @@ const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it. <b>Add to Screenshot</b> gathers up to 3 verses, from anywhere, onto one picture.', at:'#pa-bm'},
-  mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share, and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
+  mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share (<b>📸 Screenshot</b> under the buttons puts up to 3 verses on one), and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
   plans:    {i:'📅', t:'Reading Plans', b:'Pick a plan and read <b>at your own pace</b> — you can run more than one. A chapter checks off when you reach the end of it, or hear it through on the 🔊 audio Bible, and your 🔥 streak grows each day you read.', at:'#plans-inner .pl-btn'},
   notes:    {i:'📝', t:'Your Notes', b:'Everything you have kept is here: <b>My Verses</b> (lists you name), your <b>Highlights</b>, verse <b>Notes</b> and your <b>Studies</b>. The box at the top searches all of it.', at:'#tab-bm'},
