@@ -195,9 +195,8 @@
  },
  "Person": {
   "Scripture": [
-   "1 Corinthians 15:45",
-   "📝＋Genesis 2:20And Adam gave names to al",
-   "📝＋Genesis 3:17And unto Adam he said, Be"
+   "Ruth 4:17",
+   "2 Samuel 5:3"
   ],
   "Study": [
    "📝＋ Add to Study"
@@ -205,13 +204,30 @@
   "Share": [
    "📤 Share"
   ],
+  "Hebrew & Greek": [
+   "🔤 “David” in Hebrew & Greek ›"
+  ],
   "People": [
-   "Eve",
-   "Cain",
-   "Abel"
+   "Jesse",
+   "Michal",
+   "Abigail the Carmelitess"
+  ],
+  "Timeline": [
+   "David flees from Saul 1062 B.C.",
+   "David king over Judah in Hebron 1056 B.C",
+   "David king over all Israel; Jerusalem ta"
+  ],
+  "Journeys": [
+   "David fleeing Saul",
+   "The birth and childhood of Jesus"
+  ],
+  "Places": [
+   "Jerusalem",
+   "City of David",
+   "Hebron"
   ],
   "Search the Bible": [
-   "🔍 Find every “Adam” in Scripture"
+   "🔍 Find every “David” in Scripture"
   ]
  },
  "Place": {
@@ -220,6 +236,9 @@
   ],
   "Share": [
    "📤 Share"
+  ],
+  "Hebrew & Greek": [
+   "🔤 “Bethel” in Hebrew & Greek ›"
   ],
   "Journeys": [
    "🧭 Abraham's journey · stop 4",
@@ -230,6 +249,11 @@
    "Allon-bacuth same site",
    "Aven same site",
    "Beth-aven same site"
+  ],
+  "People": [
+   "Jeroboam",
+   "Jacob",
+   "Joshua"
   ],
   "Search the Bible": [
    "🔍 Find every “Bethel” in Scripture"
@@ -262,6 +286,9 @@
   ],
   "Present": [
    "🎦 Present"
+  ],
+  "Places": [
+   "📍 Ur ›"
   ],
   "Scripture": [
    "Read ›"

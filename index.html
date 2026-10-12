@@ -397,6 +397,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .jr-top{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-m);font-family:'Inter',sans-serif}
 .jr-top button{margin-left:auto;background:none;border:1px solid var(--border);color:var(--gold-l);border-radius:14px;padding:3px 9px;font-size:12px;cursor:pointer}
 .jr-place{font-family:'IM Fell English',serif;font-size:20px;color:var(--gold);margin:4px 0 0}
+.jr-pl{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
 .jr-place span{font-family:'Crimson Pro',serif;font-size:14px;color:var(--text-m);font-style:italic}
 .jr-d{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);margin:2px 0 6px}
 .jr-v{font-family:'Crimson Pro',serif;font-size:15px;line-height:1.5;color:var(--text);border-left:3px solid var(--gold);padding:2px 0 2px 10px;margin:4px 0}
@@ -2531,8 +2532,8 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with our church's KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
         <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Search → Hebrew &amp; Greek</strong> is Strong's — every word of the KJV tied to the Hebrew or Greek it translates. Type an English word (<em>mercy</em>), a Hebrew or Greek word (<em>agape</em>) or a number (<em>G26</em>). A word's page lists every verse it is in; tap a rendering to see only those verses. While reading, tap a verse and open <strong>🔤 Hebrew words</strong> at the bottom of the card</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
-        <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it</span></div>
-        <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. Tap a verse while reading to see the people in it</span></div>
+        <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it. <strong>In the story</strong> lists the people named there and its events on the timeline; on a journey's map, tap a stop's name to open the place</span></div>
+        <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was, their family, and every verse that names them. <strong>In the story</strong> gathers the places, journeys and timeline events of their life, and <strong>🔤 Hebrew &amp; Greek</strong> shows the name in the original. Tap a verse while reading to see the people in it</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> shows every Bible place on one map — tap a place to see what happened there. The classic atlas maps are below it. All of it works offline. In the reader, <strong>📍 Where</strong> maps the places in the chapter</span></div>
         <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The 🔥 flame</strong> in the header is your reading streak. It grows each day you read a chapter to the end — however you reached it: from a book, a plan, Search, <strong>Next</strong> or a link — and a 🛡️ shield, earned every 7 days, covers a missed day. <strong>Tap 🔥</strong> for your streak, a <strong>calendar of the days you read</strong> (tap a day to open the chapters you read) and your <strong>badges</strong>. A book read right through is ticked off in your Reading Journey</span></div>
         <div class="tip-row"><span class="tip-ico">✍️</span><span class="tip-txt"><strong>✍️ Reading Journal</strong> — at the end of every chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts. Tap the chapter in it to read it again; present, share or print it like any study</span></div>
@@ -7242,6 +7243,53 @@ function relLabel(type, n){
   const L = REL_LABELS[type];
   return L ? L[n > 1 ? 1 : 0] : type.charAt(0).toUpperCase() + type.slice(1);
 }
+/* ── "In the story": what a person's or a place's verses touch elsewhere ──
+   From the verses naming them: the timeline events whose key verse is among them, the journeys
+   with a stop in them, and the places (for a person) or the people (for a place) named alongside.
+   Each chip opens that page; Back returns here. */
+// "bookIdx.ch:v,v-v;…" → ["Genesis 12:1", …]
+function refsOf(refStr){
+  const out = [];
+  for(const r of (refStr || '').split(';')){
+    if(!r) continue;
+    const [bc, vs] = r.split(':'), [b, c] = bc.split('.');
+    for(const part of (vs || '').split(',')){
+      const [a, z] = part.split('-').map(Number);
+      for(let v = a; v <= (z || a); v++) out.push(`${BOOKS[b]} ${c}:${v}`);
+    }
+  }
+  return out;
+}
+const STORY_MAX = 8;
+async function fillStory(boxId, refStr, {person = null, place = null, journeys = true} = {}){
+  const box = document.getElementById(boxId);
+  if(!box) return;
+  const key = S._subView && S._subView.key;
+  const [idx] = await Promise.all([loadVerseIndex().catch(() => null), ensureNameIndex()]);
+  if(!document.getElementById(boxId) || (S._subView && S._subView.key) !== key) return; // left the page meanwhile
+  const refs = refsOf(refStr), events = new Map(), trips = new Map(), places = new Map(), people = new Map();
+  for(const r of refs){
+    const hit = idx && idx[r];
+    for(const [id, t, y] of (hit && hit.t) || []) events.set(id, [t, y]);
+    if(journeys) for(const [id, t, k] of (hit && hit.j) || []) if(!trips.has(id)) trips.set(id, [t, k]);
+    if(person) for(const id of placesInVerse(r)) places.set(id, (places.get(id) || 0) + 1);
+    if(place) for(const id of peopleInVerse(r)) if(id !== person) people.set(id, (people.get(id) || 0) + 1);
+  }
+  const top = m => [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, STORY_MAX);
+  const row = (label, chips) => chips.length ? `<div class="pp-rel"><span class="pp-rel-l">${label}</span><span class="pp-rel-v">${chips.join('')}</span></div>` : '';
+  const rows = [
+    row('📅 Timeline', [...events.entries()].sort((a, b) => a[1][1] - b[1][1]).slice(0, STORY_MAX).map(([id, [t, y]]) =>
+      `<button class="pp-chip" onclick="openTimelineAt('${id}')">${escapeHtml(t)} <span class="pp-chip-d">${tlYearText(y)}</span></button>`)),
+    row('🧭 Journeys', [...trips.entries()].slice(0, STORY_MAX).map(([id, [t, k]]) =>
+      `<button class="pp-chip" onclick="openJourney('${id}',${k})">${escapeHtml(t)}</button>`)),
+    row('📍 Places', top(places).filter(([id]) => S._places[id]).map(([id, n]) =>
+      `<button class="pp-chip" onclick="openPlace('${id}')" title="Named together in ${n} verse${n !== 1 ? 's' : ''}">${escapeHtml(S._places[id].n)}</button>`)),
+    row('👤 People', top(people).filter(([id]) => S._people[id]).map(([id, n]) =>
+      `<button class="pp-chip" onclick="openPerson('${id}')" title="Named here in ${n} verse${n !== 1 ? 's' : ''}">${escapeHtml(S._people[id].n)}</button>`)),
+  ].join('');
+  box.innerHTML = rows ? `<div class="pp-h">In the story</div>${rows}` : '';
+}
+
 async function openPerson(id, pushHistory=true, scrollY=0){
   sayWarm();
   await Promise.all([ensureNameIndex(), loadSay()]);
@@ -7281,9 +7329,11 @@ async function openPerson(id, pushHistory=true, scrollY=0){
         ${l[3] ? `<span class="pp-mean">“${escapeHtml(l[3])}”</span>` : ''}
         ${l[4] ? `<div class="pp-gk"><span class="pp-orig" lang="el">${escapeHtml(l[4])}</span> <span class="pp-tr">${escapeHtml(l[5])}</span>${l[6] ? ` <span class="pp-mean">“${escapeHtml(l[6])}”</span>` : ''}</div>` : ''}
       </div>`).join('')}
-      ${hitch && hitch.meaning ? `<div class="pp-hitch">Hitchcock (1869): “${escapeHtml(hitch.meaning)}”</div>` : ''}` : ''}
+      ${hitch && hitch.meaning ? `<div class="pp-hitch">Hitchcock (1869): “${escapeHtml(hitch.meaning)}”</div>` : ''}
+      ${(p.l || []).some(l => l[1] || l[4]) ? `<button class="pp-chip" onclick="strongsSearchFor('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔤 “${escapeHtml(p.n)}” in Hebrew &amp; Greek ›</button>` : ''}` : ''}
     ${rels.length ? `<div class="pp-h">Family &amp; connections</div>
       ${rels.map(([type, ids]) => `<div class="pp-rel"><span class="pp-rel-l">${relLabel(type, ids.length)}</span><span class="pp-rel-v">${ids.map(relChip).join('')}</span></div>`).join('')}` : ''}
+    <div id="pp-story"></div>
     ${n ? `<div class="nv-line">
       <button class="nv-hdr" onclick="togglePersonVerses()" aria-expanded="${openVerses}">
         <span class="nv-lbl">Verses naming ${escapeHtml(p.n)}</span><span class="cw-count">${n}</span><span class="doc-cat-arr${openVerses ? ' open' : ''}" id="ppv-arr">⌄</span>
@@ -7291,6 +7341,7 @@ async function openPerson(id, pushHistory=true, scrollY=0){
       <div class="nv-body" id="ppv-body"></div></div>` : ''}
     <button class="nv-showmore pp-find" onclick="namesSearch('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔍 Find every “${escapeHtml(p.n)}” in Scripture</button>
     <div class="nv-credit">From BibleData (Brady Stephenson, CC BY 4.0). Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain).</div>`;
+  fillStory('pp-story', p.v, {person: id});
   S._personOpen = S._personOpen || {};
   if(!(id in S._personOpen)) S._personOpen[id] = openVerses;
   if(S._personOpen[id]) await fillPersonVerses();
@@ -7419,6 +7470,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
     <div class="pp-meta">${escapeHtml(placeType(p.t))}${n ? ` · Named in ${n} verse${n !== 1 ? 's' : ''}` : ''}</div>
     <button class="nb-add" onclick="nbAddPlace()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
     ${hitch && hitch.meaning ? `<div class="pp-hitch">Name meaning (Hitchcock, 1869): “${escapeHtml(hitch.meaning)}”</div>` : ''}
+    <button class="pp-chip" onclick="strongsSearchFor('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔤 “${escapeHtml(p.n)}” in Hebrew &amp; Greek ›</button>
     <div class="pp-h">Where it was</div>
     ${p.ll ? `<div class="pl-site">
         <div class="pl-site-name">${escapeHtml(p.s || '')} <span class="pl-conf pl-${confCls}" title="${escapeHtml(confWhy)}">${conf}</span></div>
@@ -7434,6 +7486,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
       return `<div class="pl-alt"><span>${escapeHtml(s)}</span><span class="pl-conf pl-${placeConfidence(c)[2]}">${cl}</span>${p.ll ? `<span class="pl-alt-d">${fmtMiles(placeDistance(p.ll, [la, lo]).miles)} away</span>` : ''}</div>`; }).join('')}` : ''}
     ${near.length ? `<div class="pp-h">Nearby Bible places</div><div class="vl-chips">${near.map(([k, q, mi]) =>
       `<button class="pp-chip" onclick="openPlace('${k}')">${escapeHtml(q.n)} <span class="pp-chip-d">${mi < 0.3 ? 'same site' : mi < 1 ? '<1 mi' : Math.round(mi) + ' mi'}</span></button>`).join('')}</div>` : ''}
+    <div id="pl-story"></div>
     ${n ? `<div class="nv-line">
       <button class="nv-hdr" onclick="togglePlaceVerses()" aria-expanded="${openVerses}">
         <span class="nv-lbl">Verses naming ${escapeHtml(p.n)}</span><span class="cw-count">${n}</span><span class="doc-cat-arr${openVerses ? ' open' : ''}" id="plv-arr">⌄</span>
@@ -7442,6 +7495,7 @@ async function openPlace(id, pushHistory=true, scrollY=0){
     <button class="nv-showmore pp-find" onclick="placeSearch('${escapeHtml(p.n).replace(/'/g, "\\'")}')">🔍 Find every “${escapeHtml(p.n)}” in Scripture</button>
     <div class="nv-credit">Locations from the OpenBible.info Bible Geocoding Data (CC BY 4.0), which draws on over seventy atlases and reference works. Distances are straight-line. Name meanings from Hitchcock's Bible Names Dictionary (1869 — public domain).</div>`;
   S._placeOpen = S._placeOpen || {};
+  fillStory('pl-story', p.v, {place: id, journeys: false});
   plViews(id);
   journeysAt(id).then(list => { const b = document.getElementById('pl-jr'); if(b && list.length) b.innerHTML = `<div class="wm-chips" style="padding:2px 0 6px">${list.map(([j, i]) => `<button class="vl-chip" onclick="openJourney('${j.id}', ${i})">🧭 ${escapeHtml(j.t)} · stop ${i + 1}</button>`).join('')}</div>`; });
   if(p.ll) wmMount(document.getElementById('pl-map'), [wmPin(id, true)], {expand: () => openWhereMap(p.n, placeType(p.t), [wmPin(id, true)])});
@@ -9321,7 +9375,7 @@ async function jrCard(){
   const views = jrViewsHtml((j.g || []).map(g => g.k), (g, k) => `jrView('${g}', ${k})`);
   box.innerHTML = `<div class="jr-card">${views}
     <div class="jr-top"><span>Stop ${i + 1} of ${j.s.length}</span>${st.y != null ? `<button onclick="jrTimeline()">📅 About ${tlYearText(st.y)} ›</button>` : ''}<button onclick="jrPresent()" style="margin-left:6px">${document.getElementById('wm-overlay').classList.contains('jpres') ? '✕ Exit' : '🎦 Present'}</button></div>
-    <div class="jr-place">📍 ${escapeHtml(st.n)}${today}</div>
+    <div class="jr-place">${st.p && S._places[st.p] ? `<button class="jr-pl" onclick="jrPlace()" title="The place, and every verse that names it">📍 ${escapeHtml(st.n)} ›</button>` : `📍 ${escapeHtml(st.n)}`}${today}</div>
     <div class="jr-d">${escapeHtml(st.d)}</div>
     <div class="jr-v"><b>${escapeHtml(st.r)}</b><span class="jr-vt">…</span></div>
     ${st.site ? `<div class="jr-site">${escapeHtml(st.site)}</div>` : st.u ? '<div class="jr-site">The site is uncertain — drawn dashed.</div>' : ''}
@@ -9349,6 +9403,7 @@ document.addEventListener('keydown', e => {
   else if(e.key === 'Escape'){ e.preventDefault(); jrPresent(); }
 });
 function jrRead(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => jumpToRef(st.r)); }
+function jrPlace(){ const st = S._jr.j.s[S._jr.i]; if(st.p) leavePopoverThen('wm-overlay', () => openPlace(st.p)); }
 function jrTimeline(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => openTimelineAt(st.e)); }
 // Search → Maps: the list
 async function renderJourneyList(){

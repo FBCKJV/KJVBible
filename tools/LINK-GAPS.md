@@ -5,9 +5,9 @@ Read with [LINK-MAP.md](LINK-MAP.md) (what each page links to, written by `node 
 Ranked by how much understanding they add for someone reading a verse, and how little they cost a plain reader (CLAUDE.md, tests 1–4).
 
 1. ~~**The verse card has no "when and where".**~~ **Done in v62.01:** the card's **🧭 When & where** fold opens the timeline event or the journey stop a verse belongs to (275 verses; `verse-index.json` from `tools/build-verse-index.js`).
-2. **A Person page leads only to Scripture and other people.** It names the man's Hebrew word but does not link it to Strong's, and does not link the places or events of his life. Fix: the Hebrew/Greek name opens Strong's; "Journeys" and "On the timeline" chips when his verses fall in them.
-3. **A Place page does not say who lived or was there**, and has no timeline link. Fix: "People named here" (from the same verse lists) and a 📅 chip.
-4. **A journey stop does not open its Place page**, and a stop has no way to the people in its verse.
+2. ~~**A Person page leads only to Scripture and other people.**~~ **Done in v62.02:** *In the story* (📅 timeline, 🧭 journeys, 📍 places named with them) and *🔤 in Hebrew & Greek*.
+3. ~~**A Place page does not say who was there.**~~ **Done in v62.02:** *In the story* (👤 people named there, 📅 timeline) and *🔤 in Hebrew & Greek*.
+4. ~~**A journey stop does not open its Place page.**~~ **Done in v62.02:** the stop's name opens the place. (A stop still has no way to the people in its verse; the place's page now lists them.)
 5. **A Hitchcock Name page** leads to the person but not the place of the same name.
 6. **The classic maps lead only to journeys.** No way from a map to its places or verses.
 7. **A hymn leads only to Scripture.** A doctrine or topic it teaches (for example "Faith Alone") could be offered. Also: only 259 verses have a hymn on the verse card; most hymns echo more verses than the one to three listed.
