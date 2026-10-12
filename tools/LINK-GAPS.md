@@ -10,7 +10,7 @@ Ranked by how much understanding they add for someone reading a verse, and how l
 4. ~~**A journey stop does not open its Place page.**~~ **Done in v62.02:** the stop's name opens the place. (A stop still has no way to the people in its verse; the place's page now lists them.)
 5. ~~**A Hitchcock Name page leads to the person but not the place.**~~ Not a gap: the page already lists every person *and* place of the name (the first map read Abraham, which names no place). v62.03 adds *🔤 In Hebrew & Greek*.
 6. ~~**The classic maps lead only to journeys.**~~ **Done in v62.03:** under each map, *📖 Verses, places & journeys* (hand-chosen passages, the journeys drawn on it, and the places those passages name).
-7. ~~**A hymn leads only to Scripture.**~~ **Done in v62.04:** a hymn shows ✝ the doctrines citing its verses, and a doctrine its 🎵 hymns. Still thin: each hymn lists only the one to three verses it stands on (259 verses in all), so few hymns meet a doctrine. Adding the verses each hymn echoes, by hand in `tools/hymns/list.js`, would widen this and the verse card's 🎵 fold.
+7. ~~**A hymn leads only to Scripture.**~~ **Done in v62.04:** a hymn shows ✝ the doctrines citing its verses, and a doctrine its 🎵 hymns. Widened in v62.05: 1,033 reviewed verses added (tools/hymns/REVIEW-VERSES.md), so hymns now stand on 856 verses instead of 259.
 8. ~~**Dictionary, Strong's and Topics never lead to hymns.**~~ **Done in v62.04:** *🎵 “grace” in 55 hymns ›* when hymns sing the word (whole words).
 
 Not gaps: Doctrines, Nave topics, Treasury and the Concordance all open the chapter from their verse rows; Dictionary and Strong's lead to each other and to Scripture.
