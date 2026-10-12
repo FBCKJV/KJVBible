@@ -2531,6 +2531,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Several verses, one screenshot</strong> — <strong>Screenshot</strong> in the press-and-hold bar pictures verses side by side in a chapter. To gather verses from different places, tap each verse and choose <strong>Add to Screenshot</strong> (up to 3); the 📸 count at the top opens them to make the picture, and the press-and-hold bar shows how many are waiting.</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
+        <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Names in this verse</strong> — on the verse card, every person and place the verse names sits in one row. Tap a name for what it means (Hitchcock’s Bible Names), then <strong>👤</strong> opens the person’s story or <strong>📍</strong> where the place was; <strong>🗺️ Show on map</strong> pins the places.</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Hear a name said aloud</strong> — on a name, person, place or dictionary word, tap <strong>🔊 Hear it</strong> (tap again to hear it slowly). Hard names are written the way they sound, the strong part in capitals: <strong>meh-FIB-oh-sheth</strong>. On a verse card, tap a word or name in <strong>Words / Names in this verse</strong> for the same. It uses your phone's own voice, so it works offline too</span></div>
         <div class="tip-row"><span class="tip-ico">📤</span><span class="tip-txt"><strong>Share a name, place, word or map</strong> — tap <strong>📤 Share</strong> beside <strong>📝＋ Add to Study</strong> (on a map, 📤 at the top). It sends a line about it and a link that opens that very page in the app — for a friend, a class or your own notes</span></div>
         <div class="tip-row"><span class="tip-ico">🔎</span><span class="tip-txt"><strong>One search looks everywhere</strong> — above the verses, <strong>In the study tools</strong> shows what the rest of the app has on your word: a person or place, our doctrines, Nave's topics, the dictionary, the Hebrew &amp; Greek, hymns, the timeline, journeys, maps and the concordance's count. A Strong's number such as <em>G26</em> opens its word. Tap one to open it; Back brings you to your results</span></div>
@@ -3159,6 +3160,7 @@ body.light #home-watermark{
       <div id="vpop-nm-say"></div>
       <div id="vpop-nm-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
       <div id="vpop-nm-mean" style="font-size:11px;color:var(--text-m);margin-top:6px;font-style:italic">Meaning from Hitchcock's Bible Names Dictionary (1869)</div>
+      <div id="vpop-nm-go" class="vl-chips" style="margin-top:8px"></div>
     </div>
     <div id="vpop-links" style="display:none"></div>
     <div id="vpop-tsk" style="display:none"></div>
@@ -4291,28 +4293,8 @@ function openVPop(ref,txt){
   }
   document.getElementById('vpop-dict-def').style.display = 'none';
 
-  // Bible names in this verse (people & places, with their meanings)
-  const nRow  = document.getElementById('vpop-name-row');
-  const nWrap = document.getElementById('vpop-names');
-  const nNames = getVerseNames(txt);
-  if(nNames.length && nRow && nWrap){
-    nWrap.innerHTML = nNames.map((n,i)=>`<span class="vd-word" data-idx="${i}">${n.name}</span>`).join('');
-    nWrap._names = nNames;
-    nWrap.onclick = e => {
-      const sp = e.target.closest('.vd-word');
-      if(!sp) return;
-      e.stopPropagation();
-      const n = nWrap._names[parseInt(sp.dataset.idx)];
-      document.getElementById('vpop-nm-word').textContent = n.name;
-      document.getElementById('vpop-nm-text').textContent = n.meaning;
-      vpopSay('vpop-nm-say', n.name, 'name');
-      nRow.style.display = 'none';
-      document.getElementById('vpop-name-def').style.display = 'block';
-    };
-    nRow.style.display = 'block';
-  } else if(nRow){
-    nRow.style.display = 'none';
-  }
+  // Names in this verse: people and places, each with its meaning (one row)
+  fillVpopNames(ref, txt);
   document.getElementById('vpop-name-def').style.display = 'none';
   fillVpopLinks(ref);
   fillVpopTreasury(ref);
@@ -4335,6 +4317,66 @@ function showVpopDictList(){
 function showVpopNameList(){
   document.getElementById('vpop-name-row').style.display = 'block';
   document.getElementById('vpop-name-def').style.display = 'none';
+}
+// One row for every name in the verse. A person or a place from the verse's own
+// records, under the name the verse uses (Simon reads "Peter"), and any other
+// name Hitchcock knows. Tapping a name shows its meaning (Hitchcock) and the
+// way on to the person's story or the place's site.
+function vpopNameItems(ref, txt){
+  const items = new Map();
+  const add = (label, kind, id) => {
+    const k = namesNorm(label);
+    if(!k) return;
+    if(!items.has(k)){ const at = txt.search(new RegExp(`(^|[^A-Za-z])${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`)); items.set(k, {name: label, at: at < 0 ? 1e6 : at, people: [], places: []}); }
+    if(kind) items.get(k)[kind].push(id);
+  };
+  if(S._people) peopleInVerse(ref).forEach(id => { const p = S._people[id]; if(p) add(placeNameInVerse(p, txt), 'people', id); });
+  if(S._places) placesInVerse(ref).forEach(id => {
+    const pl = S._places[id], label = placeNameInVerse(pl, txt), it = items.get(namesNorm(label));
+    // a name the dataset splits into several sites shows once
+    if(!it || !it.places.some(x => S._places[x].n === pl.n)) add(label, 'places', id);
+  });
+  getVerseNames(txt).forEach(n => add(n.name));
+  return [...items.values()].sort((a, b) => a.at - b.at).map(it => {
+    const h = S._nameLookup && S._nameLookup[namesNorm(it.name)];
+    return {...it, meaning: h ? h.meaning : ''};
+  });
+}
+function fillVpopNames(ref, txt){
+  const nRow = document.getElementById('vpop-name-row'), nWrap = document.getElementById('vpop-names');
+  if(!nRow || !nWrap) return;
+  document.getElementById('vpop-name-def').style.display = 'none';
+  const render = () => {
+    if(S.popRef !== ref) return;   // another verse opened meanwhile
+    const list = vpopNameItems(ref, txt);
+    nWrap._names = list;
+    if(!list.length){ nWrap.innerHTML = ''; nRow.style.display = 'none'; return; }
+    const mapped = list.some(n => n.places.some(id => S._places[id].ll));
+    nWrap.innerHTML = list.map((n, i) => `<span class="vd-word" data-idx="${i}">${escapeHtml(n.name)}</span>`).join('')
+      + (mapped ? `<div><button class="vl-chip wm-show" onclick="event.stopPropagation();vpopShowMap(this)">🗺️ Show on map</button><div id="vpop-map"></div></div>` : '');
+    if(document.getElementById('vpop-name-def').style.display !== 'block') nRow.style.display = 'block';
+  };
+  nWrap.onclick = e => {
+    const sp = e.target.closest('.vd-word');
+    if(!sp) return;
+    e.stopPropagation();
+    const n = nWrap._names[parseInt(sp.dataset.idx)];
+    document.getElementById('vpop-nm-word').textContent = n.name;
+    document.getElementById('vpop-nm-text').textContent = n.meaning;
+    document.getElementById('vpop-nm-mean').style.display = n.meaning ? '' : 'none';
+    document.getElementById('vpop-nm-go').innerHTML =
+        n.people.map(id => `<button class="vl-chip" onclick="event.stopPropagation();openPersonFromVerse('${id}')">👤 ${escapeHtml(personBrief(S._people[id]) ? personName(id) + ' · ' + clip(personBrief(S._people[id]), 40) : personName(id) + '’s story')} ›</button>`).join('')
+      + n.places.map(id => `<button class="vl-chip" onclick="event.stopPropagation();openPlaceFromVerse('${id}')">📍 Where ${escapeHtml(n.name)} was ›</button>`).join('');
+    vpopSay('vpop-nm-say', n.name, 'name');
+    nRow.style.display = 'none';
+    document.getElementById('vpop-name-def').style.display = 'block';
+  };
+  render();
+  const waits = [];
+  if(!S._people) waits.push(loadPeople().catch(() => {}));
+  if(!S._places) waits.push(loadPlaces().catch(() => {}));
+  if(!S._nameLookup) waits.push(loadBibleNames().catch(() => {}));
+  if(waits.length) Promise.all(waits).then(render);
 }
 
 function closePop(e){
@@ -7630,24 +7672,15 @@ function fillVpopLinks(ref){
   if(!el) return;
   const render = () => {
     if(S.popRef !== ref) return; // another verse opened meanwhile
-    const people = peopleInVerse(ref);
-    // one chip per place name (a name the dataset splits into several sites shows once)
-    const places = placesInVerse(ref).filter((id, i, arr) => arr.findIndex(x => S._places[x].n === S._places[id].n) === i);
+    // the people and places named are in the Names row (fillVpopNames)
     const docs = doctrineIndex().get(ref) || [];
-    if(!people.length && !places.length && !docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
+    if(!docs.length){ el.style.display = 'none'; el.innerHTML = ''; return; }
     el.innerHTML =
-      (people.length ? `<div class="vd-label">👤 People in this verse</div><div class="vl-chips">${people.map(id =>
-        `<button class="vl-chip" onclick="event.stopPropagation();openPersonFromVerse('${id}')">${escapeHtml(personName(id))}</button>`).join('')}</div>` : '')
-      + (places.length ? `<div class="vd-label">📍 Places in this verse</div><div class="vl-chips">${places.map(id =>
-        `<button class="vl-chip" onclick="event.stopPropagation();openPlaceFromVerse('${id}')">${escapeHtml(placeNameInVerse(S._places[id], S.popTxt || ''))}</button>`).join('')}</div>`
-        + (places.some(id => S._places[id].ll) ? `<button class="vl-chip wm-show" onclick="event.stopPropagation();vpopShowMap(this)">🗺️ Show on map</button><div id="vpop-map"></div>` : '') : '')
-      + (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
+      (docs.length ? `<div class="vd-label">📑 Cited in our doctrines</div><div class="vl-chips">${docs.map(([ci, ti]) =>
         `<button class="vl-chip" onclick="event.stopPropagation();openDoctrineFromVerse(${ci},${ti})">${escapeHtml(DOCTRINES[ci].topics[ti].name)}</button>`).join('')}</div>` : '');
     el.style.display = 'block';
   };
   render();
-  if(!S._people) loadPeople().then(render).catch(() => {});
-  if(!S._places) loadPlaces().then(render).catch(() => {});
 }
 function openDoctrineFromVerse(ci, ti){
   leaveVPopThen(() => {

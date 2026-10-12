@@ -826,6 +826,24 @@ check('screenshot: gaps read 16, 36 and join with …; dragging picks nothing; a
   assert(made.on && made.n === 3 && made.ref === 'John 3:16; Romans 5:8; Psalms 23:1', 'the screenshot should carry the 3 picked verses: ' + JSON.stringify(made));
 });
 
+check('verse card: one Names row — a person under the verse\'s name, a place, each with its meaning and way on', async p => {
+  await p.evaluate(() => jumpToRef('Mark 9:2')); await sleep(1200);
+  await p.evaluate(() => { const el = document.querySelector('.vblock[data-ref="Mark 9:2"]'); openVPop('Mark 9:2', el.dataset.txt); }); await sleep(1800);
+  const a = await p.evaluate(() => ({names: [...document.querySelectorAll('#vpop-names .vd-word')].map(x => x.textContent), links: document.getElementById('vpop-links').textContent}));
+  assert(a.names.join() === 'Jesus,Peter,James,John', 'names in the order the verse gives them: ' + a.names.join());
+  assert(!/People in this verse/.test(a.links), 'no separate People row');
+  await p.evaluate(() => [...document.querySelectorAll('#vpop-names .vd-word')].find(x => x.textContent === 'Peter').click()); await sleep(300);
+  const d = await p.evaluate(() => ({mean: document.getElementById('vpop-nm-text').textContent, go: document.getElementById('vpop-nm-go').textContent}));
+  assert(d.mean && /👤 Simon/.test(d.go), 'Peter shows his meaning and leads to Simon Peter: ' + JSON.stringify(d));
+  await p.evaluate(() => history.back()); await sleep(400);
+  await p.evaluate(() => jumpToRef('Genesis 28:19')); await sleep(1200);
+  await p.evaluate(() => { const el = document.querySelector('.vblock[data-ref="Genesis 28:19"]'); openVPop('Genesis 28:19', el.dataset.txt); }); await sleep(1800);
+  await p.evaluate(() => document.querySelector('#vpop-names .vd-word').click()); await sleep(300);
+  const b = await p.evaluate(() => ({word: document.getElementById('vpop-nm-word').textContent, go: document.getElementById('vpop-nm-go').textContent, map: !!document.querySelector('#vpop-names .wm-show')}));
+  assert(b.word === 'Bethel' && /📍 Where Bethel was/.test(b.go) && b.map, 'a place leads to its site, with the map below: ' + JSON.stringify(b));
+  await p.evaluate(() => history.back()); await sleep(400);
+});
+
 check('verse card: photo controls show only for a photo you add', async p => {
   const shown = () => p.evaluate(() => { const r = document.getElementById('card-photo-row'); return !!r && getComputedStyle(r).display !== 'none'; });
   await p.evaluate(() => { S.cardOrientation = 'portrait'; S.cardBg = 'mountain'; openScrOverlay([{vnum: '20', txt: 'Whoso curseth his father or his mother, his lamp shall be put out in obscure darkness.'}], 'Proverbs 20:20'); });
