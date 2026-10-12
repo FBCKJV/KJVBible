@@ -878,6 +878,8 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 #vpop.on{display:flex}
 #vpop-inner{background:var(--bg2);border:1px solid var(--border);border-radius:18px 18px 0 0;padding:18px;width:100%;max-width:700px;display:flex;flex-direction:column;gap:10px;animation:su .22s ease;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));max-height:88vh;overflow-y:auto}
 @keyframes su{from{transform:translateY(50px);opacity:0}}
+#vpop-head{display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:3;background:var(--bg2);margin:-18px -18px 0;padding:12px 18px 8px;flex-shrink:0}
+#vpop-x{padding:8px 14px;font-size:13px}
 #vpop-ref{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 #vpop-txt{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);line-height:1.7}
 .hl-row{display:flex;gap:8px;align-items:center}
@@ -3124,7 +3126,10 @@ body.light #home-watermark{
 <div id="vpop" onclick="closePop(event)">
   <div class="pane-grip" data-pane="vpop" title="Drag to resize · double-tap to reset"></div>
   <div id="vpop-inner">
-    <div id="vpop-ref"></div>
+    <div id="vpop-head">
+      <div id="vpop-ref"></div>
+      <button class="mbar-cancel" id="vpop-x" onclick="closePop()" aria-label="Close">✕ Close</button>
+    </div>
     <div id="vpop-txt"></div>
     <div id="vpop-dict-row"><div class="vd-label">📖 Words in this verse</div><div id="vpop-dict-words"></div></div>
     <div id="vpop-dict-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
@@ -3193,10 +3198,6 @@ body.light #home-watermark{
       <button class="pa" onclick="copyVerseLink()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         Link
-      </button>
-      <button class="pa" onclick="closePop()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        Close
       </button>
     </div>
   </div>
@@ -4007,6 +4008,14 @@ function enterSelectMode(){
   hint.classList.add('show');
   setTimeout(()=>hint.classList.remove('show'),2200);
 }
+
+// A tap on the blank part of the page (not a verse, button or link) puts the
+// long-press bar away, as a tap behind the verse card closes the card.
+document.getElementById('screen-reader').addEventListener('click', e => {
+  if(!S.selectMode) return;
+  if(e.target.closest('.vblock, button, a, input, #reader-loc, #parallel-strip, #reader-float-nav, .ch-map')) return;
+  exitSelectMode();
+});
 
 function toggleSelectMode(){
   if(S.selectMode) exitSelectMode();
