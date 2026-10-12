@@ -1,6 +1,6 @@
 # What each page links to
 
-Written by `node tools/map-links.js`: each tool's page opened on a real entry in a phone-sized browser, and every link on it read. `Scripture` means a tappable reference that opens the chapter.
+Written by `node tools/map-links.js`: each tool's page opened on a real entry in a phone-sized browser, and every link on it read. `Scripture` means a tappable reference that opens the chapter. A Nave topic's and a place's verses appear when their fold is opened, so those Scripture links are not counted here.
 
 | Page | Leads to |
 |---|---|
@@ -12,10 +12,10 @@ Written by `node tools/map-links.js`: each tool's page opened on a real entry in
 | Topic (Nave) | Topics (Nave) · Study · Share |
 | Treasury (cross-refs) | Scripture · Cross-references · Study |
 | Name (Hitchcock) | People · Search the Bible · Share |
-| Person | Scripture · People · Search the Bible · Study · Share |
-| Place | Places · Journeys · Search the Bible · Study · Share |
+| Person | Scripture · People · Places · Hebrew & Greek · Timeline · Journeys · Search the Bible · Study · Share |
+| Place | People · Places · Hebrew & Greek · Journeys · Search the Bible · Study · Share |
 | Timeline event | Scripture · Journeys · Maps · Study |
-| Journey | Scripture · Timeline · Journeys · Present |
+| Journey | Scripture · Places · Timeline · Journeys · Present |
 | Classic map | Journeys · Maps |
 | Dictionary word | Scripture · Hebrew & Greek · Concordance · Study · Share |
 | Strong's word | Scripture · Dictionary · Hebrew & Greek · Study · Share |

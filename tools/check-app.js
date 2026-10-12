@@ -327,6 +327,33 @@ check('verse card: 🧭 When & where opens the timeline or a journey, Back retur
   assert(!r.none, 'a fold shows on Genesis 1:2');
 });
 
+check('person, place and journey stop lead to one another; Back returns each time', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), sub = () => S._subView ? S._subView.sub + ':' + S._subView.key : S.screen;
+    const chips = id => [...document.querySelectorAll('#' + id + ' .pp-chip')].map(b => b.getAttribute('onclick'));
+    showScreen('search'); switchSearchMode('names'); await wait(1200);
+    await openPerson('David_1'); await wait(2500);
+    const david = chips('pp-story'), sg = !!document.querySelector('#person-view .pp-chip[onclick^="strongsSearchFor"]');
+    document.querySelector('#pp-story .pp-chip[onclick^="openPlace"]').click(); await wait(2000);
+    const toPlace = sub(); history.back(); await wait(1500); const backPerson = sub();
+    const bethelId = Object.keys(S._places).find(k => S._places[k].n === 'Bethel');
+    await openPlace(bethelId); await wait(2500);
+    const bethel = chips('pl-story');
+    document.querySelector('#pl-story .pp-chip[onclick^="openPerson"]').click(); await wait(2000);
+    const toPerson = sub(); history.back(); await wait(1500); const backPlace = sub();
+    await openJourney('jacob', 1); await wait(2500);
+    const btn = document.querySelector('#wm-list .jr-pl'); const stop = btn && btn.textContent;
+    if(btn) btn.click(); await wait(2500); const fromStop = sub();
+    return {david, sg, toPlace, backPerson, bethel, toPerson, backPlace, stop, fromStop, bethelId};
+  });
+  assert(r.sg, 'no Hebrew & Greek button on David');
+  assert(r.david.some(c => /openTimelineAt/.test(c)) && r.david.some(c => /openJourney/.test(c)) && r.david.some(c => /openPlace/.test(c)), 'David\'s story lacks timeline, journeys or places: ' + r.david.join(' '));
+  assert(/^place:/.test(r.toPlace) && r.backPerson === 'person:David_1', `place chip went to ${r.toPlace}, Back to ${r.backPerson}`);
+  assert(r.bethel.some(c => /openPerson\('Jacob_1'\)/.test(c)), 'Bethel does not list Jacob: ' + r.bethel.join(' '));
+  assert(/^person:/.test(r.toPerson) && r.backPlace === 'place:' + r.bethelId, `person chip went to ${r.toPerson}, Back to ${r.backPlace}`);
+  assert(r.stop && /^place:/.test(r.fromStop), `the journey stop (${r.stop}) did not open its place: ${r.fromStop}`);
+});
+
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
   await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
   const r = await p.evaluate(async () => {

@@ -44,7 +44,7 @@ const STATIONS = [
   {name:'Topic (Nave)',         open:`(showScreen('search'), switchSearchMode('topics'), openNaveTopic('FAITH'))`, sel:'#topic-view button, #topic-view a', hidden:true, pre:3500, wait:3000},
   {name:'Treasury (cross-refs)',open:`(showScreen('search'), switchSearchMode('topics'), openTreasury(tskKey('Genesis 1:1')))`, sel:'#xref-view button, #xref-view a', wait:2500},
   {name:'Name (Hitchcock)',     open:`(showScreen('search'), switchSearchMode('names'), openNamePage('abraham'))`, sel:'#name-view button, #name-view a'},
-  {name:'Person',               open:`(showScreen('search'), switchSearchMode('names'), openPerson('Adam_1'))`, sel:'#person-view button, #person-view a'},
+  {name:'Person',               open:`(showScreen('search'), switchSearchMode('names'), openPerson('David_1'))`, sel:'#person-view button, #person-view a', wait:3000},
   {name:'Place',                open:`(showScreen('search'), switchSearchMode('names'), openPlace('a64f355'))`, sel:'#place-view button, #place-view a'},
   {name:'Timeline event',       open:`(showScreen('search'), switchSearchMode('timeline'), openTimelineAt('tl-1-0'))`, sel:'#tl-pane button, #tl-pane a, #timeline-panel button, #timeline-panel a'},
   {name:'Journey',              open:`(showScreen('search'), switchSearchMode('journeys'), openJourney('abraham'))`, sel:'#wm-overlay button, #wm-overlay a', wait:3000},
@@ -72,7 +72,7 @@ const TOOL = {
   showVpopDictList:'Dictionary', showVpopNameList:'Names', openWordFromVerse:'Dictionary', openWord:'Dictionary', openDoctrineFromVerse:'Doctrines',
   hyToggleFold:'Hymns', openHymn:'Hymns', sgToggleFold:"Hebrew & Greek", sgFilter:"Hebrew & Greek", strongsSearchFor:"Hebrew & Greek", openStrongs:"Hebrew & Greek",
   openJourney:'Journeys', jrView:'Journeys', jrGo:'Journeys', openChapterMap:'Maps', tlMap:'Maps', openWhereMap:'Maps', openMap:'Maps',
-  vpopShowMap:'Maps', jrTimeline:'Timeline', openTimelineAt:'Timeline', openNaveTopicAt:'Topics (Nave)', openNaveTopic:'Topics (Nave)',
+  vpopShowMap:'Maps', jrPlace:'Places', jrTimeline:'Timeline', openTimelineAt:'Timeline', openNaveTopicAt:'Topics (Nave)', openNaveTopic:'Topics (Nave)',
   concordSearch:'Concordance', selectConcordLetter:'Concordance', toggleConcordWord:'Concordance', placeSearch:'Search the Bible', namesSearch:'Search the Bible',
   nbAddVerse:'Study', nbAddHymn:'Study', nbAddPerson:'Study', nbAddPlace:'Study', nbAddWord:'Study', nbAddStrongs:'Study', nbAddEvent:'Study', nbAddDoctrine:'Study', nbAddTopic:'Study', hyStudy:'Study',
   toggleBM:'My Verses', colFromDoctrine:'My Verses', openNote:'Notes', saveNote:'Notes', singleScreenshot:'Card', addToClipboard:'Card', hyCard:'Card', presOpen:'Present', presFromReader:'Present', jrPresent:'Present',
@@ -108,6 +108,6 @@ const QUIET = new Set(['setHL','hlNameSheet','cancelNote','closePop','sayIt','to
   fs.writeFileSync(file, JSON.stringify(all, null, 1));
   const ORDER = ['Scripture','Cross-references','People','Places','Names','Dictionary','Hebrew & Greek','Doctrines','Topics (Nave)','Hymns','Timeline','Journeys','Maps','Concordance','Search the Bible','Study','My Verses','Notes','Card','Present','Share'];
   const rows = Object.entries(all).map(([st, by]) => `| ${st} | ${ORDER.filter(k => by[k]).join(' · ') || '—'} |`);
-  fs.writeFileSync(path.join(__dirname, 'LINK-MAP.md'), `# What each page links to\n\nWritten by \`node tools/map-links.js\`: each tool's page opened on a real entry in a phone-sized browser, and every link on it read. \`Scripture\` means a tappable reference that opens the chapter.\n\n| Page | Leads to |\n|---|---|\n${rows.join('\n')}\n`);
+  fs.writeFileSync(path.join(__dirname, 'LINK-MAP.md'), `# What each page links to\n\nWritten by \`node tools/map-links.js\`: each tool's page opened on a real entry in a phone-sized browser, and every link on it read. \`Scripture\` means a tappable reference that opens the chapter. A Nave topic's and a place's verses appear when their fold is opened, so those Scripture links are not counted here.\n\n| Page | Leads to |\n|---|---|\n${rows.join('\n')}\n`);
   await browser.close(); server.close();
 })();
