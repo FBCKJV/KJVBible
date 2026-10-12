@@ -894,6 +894,9 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 #vpop-x{padding:8px 14px;font-size:13px}
 #vpop-ref{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 #vpop-txt{font-family:'Crimson Pro',serif;font-size:16px;color:var(--text);line-height:1.7}
+#vpop-txt .vw{cursor:pointer;border-radius:4px;transition:background .15s}
+#vpop-txt .vw:active{background:var(--bg3)}
+#vpop-txt .vw.on{background:var(--bg3);color:var(--gold);box-shadow:0 2px 0 var(--gold-d)}
 .hl-row{display:flex;gap:8px;align-items:center}
 /* Named highlight colours (v53) */
 .hl-opt{background:none;border:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:30px;font-family:inherit}
@@ -3149,7 +3152,7 @@ body.light #home-watermark{
     <div id="vpop-txt"></div>
     <div id="vpop-dict-row"><div class="vd-label">📖 Words in this verse</div><div id="vpop-dict-words"></div></div>
     <div id="vpop-dict-def" style="display:none;padding:8px 0 2px;border-top:1px solid var(--border);margin-top:8px">
-      <button onclick="event.stopPropagation();showVpopDictList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">← All words</button>
+      <button onclick="event.stopPropagation();showVpopDictList()" style="background:none;border:none;color:var(--gold);font-size:12px;cursor:pointer;padding:0 0 6px;display:flex;align-items:center;gap:4px">✕ Put away</button>
       <div id="vpop-def-word" style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold);margin-bottom:4px"></div>
       <div id="vpop-def-say"></div>
       <div id="vpop-def-text" style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.6"></div>
@@ -4265,34 +4268,10 @@ function openVPop(ref,txt){
   hintMaybe('verse', 650);
   S.popRef=ref;S.popTxt=txt;
   document.getElementById('vpop-ref').textContent=ref;
-  document.getElementById('vpop-txt').textContent=txt;
   updateHLPicker();updateBMBtn();
   document.getElementById('note-area-wrap').classList.remove('on');
-  // Dictionary words
-  const dRow  = document.getElementById('vpop-dict-row');
-  const dWrap = document.getElementById('vpop-dict-words');
-  const dWords = getVerseDictWords(txt);
-  if(dWords.length && dRow && dWrap){
-    dWrap.innerHTML = dWords.map((w,i)=>
-      `<span class="vd-word" data-idx="${i}">${w.word.charAt(0).toUpperCase()+w.word.slice(1)}</span>`
-    ).join('');
-    dWrap._words = dWords;
-    dWrap.onclick = e => {
-      const sp = e.target.closest('.vd-word');
-      if(!sp) return;
-      e.stopPropagation();
-      const w = dWrap._words[parseInt(sp.dataset.idx)];
-      document.getElementById('vpop-def-word').textContent = w.word.charAt(0).toUpperCase()+w.word.slice(1);
-      document.getElementById('vpop-def-text').textContent = w.def;
-      vpopWebster(w.word);
-      vpopSay('vpop-def-say', w.word, 'word');
-      dRow.style.display = 'none';
-      document.getElementById('vpop-dict-def').style.display = 'block';
-    };
-    dRow.style.display = 'block';
-  } else if(dRow){
-    dRow.style.display = 'none';
-  }
+  // Tap any word of the verse for its meaning (Webster 1828, with the KJV note on top)
+  vpopWords(txt);
   document.getElementById('vpop-dict-def').style.display = 'none';
 
   // Names in this verse: people and places, each with its meaning (one row)
@@ -4313,8 +4292,39 @@ function openVPop(ref,txt){
 }
 
 function showVpopDictList(){
-  document.getElementById('vpop-dict-row').style.display = 'block';
   document.getElementById('vpop-dict-def').style.display = 'none';
+  document.querySelectorAll('#vpop-txt .vw.on').forEach(x => x.classList.remove('on'));
+}
+// The verse at the top of the card: every word but the smallest can be tapped
+const VW_SKIP = new Set('a an and the to of in on at by for is was be are were it he she they we i me my him his her them us our or as so'.split(' '));
+function vpopWords(txt){
+  const el = document.getElementById('vpop-txt');
+  document.getElementById('vpop-dict-row').style.display = 'none';
+  el.innerHTML = txt.split(/([A-Za-z’']+)/).map((t, i) =>
+    i % 2 && !VW_SKIP.has(t.toLowerCase()) ? `<span class="vw">${escapeHtml(t)}</span>` : escapeHtml(t)).join('');
+  el.onclick = e => {
+    const sp = e.target.closest('.vw');
+    if(!sp) return;
+    e.stopPropagation();
+    const was = sp.classList.contains('on');
+    showVpopDictList();
+    if(was) return;   // a second tap on the same word puts its meaning away
+    sp.classList.add('on');
+    const word = sp.textContent.replace(/[’']s$/, '');
+    // A name opens its place in the Names row (meaning, the person or the place)
+    const nm = [...document.querySelectorAll('#vpop-names .vd-word')].find(x => namesNorm(x.textContent) === namesNorm(word));
+    if(nm){ nm.click(); document.getElementById('vpop-name-def').scrollIntoView({block: 'nearest'}); return; }
+    document.getElementById('vpop-def-word').textContent = word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    const t = document.getElementById('vpop-def-text');
+    t.textContent = '';
+    lookupWord(word.toLowerCase()).then(r => {
+      if(!sp.classList.contains('on')) return;
+      t.textContent = r ? (r.note ? 'In the KJV: ' + r.note : '') : `Webster’s 1828 has no entry for “${word}”.`;
+    });
+    vpopWebster(word.toLowerCase());
+    vpopSay('vpop-def-say', word.toLowerCase(), 'word');
+    document.getElementById('vpop-dict-def').style.display = 'block';
+  };
 }
 function showVpopNameList(){
   document.getElementById('vpop-name-row').style.display = 'block';
