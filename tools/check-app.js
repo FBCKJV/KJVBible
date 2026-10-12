@@ -269,6 +269,31 @@ check('verse card: 🎵 a hymn on the verse opens it; a verse with none shows no
   assert(r.back.book === 'Isaiah' && r.back.ch === 5, 'Back from the hymn left ' + JSON.stringify(r.back));
 });
 
+check('the trail back: verse → card → Strong\'s → another chapter, then Back, Back lands where you started', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, sub: S._subView ? S._subView.sub + ':' + S._subView.key : '', book: S.book, ch: S.ch + 1});
+    await jumpToRef('John 3:16'); await wait(1500);
+    openVPop('John 3:16', 'For God so loved the world'); await wait(800);
+    leaveVPopThen(() => openStrongs('G26')); await wait(1800);
+    const strongs = at();
+    await jumpToRef('Matthew 24:12'); await wait(1500);
+    const away = at();
+    history.back(); await wait(1200); const back1 = at();
+    history.back(); await wait(1200); const back2 = at();
+    // and from a person page: a verse, then Back returns to the person
+    showScreen('search'); switchSearchMode('names'); await wait(1200);
+    await openPerson('Adam_1'); await wait(1500);
+    await jumpToRef('1 Corinthians 15:45'); await wait(1500);
+    history.back(); await wait(1200); const person = at();
+    return {strongs, away, back1, back2, person};
+  });
+  assert(r.strongs.sub === 'strongs:G26', 'the Strong\'s page did not open: ' + JSON.stringify(r.strongs));
+  assert(r.away.screen === 'reader' && r.away.book === 'Matthew', 'the verse did not open Matthew 24');
+  assert(r.back1.screen === 'search' && r.back1.sub === 'strongs:G26', 'Back from the verse should return to the Strong\'s page: ' + JSON.stringify(r.back1));
+  assert(r.back2.screen === 'reader' && r.back2.book === 'John' && r.back2.ch === 3, 'Back again should land in John 3, where it started: ' + JSON.stringify(r.back2));
+  assert(r.person.screen === 'search' && r.person.sub === 'person:Adam_1', 'Back from a verse should return to the person page: ' + JSON.stringify(r.person));
+});
+
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
   await p.evaluate(() => { showScreen('search'); switchSearchMode('hymns'); }); await sleep(1500);
   const r = await p.evaluate(async () => {

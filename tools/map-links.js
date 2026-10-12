@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 // Map how the study tools link to each other and back to Scripture.
 //
-//   node tools/map-links.js            prints the map and writes tools/link-map.json
+//   node tools/map-links.js            prints the map and writes tools/link-map.json and tools/LINK-MAP.md
 //   node tools/map-links.js person     only the stations whose name has "person"
 //
 // For each station (a tool's page, opened on a real entry) it taps every link
 // on the page in a phone-sized browser and records where the tap lands (the
 // function the app called: another tool, the chapter, the verse card, a map…)
-// and whether the phone's Back button returns to the station. The result is
+// (Back is checked separately, as whole journeys, in tools/check-app.js.) The result is
 // what a reader can actually do, not what the code looks like it can do.
 // Same Playwright/Chromium setup as tools/check-app.js.
 
@@ -48,19 +48,20 @@ const NAV = {
 const STATIONS = [
   {name:'Chapter (Genesis 12)',  open:`jumpToRef('Genesis 12:1')`, sel:'#screen-reader .ch-map, #screen-reader #ch-jr button, #screen-reader #ch-jr a'},
   {name:'Verse card (Genesis 12:1)', open:`jumpToRef('Genesis 12:1').then(()=>openVPop('Genesis 12:1','Now the LORD had said unto Abram, Get thee out of thy country, and from thy kindred, and from thy father\\'s house, unto a land that I will shew thee:'))`, sel:'#vpop button, #vpop a', wait:2500},
+  {name:'Verse card (Genesis 28:19)', open:`jumpToRef('Genesis 28:19').then(()=>openVPop('Genesis 28:19','And he called the name of that place Bethel: but the name of that city was called Luz at the first.'))`, sel:'#vpop button, #vpop a', wait:2500},
   {name:'Verse card (John 3:16)', open:`jumpToRef('John 3:16').then(()=>openVPop('John 3:16','For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.'))`, sel:'#vpop button, #vpop a', wait:2500},
-  {name:'Doctrine verses',      open:`(showScreen('search'), switchSearchMode('doctrine'), showDoctrineVerses(0,0))`, sel:'#doctrine-verses button, #doctrine-verses a, #doctrine-view button, #doctrine-view a'},
-  {name:'Topic (Nave)',         open:`(showScreen('search'), switchSearchMode('topics'), openNaveTopic('faith'))`, sel:'#topic-view button, #topic-view a'},
-  {name:'Treasury (cross-refs)',open:`(showScreen('search'), switchSearchMode('topics'), openTreasury('Genesis 1:1'))`, sel:'#xref-view button, #xref-view a'},
+  {name:'Doctrine verses',      open:`(showScreen('search'), switchSearchMode('doctrine'), showDoctrineVerses(0,0))`, wait:2500, sel:'#doctrine-panel button, #doctrine-panel a'},
+  {name:'Topic (Nave)',         open:`(showScreen('search'), switchSearchMode('topics'), openNaveTopic('FAITH'))`, sel:'#topic-view button, #topic-view a', hidden:true, pre:3500, wait:3000},
+  {name:'Treasury (cross-refs)',open:`(showScreen('search'), switchSearchMode('topics'), openTreasury(tskKey('Genesis 1:1')))`, sel:'#xref-view button, #xref-view a', wait:2500},
   {name:'Name (Hitchcock)',     open:`(showScreen('search'), switchSearchMode('names'), openNamePage('abraham'))`, sel:'#name-view button, #name-view a'},
   {name:'Person',               open:`(showScreen('search'), switchSearchMode('names'), openPerson('Adam_1'))`, sel:'#person-view button, #person-view a'},
   {name:'Place',                open:`(showScreen('search'), switchSearchMode('names'), openPlace('a64f355'))`, sel:'#place-view button, #place-view a'},
   {name:'Timeline event',       open:`(showScreen('search'), switchSearchMode('timeline'), openTimelineAt('tl-1-0'))`, sel:'#tl-pane button, #tl-pane a, #timeline-panel button, #timeline-panel a'},
-  {name:'Journey',              open:`(showScreen('search'), switchSearchMode('journeys'), openJourney('abraham'))`, sel:'#journey-view button, #journey-view a, #journeys-panel button, #journeys-panel a'},
+  {name:'Journey',              open:`(showScreen('search'), switchSearchMode('journeys'), openJourney('abraham'))`, sel:'#wm-overlay button, #wm-overlay a', wait:3000},
   {name:'Classic map',          open:`(showScreen('search'), switchSearchMode('maps'), openMap(0))`, sel:'#maps-panel button, #maps-panel a, #map-view button, #map-view a'},
   {name:'Dictionary word',      open:`(showScreen('search'), switchSearchMode('dict'), openWord('grace'))`, sel:'#word-view button, #word-view a'},
   {name:"Strong's word",        open:`(showScreen('search'), switchSearchMode('strongs'), openStrongs('G26'))`, sel:'#strongs-view button, #strongs-view a'},
-  {name:'Concordance word',     open:`(showScreen('search'), switchSearchMode('concordance'), openConcordWord('grace'))`, sel:'#concordance-panel button, #concordance-panel a'},
+  {name:'Concordance word',     open:`(showScreen('search'), switchSearchMode('concord'), openConcordWord('grace'))`, sel:'#concord-panel button, #concord-panel a'},
   {name:'Hymn',                 open:`(showScreen('search'), switchSearchMode('hymns'), openHymn(0))`, sel:'#hymn-view button, #hymn-view a'},
 ];
 
@@ -83,6 +84,21 @@ async function openApp(ctx, base){
   return p;
 }
 
+
+// What a link does, by the function it calls
+const TOOL = {
+  jumpToRef:'Scripture', openPassage:'Scripture', xrPreview:'Scripture', tlPaneRead:'Scripture', jrRead:'Scripture', openHistoryChapter:'Scripture',
+  openTreasuryFromVerse:'Cross-references', openTreasury:'Cross-references', openPersonFromVerse:'People', openPerson:'People', openPlaceFromVerse:'Places', openPlace:'Places',
+  showVpopDictList:'Dictionary', showVpopNameList:'Names', openWordFromVerse:'Dictionary', openWord:'Dictionary', openDoctrineFromVerse:'Doctrines',
+  hyToggleFold:'Hymns', openHymn:'Hymns', sgToggleFold:"Hebrew & Greek", sgFilter:"Hebrew & Greek", strongsSearchFor:"Hebrew & Greek", openStrongs:"Hebrew & Greek",
+  openJourney:'Journeys', jrView:'Journeys', jrGo:'Journeys', openChapterMap:'Maps', tlMap:'Maps', openWhereMap:'Maps', openMap:'Maps',
+  vpopShowMap:'Maps', jrTimeline:'Timeline', openTimelineAt:'Timeline', openNaveTopicAt:'Topics (Nave)', openNaveTopic:'Topics (Nave)',
+  concordSearch:'Concordance', selectConcordLetter:'Concordance', toggleConcordWord:'Concordance', placeSearch:'Search the Bible', namesSearch:'Search the Bible',
+  nbAddVerse:'Study', nbAddHymn:'Study', nbAddPerson:'Study', nbAddPlace:'Study', nbAddWord:'Study', nbAddStrongs:'Study', nbAddEvent:'Study', nbAddDoctrine:'Study', nbAddTopic:'Study', hyStudy:'Study',
+  toggleBM:'My Verses', colFromDoctrine:'My Verses', openNote:'Notes', saveNote:'Notes', singleScreenshot:'Card', addToClipboard:'Card', hyCard:'Card', presOpen:'Present', presFromReader:'Present', jrPresent:'Present',
+  shareVerse:'Share', copyVerseLink:'Share', copyVerse:'Share', shareSub:'Share', hyShare:'Share',
+};
+const QUIET = new Set(['setHL','hlNameSheet','cancelNote','closePop','sayIt','toolTips','closePopover','docBackToList','toggleTreasuryLine','togglePersonVerses','togglePlaceVerses','wdShowAll','sgShowVerses','hyClear','hyTap','toggleNaveLine','renderConcordHits','leaveVPopThen']);
 (async () => {
   const {chromium} = loadPlaywright();
   const server = await serve(), base = `http://127.0.0.1:${server.address().port}`;
@@ -90,40 +106,29 @@ async function openApp(ctx, base){
   const browser = await chromium.launch(launch), out = {};
   for(const st of STATIONS.filter(s => !ONLY.length || ONLY.some(o => s.name.toLowerCase().includes(o.toLowerCase())))){
     const ctx = await browser.newContext({viewport: {width: 390, height: 844}}), p = await openApp(ctx, base);
-    const reopen = async () => { await p.evaluate(`window.__nav = []`); await p.evaluate(st.open).catch(() => {}); await sleep(st.wait || 1800); await p.evaluate(`window.__nav = []`); };
-    await reopen();
-    // distinct, visible links on the station
-    const links = await p.evaluate(sel => {
-      const seen = new Set(), res = [];
-      [...document.querySelectorAll(sel)].forEach((e, i) => {
-        const r = e.getBoundingClientRect(); if(!r.width || !r.height || getComputedStyle(e).visibility === 'hidden') return;
-        const label = (e.textContent || e.getAttribute('aria-label') || e.title || '').replace(/\s+/g, ' ').trim().slice(0, 50);
-        const key = (e.getAttribute('onclick') || '') + '|' + label.replace(/\d+/g, '#');
-        if(seen.has(key)) return; seen.add(key); res.push({i, label});
-      });
-      return res;
-    }, st.sel);
-    const rows = [];
-    for(const l of links.slice(0, 40)){
-      await reopen();
-      const before = await p.evaluate('__sig()');
-      const clicked = await p.evaluate(([sel, i]) => { const e = document.querySelectorAll(sel)[i]; if(!e) return false; e.click(); return true; }, [st.sel, l.i]);
-      if(!clicked){ continue; }
-      await sleep(1100);
-      const log = await p.evaluate('__nav'), after = await p.evaluate('__sig()');
-      const first = log.find(([n]) => NAV[n]);
-      const dest = first ? NAV[first[0]] : (after !== before ? 'other' : 'in place');
-      await p.evaluate(() => history.back()); await sleep(900);
-      const back = await p.evaluate('__sig()');
-      rows.push({label: l.label, dest, call: first ? first[0] + '(' + first[1] + ')' : '', backToStation: dest === 'in place' ? null : back === before || JSON.parse(back).sub === JSON.parse(before).sub && JSON.parse(back).ref === JSON.parse(before).ref && JSON.parse(back).scr === JSON.parse(before).scr});
-    }
-    out[st.name] = rows;
-    const by = {}; rows.forEach(r => by[r.dest] = (by[r.dest] || 0) + 1);
-    console.log(`\n■ ${st.name}  —  ${rows.length} links${p._errors.length ? '  (page errors: ' + p._errors.length + ')' : ''}`);
-    console.log('  → ' + Object.entries(by).map(([k, v]) => `${k} ${v}`).join(' · '));
-    const noBack = rows.filter(r => r.backToStation === false); if(noBack.length) console.log('  Back did not return from: ' + noBack.map(r => `“${r.label}” (${r.dest})`).join('; '));
+    // "(showScreen('search'), switchSearchMode('x'), openThing())" runs as three steps, so the tool's list has drawn before its page opens
+    const m = st.open.match(/^\(showScreen\('search'\), (switchSearchMode\('\w+'\)), (.+)\)$/);
+    const steps = m ? ["showScreen('search')", m[1], m[2]] : [st.open];
+    for(const [i, x] of steps.entries()){ await p.evaluate(x).catch(() => {}); await sleep(i < steps.length - 1 ? (st.pre || 1200) : (st.wait || 2200)); }
+    const sel = st.sel + ', ' + st.sel.split(',').map(x => x.trim().replace(/ (button|a)$/, ' [onclick]')).join(', ');
+    const links = await p.evaluate(([sel, hidden]) => [...document.querySelectorAll(sel)].filter(e => hidden || (e.getBoundingClientRect().width && e.getBoundingClientRect().height)).map(e => {
+      const oc = (e.getAttribute('onclick') || '').replace(/event\.stopPropagation\(\);?/g, '');
+      const fns = [...oc.matchAll(/\b([a-zA-Z]+)\(/g)].map(x => x[1]).filter(f => !['event','preventDefault','history','back','then','if','leaveVPopThen','stopPropagation'].includes(f));
+      const t = (e.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 40);
+      return {fn: fns[0] || (/🗺/.test(t) ? 'openMap' : /📅/.test(t) ? 'openTimelineAt' : /🎧/.test(t) ? 'openHymn' : '') || (e.dataset.ref || /^\d? ?[A-Za-z. ]+ \d+:\d+/.test(t) ? 'jumpToRef' : ''), t};
+    }), [sel, !!st.hidden]);
+    if(!links.length) console.log('  (nothing matched ' + sel + '; screen ' + await p.evaluate(() => S.screen + ' / topics-panel ' + document.getElementById('topics-panel').style.display + ' / topic-view ' + document.getElementById('topic-view').style.display + ' len ' + document.getElementById('topic-view').innerHTML.length) + ')');
+    const by = {};
+    links.forEach(l => { const k = TOOL[l.fn] || (QUIET.has(l.fn) || !l.fn ? null : '? ' + l.fn); if(!k) return; (by[k] = by[k] || new Set()).add(l.t); });
+    out[st.name] = Object.fromEntries(Object.entries(by).map(([k, v]) => [k, [...v].slice(0, 3)]));
+    console.log('\n■ ' + st.name + ' — leads to: ' + (Object.keys(out[st.name]).join(' · ') || '(nothing found)'));
     await ctx.close();
   }
-  fs.writeFileSync(path.join(__dirname, 'link-map.json'), JSON.stringify(out, null, 1));
+  const file = path.join(__dirname, 'link-map.json');
+  const all = fs.existsSync(file) && ONLY.length ? {...JSON.parse(fs.readFileSync(file, 'utf8')), ...out} : out;
+  fs.writeFileSync(file, JSON.stringify(all, null, 1));
+  const ORDER = ['Scripture','Cross-references','People','Places','Names','Dictionary','Hebrew & Greek','Doctrines','Topics (Nave)','Hymns','Timeline','Journeys','Maps','Concordance','Search the Bible','Study','My Verses','Notes','Card','Present','Share'];
+  const rows = Object.entries(all).map(([st, by]) => `| ${st} | ${ORDER.filter(k => by[k]).join(' · ') || '—'} |`);
+  fs.writeFileSync(path.join(__dirname, 'LINK-MAP.md'), `# What each page links to\n\nWritten by \`node tools/map-links.js\`: each tool's page opened on a real entry in a phone-sized browser, and every link on it read. \`Scripture\` means a tappable reference that opens the chapter.\n\n| Page | Leads to |\n|---|---|\n${rows.join('\n')}\n`);
   await browser.close(); server.close();
 })();
