@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <!-- BUILD: 2026-07-03-watermark-fix -->
 <html lang="en">
+<!--
+  KJV Bible App — © 2026 Faith Baptist Church of Plymouth County
+  Licensed CC BY-NC-ND 4.0: free to use and share as it is, with the church
+  named; not to be sold or changed. https://creativecommons.org/licenses/by-nc-nd/4.0/
+  Works by others keep their own terms — see LICENSE.
+-->
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -2508,7 +2514,9 @@ body.light #home-watermark{
     </ul>
     <p>Like any website, these services see your device's internet address when they send a file.</p>
     <h4>Removing it all</h4>
-    <p>To remove everything from this phone, clear this site's data in your browser's settings. To have your restore code backup removed, ask at Faith Baptist Church of Plymouth County.</p>
+    <p>To remove everything from this phone, clear this site's data in your browser's settings. To have your restore code backup removed, write to us with your code.</p>
+    <h4>Questions</h4>
+    <p>Write to Faith Baptist Church of Plymouth County: <a href="#" class="church-mail" onclick="event.preventDefault();mailChurch()" style="color:var(--gold)">✉️ email the church</a>.</p>
     <button id="privacy-close" onclick="closePopover('privacy-sheet')">✕ Close</button>
   </div>
 </div>
@@ -2595,7 +2603,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📍</span><span class="tip-txt"><strong>Search → Names</strong> also lists ~1,200 Bible places — tap one to see where it was today, how far from Jerusalem, what was nearby, and every verse that names it. <strong>In the story</strong> lists the people named there and its events on the timeline; on a journey's map, tap a stop's name to open the place</span></div>
         <div class="tip-row"><span class="tip-ico">👤</span><span class="tip-txt"><strong>Search → Names</strong> lists ~2,600 names with their meanings and the ~3,000 people who bore them — tap a name to see who each person was (and any place of that name), their family, and every verse that names them. <strong>In the story</strong> gathers the places, journeys and timeline events of their life, and <strong>🔤 Hebrew &amp; Greek</strong> shows the name in the original. Tap a verse while reading to see the people in it</span></div>
         <div class="tip-row"><span class="tip-ico">🗺️</span><span class="tip-txt"><strong>Search → Maps</strong> shows every Bible place on one map — tap a place to see what happened there. The classic atlas maps are below it; under each, <strong>📖 Verses, places &amp; journeys</strong> leads to the passages, journeys and places it shows. All of it works offline. In the reader, <strong>📍 Where</strong> maps the places in the chapter</span></div>
-        <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The 🔥 flame</strong> in the header is your reading streak. It grows each day you read a chapter to the end — however you reached it: from a book, a plan, Search, <strong>Next</strong> or a link — and a 🛡️ shield, earned every 7 days, covers a missed day. <strong>Tap 🔥</strong> for your streak, a <strong>calendar of the days you read</strong> (tap a day to open the chapters you read) and your <strong>badges</strong>. A book read right through is ticked off in your Reading Journey</span></div>
+        <div class="tip-row"><span class="tip-ico">🔥</span><span class="tip-txt"><strong>The 🔥 flame</strong> in the header is your reading streak. It grows each day you read a chapter to the end — however you reached it: from a book, a plan, Search, <strong>Next</strong> or a link — and a 🛡️ shield, earned every 7 days, keeps your streak through a time away (a day or more); reading again within a day or so of your last reading also keeps it. <strong>Tap 🔥</strong> for your streak, a <strong>calendar of the days you read</strong> (tap a day to open the chapters you read) and your <strong>badges</strong>. A book read right through is ticked off in your Reading Journey</span></div>
         <div class="tip-row"><span class="tip-ico">✍️</span><span class="tip-txt"><strong>✍️ Reading Journal</strong> — at the end of every chapter, ✍️ opens a study called Reading Journal with today’s date and the chapter, ready for your thoughts. Tap the chapter in it to read it again; present, share or print it like any study</span></div>
         <div class="tip-row"><span class="tip-ico">📅</span><span class="tip-txt"><strong>Plans tab</strong> — run Bible in a Year, NT in 30 Days and Proverbs in a Month, one or several at once, each at your own pace. A chapter checks off once you have read to the end of it; <strong>✓ Mark read</strong> is for a day read from a printed Bible. Your next reading of each plan is on Home; <strong>⋯</strong> pauses, starts over or removes a plan</span></div>
         <div class="tip-row"><span class="tip-ico">🔖</span><span class="tip-txt"><strong>My Verses</strong> — tap a verse, then <strong>🔖 Save</strong>, and put it in a list you name: a doctrine you often explain, verses for comfort, a lesson. A verse can be in any number of lists. In <strong>Notes → My Verses</strong>, open a list to put its verses in your order (↑ ↓ or ⇅ Bible order), make a picture of one with <strong>📸 Card</strong>, memorize one with <strong>⚔️ Drill</strong>, <strong>Share</strong> it, <strong>Present</strong> it as slides or add it to a study. A doctrine page can be saved as a list with <strong>🔖 Save to My Verses</strong>. Your old bookmarks are in a list called Bookmarks</span></div>
@@ -2770,8 +2778,10 @@ body.light #home-watermark{
         <div class="tips-section-lbl">ℹ️ About</div>
         <div class="set-row"><div class="set-lbl">Version</div><div class="set-ctrl" id="settings-version" style="color:var(--text-m)">—</div></div>
         <button class="set-link" onclick="openPopover('privacy-sheet')">🔒 Privacy — what is kept, and where<span>›</span></button>
+        <button class="set-link" onclick="mailChurch()">✉️ Write to the church<span class="church-mail-at" style="font-size:12px;color:var(--text-m);margin-left:6px"></span><span>›</span></button>
         <a class="set-link" href="kjv/index.html" style="text-decoration:none">📜 The King James Bible as web pages — a page for every chapter, to share with anyone<span>›</span></a>
         <div class="set-row col"><div class="set-lbl" style="font-size:12px;color:var(--text-m);line-height:1.6">
+          © 2026 Faith Baptist Church of Plymouth County. Free for churches and anyone to use and share as it is — not to be sold or changed (<a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener" style="color:var(--gold)">CC BY-NC-ND 4.0</a>). The works below keep their own terms.<br><br>
           Bible name meanings from <strong>Hitchcock's Bible Names Dictionary</strong> (Roswell D. Hitchcock, 1869 — public domain), compiled via the <strong>BibleData</strong> project (Brady Stephenson).<br>
           Hebrew and Greek from <strong>Strong's Exhaustive Concordance</strong> (James Strong, 1890 — public domain; XML by David Troidl, David Instone-Brewer and Ulrik Petersen), each KJV word tied to its number by the <strong>CrossWire Bible Society</strong>'s King James Version.
         </div></div>
@@ -5278,6 +5288,8 @@ window.addEventListener('popstate', e => {
   if(S._popSkip){ S._popSkip = false; return; }
   const _cf = document.getElementById('copy-fmt-sheet');
   if(_cf){ _cf.remove(); return; }
+  const _pg = document.getElementById('pres-goto');
+  if(_pg && _pg.classList.contains('on')){ _pg.classList.remove('on'); document.getElementById('pres-goto-in').blur(); return; }
   const _wn = document.getElementById('whatsnew-modal');
   if(_wn && _wn.style.display === 'flex'){ dismissWhatsNew(); return; }
 
@@ -9315,9 +9327,16 @@ function presBackToLesson(){ if(!PRES.deck) return; PRES.mode = 'deck'; presRend
 // ── Go to a verse (🔎 or /) ──
 function presGotoOpen(){
   const f = document.getElementById('pres-goto'), inp = document.getElementById('pres-goto-in');
+  if(f.classList.contains('on')) return;
   f.classList.add('on'); inp.value = ''; setTimeout(() => inp.focus(), 30);
+  history.pushState({screen:S.screen, modal:'presgoto'}, '', '');   // Back closes the box, not Present
 }
-function presGotoClose(){ document.getElementById('pres-goto').classList.remove('on'); document.getElementById('pres-goto-in').blur(); }
+function presGotoClose(){
+  const f = document.getElementById('pres-goto');
+  if(!f.classList.contains('on')) return;
+  f.classList.remove('on'); document.getElementById('pres-goto-in').blur();
+  if(history.state && history.state.modal==='presgoto'){ S._popSkip = true; history.back(); }
+}
 async function presGoto(){
   const v = document.getElementById('pres-goto-in').value.trim(), r = v && parseReference(v);
   if(!r || !r.book){ showToast('Type a reference such as John 3:16 or Rom 8'); return; }
@@ -9328,6 +9347,11 @@ async function presGoto(){
   PRES.book = r.book; PRES.ch = r.chIdx; PRES.v = Math.max(0, (r.verse || 1) - 1); PRES.part = 0; PRES.mode = 'bible';
   presGotoClose(); presApplyLook(); presRender();
 }
+// The church's address, kept out of the page's text so address-harvesting
+// robots that read the source never see it; shown only in the running app
+function churchMail(){ return ['moc.liamg', '9891vjkcbf'].map(x => [...x].reverse().join('')).reverse().join(String.fromCharCode(64)); }
+function mailChurch(){ location.href = 'mai' + 'lto:' + churchMail() + '?subject=' + encodeURIComponent('KJV Bible app'); }
+function showChurchMail(){ document.querySelectorAll('.church-mail-at').forEach(el => el.textContent = churchMail()); }
 function presFromReader(){
   const sel = typeof getSelectedSorted === 'function' ? getSelectedSorted() : [];
   presOpen(sel.length ? sel[0].ref : `${S.book} ${S.ch + 1}:1`);
@@ -11756,7 +11780,7 @@ function showStreakInfo(){
       <div style="display:flex;justify-content:center;gap:6px;margin:6px 0 2px">
         ${Array.from({length:3},(_,i)=>`<span style="font-size:24px;opacity:${i<tokens?1:0.2}">🛡️</span>`).join('')}
       </div>
-      <div style="font-size:11px;color:var(--text-m);text-align:center">${tokens}/3 shields · earned every 7 days</div>`;
+      <div style="font-size:11px;color:var(--text-m);text-align:center">${tokens}/3 shields · earned every 7 days · one keeps your streak through a time away</div>`;
   }
 
   // Last read diagnostic
@@ -16941,6 +16965,7 @@ function applyFontFamily(k){
 }
 function setFontFamily(k){ applyFontFamily(k); LS.set('kjv_ff',k); fbSyncSoon(); }
 function openSettings(){
+  showChurchMail();
   // reflect current values into the controls
   const fl=document.getElementById('set-font-label'); if(fl) fl.textContent=S.fontSize;
   applyLineSpacing(S.lineSpacing);

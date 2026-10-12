@@ -890,6 +890,10 @@ check('privacy: Settings → Privacy opens, says what is kept, and Back closes i
   await p.evaluate(() => history.back()); await sleep(400);
   const st = await p.evaluate(() => ({priv: document.getElementById('privacy-sheet').classList.contains('on'), set: document.getElementById('settings-sheet').classList.contains('on')}));
   assert(!st.priv && st.set, 'Back should close Privacy and leave Settings open: ' + JSON.stringify(st));
+  // the church's email is shown in the app but never written whole in the page's source
+  const src = require('fs').readFileSync(require('path').join(ROOT, 'index.html'), 'utf8');
+  const shown = await p.evaluate(() => document.querySelector('.church-mail-at').textContent);
+  assert(/^[a-z0-9]+@gmail\.com$/.test(shown) && !src.includes(shown) && !/[a-z0-9._-]+@gmail\.com/i.test(src), 'the address should appear in Settings but not in the page source');
 });
 
 check('Back: picking verses, the copy sheet, Tips ✕, the list picker each take one step', async p => {
@@ -957,6 +961,10 @@ check('Present: a reference not in the Bible says so; Sword Drill streak shows o
   }
   const after = await p.evaluate(() => [PRES.book, PRES.ch, PRES.v].join());
   assert(!errs.length && before === after, 'a reference that is not there should leave the slide as it was: ' + JSON.stringify({errs, before, after}));
+  await p.evaluate(() => presGotoOpen()); await sleep(200);
+  await p.evaluate(() => history.back()); await sleep(400);
+  const pg = await p.evaluate(() => ({box: document.getElementById('pres-goto').classList.contains('on'), pres: document.getElementById('pres-overlay').classList.contains('on')}));
+  assert(!pg.box && pg.pres, 'Back should close the Go to box and keep Present: ' + JSON.stringify(pg));
   await p.evaluate(() => history.back()); await sleep(400);
   const n = await p.evaluate(() => { memUpdateStreakDisplay({streak: 9, streakLast: '2020-01-01'}); const a = document.getElementById('mgs-num'); return a ? a.textContent : '0'; });
   assert(n === '0', 'an old Sword Drill streak should show 0, not ' + n);

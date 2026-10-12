@@ -448,6 +448,11 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **A way to write to the church, and plainer streak words (v62.17)**
+  - **Write to the church:** Settings → About has **✉️ Write to the church** (the church's email, kept out of the page's text so robots cannot harvest it), and the Privacy page says to write there to have a restore-code backup removed.
+  - **Streak words:** Tips & Help and the streak panel now say what a 🛡️ shield does: it keeps your streak through a time away. The streak rules themselves are unchanged.
+  - **Present:** Back on Present's **Go to** box closes just the box
+  - **Licence:** the app is © Faith Baptist Church of Plymouth County under **CC BY-NC-ND 4.0**. Churches and anyone may use and share it as it is, with the church named, but may not sell or change it. Details are in the new LICENSE file and in Settings → About. Works by others keep their own terms; the Webster transcription stays CC BY-SA 4.0
 - **Before sharing widely: a sweep for bugs (v62.16)**
   - **Your notes are safer.**
     - A phone with no room left can no longer undo a newer edit made on another device.
