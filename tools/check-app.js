@@ -126,6 +126,14 @@ check('versions agree (sw.js and What\'s New)', async () => {
   assert(html.includes(`data-wn="${wn}"`), `no What's New item for ${wn}`);
 }, {noPage: true});
 
+check('hymn and verse indexes match their sources (rebuild if this fails)', async () => {
+  const {execFileSync} = require('child_process');
+  for(const b of ['build-hymns.js', 'build-verse-index.js']){
+    try{ execFileSync(process.execPath, [path.join(__dirname, b), '--check'], {stdio: 'pipe'}); }
+    catch(e){ throw new Error(String(e.stdout || e.message).trim()); }
+  }
+}, {noPage: true});
+
 check('reading: a chapter read to the end keeps the streak', async (p, ctx) => {
   await p.evaluate(() => { const y = new Date(Date.now() - 864e5);
     LS.set('kjv_streak', 5); LS.set('kjv_streak_last', `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`);
@@ -267,6 +275,56 @@ check('verse card: 🎵 a hymn on the verse opens it; a verse with none shows no
   assert(r.opened === 'Holy, Holy, Holy', 'tapping the hymn opened ' + r.opened);
   assert(r.none, 'a hymn fold shows on Genesis 1:1');
   assert(r.back.book === 'Isaiah' && r.back.ch === 5, 'Back from the hymn left ' + JSON.stringify(r.back));
+});
+
+check('the trail back: verse → card → Strong\'s → another chapter, then Back, Back lands where you started', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, sub: S._subView ? S._subView.sub + ':' + S._subView.key : '', book: S.book, ch: S.ch + 1});
+    await jumpToRef('John 3:16'); await wait(1500);
+    openVPop('John 3:16', 'For God so loved the world'); await wait(800);
+    leaveVPopThen(() => openStrongs('G26')); await wait(1800);
+    const strongs = at();
+    await jumpToRef('Matthew 24:12'); await wait(1500);
+    const away = at();
+    history.back(); await wait(1200); const back1 = at();
+    history.back(); await wait(1200); const back2 = at();
+    // and from a person page: a verse, then Back returns to the person
+    showScreen('search'); switchSearchMode('names'); await wait(1200);
+    await openPerson('Adam_1'); await wait(1500);
+    await jumpToRef('1 Corinthians 15:45'); await wait(1500);
+    history.back(); await wait(1200); const person = at();
+    return {strongs, away, back1, back2, person};
+  });
+  assert(r.strongs.sub === 'strongs:G26', 'the Strong\'s page did not open: ' + JSON.stringify(r.strongs));
+  assert(r.away.screen === 'reader' && r.away.book === 'Matthew', 'the verse did not open Matthew 24');
+  assert(r.back1.screen === 'search' && r.back1.sub === 'strongs:G26', 'Back from the verse should return to the Strong\'s page: ' + JSON.stringify(r.back1));
+  assert(r.back2.screen === 'reader' && r.back2.book === 'John' && r.back2.ch === 3, 'Back again should land in John 3, where it started: ' + JSON.stringify(r.back2));
+  assert(r.person.screen === 'search' && r.person.sub === 'person:Adam_1', 'Back from a verse should return to the person page: ' + JSON.stringify(r.person));
+});
+
+check('verse card: 🧭 When & where opens the timeline or a journey, Back returns to the chapter', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, book: S.book, ch: S.ch + 1, vpop: document.getElementById('vpop').classList.contains('on')});
+    LS.set('kjv_when_open', true);
+    const card = async (ref, txt) => { await jumpToRef(ref); await wait(1500); openVPop(ref, txt); await wait(1800); const el = document.getElementById('vpop-when'); return {shown: el.style.display !== 'none', text: el.textContent, row: el.querySelector('.hy-row')}; };
+    const flood = await card('Genesis 6:8', 'But Noah found grace in the eyes of the LORD.');
+    flood.row.click(); await wait(2000);
+    const tl = {screen: S.screen, sub: (document.querySelector('.tl-ev.here, #tl-panel .here') || {}).id || '', url: location.href.length > 0};
+    history.back(); await wait(1500); const afterTl = at();
+    const bethel = await card('Genesis 28:19', 'And he called the name of that place Bethel');
+    const jrow = [...document.querySelectorAll('#vpop-when .hy-row')].find(x => /🧭/.test(x.textContent)); jrow.click(); await wait(2500);
+    const jr = {overlay: document.getElementById('wm-overlay').classList.contains('on'), jr: !!(S._jr && S._jr.j), title: S._jr && S._jr.j && S._jr.j.t};
+    history.back(); await wait(1500); const afterJr = at();
+    const none = await card('Genesis 1:2', 'And the earth was without form, and void;');
+    LS.set('kjv_when_open', false);
+    return {flood: {shown: flood.shown, text: flood.text}, tl, afterTl, bethel: {shown: bethel.shown, text: bethel.text}, jr, afterJr, none: none.shown};
+  });
+  assert(r.flood.shown && /The Flood/.test(r.flood.text), 'Genesis 6:8 has no timeline row: ' + r.flood.text);
+  assert(r.afterTl.screen === 'reader' && r.afterTl.book === 'Genesis' && r.afterTl.ch === 6, 'Back from the timeline left ' + JSON.stringify(r.afterTl));
+  assert(r.bethel.shown && /Bethel/.test(r.bethel.text), 'Genesis 28:19 has no journey row: ' + r.bethel.text);
+  assert(r.jr.overlay && r.jr.jr, 'the journey did not open: ' + JSON.stringify(r.jr));
+  assert(r.afterJr.screen === 'reader' && r.afterJr.book === 'Genesis' && r.afterJr.ch === 28, 'Back from the journey left ' + JSON.stringify(r.afterJr));
+  assert(!r.none, 'a fold shows on Genesis 1:2');
 });
 
 check('hymns: 🎧 Listen opens the Hymns app', async p => {
