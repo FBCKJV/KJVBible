@@ -5734,10 +5734,12 @@ async function showDoctrineVerses(ci, ti, pushHistory=true, scrollY=0, fromList=
     <div class="dv-title">${topic.name}</div>
     <div class="dv-desc">${topic.desc}</div>
     <div class="dv-btns"><button class="nb-add" onclick="nbAddDoctrine(${ci},${ti})">📝＋ Add to Study</button><button class="nb-add" onclick="colFromDoctrine(${ci},${ti})">🔖 Save to My Verses</button></div>
+    <div id="dv-hymns"></div>
     <div id="dv-verses"><div id="s-status">Loading verses…</div></div>`;
   if(scroller) scroller.scrollTop = 0;
 
   const versesEl = document.getElementById('dv-verses');
+  fillDoctrineHymns(ci, ti);
 
   // ── Load all verse data first ──
   const loaded = [];
@@ -6793,6 +6795,7 @@ async function openNaveTopic(key, pushHistory=true, scrollY=0){
     <div class="dv-title">${escapeHtml(naveTitle(key))}</div>
     <div class="dv-desc">${[naveSummary(key), "Nave's Topical Bible"].filter(Boolean).join(' · ')}</div>
     <button class="nb-add" onclick="nbAddTopic()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>
+    <div id="nv-hymns"></div>
     ${lines.map((l, i) => {
       const [depth, label, refs, see] = l;
       const pad = `style="margin-left:${depth * 14}px"`;
@@ -6809,6 +6812,7 @@ async function openNaveTopic(key, pushHistory=true, scrollY=0){
     }).join('')}
     <div class="nv-credit">From Nave's Topical Bible (Orville J. Nave, 1896 — public domain), digitized by BibleData (Brady Stephenson, CC BY 4.0).</div>`;
   scroller.scrollTop = 0;
+  hymnsChip('nv-hymns', naveTitle(key).toLowerCase());
   await Promise.all([...open].map(i => fillNaveLine(i)));
   if(scrollY) scroller.scrollTop = scrollY;
 }
@@ -7916,15 +7920,64 @@ const hymnRow = (i, mark) => { const h = S._hymns[i];
 const HYMNS_APP = 'https://fbckjv.app/Hymns/';
 const hymnListenURL = song => HYMNS_APP + '?song=' + encodeURIComponent(song);
 // Title, author or any line of the words ("it is well", "crosby", "sinking sand")
-function filterHymns(q){
+// Title, author or any line of the words, as the Hymns search reads them; `whole` matches whole words only
+const hyNorm = t => t.toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ');
+function hyHas(nq, whole){
+  if(!whole) return t => hyNorm(t).includes(nq);
+  const re = new RegExp(`(^| )${nq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}( |$)`);
+  return t => re.test(hyNorm(t));
+}
+/* ── Hymns ↔ the study tools ──
+   A Dictionary word, a Strong's word or a Nave topic offers "🎵 “grace” in 9 hymns ›" when hymns sing
+   the word; a hymn offers the doctrines that cite its verses, and a doctrine the hymns on its verses. */
+async function hymnsChip(boxId, word){
+  const w = (word || '').trim();
+  if(!w || w.length < 3) return;
+  const H = await loadHymns().catch(() => null), box = document.getElementById(boxId);
+  if(!H || !box) return;
+  const has = hyHas(hyNorm(w), true);
+  const n = H.filter(h => has(h[0]) || [...h[5].flat(), ...h[6]].some(has)).length;
+  if(n) box.innerHTML = `<button class="nv-showmore pp-find" onclick="hymnsSearchFor('${escapeHtml(w).replace(/'/g, "\\'")}')">🎵 “${escapeHtml(w)}” in ${n} hymn${n !== 1 ? 's' : ''} ›</button>`;
+}
+async function hymnsSearchFor(w){
+  if(S.screen !== 'search') showScreen('search', false);
+  switchSearchMode('hymns', true, false);
+  showTabList('hymns');
+  const f = document.getElementById('hymns-filter');
+  if(f) f.value = w;
+  await loadHymns().catch(() => null);
+  filterHymns(w, true);
+}
+// The doctrines citing any verse a hymn stands on → [[ci, ti], …]
+function doctrinesForHymn(h){
+  const idx = doctrineIndex(), out = [];
+  for(const [label, jump] of h[4]){
+    const m = jump.match(/^(.+ \d+):(\d+)$/), e = label.match(/[–-](\d+)$/);
+    for(let v = +m[2]; v <= (e ? +e[1] : +m[2]); v++)
+      for(const d of idx.get(`${m[1]}:${v}`) || []) if(!out.some(([a, b]) => a === d[0] && b === d[1])) out.push(d);
+  }
+  return out;
+}
+// The hymns standing on any verse a doctrine cites
+async function fillDoctrineHymns(ci, ti){
+  const box = document.getElementById('dv-hymns'), idx = await loadHymnIndex().catch(() => null);
+  if(!box || !idx || !S._docTopic || S._docTopic[0] !== ci || S._docTopic[1] !== ti) return;
+  const found = new Set();
+  for(const refStr of DOCTRINES[ci].topics[ti].refs){
+    const r = parseReference(refStr);
+    if(!r || !r.verse) continue;
+    for(let v = r.verse; v <= (r.verseEnd || r.verse); v++) hymnsOnVerse(idx, `${r.book} ${r.chIdx + 1}:${v}`).forEach(i => found.add(i));
+  }
+  if(found.size) box.innerHTML = `<div class="vd-label" style="margin:12px 0 6px">🎵 Hymns on these verses</div><div class="vl-chips">${[...found].map(i => `<button class="vl-chip" onclick="openHymn(${i})">🎵 ${escapeHtml(idx.h[i][0])}</button>`).join('')}</div>`;
+}
+function filterHymns(q, whole=false){
   if(!S._hymns) return;
   q = q.trim().toLowerCase();
   if(!q) return renderHymns();
-  const norm = t => t.toLowerCase().replace(/[’']/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ');
-  const nq = norm(q);
+  const nq = hyNorm(q), has = hyHas(nq, whole);
   const hits = S._hymns.map((h, i) => {
     const words = [...h[5].flat(), ...h[6]];
-    const score = norm(h[0]).includes(nq) ? 3 : norm(h[1]).includes(nq) ? 2 : words.some(l => norm(l).includes(nq)) ? 1 : 0;
+    const score = has(h[0]) ? 3 : has(h[1]) ? 2 : words.some(has) ? 1 : 0;
     return [i, score];
   }).filter(x => x[1]).sort((a, b) => b[1] - a[1]);
   const list = document.getElementById('hymns-list');
@@ -7946,6 +7999,7 @@ async function openHymn(i, pushHistory=true, scrollY=0){
     <div class="dv-title">${escapeHtml(t)}</div>
     <div class="hy-by">${escapeHtml(a)}, ${y} · ${escapeHtml(sec)}</div>
     <button class="nb-add" onclick="nbAddHymn()" onmousedown="event.preventDefault()" title="Adds the lines you have selected, or the first verse and refrain">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button>${song ? `<a class="nb-add hy-listen" href="${hymnListenURL(song)}" target="_blank" rel="noopener" title="Hear it sung in the FBC Hymns app">🎧 Listen</a>` : ''}
+    ${(() => { const ds = doctrinesForHymn(h); return ds.length ? `<div class="vl-chips hy-docs">${ds.map(([ci, ti]) => `<button class="vl-chip" onclick="openDoctrineFromSearch(${ci},${ti})">✝ ${escapeHtml(DOCTRINES[ci].topics[ti].name.replace(/<[^>]*>/g, ''))}</button>`).join('')}</div>` : ''; })()}
     <div class="vl-chips hy-refs">${refs.map(([label, r]) => `<button class="vl-chip" onclick="jumpToRef('${r.replace(/'/g, "\\'")}')">📖 ${escapeHtml(label)}</button>`).join('')}</div>
     ${stanzas.map((st, n) => `<div class="hy-st" data-hy="${n}" onclick="hyTap(event, this)"><span class="hy-n">${n + 1}</span><div>${st.map(escapeHtml).join('<br>')}</div>${addBtn(n)}</div>` + (n === 0 ? chorusHTML : '')).join('')}
     <div class="nv-credit">Words public domain (${y}). Texts from open hymnal collections, proofread against standard hymnals.${song ? ' 🎧 Listen opens a recording in the FBC Hymns app, with these words to follow.' : ''}</div>
@@ -9782,12 +9836,13 @@ async function openWord(key, pushHistory=true, scrollY=0){
     <div class="wd-first" id="wd-first"></div>
     <div style="margin-top:12px"><button class="nb-add" onclick="nbAddWord()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button></div>
     <button class="nv-showmore pp-find" onclick="concordSearch('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔍 Find “${escapeHtml(r.noteWord || r.word)}” in Scripture</button>
-    <button class="nv-showmore pp-find" onclick="strongsSearchFor('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔤 The Hebrew &amp; Greek behind “${escapeHtml(r.noteWord || r.word)}” ›</button>
+    <button class="nv-showmore pp-find" onclick="strongsSearchFor('${escapeHtml(r.noteWord ? dictKey(r.noteWord) : r.word)}')">🔤 The Hebrew &amp; Greek behind “${escapeHtml(r.noteWord || r.word)}” ›</button><div id="wd-hymns"></div>
     <div class="nv-credit">Noah Webster, An American Dictionary of the English Language (1828 — public domain); transcription by akaitsurugi/webster1828, CC BY-SA 4.0. Scripture references checked against the KJV.</div>`;
   S._wordShown = r;
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
   sayHint();
   wordFirstMention(r);
+  hymnsChip('wd-hymns', (r.noteWord ? dictKey(r.noteWord) : r.word || '').toLowerCase());
 }
 // "⭐ First mention in Scripture: Genesis 6:8" — the law of first mention
 async function wordFirstMention(r){
@@ -10062,12 +10117,14 @@ async function openStrongs(key, pushHistory=true, scrollY=0){
     </div>
     <div style="margin-top:12px"><button class="nb-add" onclick="nbAddStrongs()">📝＋ Add to Study</button><button class="nb-add nb-share" onclick="shareSub()">📤 Share</button></div>
     ${top ? `<button class="nv-showmore pp-find" onclick="openWord('${top}')">📖 “${top}” in Webster’s 1828 ›</button>` : ''}
+    <div id="sg-hymns"></div>
     <div class="sg-vh" id="sg-vh"></div>
     <div id="sg-verses"></div>
     <div class="nv-credit">Strong’s Hebrew and Greek dictionaries (James Strong, 1890 — public domain; XML by David Troidl, David Instone-Brewer and Ulrik Petersen). The words of the KJV tied to their numbers by the CrossWire Bible Society’s King James Version.</div>`;
   if(scrollY) document.getElementById('screen-search').scrollTop = scrollY;
   hintMaybe('strongs', 900);
   sgShowVerses(false, st);
+  if(top) hymnsChip('sg-hymns', top);
 }
 // The verses, a page at a time, the words that render the number in bold
 async function sgShowVerses(more, st = S._sgShown){
@@ -13654,6 +13711,7 @@ const TOOL_TIPS = {
     ['🎧', '<strong>🎧 Listen</strong> on a hymn (marked 🎧 in the list) opens it sung in the FBC Hymns app, with the words to follow. In the <strong>Psalms</strong>, <strong>🎧 Sung</strong> under the chapter title does the same for that Psalm'],
     ['📝＋', '<strong>📝＋ Add to Study</strong> puts a hymn in your notebook'],
     ['📸', '<strong>Tap a verse</strong> of a hymn (or the refrain), and more if you like, then <strong>📸 Card</strong> makes a picture of those words to share, in any of the card styles'],
+    ['✝', 'Above a hymn’s 📖 verses, <strong>✝</strong> names the doctrines that cite them; a doctrine lists the <strong>🎵 hymns on its verses</strong>. A word in the Dictionary, Strong’s or Topics offers <strong>🎵 “grace” in 55 hymns ›</strong> when hymns sing it'],
   ]},
   doctrine: {i:'📑', t:'Doctrines', tips:[
     ['📑', '<strong>Faith Baptist Church’s positions</strong> on salvation, the Godhead, baptism, last things and more — open a topic to see its supporting KJV verses'],

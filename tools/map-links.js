@@ -52,7 +52,7 @@ const STATIONS = [
   {name:'Dictionary word',      open:`(showScreen('search'), switchSearchMode('dict'), openWord('grace'))`, sel:'#word-view button, #word-view a'},
   {name:"Strong's word",        open:`(showScreen('search'), switchSearchMode('strongs'), openStrongs('G26'))`, sel:'#strongs-view button, #strongs-view a'},
   {name:'Concordance word',     open:`(showScreen('search'), switchSearchMode('concord'), openConcordWord('grace'))`, sel:'#concord-panel button, #concord-panel a'},
-  {name:'Hymn',                 open:`(showScreen('search'), switchSearchMode('hymns'), openHymn(0))`, sel:'#hymn-view button, #hymn-view a'},
+  {name:'Hymn (Amazing Grace)',               open:`(showScreen('search'), switchSearchMode('hymns'), openHymn(26))`, sel:'#hymn-view button, #hymn-view a'},
 ];
 
 async function openApp(ctx, base){
@@ -69,7 +69,7 @@ async function openApp(ctx, base){
 const TOOL = {
   jumpToRef:'Scripture', openPassage:'Scripture', xrPreview:'Scripture', tlPaneRead:'Scripture', jrRead:'Scripture', openHistoryChapter:'Scripture',
   openTreasuryFromVerse:'Cross-references', openTreasury:'Cross-references', openPersonFromVerse:'People', openPerson:'People', openPlaceFromVerse:'Places', openPlace:'Places',
-  showVpopDictList:'Dictionary', showVpopNameList:'Names', openWordFromVerse:'Dictionary', openWord:'Dictionary', openDoctrineFromVerse:'Doctrines',
+  showVpopDictList:'Dictionary', showVpopNameList:'Names', openWordFromVerse:'Dictionary', openWord:'Dictionary', openDoctrineFromVerse:'Doctrines', openDoctrineFromSearch:'Doctrines', hymnsSearchFor:'Hymns',
   hyToggleFold:'Hymns', openHymn:'Hymns', sgToggleFold:"Hebrew & Greek", sgFilter:"Hebrew & Greek", strongsSearchFor:"Hebrew & Greek", openStrongs:"Hebrew & Greek",
   openJourney:'Journeys', jrView:'Journeys', jrGo:'Journeys', openChapterMap:'Maps', tlMap:'Maps', openWhereMap:'Maps', openMap:'Maps',
   vpopShowMap:'Maps', jrPlace:'Places', nbAddMap:'Study', shareMap:'Share', jrTimeline:'Timeline', openTimelineAt:'Timeline', openNaveTopicAt:'Topics (Nave)', openNaveTopic:'Topics (Nave)',
