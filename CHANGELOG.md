@@ -448,6 +448,15 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Psalm 47, and only the names a verse says (v62.18)**
+  - **Psalms:** one Psalm now reads as the KJV prints it, **Psalm 47** or **Psalm 23:1**, in these places:
+    - the reader's header and the line under the title (where other books say *Chapter 9*);
+    - the verse card, screenshots, Copy and Share;
+    - plans and Continue Reading;
+    - My Verses, Highlights and Notes;
+    - Present and the Verse of the Day.
+  - **Several Psalms** keep the plural (*Psalms 23–24*), and the book is still *Psalms*. Saved highlights, notes and lists are untouched.
+  - **Names:** a verse's Names row lists a person only when the verse uses one of their names. 3 John 1:1 (*The elder unto the wellbeloved Gaius*) no longer lists John, its writer. Peter still leads to Simon Peter.
 - **A way to write to the church, and plainer streak words (v62.17)**
   - **Write to the church:** Settings → About has **✉️ Write to the church** (the church's email, kept out of the page's text so robots cannot harvest it), and the Privacy page says to write there to have a restore-code backup removed.
   - **Streak words:** Tips & Help and the streak panel now say what a 🛡️ shield does: it keeps your streak through a time away. The streak rules themselves are unchanged.
