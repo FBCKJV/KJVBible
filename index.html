@@ -2555,6 +2555,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has Faith Baptist Church's positions on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
+        <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a word of the verse</strong> on its card for what it means — Webster’s 1828, with our church’s KJV note on top where there is one, and <strong>Full dictionary entry →</strong> for the rest. A name opens its meaning and the person or place. Tap the word again to put it away.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Search → Dictionary</strong> is Webster's 1828 dictionary with our church's KJV notes on top — type any word, or browse the KJV word list. Its Scripture references are links</span></div>
         <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Search → Hebrew &amp; Greek</strong> is Strong's — every word of the KJV tied to the Hebrew or Greek it translates. Type an English word (<em>mercy</em>), a Hebrew or Greek word (<em>agape</em>) or a number (<em>G26</em>). A word's page lists every verse it is in; tap a rendering to see only those verses. While reading, tap a verse and open <strong>🔤 Hebrew words</strong> at the bottom of the card</span></div>
         <div class="tip-row"><span class="tip-ico">📇</span><span class="tip-txt"><strong>Search → Concordance</strong> browses every KJV word from A–Z with its verse count — tap a word to find every verse it appears in</span></div>
@@ -4265,7 +4266,7 @@ function multiScreenshot(){
 
 /* ════ SINGLE VERSE POPUP ════ */
 function openVPop(ref,txt){
-  hintMaybe('verse', 650);
+  hintMaybe(hintSeen('verse') ? 'vword' : 'verse', 650);
   S.popRef=ref;S.popTxt=txt;
   document.getElementById('vpop-ref').textContent=ref;
   updateHLPicker();updateBMBtn();
@@ -5451,8 +5452,8 @@ const KJV_DICT = {
   "do well": "Doing what is right; prospering in obedience (Gen. 4:7).",
   "durst": "Dared; had the courage to do (John 21:12).",
   "ear": "To plough or till the ground — \'earing time\' is ploughing season (Gen. 45:6).",
-  "elect": "Chosen. Of salvation, the elect are those who have entered into \"the election of grace\" by faith — a description of believers, NOT persons picked beforehand to be saved (Rom. 5:2; 11:5–6, 20; Matt. 24:22).",
-  "election": "God's choice. Of salvation: \"the election of grace\" — entered by faith, not by works (Rom. 5:2; 11:5–6). \"Make your calling and election sure\" (2 Pet. 1:10).",
+  "elect": "Chosen; singled out by God for a special purpose, privilege, or service (Isa. 42:1; 45:4). Of believers, the elect are those already in Christ — chosen \"in him\" (Eph. 1:4) — never persons picked beforehand to be caused to believe (Rom. 11:5–6, 20; Matt. 24:22).",
+  "election": "Being singled out by God for a special purpose, privilege, or service. In Scripture it is never God choosing who will believe or causing anyone to be saved; it is always accompanied by conditions and responsibilities, and in many cases warnings of disqualification and real consequences for failure. \"Give diligence to make your calling and election sure\" (2 Pet. 1:10; Rom. 11:5–6, 20–22).",
   "emerods": "Tumours; haemorrhoids; used of the plague on the Philistines (1 Sam. 5:6).",
   "ensign": "A banner, flag, or standard — a rallying point for a nation (Isa. 11:12).",
   "ephah": "A unit of dry measure holding about a bushel (22 litres) (Ruth 2:17).",
@@ -5516,7 +5517,7 @@ const KJV_DICT = {
   "piece of silver": "A silver coin, often a shekel or drachma (Luke 15:8).",
   "pilled": "Peeled; stripped of bark (Gen. 30:37).",
   "pottage": "A thick stew or soup. Esau sold his birthright for a pottage of lentils (Gen. 25:34).",
-  "predestinate": "To foreordain; to determine beforehand — refers to God\'s sovereign purpose for believers (Rom. 8:29).",
+  "predestinate": "To foreordain; to determine beforehand — refers to God\'s planned purpose for all believers (Rom. 8:29).",
   "predestination": "Foreordaining. In Scripture, what God has determined beforehand for the believer — to be conformed to the image of His Son and adopted as His child (Rom. 8:29; Eph. 1:5).",
   "presently": "Immediately; at once — NOT after a while (Matt. 21:19).",
   "prevent": "To go before; to precede; to come before — NOT to stop (Ps. 88:13; 1 Thess. 4:15).",
@@ -9977,10 +9978,17 @@ async function vpopWebster(word){
   const box = document.getElementById('vpop-def-webster');
   if(!box) return;
   box.innerHTML = '';
-  const r = await lookupWord(word);
+  let r = await lookupWord(word);
   if(!r || document.getElementById('vpop-def-word').textContent.toLowerCase() !== word.toLowerCase()) return;
-  const fs = firstSense(r.entries);
-  box.innerHTML = (fs ? `<div class="wd-vp"><span class="wd-kjv-l">Webster 1828</span> ${escapeHtml(fs)}</div>` : '')
+  let fs = firstSense(r.entries);
+  // A form's own entry can be thin ("transfigured: Changed in form."): give the root word's instead
+  if(fs.length < 40) for(const f of websterForms(word).slice(1)){
+    const r2 = await lookupWord(f), fs2 = r2 && firstSense(r2.entries);
+    if(fs2 && fs2.length > fs.length && r2.key !== r.key){ r = r2; fs = fs2; break; }
+  }
+  if(document.getElementById('vpop-def-word').textContent.toLowerCase() !== word.toLowerCase()) return;
+  const root = r.key !== dictKey(word) ? ` <i>(${escapeHtml(r.key)})</i>` : '';
+  box.innerHTML = (fs ? `<div class="wd-vp"><span class="wd-kjv-l">Webster 1828</span>${root} ${escapeHtml(fs)}</div>` : '')
     + `<button class="vl-chip" onclick="event.stopPropagation();openWordFromVerse('${r.key}')">Full dictionary entry →</button>`;
 }
 function openWordFromVerse(key){ leaveVPopThen(() => openWord(key)); }
@@ -13901,6 +13909,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
   reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save or drill them together. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
+  vword:    {i:'📖', t:'What does this word mean?', b:'<b>Tap any word</b> of the verse for its meaning — Webster’s 1828, with our church’s KJV note on top where there is one. Tap it again to put it away.', at:'#vpop-txt'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it. <b>Add to Screenshot</b> gathers up to 3 verses, from anywhere, onto one picture.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share (<b>📸 Screenshot</b> under the buttons puts up to 3 verses on one), and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
   calendar: {i:'🔥', t:'Your days in the Word', b:'Each shaded day is a day you read — the darker, the more chapters. <b>Tap a day</b> to see what you read and open it again. Your <b>badges</b> are below. A chapter counts once you read to the end of it.', at:'#sp-cal'},
