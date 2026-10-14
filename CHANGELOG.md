@@ -448,6 +448,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Verse of the Day (v62.20):** Psalm 28:7 came up twice a year; its second day (23 July) is now Psalm 27:1, *The LORD is my light and my salvation; whom shall I fear?*
 - **Search finds what you mean, every time (v62.19)**
   - **No more stale results:** a search still loading from an earlier word could draw its results after you had typed something new. Each new letter now retires the search before it, and Enter, a recent search, the Testament buttons and the Concordance all replace a typed search still waiting to run.
   - **Everyday words:** *God loves* finds *God loveth*, *he teaches* finds *he teacheth*, *carries* finds *carrieth*, *says* finds *saith*, and *your* also finds *thy* and *thine* (*your word is a lamp* → Psalm 119:105).
