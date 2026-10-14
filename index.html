@@ -1660,7 +1660,9 @@ body.light #home-watermark{
 #mg-stats b{color:var(--gold)}
 #mem-game-streak{padding:0!important;font-size:11.5px!important}
 #mem-verse-scroll{flex:1;overflow-y:auto;padding:16px 18px 24px;min-height:0}
-#mem-game-ref{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+#mem-game-ref{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;background:none;border:none;padding:4px 0;cursor:pointer;font-family:inherit;text-decoration:underline;text-decoration-color:var(--gold-d);text-underline-offset:3px}
+#mem-game-ref::after,.mc-ref::after{content:' ›';text-decoration:none;display:inline-block}
+.mc-ref{background:none;border:none;padding:0;font:inherit;color:var(--gold);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 #mem-verse-text{font-family:'Crimson Pro',serif;font-size:22px;line-height:1.9;color:var(--text)}
 .mw{display:inline}
 .mw-k{color:var(--text)}
@@ -2829,7 +2831,7 @@ body.light #home-watermark{
       </div>
     </div>
     <div id="mem-verse-scroll" onclick="memFocusInput()">
-      <div id="mem-game-ref"></div>
+      <button id="mem-game-ref" onclick="memOpenChapter()" title="Read it in its chapter"></button>
       <div id="mem-verse-text"></div>
       <div id="mem-congrats">
         <div class="mc-ico" id="mc-ico">🎉</div>
@@ -11308,7 +11310,7 @@ function colNewFromSheet(){
   const inp = document.getElementById('col-new-in'), n = inp.value.trim();
   if(!n) { inp.focus(); return; }
   const d = colData();
-  const ex = d.list.find(x => x.n.toLowerCase() === n.toLowerCase());
+  const ex = colByName(d, n);
   const id = ex ? ex.id : colNewId();
   if(!ex) d.list.unshift({id, n, items: [], u: Date.now()});
   colSave(d);
@@ -11494,7 +11496,7 @@ function colFromDoctrine(ci, ti){
     ? {a: g[0].ref, e: g[g.length - 1].vNum, r: `${g[0].ref}–${g[g.length - 1].vNum}`, t: g.map(v => `${v.vNum} ${v.text}`).join(' ')}
     : {a: g[0].ref, r: g[0].ref, t: g[0].text});
   const d = colData();
-  let c = d.list.find(x => x.n === topic.name);
+  let c = colByName(d, topic.name);
   if(c){
     const have = new Set(c.items.map(colItemKey));
     items.forEach(it => { if(!have.has(colItemKey(it))) c.items.push(it); });
@@ -11526,10 +11528,15 @@ function renderBMPanel(){
       <span class="col-card-c">${c.items.length} ${c.items.length === 1 ? 'verse' : 'verses'}${c.items.length ? ' · ' + escapeHtml(c.items.slice(0, 3).map(i => i.r).join(', ')) + (c.items.length > 3 ? '…' : '') : ''}</span>
     </button>`).join('') : `<div class="empty-msg">No lists match &ldquo;${escapeHtml(q)}&rdquo;.</div>`);
 }
+// Each list has its own name: "Comfort" and "comfort" are the same list
+const colNameKey = n => String(n || '').trim().replace(/\s+/g, ' ').toLowerCase();
+const colByName = (d, n, notId) => d.list.find(x => x.id !== notId && colNameKey(x.n) === colNameKey(n));
 function colNewFromTab(){
   const inp = document.getElementById('col-tab-new'), n = (inp.value || '').trim();
   if(!n){ inp.focus(); return; }
-  const d = colData(), id = colNewId();
+  const d = colData(), same = colByName(d, n);
+  if(same){ inp.value = ''; showToast(`You already have a list called ${same.n}`); colOpen(same.id); return; }
+  const id = colNewId();
   d.list.unshift({id, n, items: [], u: Date.now()});
   colSave(d);
   colOpen(id);
@@ -11612,6 +11619,8 @@ function colRenameSave(id){
   const inp = document.getElementById('col-rename-in');
   if(!inp) return;
   const n = inp.value.trim();
+  const same = n && colByName(colData(), n, id);
+  if(same){ showToast(`You already have a list called ${same.n}`); renderBMPanel(); return; }
   if(n) colEdit(id, c => { c.n = n; }); else renderBMPanel();
 }
 async function colDelete(id){
@@ -11781,7 +11790,7 @@ function hlToList(c){
     .sort((a, b) => { const x = canonKey(a), y = canonKey(b); return x[0] - y[0] || x[1] - y[1] || x[2] - y[2]; });
   if(!refs.length) return;
   const name = hlName(c), d = colData();
-  let col = d.list.find(x => x.n === name);
+  let col = colByName(d, name);
   if(!col) d.list.unshift(col = {id: colNewId(), n: name, items: [], u: Date.now()});
   const have = new Set(col.items.map(colItemKey));
   refs.forEach(r => { if(!have.has(r + '-')) col.items.push({a: r, r, t: hlPreview(r).replace(/^…$/, '')}); });
@@ -14682,7 +14691,7 @@ function memDueReviews(){
   return Object.keys(refs).filter(r => memIsDue(refs[r], now));
 }
 
-function memRecordComplete(ref, mode, elapsed){
+function memRecordComplete(ref, mode, elapsed, game){
   const ms = memGetMastery();
   if(!ms.refs) ms.refs = {};
   const existing = ms.refs[ref] || {mastered:false,timesCompleted:0,bestMode:null,bestTimeChallenge:null,bestTimeGuided:null};
@@ -14698,6 +14707,13 @@ function memRecordComplete(ref, mode, elapsed){
   if(!existing.bestMode||(mode==='challenge'&&existing.bestMode!=='challenge')) existing.bestMode=mode;
   const btKey = mode==='challenge'?'bestTimeChallenge':'bestTimeGuided';
   if(existing[btKey]===null||existing[btKey]===undefined||elapsed<existing[btKey]) existing[btKey]=elapsed;
+  // Each way of practising keeps its own best (learn, letters, order, full);
+  // the two older fields above stay as they were for older copies of the app
+  if(game){
+    const bt = existing.bestTimes && typeof existing.bestTimes === 'object' ? existing.bestTimes : {};
+    if(!(bt[game] <= elapsed)) bt[game] = elapsed;
+    existing.bestTimes = bt;
+  }
   ms.refs[ref]=existing;
 
   // Update mem streak
@@ -14778,6 +14794,17 @@ function openMemorize(){
 function memCloseTap(){
   const st = history.state || {};
   if(st.modal === 'mem-overlay') history.go(st.mem === 'verse' ? -2 : -1); else closeMemorize();
+}
+// The verse's reference: Sword Drill closes and the chapter opens at the verse
+function memOpenChapter(){
+  const r = (M.ref || M.loading || '').replace(/-\d+$/, '').replace(/^Psalm (?=\d)/, 'Psalms ');
+  if(!r) return;
+  const st = history.state || {};
+  if(st.modal === 'mem-overlay'){
+    const after = () => { window.removeEventListener('popstate', after); setTimeout(() => jumpToRef(r), 0); };
+    window.addEventListener('popstate', after);
+    history.go(st.mem === 'verse' ? -2 : -1);
+  } else { closeMemorize(); jumpToRef(r); }
 }
 function memBackTap(){
   const st = history.state || {};
@@ -15378,18 +15405,20 @@ function showMemCongrats(){
   const saveMode = isMastered ? 'challenge' : 'guided';
   const btKey = isMastered ? 'bestTimeChallenge' : 'bestTimeGuided';
   const msBefore = memGetMastery();
-  const priorBest = msBefore.refs?.[M.ref]?.[btKey] ?? null;
-  const priorCount = msBefore.refs?.[M.ref]?.timesCompleted ?? 0;
-  const rec = memRecordComplete(M.ref, saveMode, elapsed);
+  // This mode's own best: Word Order is never compared with First Letters
+  // (Full Recall's older best is its own already)
+  const prior = msBefore.refs?.[M.ref];
+  const priorBest = prior?.bestTimes?.[M.mode] ?? (isMastered ? prior?.[btKey] ?? null : null);
+  const rec = memRecordComplete(M.ref, saveMode, elapsed, M.mode);
   let timeDisplay = `⏱ ${fmtTime(elapsed)}`;
-  if(priorCount > 0 && priorBest !== null) timeDisplay += elapsed < priorBest ? ' 🏅 New best!' : `  •  Best: ${fmtTime(priorBest)}`;
+  if(priorBest !== null) timeDisplay += elapsed < priorBest ? ' 🏅 New best!' : `  •  Best: ${fmtTime(priorBest)}`;
   const slips = M.mistakes + M.hints, stars = slips===0 ? 3 : slips<=2 ? 2 : 1;
   document.getElementById('mc-stars').innerHTML = [1,2,3].map(n=>`<span class="${n<=stars?'':'off'}">⭐</span>`).join('');
   document.getElementById('mc-ico').textContent = isMastered?'🏆':stars===3?'🌟':'🎉';
   document.getElementById('mc-title').textContent = isMastered?'Verse Mastered!':'Well Done!';
   document.getElementById('mc-time').textContent = timeDisplay;
   document.getElementById('mc-mode-lbl').textContent = `${MEM_MODES[M.mode].ico} ${MEM_MODES[M.mode].n} · ❌ ${M.mistakes} · 💡 ${M.hints}`;
-  document.getElementById('mc-verse-echo').textContent = `“${M.verseText}” — ${M.ref}`;
+  document.getElementById('mc-verse-echo').innerHTML = `“${escapeHtml(M.verseText)}” — <button class="mc-ref" onclick="memOpenChapter()">${escapeHtml(M.ref)}</button>`;
   document.getElementById('mc-sub').textContent = isMastered
     ? (stars===3 ? 'Perfect — hidden in thine heart!' : 'Hidden in thine heart — well done!')
     : 'Finish it in Full Recall to mark it mastered';
@@ -16541,7 +16570,8 @@ MERGE_STORES.kjv_mem_mastery = {tag:'mm',
   combine: (a, b) => {
     const lo = (x, y) => x == null ? y : y == null ? x : Math.min(x, y);
     return {...b, ...a, mastered: !!(a.mastered || b.mastered), timesCompleted: Math.max(a.timesCompleted || 0, b.timesCompleted || 0),
-      bestTimeChallenge: lo(a.bestTimeChallenge, b.bestTimeChallenge), bestTimeGuided: lo(a.bestTimeGuided, b.bestTimeGuided)};
+      bestTimeChallenge: lo(a.bestTimeChallenge, b.bestTimeChallenge), bestTimeGuided: lo(a.bestTimeGuided, b.bestTimeGuided),
+      bestTimes: Object.fromEntries([...new Set([...Object.keys(a.bestTimes || {}), ...Object.keys(b.bestTimes || {})])].map(k => [k, lo((a.bestTimes || {})[k], (b.bestTimes || {})[k])]))};
   }};
 // A list of names kept as a plain array (the stored form does not change)
 const syncNameList = {
