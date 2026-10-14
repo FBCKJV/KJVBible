@@ -448,6 +448,13 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Search finds what you mean, every time (v62.19)**
+  - **No more stale results:** a search still loading from an earlier word could draw its results after you had typed something new. Each new letter now retires the search before it, and Enter, a recent search, the Testament buttons and the Concordance all replace a typed search still waiting to run.
+  - **Everyday words:** *God loves* finds *God loveth*, *he teaches* finds *he teacheth*, *carries* finds *carrieth*, *says* finds *saith*, and *your* also finds *thy* and *thine* (*your word is a lamp* → Psalm 119:105).
+  - **Misspellings put right:** when a misspelt word finds nothing (*salvaton*, *faith beleive*), the results for the right spelling show, with **Search for "…" instead** to see what was typed.
+  - **Closer "closest matches":** when no verse has every word, the verses with the rarer words come first (*jesus heals* opens with *who healeth all thy diseases*, not every verse that says Jesus).
+  - **Enter** searches at once and puts the keyboard away.
+  - The Testament buttons no longer clear the Hebrew & Greek language buttons, and one Verse of the Day (10 November) named a book that does not exist; it is now Jeremiah 1:5.
 - **Psalm 47, and only the names a verse says (v62.18)**
   - **Psalms:** one Psalm now reads as the KJV prints it, **Psalm 47** or **Psalm 23:1**, in these places:
     - the reader's header and the line under the title (where other books say *Chapter 9*);

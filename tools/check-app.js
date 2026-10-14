@@ -205,6 +205,35 @@ check('search: G26 and a word reach Hebrew & Greek', async p => {
   assert((await p.evaluate(() => (S._toolHits || []).map(r => r.t))).some(t => /Hebrew & Greek/.test(t)), 'no Hebrew & Greek row for “mercy”');
 });
 
+check('search: everyday words, a spelling fix, and no stale results', async p => {
+  await p.evaluate(() => { showScreen('search'); switchSearchMode('search'); });
+  const run = async (q, wait = 1500) => { await p.evaluate(q => searchFor(q), q); await sleep(wait);
+    return p.evaluate(() => ({refs: (S._searchResults || []).map(r => r.ref), fixed: S._searchFixedTo, status: (document.getElementById('s-status') || {}).textContent})); };
+  let r = await run('your word is a lamp', 6000);
+  assert(r.refs.includes('Psalms 119:105'), '“your word is a lamp” did not find Psalm 119:105');
+  r = await run('god loves');
+  assert(r.refs.includes('2 Corinthians 9:7'), '“god loves” did not find “God loveth a cheerful giver”');
+  r = await run('he teaches');
+  assert(r.refs.includes('Psalms 18:34'), '“he teaches” did not find “He teacheth my hands to war”');
+  r = await run('salvaton');
+  assert(r.fixed === 'salvation' && r.refs.includes('Genesis 49:18'), '“salvaton” was not put right: ' + r.status);
+  await p.evaluate(() => searchAsTyped()); await sleep(1200);
+  assert(await p.evaluate(() => !S._searchFixedTo && !(S._searchResults || []).length), '“Search for … instead” did not search what was typed');
+  r = await run('jesus heals');
+  assert(r.refs[0] && !/^Matthew 1:/.test(r.refs[0]), 'closest matches for “jesus heals” did not put the rarer word first: ' + r.refs[0]);
+  // Typing over a search still finishing never shows the old results
+  await p.evaluate(() => { const i = document.getElementById('s-input'); i.value = 'grace'; handleSearch('grace'); });
+  await sleep(500);
+  await p.evaluate(() => { const i = document.getElementById('s-input'); i.value = 'mercy'; handleSearch('mercy'); });
+  await sleep(1500);
+  assert(await p.evaluate(() => S._searchQuery === 'mercy' && /mercy/.test(document.getElementById('s-status').textContent)), 'the results are not for the last words typed');
+  // The Testament buttons leave Hebrew & Greek's own buttons alone
+  await p.evaluate(() => setSearchFilter('nt')); await sleep(800);
+  assert(await p.evaluate(() => !!document.querySelector('#sg-lang .sf-btn.on')), 'the Testament buttons cleared the Hebrew & Greek buttons');
+  assert(await p.evaluate(() => (S._searchResults || []).every(r => isNT(r.book))), 'New Testament filter let Old Testament verses through');
+  await p.evaluate(() => setSearchFilter('all'));
+});
+
 check('strongs: list search, page, filter, deep link', async p => {
   await p.evaluate(() => strongsSearchFor('mercy')); await sleep(2500);
   const first = await p.evaluate(() => (document.querySelector('#strongs-results .wd-row') || {}).dataset?.k);

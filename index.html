@@ -2593,6 +2593,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🔔</span><span class="tip-txt"><strong>A daily reading reminder</strong> — on the Plans page, tap 🔔 and choose morning, midday or evening. Each day a short note on this device names your next reading; tap it to open your plans. Turn it off the same way</span></div>
         <div class="tip-row"><span class="tip-ico">🔍</span><span class="tip-txt"><strong>Search understands references</strong> — type <em>John 3:16</em>, <em>Matt 24</em>, or <em>1 Pet 3</em> to jump directly to that passage</span></div>
         <div class="tip-row"><span class="tip-ico">❝</span><span class="tip-txt"><strong>Search for an exact phrase</strong> — put it in quotes, like <em>"god so loved"</em>. Put a minus before a word to leave it out: <em>love -god</em>. Switch between <em>Best match</em> and <em>Bible order</em> above the results</span></div>
+        <div class="tip-row"><span class="tip-ico">🔤</span><span class="tip-txt"><strong>Search in everyday words</strong> — <em>God loves</em> finds <em>God loveth</em>, <em>he teaches</em> finds <em>he teacheth</em>, and <em>your word is a lamp</em> finds <em>Thy word is a lamp</em>. A misspelt word is put right for you (<em>salvaton</em> → salvation), with a link to search exactly what you typed</span></div>
         <div class="tip-row"><span class="tip-ico">⇄</span><span class="tip-txt"><strong>Parallel passage chips</strong> appear automatically when reading a Gospel chapter that has a counterpart in another Gospel</span></div>
         <div class="tip-row"><span class="tip-ico">📑</span><span class="tip-txt"><strong>Search → Doctrines</strong> has the primary doctrines of the faith on salvation, the Godhead, baptism, last things and more — each with supporting KJV verses</span></div>
         <div class="tip-row"><span class="tip-ico">📚</span><span class="tip-txt"><strong>Search → Topics</strong> has Nave's Topical Bible — ~5,300 subjects A–Z, each with its passages arranged by sub-topic. Searching a subject like <em>forgiveness</em> shows its topic card at the top of your results</span></div>
@@ -3443,7 +3444,7 @@ const VOD=[
   {b:'Isaiah',c:41,v:14},{b:'Isaiah',c:43,v:1},{b:'Isaiah',c:43,v:18},{b:'Isaiah',c:44,v:22},{b:'Isaiah',c:45,v:22},
   {b:'Isaiah',c:48,v:17},{b:'Isaiah',c:49,v:15},{b:'Isaiah',c:53,v:4},{b:'Isaiah',c:53,v:6},{b:'Isaiah',c:55,v:1},
   {b:'Isaiah',c:55,v:6},{b:'Isaiah',c:55,v:11},{b:'Isaiah',c:57,v:15},{b:'Isaiah',c:58,v:11},{b:'Isaiah',c:60,v:1},
-  {b:'Isaiah',c:61,v:1},{b:'Isaiah',c:61,v:3},{b:'Isaiah',c:61,v:10},{b:'Jeremiah 1 Jeremiah',c:17,v:5},{b:'Jeremiah',c:31,v:3},
+  {b:'Isaiah',c:61,v:1},{b:'Isaiah',c:61,v:3},{b:'Isaiah',c:61,v:10},{b:'Jeremiah',c:1,v:5},{b:'Jeremiah',c:31,v:3},
   {b:'Jeremiah',c:31,v:33},{b:'Ezekiel',c:36,v:26},{b:'Daniel',c:2,v:20},{b:'Daniel',c:6,v:26},{b:'Hosea',c:6,v:3},
   {b:'Joel',c:2,v:12},{b:'Joel',c:2,v:32},{b:'Amos',c:5,v:4},{b:'Jonah',c:2,v:9},{b:'Micah',c:7,v:18},
   {b:'Habakkuk',c:3,v:2},{b:'Zechariah',c:4,v:6},{b:'Malachi',c:3,v:10},{b:'Malachi',c:4,v:2},{b:'Matthew',c:4,v:4},
@@ -6140,18 +6141,21 @@ function parseReference(raw) {
 const KJV_VARIANTS = {
   // Pronouns
   'thine':['thine','your','yours'],
+  // Today's "your" is often "thy" or "thine" ("your word is a lamp")
+  'your':['your','thy','thine'],'yours':['yours','thine'],
   'yourself':['yourself','thyself'],'thyself':['thyself','yourself'],
   // KJV verb forms
   'hath':['hath','have','has'],
   'doth':['doth','does','do'],'doest':['doest','do','does'],
   'saith':['saith','say','said','says'],
+  'say':['say','saith'],'says':['says','saith','say'],
   'spake':['spake','spoke','speak'],'spoke':['spoke','spake'],
   'speak':['speak','spake','spoken'],
   'wilt':['wilt','will'],'shalt':['shalt','shall'],
   'art':['art','are'],'wast':['wast','was'],
   'canst':['canst','can'],'wouldest':['wouldest','would'],
   // Show/shew
-  'show':['show','shew','shewn'],'shew':['shew','show','shewn','shown'],
+  'show':['show','shew','shewn'],'shows':['shows','sheweth','showeth','shew'],'shew':['shew','show','shewn','shown'],
   'showing':['showing','shewing'],'shewing':['shewing','showing'],
   // Know/believe/love/give variants
   'knoweth':['knoweth','know','knows'],'know':['know','knew','known'],
@@ -6203,9 +6207,18 @@ function inflectionPattern(w){
   if (/^[a-z]*[^aeiou][aeiou][bdgklmnprt]$/.test(w)) alts.push(`${e}${w.slice(-1)}(?:ed|eth|est|ing)`);
   return alts.join('|');
 }
+// Today's -s on a verb is -eth in the KJV: "God loves" → loveth, "he heals"
+// → healeth, "teaches" → teacheth, "carries" → carrieth, "goes" → goeth.
+// Plurals that aren't verbs ("eyes" → eyeth) match nothing, so no harm.
+function modernForms(w){
+  if (w.length < 4 || !w.endsWith('s') || /(?:ss|us|is)$/.test(w)) return [];
+  if (w.endsWith('ies')) return [w.slice(0,-3) + 'ieth', w.slice(0,-3) + 'iest'];
+  const r = /(?:s|x|z|ch|sh|o)es$/.test(w) ? w.slice(0,-2) : w.slice(0,-1);
+  return r.endsWith('e') ? [r + 'th', r + 'st'] : [r + 'eth', r + 'est'];
+}
 function wordPattern(word, mode){
   if (mode === 'exact') return `\\b${_reEsc(word)}\\b`;
-  const body = (KJV_VARIANTS[word] || [word]).map(inflectionPattern).join('|');
+  const body = (KJV_VARIANTS[word] || [word]).map(v => [inflectionPattern(v), ...modernForms(v).map(_reEsc)].join('|')).join('|');
   return mode === 'prefix' ? `\\b(?:${body}|${_reEsc(word)}[a-z]*)\\b` : `\\b(?:${body})\\b`;
 }
 // `gap` lets up to that many extra words sit between the phrase's words
@@ -6270,21 +6283,25 @@ function bookSearchIndex(bookName, data){
 }
 
 // Scores every verse of the given books. `full` hit every term; `partial`
-// hit at least one (kept for the "closest matches" fallback).
+// hit at least one (kept for the "closest matches" fallback). Each entry's
+// `w` weighs the words it has by how rare they are, so among the closest
+// matches a verse with "heal" comes before one with only "Jesus".
 function scanVerses(indexes, query, mode){
   const { terms, exclude, together } = buildSearchTerms(query, mode);
-  const full = [], partial = [];
+  const full = [], partial = [], df = terms.map(() => 0);
+  let n = 0;
   for (const verses of indexes) {
+    n += verses.length;
     for (const v of verses) {
       const lc = v.lc;
-      let hits = 0, score = 0;
+      let hits = 0, score = 0, mask = 0;
       const pos = [];
-      for (const t of terms) {
+      terms.forEach((t, i) => {
         const m = t.re.exec(lc);
-        if (!m) continue;
-        hits++; pos.push(m.index);
+        if (!m) return;
+        hits++; mask |= 1 << i; df[i]++; pos.push(m.index);
         score += 2 + (t.exact && t.exact.test(lc) ? 1 : 0); // the word as typed beats an inflection
-      }
+      });
       if (!hits || exclude.some(re => re.test(lc))) continue;
       // Proximity boost: terms close together score higher
       if (pos.length > 1) {
@@ -6292,9 +6309,15 @@ function scanVerses(indexes, query, mode){
         score += span < 30 ? 8 : span < 60 ? 4 : span < 100 ? 2 : 0;
       }
       if (together && together.test(lc)) score += 10;
-      const entry = { ref: v.ref, book: v.book, txt: v.txt, ord: v.ord, score };
+      const entry = { ref: v.ref, book: v.book, txt: v.txt, ord: v.ord, score, mask };
       (hits === terms.length ? full : partial).push(entry);
     }
+  }
+  const idf = df.map(d => Math.log((n + 1) / (d + 1)));
+  for (const e of partial) {
+    let w = 0;
+    idf.forEach((x, i) => { if (e.mask & (1 << i)) w += x; });
+    e.w = Math.round(w * 100);
   }
   return { full, partial, terms };
 }
@@ -6303,14 +6326,17 @@ function scanVerses(indexes, query, mode){
 S.searchFilter = 'all';
 function setSearchFilter(f){
   S.searchFilter = f;
-  document.querySelectorAll('.sf-btn').forEach((b,i)=>{
+  document.querySelectorAll('#s-filter .sf-btn').forEach((b,i)=>{
     b.classList.toggle('on', ['all','ot','nt'][i]===f);
   });
   // Re-run current search with new filter (cheap — books stay in memory).
   // A Concordance/Names exact-word search stays exact if the box is unchanged.
   const inp = document.getElementById('s-input') || document.querySelector('#search-panel input');
   if(inp && inp.value.trim().length >= 2){
-    if(S._searchExact && inp.value.trim() === S._searchQuery) S._exactNext = true;
+    if(inp.value.trim() === S._searchQuery){
+      if(S._searchExact) S._exactNext = true;
+      if(S._searchAsTyped) S._asTypedNext = true;
+    }
     doSearch(inp.value.trim());
   }
 }
@@ -6530,6 +6556,9 @@ function handleSearch(q) {
     renderSearchHome();
     return;
   }
+  // Retire the search before this one now, so nothing it was still loading
+  // can draw its results over the new words while they wait to be searched
+  S._searchGen = (S._searchGen || 0) + 1;
   document.getElementById('s-results').innerHTML = '<div id="s-status">Searching…</div>';
   const strip = document.getElementById('s-book-strip');
   if(strip) strip.style.display = 'none';
@@ -6538,6 +6567,9 @@ function handleSearch(q) {
 
 async function doSearch(raw) {
   const el = document.getElementById('s-results');
+  // Every way in (Enter, a chip, the Testament buttons, the Concordance)
+  // replaces a typed search still waiting to run
+  clearTimeout(sTimer);
   showSearchHub(false);
   // Staleness guard: fetchBook awaits below can take seconds on a cold
   // cache, and the user can retrigger doSearch mid-scan. Each run takes a
@@ -6549,6 +6581,11 @@ async function doSearch(raw) {
   const exactMode = S._exactNext === true;
   S._exactNext = false;
   S._searchExact = exactMode; // persists for this result set (testament re-run)
+  // "Search for what I typed" after a spelling fix — the same one-shot
+  const asTyped = S._asTypedNext === true;
+  S._asTypedNext = false;
+  S._searchAsTyped = asTyped;
+  S._searchFixedTo = null;
   // Strip trailing punctuation for reference check
   const cleaned = raw.trim().replace(/[?!.,;]+$/, '');
   S._topicMatches = findTopicMatches(cleaned);
@@ -6620,13 +6657,32 @@ async function doSearch(raw) {
     // promote the closest partial matches (verses hitting *some* of the
     // terms). With a single term, "partial" and "no match" are the same.
     S._isPartialFallback = true;
-    S._searchResults = res.partial.sort((a,b) => b.score - a.score || a.ord - b.ord).slice(0, 200);
+    // The rarest words first (see scanVerses), then the best score
+    S._searchResults = res.partial.sort((a,b) => b.w - a.w || b.score - a.score || a.ord - b.ord).slice(0, 200);
   }
 
-  S._naveMatches = findNaveTopics(cleaned);
+  // A misspelt word ("salvaton", "faith beleive") finds nothing, or only
+  // verses with the other words. When the spelling fix finds verses with
+  // every word, show those, with a link back to what was typed.
+  const fixSpelling = dym => {
+    if (!dym || exactMode || asTyped || S._searchFixedTo) return false;
+    if (S._searchResults.length && !S._isPartialFallback) return false;
+    const fq = parseSearchQuery(dym);
+    let fm = 'strict', fr = scanVerses(indexes, fq, fm);
+    if (!fr.full.length) { fm = 'prefix'; fr = scanVerses(indexes, fq, fm); }
+    if (!fr.full.length) return false;
+    S._searchFixedTo = dym; S._didYouMean = null;
+    S._searchMatchMode = fm; S._searchTerms = fr.terms;
+    S._searchResults = fr.full; S._isPartialFallback = false; S._bookFilter = null;
+    return true;
+  };
+  const eff = () => S._searchFixedTo || cleaned;
+
+  S._didYouMean = exactMode ? null : didYouMean(cleaned, query);
+  fixSpelling(S._didYouMean);
+  S._naveMatches = findNaveTopics(eff());
   S._toolHitsOpen = false;
-  S._toolHits = findToolHits(cleaned);
-  if (!exactMode) S._didYouMean = didYouMean(cleaned, query);
+  S._toolHits = findToolHits(eff());
   const render = () => {
     if (!S._searchResults.length) {
       el.innerHTML = renderToolHits()
@@ -6652,13 +6708,14 @@ async function doSearch(raw) {
   if (waits.length) {
     await Promise.all(waits);
     if (gen !== S._searchGen) return;
-    S._naveMatches = findNaveTopics(cleaned);
-    const hits = findToolHits(cleaned);
-    const dym = exactMode ? null : didYouMean(cleaned, query);
-    if (JSON.stringify(hits) !== JSON.stringify(S._toolHits) || dym !== S._didYouMean) {
-      S._toolHits = hits; S._didYouMean = dym;
+    const dym = exactMode || S._searchFixedTo ? null : didYouMean(cleaned, query);
+    const fixed = fixSpelling(dym);
+    S._naveMatches = findNaveTopics(eff());
+    const hits = findToolHits(eff());
+    if (fixed || JSON.stringify(hits) !== JSON.stringify(S._toolHits) || dym !== S._didYouMean) {
+      S._toolHits = hits; if (!fixed) S._didYouMean = dym;
       // Only redraw if the reader is still on the first page of results
-      if (!S._searchResults.length || (S._searchPage || 0) === 0) render();
+      if (fixed || !S._searchResults.length || (S._searchPage || 0) === 0) render();
     }
   }
 }
@@ -6752,8 +6809,8 @@ function renderSearchPage(startIdx, scroll){
   const el      = document.getElementById('s-results');
   const all     = S._searchResults || [];
   const filtered = (S._bookFilter ? all.filter(r => r.book === S._bookFilter) : all.slice())
-    .sort(S.searchSort === 'canon' ? (a,b) => a.ord - b.ord : (a,b) => b.score - a.score || a.ord - b.ord);
-  const cleaned = S._searchQuery  || '';
+    .sort(S.searchSort === 'canon' ? (a,b) => a.ord - b.ord : (a,b) => (b.w || 0) - (a.w || 0) || b.score - a.score || a.ord - b.ord);
+  const cleaned = S._searchFixedTo || S._searchQuery || '';
   const PAGE    = 100;
   const total   = filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / PAGE));
@@ -7096,6 +7153,8 @@ function didYouMean(cleaned, query){
   const fixes = {};
   for(const w of new Set([...query.words, ...query.phrases.flat(), ...query.excluded])){
     if(w.length < 3 || STOP.has(w) || /\d/.test(w) || vocab.has(w) || KJV_VARIANTS[w]) continue;
+    // Today's form of a KJV word ("heals" → healeth) isn't a typo
+    if(modernForms(w).some(f => vocab.has(f))) continue;
     // A modern word that names a topic ("worry" → Care) isn't a typo
     if(NAVE_ALIASES[w] || (S._naves && S._naves.byNorm.has(w))) continue;
     const s = suggestWord(w, vocab);
@@ -7105,10 +7164,13 @@ function didYouMean(cleaned, query){
   return cleaned.replace(/[A-Za-z’']+/g, t => fixes[t.toLowerCase()] || t);
 }
 function renderDidYouMean(){
+  if(S._searchFixedTo) return `<div class="s-dym">Showing results for <b>${escapeHtml(S._searchFixedTo)}</b>. <a href="#" onclick="searchAsTyped();return false">Search for “${escapeHtml(S._searchQuery)}” instead</a></div>`;
   return S._didYouMean
     ? `<div class="s-dym">Did you mean <a href="#" onclick="searchFor(S._didYouMean);return false">${escapeHtml(S._didYouMean)}</a>?</div>`
     : '';
 }
+// After a spelling fix: the words exactly as typed
+function searchAsTyped(){ S._asTypedNext = true; searchFor(S._searchQuery); }
 function searchFor(q){
   const inp = document.getElementById('s-input');
   if(inp) inp.value = q;
@@ -9879,7 +9941,11 @@ function renderSearchHome(){
 document.addEventListener('DOMContentLoaded', () => {
   const res = document.getElementById('s-results'), inp = document.getElementById('s-input');
   if(res) res.addEventListener('click', e => { if(e.target.closest('.rc') && inp) rememberSearch(inp.value); }, true);
-  if(inp) inp.addEventListener('keydown', e => { if(e.key === 'Enter') rememberSearch(inp.value); });
+  if(inp) inp.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    rememberSearch(inp.value);
+    if(inp.value.trim().length >= 2){ doSearch(inp.value.trim()); inp.blur(); }
+  });
   renderSearchHome();
 });
 
