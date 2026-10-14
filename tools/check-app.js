@@ -134,6 +134,21 @@ check('hymn and verse indexes match their sources (rebuild if this fails)', asyn
   }
 }, {noPage: true});
 
+check('chapter audio: every chapter has its own stretch of the recording, in order', async () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const T = JSON.parse(html.match(/const SCOURBY_TS = (\{.*?\});\n/)[1]);
+  const bad = [];
+  for(const [b, t] of Object.entries(T)){
+    const n = JSON.parse(fs.readFileSync(path.join(ROOT, 'bible', b.replace(/ /g, '') + '.json'))).chapters.length;
+    if(t.c.length !== n || t.e.length !== n) bad.push(`${b}: ${t.c.length} timings for ${n} chapters`);
+    for(let i = 0; i < t.c.length; i++){
+      if(t.e[i] - t.c[i] < 8) bad.push(`${b} ${i + 1} is only ${(t.e[i] - t.c[i]).toFixed(1)}s`);
+      if(i && t.c[i] < t.e[i - 1]) bad.push(`${b} ${i + 1} starts before ${i} ends`);
+    }
+  }
+  assert(!bad.length, bad.slice(0, 5).join('; '));
+}, {noPage: true});
+
 check('reading: a chapter read to the end keeps the streak', async (p, ctx) => {
   await p.evaluate(() => { const y = new Date(Date.now() - 864e5);
     LS.set('kjv_streak', 5); LS.set('kjv_streak_last', `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, '0')}-${String(y.getDate()).padStart(2, '0')}`);
@@ -631,7 +646,10 @@ check('listening: a chapter heard through counts in plans, books and the calenda
   assert(r.one, 'Ephesians 1 heard through was not logged as read');
   assert(r.plan, 'Ephesians 1 heard through did not count in the plan');
   assert(!r.two, 'Ephesians 2 skipped to its end should not count');
-  assert(r.streak >= 1, 'listening should keep the streak');
+  // the streak may first ask the cloud (when Firebase can be reached), so give it a moment
+  let streak = r.streak;
+  for(let i = 0; i < 20 && streak < 1; i++){ await sleep(250); streak = await p.evaluate(() => S.streak); }
+  assert(streak >= 1, 'listening should keep the streak');
 });
 
 check('share: links open a chapter or verses; a newcomer sees them first; Home', async (p, ctx, browser, base) => {
