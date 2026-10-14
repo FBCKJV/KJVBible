@@ -448,6 +448,7 @@
 - **Bottom nav** — "Books" label changed to "Home"
 
 ### Bug Fixes
+- **Chapter audio stays in its chapter (v62.22)** — playing one chapter, the progress bar shows that chapter, but a tap on it moved to the same point in the whole book (a touch near the end of John 19's bar played John 18). A tap now moves within the chapter shown.
 - **A sweep for bugs, area by area (v62.21)** — the streak rules are unchanged.
   - **Search:** other forms of a word are tried before closest matches (*being interpreted a stone* finds John 1:42, *by interpretation, A stone*); *being* counts as a common word like *be* and *been*.
   - **Your work is safer:** typing in a study is no longer lost when another study opens straight after; **＋ Add** with a list's own name never takes the verse out; the Save sheet's rows stay put while you tap; a highlight change can no longer strip a study's tappable reference; a Reading Journal heading for John 1 is no longer mistaken for John 10; 📝＋ on a cross-reference adds the passage with its verses numbered; a long link no longer pushes ✕ off a note; damaged storage no longer stops Home or the notebook.

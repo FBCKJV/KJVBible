@@ -16357,8 +16357,14 @@ function scourbySeekClick(e){
   const ts = SCOURBY_TS[SA.book];
   if(!ts) return;
   const audio = document.getElementById('scourby-audio');
+  const p = Math.max(0, Math.min(1, pct));
   SA.seeking = true;
-  audio.currentTime = ts.t * pct;
+  // Playing one chapter, the bar shows that chapter: a tap moves within it,
+  // never to a spot in another chapter of the book
+  if(SA.chMode && SA.chEnd){
+    const chStart = ts.c[SA.chIdx] || 0;
+    audio.currentTime = chStart + p * (SA.chEnd - chStart);
+  } else audio.currentTime = ts.t * p;
   SA.seeking = false;
 }
 
