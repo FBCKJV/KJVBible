@@ -234,6 +234,49 @@ check('search: everyday words, a spelling fix, and no stale results', async p =>
   await p.evaluate(() => setSearchFilter('all'));
 });
 
+check('search: other forms of a word find the verse (being interpreted a stone → John 1:42)', async p => {
+  await p.evaluate(() => { showScreen('search'); switchSearchMode('search'); searchFor('being interpreted a stone'); });
+  await sleep(6000);
+  const first = await p.evaluate(() => { const r = document.querySelector('#s-results .rc .rc-ref'); return r ? r.textContent : ''; });
+  assert(/John 1:42/.test(first), 'first result shown was ' + first);
+});
+
+check('bug sweep: a slow book, a study saved, a list kept, Sword Drill’s add sheet, the certificate', async p => {
+  // Two books tapped quickly: the second wins, with its own text
+  await p.route('**/bible/Genesis.json', async r => { await sleep(1500); r.continue(); });
+  await p.evaluate(() => { delete S.cache.Genesis; delete S.cache.Exodus; selectBook('Genesis'); setTimeout(() => selectBook('Exodus'), 150); });
+  await sleep(2500);
+  const bk = await p.evaluate(() => ({book: S.book, n: S.bookData && S.bookData.chapters.length, grid: document.getElementById('chs-grid').children.length}));
+  assert(bk.book === 'Exodus' && bk.n === 40 && bk.grid === 40, 'book race: ' + JSON.stringify(bk));
+  // Typing in a study, then straight to another study: the typing is kept
+  await p.evaluate(() => { nbOpen(); const ed = document.getElementById('nb-ed'); ed.innerHTML = '<p>kept words</p>'; ed.dispatchEvent(new Event('input', {bubbles: true})); });
+  await sleep(100);
+  await p.evaluate(() => { const a = nbActive().id; nbOpenStudy(null); S._keptId = a; });
+  await sleep(600);
+  assert(await p.evaluate(() => /kept words/.test(nbData().list.find(x => x.id === S._keptId).h)), 'typing was lost when another study opened');
+  await p.evaluate(() => history.back()); await sleep(400);
+  // ＋ Add with a list's own name never takes the verse out
+  await p.evaluate(() => { LS.set('kjv_collections', {list: [{id: 'c1', n: 'Comfort', items: [{a: 'John 3:16', r: 'John 3:16', t: 'For God so loved'}], u: 1}]}); colIndex && colIndex();
+    colSheet([{a: 'John 3:16', r: 'John 3:16', t: 'For God so loved'}]); document.getElementById('col-new-in').value = 'comfort'; colNewFromSheet(); });
+  await sleep(300);
+  assert(await p.evaluate(() => colLists().find(c => c.id === 'c1').items.length === 1), '＋ Add removed the verse');
+  await p.evaluate(() => history.back()); await sleep(400);
+  // Sword Drill: Add your own verse shows above the list
+  await p.evaluate(() => { openMemorize(); }); await sleep(800);
+  await p.evaluate(() => memAddOpen()); await sleep(500);
+  const top = await p.evaluate(() => { const b = document.getElementById('memadd-save').getBoundingClientRect(); const el = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2); return !!(el && el.closest('#memadd-sheet')); });
+  assert(top, 'the Add a Verse sheet is hidden behind Sword Drill');
+  await p.evaluate(() => history.back()); await sleep(400);
+  // The certificate: a Style tap redraws the certificate, not an older card
+  await p.evaluate(() => { openScrOverlay([{ref: 'John 3:16', vnum: '16', txt: 'For God so loved the world'}], 'John 3:16'); });
+  await sleep(500); await p.evaluate(() => history.back()); await sleep(400);
+  await p.evaluate(() => openSwordCertificate()); await sleep(500);
+  const w0 = await p.evaluate(() => document.getElementById('scr-canvas').width);
+  await p.evaluate(() => switchCardTheme('light')); await sleep(400);
+  const after = await p.evaluate(() => ({w: document.getElementById('scr-canvas').width, ref: S.scrRef}));
+  assert(after.w === w0 && after.ref === 'Sword Drill Certificate', 'a Style tap replaced the certificate: ' + JSON.stringify(after));
+});
+
 check('strongs: list search, page, filter, deep link', async p => {
   await p.evaluate(() => strongsSearchFor('mercy')); await sleep(2500);
   const first = await p.evaluate(() => (document.querySelector('#strongs-results .wd-row') || {}).dataset?.k);
