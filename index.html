@@ -843,6 +843,9 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
   gap:4px;text-align:center;max-width:400px;width:92%;max-height:88vh;overflow-y:auto;overscroll-behavior:contain;
   animation:su .25s ease;
 }
+/* ✕ floats at the top right and stays in view as the card scrolls */
+#sp-x{position:sticky;top:-14px;align-self:flex-end;margin:-14px -10px -30px 0;z-index:2;width:38px;height:38px;flex-shrink:0;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border);color:var(--text-d);font-size:16px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 /* The reading calendar and badges (v52) */
 #sp-cal{width:100%;margin:10px 0 4px;padding-top:12px;border-top:1px solid var(--border)}
 .cal-hd{display:flex;align-items:center;justify-content:space-between;font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);margin-bottom:6px}
@@ -3107,6 +3110,7 @@ body.light #home-watermark{
 <!-- STREAK INFO PANEL -->
 <div id="streak-panel" onclick="closeStreakPanel(event)">
   <div id="streak-panel-inner">
+    <button id="sp-x" onclick="closeStreakPanel()" aria-label="Close">✕</button>
     <div id="sp-flame">🔥</div>
     <div id="sp-count"></div>
     <div id="sp-label">day streak</div>
@@ -3121,7 +3125,6 @@ body.light #home-watermark{
     <div id="sp-cal"></div>
     <div id="sp-rbadges"></div>
     <div id="sp-tip">Read a chapter, doctrine, or Romans Road each day to keep your streak</div>
-    <button onclick="closeStreakPanel()" style="margin-top:12px;background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:8px;padding:8px 20px;cursor:pointer;font-size:13px">Close</button>
   </div>
 </div>
 
