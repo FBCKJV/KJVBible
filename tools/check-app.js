@@ -236,6 +236,10 @@ check('search: everyday words, a spelling fix, and no stale results', async p =>
   assert(await p.evaluate(() => !S._searchFixedTo && !(S._searchResults || []).length), '“Search for … instead” did not search what was typed');
   r = await run('jesus heals');
   assert(r.refs[0] && !/^Matthew 1:/.test(r.refs[0]), 'closest matches for “jesus heals” did not put the rarer word first: ' + r.refs[0]);
+  // A range of chapters is a reference, not words
+  await p.evaluate(() => { const i = document.getElementById('s-input'); i.value = '2 Samuel 11-12'; doSearch('2 Samuel 11-12'); });
+  await sleep(1500);
+  assert(await p.evaluate(() => { const t = document.getElementById('s-results').textContent; return /2 Samuel 11–12/.test(t) && document.querySelectorAll('#s-results .rc-ref').length > 50 && !/closest/.test(t); }), '“2 Samuel 11-12” was not read as two chapters');
   // Typing over a search still finishing never shows the old results
   await p.evaluate(() => { const i = document.getElementById('s-input'); i.value = 'grace'; handleSearch('grace'); });
   await sleep(500);
