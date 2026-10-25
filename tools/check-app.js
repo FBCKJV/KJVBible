@@ -126,6 +126,17 @@ check('versions agree (sw.js and What\'s New)', async () => {
   assert(html.includes(`data-wn="${wn}"`), `no What's New item for ${wn}`);
 }, {noPage: true});
 
+check('every classic map has its picture and is kept for offline use', async () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'), sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  const list = (html.match(/const MAPS=\[([\s\S]*?)\n\];/) || [])[1] || '', files = [...list.matchAll(/f:'([^']+)'/g)].map(m => m[1]);
+  assert(files.length >= 11, `only ${files.length} maps found in MAPS`);
+  for(const f of files){
+    assert(fs.existsSync(path.join(ROOT, 'maps', f + '.jpg')), `maps/${f}.jpg is missing`);
+    assert(sw.includes(`'maps/${f}.jpg'`), `maps/${f}.jpg is not in sw.js MAP_ASSETS`);
+  }
+  for(const m of html.matchAll(/\['([^']+)',\d+,\d+,'([^']+)'\]/g)) assert(files.includes(m[2]), `CHAPTER_MAPS ${m[1]} names no map ${m[2]}`);
+}, {noPage: true});
+
 check('hymn and verse indexes match their sources (rebuild if this fails)', async () => {
   const {execFileSync} = require('child_process');
   for(const b of ['build-hymns.js', 'build-verse-index.js']){
@@ -475,6 +486,34 @@ check('classic maps: every passage is real; verses, journeys and places open, Ba
   assert(r.hasPlace && r.hasJr, 'the Exodus map lacks places or journeys: ' + r.chips.join(' | '));
   assert(r.verse.screen === 'reader' && r.verse.book === 'Exodus' && r.verse.ch === 12 && !r.verse.map, 'the first passage did not open Exodus 12: ' + JSON.stringify(r.verse));
   assert(r.place.sub === 'place' && !r.place.map, 'a place chip did not open the place page: ' + JSON.stringify(r.place));
+});
+
+check('the churches journey: pins with no line, its classic map from the top; the plate only where a chapter names places', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), btn = id => getComputedStyle(document.getElementById(id)).display !== 'none';
+    showScreen('search'); switchSearchMode('maps'); await wait(800);
+    await openJourney('churches'); await wait(1500);
+    const lines = document.querySelectorAll('#wm-map .wm-route path').length, stops = S._jr.j.s.length;
+    jrGo(5); await wait(500);
+    const after = document.querySelectorAll('#wm-map .wm-route path').length;
+    const chip = [...document.querySelectorAll('#wm-sub .vl-chip')].find(b => /Classic map/.test(b.textContent));
+    if(chip) chip.click(); await wait(1500);
+    const plate = document.getElementById('map-overlay').classList.contains('on') && S._mapOpen === MAPS.findIndex(m => m.f === 'local-churches');
+    history.back(); await wait(1200);
+    await openJourney('paul2'); await wait(1500);
+    const paulLines = document.querySelectorAll('#wm-map .wm-route path').length;
+    history.back(); await wait(1200);
+    jumpToRef('Romans 8:1'); await wait(2500);
+    const romans8 = btn('ch-map-btn') || btn('ch-where-btn');
+    jumpToRef('Revelation 2:1'); await wait(2500);
+    const rev2 = {where: btn('ch-where-btn'), plate: btn('ch-map-btn'), jr: document.getElementById('ch-jr').textContent};
+    return {lines, after, stops, chip: !!chip, plate, paulLines, romans8, rev2};
+  });
+  assert(r.stops === 33 && r.lines === 0 && r.after === 0, `the churches journey drew a line or lost stops: ${JSON.stringify(r)}`);
+  assert(r.paulLines > 0, "Paul's second journey lost its route line");
+  assert(r.chip && r.plate, `the journey's 📜 Classic map did not open the churches plate: ${JSON.stringify(r)}`);
+  assert(!r.romans8, 'Romans 8 names no place yet shows a map button');
+  assert(r.rev2.where && !r.rev2.plate && /churches of the New Testament/.test(r.rev2.jr), `Revelation 2 should show 📍 Where and the 🧭 churches journey: ${JSON.stringify(r.rev2)}`);
 });
 
 check('hymns and the study tools: a word offers its hymns, a hymn its doctrines, a doctrine its hymns', async p => {

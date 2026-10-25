@@ -2410,7 +2410,7 @@ body.light #home-watermark{
         <div id="jr-list"></div>
         <div class="mx-h">📜 Classic maps</div>
         <div style="font-size:12px;color:var(--text-m);margin-bottom:12px;font-style:italic">
-          Public-domain Bible maps from a 19th-century atlas. Tap a map to open it full-screen — pinch or use +/− to zoom.
+          Public-domain Bible maps from a 19th-century atlas, and a map of the local churches of the New Testament. Tap a map to open it full-screen — pinch or use +/− to zoom.
         </div>
         <div id="maps-grid"></div>
       </div>
@@ -9144,6 +9144,7 @@ function wmDraw(el, pins, opts){
   // Journeys: the route in map units (drawn once per stop), the numbered stops at screen size
   function drawRoute(){
     const {j, cur} = opts.route, S2 = j.s, P = ll => `${(ll[1]*WM_K).toFixed(4)} ${(-ll[0]).toFixed(4)}`;
+    if(j.nl){ gRoute.innerHTML = ''; return; } // pins only: the stops were never one road travelled
     let d = '', from = S2[0].alts ? null : S2[0].ll;
     for(let i = 1; i < S2.length; i++){
       const st = S2[i], prev = S2[i-1], done = i <= cur, dash = st.u || prev.u;
@@ -9764,7 +9765,7 @@ function paneApply(){
 })();
 
 /* ════ JOURNEYS ════
-   Eighteen journeys, from Abraham to Paul's voyage to Rome, each a list of
+   Nineteen journeys, from Abraham to Paul's voyage to Rome and the churches, each a list of
    stops that are verses naming the place (journeys.json, built by
    tools/journeys/build.py from the approved stop list). The route draws on
    stop by stop; dashed where the site is uncertain. Each stop carries its
@@ -9805,7 +9806,9 @@ async function openJourney(id, i=0){
   ov.classList.add('jr'); ov.classList.remove('jpres');
   document.getElementById('wm-tips').dataset.tt = 'journey'; ttRefresh();
   document.getElementById('wm-title').textContent = '🧭 ' + j.t;
-  document.getElementById('wm-sub').textContent = `${j.r} · ${jrDates(j)} · ${j.s.length} stops`;
+  const plate = MAPS.findIndex(m => MAP_LINKS[m.f] && MAP_LINKS[m.f].jr.includes(id));
+  document.getElementById('wm-sub').innerHTML = escapeHtml(`${j.r} · ${jrDates(j)} · ${j.s.length} stops`)
+    + (plate >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openMap(${plate}))">📜 Classic map: ${escapeHtml(MAPS[plate].t)} ›</button>` : '');
   if(!ov.classList.contains('on')) openPopover('wm-overlay');
   else if((history.state || {}).modal !== 'wm-overlay') history.pushState({screen:S.screen, modal:'wm-overlay'}, '', ''); // over the side map: Back closes the journey
   requestAnimationFrame(() => {
@@ -9916,8 +9919,9 @@ async function tlMap(ei, i){
 
 /* ════ MAPS FROM THE READER ════
    A chapter covered by one of the Bible maps shows a button for it under
-   the chapter heading. [book, firstChapter, lastChapter, map file] — the
-   first matching row wins. */
+   the chapter heading. [book, firstChapter, lastChapter, map file, whereOnly] — the
+   first matching row wins. A whereOnly map is offered only inside 📍 Where, so a
+   chapter that names no place shows no button for it. */
 const CHAPTER_MAPS = [
   ['Genesis',10,10,'table-of-nations'], ['Genesis',11,50,'assyria'],
   ['Exodus',12,40,'exodus-sinai'], ['Numbers',10,36,'exodus-sinai'], ['Deuteronomy',1,3,'exodus-sinai'],
@@ -9929,7 +9933,11 @@ const CHAPTER_MAPS = [
   ['Matthew',21,28,'jerusalem'], ['Mark',11,16,'jerusalem'], ['Luke',19,24,'jerusalem'], ['John',12,21,'jerusalem'],
   ['Matthew',1,20,'journeys-of-christ'], ['Mark',1,10,'journeys-of-christ'], ['Luke',1,18,'journeys-of-christ'], ['John',1,11,'journeys-of-christ'],
   ['Acts',1,12,'palestine-nt'], ['Acts',13,28,'pauls-journeys'],
-  ['Romans',15,16,'pauls-journeys'], ['Galatians',1,2,'pauls-journeys'], ['Revelation',1,3,'pauls-journeys'],
+  ['Romans',15,16,'pauls-journeys'], ['Galatians',1,2,'pauls-journeys'], ['Revelation',1,3,'local-churches',1],
+  ['Romans',1,14,'local-churches',1], ['1 Corinthians',1,16,'local-churches',1], ['2 Corinthians',1,13,'local-churches',1],
+  ['Galatians',3,6,'local-churches',1], ['Ephesians',1,6,'local-churches',1], ['Philippians',1,4,'local-churches',1],
+  ['Colossians',1,4,'local-churches',1], ['1 Thessalonians',1,5,'local-churches',1], ['2 Thessalonians',1,3,'local-churches',1],
+  ['Titus',1,3,'local-churches',1], ['1 Peter',1,5,'local-churches',1],
 ];
 function chapterMap(book, ch){
   const row = CHAPTER_MAPS.find(([b, a, z]) => b === book && ch >= a && ch <= z);
@@ -9938,7 +9946,8 @@ function chapterMap(book, ch){
 function updateChapterMapButton(){
   const btn = document.getElementById('ch-map-btn');
   if(!btn) return;
-  const i = chapterMap(S.book, S.ch + 1);
+  const row = CHAPTER_MAPS.find(([b, a, z]) => b === S.book && S.ch + 1 >= a && S.ch + 1 <= z);
+  const i = row && !row[4] ? chapterMap(S.book, S.ch + 1) : -1;
   btn.style.display = i >= 0 ? 'inline-block' : 'none';
   if(i >= 0){ btn.textContent = '🗺️ ' + MAPS[i].t; btn.onclick = () => openMap(i); }
 }
@@ -10724,6 +10733,7 @@ const MAPS=[
   {f:'journeys-of-christ',t:'The Journeys of Christ',              d:"The Lord's travels during His public ministry"},
   {f:'jerusalem',      t:'Plan of Ancient Jerusalem',              d:'The city in Bible times'},
   {f:'pauls-journeys', t:"Paul's Missionary Journeys",             d:'Across the Roman world'},
+  {f:'local-churches', t:'Local Churches of the Bible',            d:'The New Testament churches by A.D. 70'},
 ];
 function renderMaps(){
   const el=document.getElementById('maps-grid');
@@ -10748,6 +10758,7 @@ const MAP_LINKS = {
   'journeys-of-christ':{refs:['Matthew 4:23', 'Luke 8:1'], jr:['ministry', 'passion']},
   'jerusalem':         {refs:['Psalms 48:12-13', 'Psalms 125:2', 'Nehemiah 3:1'], jr:['passion']},
   'pauls-journeys':    {refs:['Acts 13:2-4', 'Acts 16:9-10', 'Acts 27:1'], jr:['paul0', 'paul1', 'paul2', 'paul3', 'rome']},
+  'local-churches':    {refs:['Acts 9:31', 'Acts 16:5', '1 Corinthians 16:19', 'Revelation 1:11'], jr:['churches']},
 };
 // "Genesis 10:1-5" → ["Genesis 10:1", …, "Genesis 10:5"]
 const mapRefVerses = r => { const m = r.match(/^(.+ \d+):(\d+)(?:-(\d+))?$/); const out = []; for(let v = +m[2]; v <= +(m[3] || m[2]); v++) out.push(`${m[1]}:${v}`); return out; };
@@ -14123,6 +14134,7 @@ const TOOL_TIPS = {
     ['📖', '<strong>Read ›</strong> opens the verse in the Bible; <strong>📅 About …</strong> opens the timeline at that event'],
     ['⚖️', '<strong>Disputed sites</strong> (the Red Sea and Sinai, Ur, Golgotha, Emmaus …) have a switch on the stop card for each view, with <strong>Why this view?</strong>. Your choice is remembered and shared, so the Exodus and Elijah’s Horeb always agree'],
     ['┄', '<strong>Dashed</strong> lines and rings mark sites that are uncertain'],
+    ['⛪', '<strong>The churches of the New Testament</strong> visits each church in the order the Bible tells of it, from Jerusalem to the seven churches of Asia. It has no route line, for no one road joins them; <strong>📜 Classic map</strong> at the top opens the printed map of the same churches'],
     ['🎦', '<strong>🎦 Present</strong> fills the screen with the map and the stop in large type; the space bar, arrows or a clicker step, and Esc returns'],
     ['⌖', 'Pinch or use <strong>+ / −</strong> to zoom and drag to look around; <strong>⌖</strong> fits the whole route'],
   ]},
@@ -14133,9 +14145,9 @@ const TOOL_TIPS = {
   ]},
   maps: {i:'🗺️', t:'Maps', tips:[
     ['🗺️', '<strong>Every Bible place on one map</strong> — tap a place to see what happened there; pinch or use + / − to zoom and drag to look around'],
-    ['🧭', '<strong>🧭 Journeys</strong> follow Abraham, the Exodus, Paul and others stop by stop, each stop a verse with its date on the timeline'],
+    ['🧭', '<strong>🧭 Journeys</strong> follow Abraham, the Exodus, Paul, the churches of the New Testament and others stop by stop, each stop a verse with its date on the timeline'],
     ['⚖️', '<strong>Disputed sites</strong> such as mount Sinai, Ur, Golgotha, Ai and Sodom show both views, on the journeys and on the place pages'],
-    ['📜', '<strong>📜 Classic maps</strong> are 19th-century atlas plates; open one full screen and tap 📝 to add it to your study, or 📤 to send it to someone. Below it, <strong>📖 Verses, places &amp; journeys</strong> opens the passages it shows, the journeys drawn on it and the places those verses name'],
+    ['📜', '<strong>📜 Classic maps</strong> are 19th-century atlas plates, with a map of the <strong>local churches of the Bible</strong> (A.D. 70), with its own 🧭 journey; open one full screen and tap 📝 to add it to your study, or 📤 to send it to someone. Below it, <strong>📖 Verses, places &amp; journeys</strong> opens the passages it shows, the journeys drawn on it and the places those verses name'],
     ['📖', 'In the reader, <strong>📍 Where</strong> maps the places in the chapter, and a <strong>🧭</strong> button opens a journey that passes through it'],
     ['📶', 'Maps work offline once they have loaded'],
   ]},
