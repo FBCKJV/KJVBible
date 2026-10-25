@@ -137,6 +137,21 @@ check('every classic map has its picture and is kept for offline use', async () 
   for(const m of html.matchAll(/\['([^']+)',\d+,\d+,'([^']+)'\]/g)) assert(files.includes(m[2]), `CHAPTER_MAPS ${m[1]} names no map ${m[2]}`);
 }, {noPage: true});
 
+// The app keeps these files on the phone until the version in its URL changes
+check('a changed data file raises its version, so phones fetch it afresh', async () => {
+  const {execFileSync} = require('child_process'), git = (...a) => execFileSync('git', a, {cwd: ROOT, stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 1 << 26}).toString();
+  let base = process.env.CHECK_BASE; // compare with another commit (default: where this branch left main)
+  if(!base) try{ base = git('merge-base', 'HEAD', 'origin/main').trim(); }catch(e){ try{ base = git('rev-parse', 'HEAD').trim(); }catch(e){ return; } }
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'), old = git('show', `${base}:index.html`);
+  const ver = (src, k) => (src.match(new RegExp(`const ${k} = '([^']+)'`)) || [])[1];
+  const FILES = {'journeys.json': 'JOURNEYS_VERSION', 'timeline.json': 'TIMELINE_VERSION', 'hymns.json': 'HYMNS_VERSION', 'hymn-index.json': 'HYMNS_VERSION',
+    'bible-lands.json': 'LANDS_VERSION', 'dictionary': 'DICT_VERSION', 'strongs': 'SG_VERSION', 'treasury': 'TSK_VERSION'};
+  const stale = Object.entries(FILES).filter(([f, k]) => {
+    try{ execFileSync('git', ['diff', '--quiet', base, '--', f], {cwd: ROOT, stdio: 'ignore'}); return false; }catch(e){ return ver(html, k) === ver(old, k); }
+  });
+  assert(!stale.length, 'changed without raising the version (phones keep the old copy): ' + stale.map(([f, k]) => `${f} → ${k}`).join(', '));
+}, {noPage: true});
+
 check('hymn and verse indexes match their sources (rebuild if this fails)', async () => {
   const {execFileSync} = require('child_process');
   for(const b of ['build-hymns.js', 'build-verse-index.js']){

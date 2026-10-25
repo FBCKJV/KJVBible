@@ -9772,7 +9772,7 @@ function paneApply(){
    date and timeline entry, so the text, the timeline and the map lead to
    one another: the reader's 🧭 button, the timeline's 🧭 and 📍, and each
    stop's Read › and 📅 About ›. */
-const JOURNEYS_VERSION = '2026-10-05b';
+const JOURNEYS_VERSION = '2026-10-25'; // bump whenever tools/journeys/build.py is re-run, or phones keep the old list
 function loadJourneys(){ return S._journeys ? Promise.resolve(S._journeys) : loadCachedJSON(`journeys.json?v=${JOURNEYS_VERSION}`).then(d => { S._jrGroups = d.g || {}; return S._journeys = d.j; }); }
 const jrDates = j => !j.y ? '' : j.y[0] === j.y[1] ? 'about ' + tlYearText(j.y[0]) : `about ${tlYearText(j.y[0])} – ${tlYearText(j.y[1])}`;
 // The pin(s) for a stop: a place pin, or dashed rings for each suggested site
