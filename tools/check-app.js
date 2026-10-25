@@ -126,6 +126,17 @@ check('versions agree (sw.js and What\'s New)', async () => {
   assert(html.includes(`data-wn="${wn}"`), `no What's New item for ${wn}`);
 }, {noPage: true});
 
+check('every classic map has its picture and is kept for offline use', async () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'), sw = fs.readFileSync(path.join(ROOT, 'sw.js'), 'utf8');
+  const list = (html.match(/const MAPS=\[([\s\S]*?)\n\];/) || [])[1] || '', files = [...list.matchAll(/f:'([^']+)'/g)].map(m => m[1]);
+  assert(files.length >= 11, `only ${files.length} maps found in MAPS`);
+  for(const f of files){
+    assert(fs.existsSync(path.join(ROOT, 'maps', f + '.jpg')), `maps/${f}.jpg is missing`);
+    assert(sw.includes(`'maps/${f}.jpg'`), `maps/${f}.jpg is not in sw.js MAP_ASSETS`);
+  }
+  for(const m of html.matchAll(/\['([^']+)',\d+,\d+,'([^']+)'\]/g)) assert(files.includes(m[2]), `CHAPTER_MAPS ${m[1]} names no map ${m[2]}`);
+}, {noPage: true});
+
 check('hymn and verse indexes match their sources (rebuild if this fails)', async () => {
   const {execFileSync} = require('child_process');
   for(const b of ['build-hymns.js', 'build-verse-index.js']){
