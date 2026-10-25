@@ -10,13 +10,14 @@ Emits ../journeys.json:
   {j:[{id,t,r,y:[from,to],s:[{n,r,d,ll,p?,u?,site?,alts?,via?,to?,y,e}]}]}
   n name as the verse spells it, r verse, d what happened, p place id, u uncertain (dashed),
   via route points into this stop, ov drawn at the traditional site, to dotted arrow off the route, y year, e timeline entry id
+  nl pins only, no line between the stops
   g disputed sites on this journey [{k group, ch [per view: {stop index: stop}, None for the journey's own]}]
   and at the top g {group: {t question, def view shown first, v [{t label, d why, pl {place id: [site, ll]}}]}} (GROUPS in draft.py)
 """
 import json, os, sys
 here = os.path.dirname(os.path.abspath(__file__)); root = os.path.dirname(os.path.dirname(here))
 sys.path.insert(0, here); os.chdir(root)
-from draft import J, VIEWS, GROUPS
+from draft import J, VIEWS, GROUPS, PINS_ONLY
 from check import P, resolve
 T = json.load(open('timeline.json'))['eras']
 START = {'abraham': -1921}   # Genesis 11 sits under the Tower of Babel on the timeline
@@ -67,6 +68,7 @@ for k, (t, rng, stops) in J.items():
     S = build(k, t, stops)
     ys = [s['y'] for s in S if 'y' in s]
     j = {'id': k, 't': t, 'r': rng, 'y': [min(ys), max(ys)] if ys else None, 's': S}
+    if k in PINS_ONLY: j['nl'] = 1
     for g, views in VIEWS.get(k, {}).items():
         ch = [None] * len(GROUPS[g]['views'])
         for vi, vs in views.items():

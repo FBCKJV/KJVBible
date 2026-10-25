@@ -488,6 +488,34 @@ check('classic maps: every passage is real; verses, journeys and places open, Ba
   assert(r.place.sub === 'place' && !r.place.map, 'a place chip did not open the place page: ' + JSON.stringify(r.place));
 });
 
+check('the churches journey: pins with no line, its classic map from the top; the plate only where a chapter names places', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms)), btn = id => getComputedStyle(document.getElementById(id)).display !== 'none';
+    showScreen('search'); switchSearchMode('maps'); await wait(800);
+    await openJourney('churches'); await wait(1500);
+    const lines = document.querySelectorAll('#wm-map .wm-route path').length, stops = S._jr.j.s.length;
+    jrGo(5); await wait(500);
+    const after = document.querySelectorAll('#wm-map .wm-route path').length;
+    const chip = [...document.querySelectorAll('#wm-sub .vl-chip')].find(b => /Classic map/.test(b.textContent));
+    if(chip) chip.click(); await wait(1500);
+    const plate = document.getElementById('map-overlay').classList.contains('on') && S._mapOpen === MAPS.findIndex(m => m.f === 'local-churches');
+    history.back(); await wait(1200);
+    await openJourney('paul2'); await wait(1500);
+    const paulLines = document.querySelectorAll('#wm-map .wm-route path').length;
+    history.back(); await wait(1200);
+    jumpToRef('Romans 8:1'); await wait(2500);
+    const romans8 = btn('ch-map-btn') || btn('ch-where-btn');
+    jumpToRef('Revelation 2:1'); await wait(2500);
+    const rev2 = {where: btn('ch-where-btn'), plate: btn('ch-map-btn'), jr: document.getElementById('ch-jr').textContent};
+    return {lines, after, stops, chip: !!chip, plate, paulLines, romans8, rev2};
+  });
+  assert(r.stops === 33 && r.lines === 0 && r.after === 0, `the churches journey drew a line or lost stops: ${JSON.stringify(r)}`);
+  assert(r.paulLines > 0, "Paul's second journey lost its route line");
+  assert(r.chip && r.plate, `the journey's 📜 Classic map did not open the churches plate: ${JSON.stringify(r)}`);
+  assert(!r.romans8, 'Romans 8 names no place yet shows a map button');
+  assert(r.rev2.where && !r.rev2.plate && /churches of the New Testament/.test(r.rev2.jr), `Revelation 2 should show 📍 Where and the 🧭 churches journey: ${JSON.stringify(r.rev2)}`);
+});
+
 check('hymns and the study tools: a word offers its hymns, a hymn its doctrines, a doctrine its hymns', async p => {
   const r = await p.evaluate(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms)), txt = id => (document.getElementById(id) || {}).textContent || '';
