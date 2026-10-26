@@ -72,6 +72,8 @@ function tidy(s, translit){
                : s.replace(/\by-h-v-h\b|\bY-H-V-H\b|\bYHVH\b/g, 'the LORD');
   // "(2KI 14:29, 1CH 3:2)" → "(2 Kings 14:29, 1 Chronicles 3:2)"
   s = s.replace(new RegExp(`\\b(${codeAlt}) (\\d+(?::\\d+(?:-\\d+)?)?)`, 'g'), (_, c, r) => `${BOOKS[CODE_IDX[c]]} ${r}`);
+  // A Psalm's title is its "verse 0" in the dataset: "(Psalm 7:0)" → "(the title of Psalm 7)"
+  s = s.replace(/\bPsalms? (\d+):0\b/g, 'the title of Psalm $1');
   return s.replace(/\s+/g, ' ').trim();
 }
 const isDivine = id => /^YHVH_/.test(id);

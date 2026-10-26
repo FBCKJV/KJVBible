@@ -121,6 +121,24 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #reader-body{padding:20px var(--reader-pad) 120px;max-width:700px;margin:0 auto}
 #ch-title{font-family:'IM Fell English',serif;font-size:26px;color:var(--gold);text-align:center;margin-bottom:4px}
 #ch-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:13px;color:var(--text-m);text-align:center;margin-bottom:24px}
+/* A Psalm's title (its superscription) above verse 1, and the Hebrew letters over Psalm 119's parts: plain text, not verses */
+#ch-ps-title:empty{display:none}
+#ch-ps-title{margin:14px 0 10px;text-align:center}
+.ps-title{font-family:var(--reader-font);font-style:italic;font-size:calc(var(--font-v) * .9);line-height:1.5;color:var(--text-d);max-width:560px;margin:0 auto;transition:background .6s;border-radius:6px}
+.ps-title.flash{background:rgba(201,148,58,.18)}
+.ps-when{display:inline-flex;align-items:center;gap:6px;background:none;border:none;color:var(--gold);font-family:'Inter',sans-serif;font-size:13px;padding:8px 6px;min-height:40px;cursor:pointer}
+.ps-when .sg-arr{font-size:16px}
+.ps-when.on .sg-arr{transform:rotate(90deg)}
+.ps-when-body{text-align:left;max-width:560px;margin:2px auto 6px}
+.ps-when-body .rc{margin:0 0 6px;padding:8px 12px}
+.ps-when-body .rc-txt{font-size:15px}
+.ps-when-note{font-size:13px;color:var(--text-m);font-style:italic;margin:0 2px 8px}
+.ps-when-pp{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 4px}
+.ps-head{font-family:'IM Fell English',serif;font-size:18px;color:var(--gold);letter-spacing:.06em;text-align:center;margin:18px 0 6px;user-select:text}
+.ps-head:first-child{margin-top:4px}
+.tl-ps{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tl-ps button,.jr-ps button{background:none;border:1px solid var(--border);border-radius:14px;color:var(--gold);font-size:12px;padding:4px 10px;cursor:pointer}
+.jr-ps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0 2px;font-size:12px;color:var(--text-m)}
 
 /* ─── VERSE BLOCKS ─── */
 .vblock.vlink{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
@@ -2242,6 +2260,7 @@ body.light #home-watermark{
           display:none;transition:all .2s" title="Listen to this chapter">🔊</button>
       </div>
       <div style="text-align:center"><button id="ch-map-btn" class="ch-map" style="display:none"></button> <button id="ch-time-btn" class="ch-map" style="display:none"></button> <button id="ch-where-btn" class="ch-map" style="display:none" onclick="openChapterMap()">📍 Where</button> <span id="ch-jr"></span> <a id="ch-sung-btn" class="ch-map" style="display:none;text-decoration:none" target="_blank" rel="noopener" title="Hear this Psalm sung, word for word from the King James Bible, in the FBC Hymns app">🎧 Sung</a> <button id="ch-pres-btn" class="ch-map" onclick="presFromReader()">🎦 Present</button></div>
+      <div id="ch-ps-title"></div>
       <div id="verses"></div>
     </div>
   
@@ -2581,6 +2600,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">⚙</span><span class="tip-txt"><strong>The ⚙ gear</strong> (top-right) holds all your settings — text size, day / night / sepia theme, reading font, line spacing, audio options, offline download, and your backup code — and, at the top, these tips and <strong>📤 Share this app</strong> (a QR code to hand the app to someone)</span></div>
         <div class="tip-row"><span class="tip-ico">📝</span><span class="tip-txt"><strong>The 📝 notebook</strong> (top bar) keeps your sermon and study notes. Tap <strong>📝＋</strong> on any verse, search result, hymn, word, person, place, map or timeline event to add it to the study you have open; select several verses to add a whole passage. Headings, outlines, quote boxes, bold and italic; share as text, <strong>📋 Copy</strong> it with its bold, italics and headings (paste into a Google Doc, an email or Telegram on a computer; each verse comes as its reference in bold and the words in italics), copy it as Markdown (for Claude or a slide maker), or print to PDF from ☰ Studies.</span></div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a Note, add it to a study, <strong>🎦 Present</strong> it or make a <strong>📸 Screenshot</strong>. <strong>Tap any word of the verse</strong> for its meaning. Below the verse are the <strong>📛 names</strong> in it (people and places), its <strong>🔗 cross-references</strong> (tap the heading to fold them away), the doctrines that cite it, a <strong>🧭 When &amp; where</strong> fold when the verse is a timeline event or a stop on a journey, a <strong>🎵 hymn</strong> built on the verse when there is one, and <strong>🔤 Hebrew words</strong> (Greek in the New Testament), folded until you open them. <strong>✕ Close</strong> is at the top right, or tap outside the card</span></div>
+        <div class="tip-row"><span class="tip-ico">📜</span><span class="tip-txt"><strong>The titles of the Psalms</strong> — 116 Psalms open with their title, above verse 1, as in a printed King James Bible (<em>“A Psalm of David, when he fled from Absalom his son”</em>), and Psalm 119 has its Hebrew letters over each part. The title is part of the text but not a numbered verse, so copying or sharing the whole chapter starts at verse 1. Where a title tells when the Psalm was written, tap <strong>📜</strong> under it for the passages that tell the story and the people in it; <strong>📅</strong>, <strong>🧭</strong> and <strong>📍 Where</strong> above it follow that history. Search, the people and the places find the titles too (<em>Doeg</em> → Psalm 52)</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Several verses, one screenshot</strong> — <strong>Screenshot</strong> in the press-and-hold bar pictures verses side by side in a chapter. To gather verses from different places, tap each verse and choose <strong>Add to Screenshot</strong> (up to 3); the 📸 count at the top opens them to make the picture, and the press-and-hold bar shows how many are waiting.</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
@@ -4034,8 +4054,11 @@ function renderReader(){
   S.lastPos={book:S.book,ch:S.ch};LS.set('kjv_last',S.lastPos);
   recordHistory(S.book, S.ch);
 
+  renderPsalmTitle();
   const c=document.getElementById('verses');c.innerHTML='';
+  const heads=S.book==='Psalms'&&ch.heads||null; // Psalm 119's Hebrew letters, over each part
   ch.verses.forEach(v=>{
+    if(heads&&heads[v.verse]){const h=document.createElement('div');h.className='ps-head';h.textContent=heads[v.verse];c.appendChild(h);}
     const ref=`${S.book} ${S.ch+1}:${v.verse}`;
     const hl=S.highlights[ref];
     const isBM=colHas(ref);
@@ -5512,16 +5535,20 @@ async function downloadBook(name, cache){
   return null;
 }
 
-// Books whose text was corrected after people saved them on their phones
-// (a stray space before "?", "God:for"): fetched again once, quietly, and
-// the saved copy replaced only when the new one has arrived — offline the
-// old copy stays. Raise v and list the books when the text is corrected again.
-const BOOK_FIXES = {v: 1, books: ['Ecclesiastes', 'Isaiah', 'Joshua', 'Leviticus', 'Mark', 'Revelation']};
+// Books whose file changed after people saved them on their phones (v1: a
+// stray space before "?", "God:for"; v2: the titles of the Psalms): fetched
+// again once, quietly, and the saved copy replaced only when the new one has
+// arrived — offline the old copy stays. Raise v and give the books the new v
+// when a book's file changes again; a phone fetches only the books changed
+// since it last caught up.
+const BOOK_FIXES = {v: 2, books: {Ecclesiastes: 1, Isaiah: 1, Joshua: 1, Leviticus: 1, Mark: 1, Revelation: 1, Psalms: 2}};
 async function refreshFixedBooks(){
-  if(!('caches' in window) || (LS.get('kjv_book_fix', 0) || 0) >= BOOK_FIXES.v) return;
+  const had = LS.get('kjv_book_fix', 0) || 0;
+  if(!('caches' in window) || had >= BOOK_FIXES.v) return;
   let cache; try{ cache = await caches.open(BIBLE_CACHE); }catch(e){ return; }
   let ok = true;
-  for(const name of BOOK_FIXES.books){
+  for(const [name, v] of Object.entries(BOOK_FIXES.books)){
+    if(v <= had) continue;
     try{
       if(!(await cachedBookResponse(cache, name))) continue; // not saved here: it will download fresh
       const srcs = bookSources(name), r = await fetch(srcs[0], {cache: 'no-store'});
@@ -5531,6 +5558,8 @@ async function refreshFixedBooks(){
       for(const u of srcs.slice(1)) await cache.delete(u);
       if(S.cache[name]) S.cache[name] = d;
       if(typeof _searchIndex !== 'undefined') delete _searchIndex[name];
+      // The chapter open now shows what changed (a Psalm's title) without moving the page
+      if(S.book === name && S.bookData && S.bookData !== d){ S.bookData = d; if(name === 'Psalms') renderPsalmTitle(); }
     }catch(e){ ok = false; }
   }
   if(ok) LS.set('kjv_book_fix', BOOK_FIXES.v);
@@ -6363,10 +6392,16 @@ function bookSearchIndex(bookName, data){
   if (_searchIndex[bookName]) return _searchIndex[bookName];
   const base = BOOKS.indexOf(bookName) * 100000;
   let i = 0;
-  return _searchIndex[bookName] = data.chapters.flatMap(ch => ch.verses.map(v => ({
+  // A Psalm's title (and Psalm 119's letters) is found too, as its own result
+  // (ps: the chapter, or the verse a letter stands over), before the verses
+  const extra = ch => bookName !== 'Psalms' ? [] : [
+    ...(ch.title ? [{ ref: `Psalms ${ch.chapter}:1`, label: `Psalm ${ch.chapter} · the title`, ps: +ch.chapter, book: bookName, txt: ch.title, lc: ch.title.toLowerCase(), ord: base + i++ }] : []),
+    ...Object.entries(ch.heads || {}).map(([v, h]) => ({ ref: `Psalms ${ch.chapter}:${v}`, label: `Psalm ${ch.chapter}:${v} · ${h.replace(/^\S+ /, '').replace(/\.$/, '')}`, ps: -1, book: bookName, txt: h, lc: h.toLowerCase(), ord: base + i++ })),
+  ];
+  return _searchIndex[bookName] = data.chapters.flatMap(ch => extra(ch).concat(ch.verses.map(v => ({
     ref: `${bookName} ${ch.chapter}:${v.verse}`, book: bookName,
     txt: v.text, lc: v.text.toLowerCase(), ord: base + i++,
-  })));
+  }))));
 }
 
 // Scores every verse of the given books. `full` hit every term; `partial`
@@ -6397,6 +6432,7 @@ function scanVerses(indexes, query, mode){
       }
       if (together && together.test(lc)) score += 10;
       const entry = { ref: v.ref, book: v.book, txt: v.txt, ord: v.ord, score, mask };
+      if (v.ps) { entry.ps = v.ps; entry.label = v.label; }
       (hits === terms.length ? full : partial).push(entry);
     }
   }
@@ -6961,7 +6997,9 @@ function renderSearchPage(startIdx, scroll){
     + sortBar
     + page.map(r => {
         const hi = re ? r.txt.replace(re, '<mark>$&</mark>') : r.txt;
-        return `<div tabindex="0" class="rc" onclick="jumpToRef('${r.ref.replace(/'/g,"\\'")}')"><div class="rc-ref">${r.ref}</div><div class="rc-txt">${hi}</div></div>`;
+        // A Psalm's title opens the Psalm at its title; a letter of Psalm 119, at its verse
+        const go = r.ps > 0 ? `openPsalmTitle(${r.ps})` : `jumpToRef('${r.ref.replace(/'/g,"\\'")}')`;
+        return `<div tabindex="0" class="rc" onclick="${go}"><div class="rc-ref">${r.label || r.ref}</div><div class="rc-txt">${r.ps ? `<em>${hi}</em>` : hi}</div></div>`;
       }).join('')
     + pager;
   if (scroll) el.scrollIntoView({block:'start'});
@@ -7420,8 +7458,19 @@ async function refCardsHTML(refStr, limit, thread=false){ // refs: "bookIdx.ch:v
     const ch = data[b] && data[b].chapters[c - 1];
     if(!ch) continue;
     const name = BOOKS[b];
+    // Verse 0 of a Psalm is its title: a card of its own that opens the Psalm at the title
+    let parts = vs ? vs.split(',') : null;
+    if(parts && name === 'Psalms'){
+      const z = parts.findIndex(p => /^0(-|$)/.test(p));
+      if(z >= 0){
+        if(ch.title) cards.push(`<div tabindex="0" class="rc" onclick="openPsalmTitle(${c})"><div class="rc-ref">Psalm ${c} · the title</div><div class="rc-txt"><em>${escapeHtml(ch.title)}</em></div></div>`);
+        const rest = parts[z].split('-')[1];
+        parts.splice(z, 1, ...(rest && +rest > 1 ? [`1-${rest}`] : rest ? ['1'] : []));
+        if(!parts.length) continue;
+      }
+    }
     // "4,5" and "39-41,42" read as one passage each (4–5, 39–42)
-    const ranges = vs ? vs.split(',').map(p => p.split('-').map(Number)).reduce((acc, [a, z]) => {
+    const ranges = parts ? parts.map(p => p.split('-').map(Number)).reduce((acc, [a, z]) => {
       const last = acc[acc.length - 1];
       if(last && a === (last[1] || last[0]) + 1) last[1] = z || a; else acc.push([a, z]);
       return acc;
@@ -7460,7 +7509,7 @@ function linkRefs(text){
    a name page tells same-named people apart, and a person page shows who
    they were, what their name means, their family and every verse naming
    them. */
-const PEOPLE_URL = 'people.json?v=2026-10-03'; // bump v= whenever tools/build-people.js is re-run
+const PEOPLE_URL = 'people.json?v=2026-10-26'; // bump v= whenever tools/build-people.js is re-run
 function loadPeople(){
   if(S._people) return Promise.resolve(S._people);
   return loadCachedJSON(PEOPLE_URL).then(d => {
@@ -7739,7 +7788,7 @@ function peopleInVerse(ref){ return (S._peopleByVerse && S._peopleByVerse.get(re
    geography, no commentary. They join the Names tab beside the people;
    a place page shows where it was, how far from Jerusalem, nearby Bible
    places, and every verse that names it. */
-const PLACES_URL = 'places.json?v=2026-10-03'; // bump v= whenever tools/build-places.js is re-run
+const PLACES_URL = 'places.json?v=2026-10-26'; // bump v= whenever tools/build-places.js is re-run
 function loadPlaces(){
   if(S._places) return Promise.resolve(S._places);
   return loadCachedJSON(PLACES_URL).then(d => {
@@ -8126,7 +8175,7 @@ async function fillTreasuryLine(i, limit=12){
    Creation to the Revelation, by era, with Ussher's dates. Built into
    timeline.json by tools/build-timeline.js from tools/timeline/events.js.
    Event: [year (negative = B.C.), title, book, firstCh, lastCh, keyRef, keyText] */
-const TIMELINE_VERSION = '2026-10-04'; // bump whenever tools/build-timeline.js is re-run
+const TIMELINE_VERSION = '2026-10-26'; // bump whenever tools/build-timeline.js is re-run
 function loadTimeline(){
   return loadCachedJSON(`timeline.json?v=${TIMELINE_VERSION}`).then(d => S._timeline = d);
 }
@@ -8140,9 +8189,14 @@ function tlEventsHTML(T, idp, tap){
     const where = key + (c2 > c1 ? ` · ${b} ${c1}–${c2}` : '');
     return `<div class="tl-ev" id="${idp}${ei}-${i}" tabindex="0" onclick="${tap}('${key.replace(/'/g, "\\'")}')">
       <div class="tl-yr">${tlYear(y)}</div>
-      <div class="tl-main"><button class="tl-nb" onclick="event.stopPropagation();nbAddEvent(${ei},${i})" title="Add to study">📝＋</button><span class="tl-btns">${tlJourney(`tl-${ei}-${i}`)}<button onclick="event.stopPropagation();tlMap(${ei},${i})" title="The places on the map" aria-label="Map">📍</button></span><div class="tl-t">${escapeHtml(t)}</div><div class="tl-q">“${escapeHtml(txt)}”</div><div class="tl-r">${escapeHtml(where)}</div></div>
+      <div class="tl-main"><button class="tl-nb" onclick="event.stopPropagation();nbAddEvent(${ei},${i})" title="Add to study">📝＋</button><span class="tl-btns">${tlJourney(`tl-${ei}-${i}`)}<button onclick="event.stopPropagation();tlMap(${ei},${i})" title="The places on the map" aria-label="Map">📍</button></span><div class="tl-t">${escapeHtml(t)}</div><div class="tl-q">“${escapeHtml(txt)}”</div><div class="tl-r">${escapeHtml(where)}</div>${tlPsalms(t)}</div>
     </div>`;
   }).join('')).join('');
+}
+// The Psalms whose titles tell they were written then
+function tlPsalms(t){
+  const ps = psalmsInEvent(t);
+  return ps.length ? `<div class="tl-ps">${ps.map(c => `<button onclick="event.stopPropagation();openPsalmTitle(${c})" title="${escapeHtml(PSALM_OCCASIONS[c].w)}">📜 Psalm ${c}</button>`).join('')}</div>` : '';
 }
 async function renderTimeline(){
   const list = document.getElementById('timeline-list');
@@ -8157,6 +8211,10 @@ async function renderTimeline(){
 function chapterEvent(book, ch){
   if(!S._timeline) return null;
   let best = null;
+  // A Psalm whose title tells when it was written: that event
+  const oc = psOccasion(book, ch);
+  if(oc && oc.tl) S._timeline.eras.forEach((era, ei) => era.e.forEach((e, i) => { if(!best && e[1] === oc.tl) best = {e, id:`tl-${ei}-${i}`}; }));
+  if(best) return best;
   S._timeline.eras.forEach((era, ei) => era.e.forEach((e, i) => {
     if(e[2] === book && ch >= e[3] && ch <= e[4] && (!best || e[4] - e[3] < best.e[4] - best.e[3])) best = {e, id:`tl-${ei}-${i}`};
   }));
@@ -8858,10 +8916,10 @@ function nbAddCard(btn){
 // Verse cards get a 📝＋ button as they appear — one place covers every list
 function nbDecorate(root){
   root.querySelectorAll('.rc:not(.ref-jump):not([data-nb])').forEach(card => {
-    const m = (card.getAttribute('onclick') || '').match(/^jumpToRef\('(.+)'\)$/);
+    const on = card.getAttribute('onclick') || '', m = on.match(/^jumpToRef\('(.+)'\)$/), t = on.match(/^openPsalmTitle\((\d+)\)$/);
     const head = card.querySelector('.rc-ref');
-    if(!m || !head) return;
-    card.dataset.nb = m[1].replace(/\\'/g, "'");
+    if(!(m || t) || !head) return;
+    card.dataset.nb = t ? `Psalms ${t[1]}:1` : m[1].replace(/\\'/g, "'"); // a Psalm's title goes in under its Psalm
     const b = document.createElement('button');
     b.className = 'rc-nb'; b.title = 'Add to study'; b.textContent = '📝＋';
     b.onclick = e => { e.stopPropagation(); nbAddCard(b); };
@@ -9305,12 +9363,125 @@ function openWhereMap(title, sub, pins, classic=-1){
 function chapterPlaces(){
   if(!S._placesByVerse || !S.bookData) return [];
   const ch = S.bookData.chapters[S.ch], ids = [], seen = new Set();
-  for(const v of ch.verses) for(const id of placesInVerse(`${S.book} ${S.ch+1}:${v.verse}`)){
+  // A Psalm's title (verse 0) and the places of the history it tells, then the verses
+  const oc = psOccasion(S.book, S.ch + 1);
+  const title = S.book === 'Psalms' ? [...placesInVerse(`Psalms ${S.ch+1}:0`), ...((oc && oc.pl) || [])] : [];
+  for(const id of title.concat(...ch.verses.map(v => placesInVerse(`${S.book} ${S.ch+1}:${v.verse}`)))){
     const p = S._places[id];
     if(p && p.ll && !seen.has(p.n)){ seen.add(p.n); ids.push(id); }
   }
   return ids;
 }
+/* ════ THE TITLES OF THE PSALMS ════
+   116 Psalms open with a title (their superscription) in the King James
+   Bible, part of the text and above verse 1: "To the chief Musician,
+   Maschil, A Psalm of David, when Doeg the Edomite came and told Saul…".
+   bible/Psalms.json keeps it as the chapter's "title" (and Psalm 119's
+   Hebrew letters as "heads"), written by tools/build-psalm-titles.js. It is
+   shown as plain text over the verses, not as a verse: verse numbers stay
+   as they are, and Select All, copy, share, highlights, notes, Present and
+   the audio are unchanged. The people and places data call it verse 0.
+   Where the title tells when the Psalm was written, PSALM_OCCASIONS gives
+   the passages that tell it, and the chapter's 📅, 🧭 and 📍 Where buttons
+   follow that history. Only what a title says: a Psalm whose title gives no
+   occasion has none, and where it could be one of two times or places
+   (which cave), both are given. Each entry:
+     w   what the title says happened, as the fold's label
+     p   [passage, what happens there] — each tap opens the chapter
+     n   a note shown above them (only where a word is needed)
+     tl  the Timeline event it falls in, by its title
+     j   [journey id, stop's verse] — the stops it belongs to
+     pl  places of the history for 📍 Where (the title's own come from places.json)
+     pp  people of the history, besides those the title names */
+const PSALM_OCCASIONS = {
+  3:  {w:'When David fled from Absalom his son', tl:"Absalom's rebellion",
+       p:[['2 Samuel 15:13-30', 'David flees Jerusalem, weeping up mount Olivet'], ['2 Samuel 16:5-14', 'Shimei curses him as he goes'], ['2 Samuel 17:21-29', 'Over Jordan to Mahanaim'], ['2 Samuel 18:24-33', 'The news of Absalom’s death; “O my son Absalom”']],
+       pl:['a15257a', 'ac2c4c5', 'ae5bfe9'], pp:['Ahithophel_1', 'Hushai_1', 'Shimei_2']},
+  18: {w:'The day the LORD delivered him from Saul and all his enemies',
+       n:'David’s song is written a second time in 2 Samuel 22, which opens with the same words as this title.',
+       p:[['2 Samuel 22:1-51', 'The same song in 2 Samuel']]},
+  34: {w:'When David changed his behaviour before the king of Gath', tl:'David flees from Saul', j:[['david', '1 Samuel 21:10']],
+       n:'The king is called Achish in 1 Samuel; the title names him Abimelech.',
+       p:[['1 Samuel 21:10-15', 'David before Achish king of Gath']]},
+  51: {w:'When Nathan the prophet came unto David', tl:"David's sin and repentance",
+       p:[['2 Samuel 11:1-27', 'David and Bath-sheba; Uriah slain'], ['2 Samuel 12:1-14', 'Nathan: “Thou art the man”']],
+       pp:['Uriah_1']},
+  52: {w:'When Doeg the Edomite told Saul', tl:'David flees from Saul', j:[['david', '1 Samuel 21:1'], ['david', '1 Samuel 22:6']],
+       p:[['1 Samuel 21:1-9', 'David at Nob; Doeg is there that day'], ['1 Samuel 22:6-10', 'Doeg tells Saul at Gibeah'], ['1 Samuel 22:11-19', 'Doeg slays the priests of Nob'], ['1 Samuel 22:20-23', 'Abiathar escapes to David']],
+       pl:['ac24f5f'], pp:['Abiathar_1']},
+  54: {w:'When the Ziphims told Saul where David hid', tl:'David flees from Saul', j:[['david', '1 Samuel 23:14']],
+       p:[['1 Samuel 23:19-28', 'The Ziphites come to Saul at Gibeah'], ['1 Samuel 26:1-3', 'They come to him again']],
+       pl:['a50057d', 'ac24f5f']},
+  56: {w:'When the Philistines took him in Gath', tl:'David flees from Saul', j:[['david', '1 Samuel 21:10']],
+       p:[['1 Samuel 21:10-15', 'David at Gath before Achish']], pp:['Achish_1']},
+  57: {w:'When David fled from Saul in the cave', tl:'David flees from Saul', j:[['david', '1 Samuel 22:1'], ['david', '1 Samuel 24:1']],
+       n:'The title does not say which cave, so both are given.',
+       p:[['1 Samuel 22:1-2', 'The cave Adullam'], ['1 Samuel 24:1-22', 'The cave at En-gedi, where he spared Saul']],
+       pl:['af82614', 'a51df0e']},
+  59: {w:'When Saul sent men to watch David’s house', tl:'David flees from Saul', j:[['david', '1 Samuel 19:18']],
+       p:[['1 Samuel 19:11-18', 'Michal lets David down through a window']],
+       pl:['a90f6e1'], pp:['Michal_1']},
+  60: {w:'When David strove with Syria and smote Edom', tl:"David's wars; Edom subdued",
+       p:[['2 Samuel 8:1-14', 'David smites Zobah and Syria, and puts garrisons in Edom'], ['1 Chronicles 18:1-13', 'Edom slain in the valley of salt'], ['2 Samuel 10:6-19', 'Joab against the Syrians']],
+       pp:['Abishai_1', 'Hadadezer_1']},
+  63: {w:'When David was in the wilderness of Judah',
+       n:'David was in the wilderness of Judah twice, fleeing Saul and fleeing Absalom; the title does not say which, so both are given.',
+       p:[['1 Samuel 23:14-15', 'Fleeing Saul in the wilderness'], ['2 Samuel 15:23-28', 'Fleeing Absalom toward the wilderness']]},
+  142: {w:'When David was in the cave', tl:'David flees from Saul', j:[['david', '1 Samuel 22:1'], ['david', '1 Samuel 24:1']],
+       n:'The title does not say which cave, so both are given.',
+       p:[['1 Samuel 22:1-2', 'The cave Adullam'], ['1 Samuel 24:1-22', 'The cave at En-gedi, where he spared Saul']],
+       pl:['af82614', 'a51df0e']},
+};
+const psOccasion = (book, ch) => book === 'Psalms' ? PSALM_OCCASIONS[ch] || null : null;
+// The Psalms written at a journey's stop, or in a Timeline event (by its title)
+const psalmsAtStop = (jid, ref) => Object.keys(PSALM_OCCASIONS).filter(c => (PSALM_OCCASIONS[c].j || []).some(([id, r]) => id === jid && r === ref)).map(Number);
+const psalmsInEvent = t => Object.keys(PSALM_OCCASIONS).filter(c => PSALM_OCCASIONS[c].tl === t).map(Number);
+// "1 Samuel 22:11-19" → "1 Samuel 22:11–19"; the first verse opens the chapter
+const psPassage = r => r.replace('-', '–');
+function renderPsalmTitle(){
+  const box = document.getElementById('ch-ps-title');
+  if(!box) return;
+  const ch = S.bookData && S.bookData.chapters[S.ch], t = S.book === 'Psalms' && ch && ch.title;
+  if(!t){ box.innerHTML = ''; return; }
+  const oc = psOccasion(S.book, S.ch + 1), open = oc && LS.get('kjv_ps_when', false);
+  box.innerHTML = `<div class="ps-title">${escapeHtml(t)}</div>`
+    + (oc ? `<button class="ps-when${open ? ' on' : ''}" aria-expanded="${!!open}" onclick="psWhenToggle()">📜 ${escapeHtml(oc.w)} <span class="sg-arr">›</span></button><div class="ps-when-body" id="ps-when-body"></div>` : '');
+  if(open) psWhenFill();
+}
+// The fold stays open or shut as it was left (per device)
+function psWhenToggle(){
+  const on = !LS.get('kjv_ps_when', false);
+  LS.set('kjv_ps_when', on);
+  const b = document.querySelector('#ch-ps-title .ps-when');
+  if(b){ b.classList.toggle('on', on); b.setAttribute('aria-expanded', on); }
+  if(on) psWhenFill(); else { const body = document.getElementById('ps-when-body'); if(body) body.innerHTML = ''; }
+}
+async function psWhenFill(){
+  const body = document.getElementById('ps-when-body'), c = S.ch + 1, oc = psOccasion(S.book, c);
+  if(!body || !oc) return;
+  const cards = oc.p.map(([r, d]) => `<div tabindex="0" class="rc" onclick="jumpToRef('${r.replace(/-\d+$/, '')}')"><div class="rc-ref">${escapeHtml(psPassage(r))}</div><div class="rc-txt">${escapeHtml(d)}</div></div>`).join('');
+  body.innerHTML = (oc.n ? `<div class="ps-when-note">${escapeHtml(oc.n)}</div>` : '') + cards + '<div class="ps-when-pp"></div>';
+  // The people: those the title names (its verse 0), then the others of the history
+  await ensureNameIndex().catch(() => {});
+  const box = body.querySelector('.ps-when-pp');
+  if(!box || S.book !== 'Psalms' || S.ch + 1 !== c || !S._people) return;
+  const ids = [...new Set([...peopleInVerse(`Psalms ${c}:0`), ...(oc.pp || [])])].filter(id => S._people[id] && id !== 'David_1');
+  box.innerHTML = ids.map(id => `<button class="pp-chip" onclick="openPerson('${id}')" title="${escapeHtml(personBrief(S._people[id]))}">👤 ${escapeHtml(S._people[id].n)}</button>`).join('');
+}
+// Open a Psalm at its title (from a search, a person's or place's page, the Timeline, a journey)
+async function openPsalmTitle(c){
+  const data = await fetchBook('Psalms');
+  if(!data || !data.chapters[c - 1]) return;
+  S.book = 'Psalms'; S.ch = c - 1; S.bookData = data;
+  renderReader(); showScreen('reader');
+  setTimeout(() => {
+    const el = document.querySelector('#ch-ps-title .ps-title');
+    if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 2000);
+  }, 250);
+}
+
 // Every Psalm is sung word for word in the FBC Hymns app (Sing the KJV)
 function updateChapterSungButton(){
   const a = document.getElementById('ch-sung-btn');
@@ -9329,7 +9500,7 @@ function updateChapterWhereButton(){
 }
 function openChapterMap(){
   const ids = chapterPlaces();
-  openWhereMap(`Places in ${S.book} ${S.ch + 1}`, `${ids.length} place${ids.length !== 1 ? 's' : ''} named in this chapter · tap a pin for details`, ids.map(id => wmPin(id)), chapterMap(S.book, S.ch + 1));
+  openWhereMap(`Places in ${refShow(S.book + ' ' + (S.ch + 1))}`, `${ids.length} place${ids.length !== 1 ? 's' : ''} named in this chapter · tap a pin for details`, ids.map(id => wmPin(id)), chapterMap(S.book, S.ch + 1));
   const jr = chapterJourneys();
   if(jr.length) document.getElementById('wm-sub').insertAdjacentHTML('beforeend', jr.map(([j, i]) => ` <button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openJourney('${j.id}', ${i}))">🧭 ${escapeHtml(j.t)} ›</button>`).join(''));
 }
@@ -9844,6 +10015,7 @@ async function jrCard(){
     <div class="jr-place">${st.p && S._places[st.p] ? `<button class="jr-pl" onclick="jrPlace()" title="The place, and every verse that names it">📍 ${escapeHtml(st.n)} ›</button>` : `📍 ${escapeHtml(st.n)}`}${today}</div>
     <div class="jr-d">${escapeHtml(st.d)}</div>
     <div class="jr-v"><b>${escapeHtml(st.r)}</b><span class="jr-vt">…</span></div>
+    ${(ps => ps.length ? `<div class="jr-ps">In the Psalms:${ps.map(c => `<button onclick="jrPsalm(${c})" title="${escapeHtml(PSALM_OCCASIONS[c].w)}">📜 Psalm ${c}</button>`).join('')}</div>` : '')(psalmsAtStop(j.id, st.r))}
     ${st.site ? `<div class="jr-site">${escapeHtml(st.site)}</div>` : st.u ? '<div class="jr-site">The site is uncertain — drawn dashed.</div>' : ''}
     <div class="jr-nav"><button onclick="jrGo(${i - 1})" ${i ? '' : 'disabled'}>‹ Back</button><button onclick="jrRead()">Read ›</button><button class="go" onclick="jrGo(${i + 1})" ${i < j.s.length - 1 ? '' : 'disabled'}>Next stop ›</button></div>
   </div>`;
@@ -9869,6 +10041,7 @@ document.addEventListener('keydown', e => {
   else if(e.key === 'Escape'){ e.preventDefault(); jrPresent(); }
 });
 function jrRead(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => jumpToRef(st.r)); }
+function jrPsalm(c){ leavePopoverThen('wm-overlay', () => openPsalmTitle(c)); }
 function jrPlace(){ const st = S._jr.j.s[S._jr.i]; if(st.p) leavePopoverThen('wm-overlay', () => openPlace(st.p)); }
 function jrTimeline(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => openTimelineAt(st.e)); }
 // Search → Maps: the list
@@ -9893,6 +10066,9 @@ function journeysAt(id){
 // Reader: journeys with a stop in this chapter: [[journey, first stop in it]]
 function chapterJourneys(){
   if(!S._journeys || !S.book) return [];
+  // A Psalm with a known occasion: the journey stops it was written at (the first of each journey)
+  const oc = psOccasion(S.book, S.ch + 1);
+  if(oc && oc.j) return S._journeys.map(j => [j, j.s.findIndex(st => oc.j.some(([id, r]) => id === j.id && r === st.r))]).filter(x => x[1] >= 0);
   const pre = `${S.book} ${S.ch + 1}:`;
   return S._journeys.map(j => [j, j.s.findIndex(st => st.r.startsWith(pre))]).filter(x => x[1] >= 0);
 }
@@ -10928,7 +11104,7 @@ async function concordVerses(w, progress){
   let done = 0;
   const datas = await Promise.all(BOOKS.map(n => S.cache[n] ? S.cache[n] : fetchBook(n).then(d => { progress(++done, BOOKS.length); return d; })));
   const re = new RegExp(`(?<![a-z])${w}(?![a-z])`);
-  return BOOKS.flatMap((n, i) => datas[i] ? bookSearchIndex(n, datas[i]).filter(v => re.test(v.lc)) : []);
+  return BOOKS.flatMap((n, i) => datas[i] ? bookSearchIndex(n, datas[i]).filter(v => !v.ps && re.test(v.lc)) : []); // verses only, as the word counts are
 }
 function renderConcordHits(body, upto){
   const w = S._concWord, hits = S._concHits;
@@ -14132,6 +14308,7 @@ const TOOL_TIPS = {
   journey: {i:'🧭', t:'Journeys', tips:[
     ['›', '<strong>Next stop › and ‹ Back</strong> step through the journey, or tap a numbered stop on the map. Each stop is a verse that names the place'],
     ['📖', '<strong>Read ›</strong> opens the verse in the Bible; <strong>📅 About …</strong> opens the timeline at that event'],
+    ['📜', 'A stop a Psalm’s title tells of shows it under <strong>In the Psalms</strong> — at Nob, <strong>📜 Psalm 52</strong> (“when Doeg the Edomite came and told Saul”). Tap it to read the Psalm'],
     ['⚖️', '<strong>Disputed sites</strong> (the Red Sea and Sinai, Ur, Golgotha, Emmaus …) have a switch on the stop card for each view, with <strong>Why this view?</strong>. Your choice is remembered and shared, so the Exodus and Elijah’s Horeb always agree'],
     ['┄', '<strong>Dashed</strong> lines and rings mark sites that are uncertain'],
     ['⛪', '<strong>The churches of the New Testament</strong> visits each church in the order the Bible tells of it, from Jerusalem to the seven churches of Asia. It has no route line, for no one road joins them; <strong>📜 Classic map</strong> at the top opens the printed map of the same churches'],
@@ -14155,6 +14332,7 @@ const TOOL_TIPS = {
     ['📖', '<strong>Tap an event</strong> to read it. Dates follow Archbishop Ussher’s chronology (1650) and are approximate'],
     ['📍', '<strong>📍</strong> maps the places in the event’s chapters, <strong>🧭</strong> (when there is one) follows the journey it belongs to, and <strong>📝＋</strong> adds it to your study'],
     ['🧭', 'From a journey stop, <strong>📅 About …</strong> brings you to its event here'],
+    ['📜', 'Under an event, <strong>📜 Psalm …</strong> are the Psalms whose titles say they were written then (David fleeing Saul: Psalms 34, 52, 54, 56, 57, 59 and 142)'],
     ['💻', 'On a laptop or a tablet held sideways, a chapter’s <strong>📅 About …</strong> opens the timeline <strong>beside the chapter</strong>, with that chapter’s event marked — tap another event to read it on the left. Back steps back through what you read; ✕ closes the panel'],
   ]},
   concord: {i:'📜', t:'Concordance', tips:[
@@ -14194,6 +14372,7 @@ const TOOL_TIPS = {
     ['👤', '<strong>About 2,600 names</strong> with their meanings and the 3,000 people who bore them — a person’s page shows who they were, their family and connections, and every verse that names them'],
     ['📍', '<strong>About 1,200 places</strong> — where each was today, how far from Jerusalem, what was nearby, the journeys through it and every verse that names it'],
     ['⚖️', 'A <strong>disputed site</strong> shows each view, why it is held, and all of them on one map'],
+    ['📜', 'Someone or somewhere named in a <strong>Psalm’s title</strong> lists it with the verses — Doeg’s page has <strong>Psalm 52 · the title</strong> beside 1 Samuel 21–22'],
     ['📖', 'While reading, <strong>tap a verse</strong>: <strong>📛 Names in this verse</strong> lists its people and places. Tap one for its meaning, then 👤 for the person or 📍 for the place'],
     ['🔊', '<strong>🔊 Hear it</strong> on a name, person or place says it aloud — tap again to hear it slowly. About 660 hard names are written the way they sound, the strong part in capitals (<strong>meh-FIB-oh-sheth</strong>)'],
     ['📤', '<strong>📤 Share</strong> on a name, person or place sends who or what it is, how to say it, and a link that opens that page in the app'],
@@ -14249,7 +14428,7 @@ document.addEventListener('DOMContentLoaded', ttRefresh);
    welcome screen; Skip is always there, and Tips & Help shows it again. */
 const HINTS = {
   home:     {i:'🏠', t:'Welcome to Home', b:'Cards with an arrow fold open when you tap them, and <b>›</b> takes you to a page. <b>Swipe the verse of the day</b> away if you don\'t want it today. Scroll down for <b>Search</b>, your <b>Reading Plans</b>, your <b>Notes</b> and <b>Sword Drill</b>.', at:'#home-search'},
-  reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save, screenshot or drill them together; tap more verses to add them (scroll freely, a drag picks nothing), and tap a blank spot or <b>✕ Cancel</b> when done. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app.', at:'#verses .vblock'},
+  reader:   {i:'📖', t:'Reading a chapter', b:'<b>Tap any verse</b> to highlight it, save it or write a note. <b>Press and hold</b> a verse to pick several at once — to copy, share, save, screenshot or drill them together; tap more verses to add them (scroll freely, a drag picks nothing), and tap a blank spot or <b>✕ Cancel</b> when done. <b>Share</b> sends a link that opens the app on those verses (Select All for the whole chapter). At the end of every chapter, <b>✍️</b> opens your Reading Journal. In the Psalms, <b>🎧 Sung</b> opens that Psalm sung in the FBC Hymns app, and where a Psalm’s title tells when it was written, <b>📜</b> under the title opens the story.', at:'#verses .vblock'},
   vword:    {i:'📖', t:'What does this word mean?', b:'<b>Tap any word</b> of the verse for its meaning — Webster’s 1828, with the KJV note on top where there is one. Tap it again, or ✕, to close it.', at:'#vpop-txt'},
   verse:    {i:'🔖', t:'Keep this verse', b:'Tap a colour to <b>highlight</b> it (<b>✏️</b> gives each colour a meaning). <b>🔖 Save</b> puts it in a list of your own — a doctrine you share, verses for comfort, a lesson. <b>Note</b> keeps your thoughts beside it. When a hymn stands on the verse, <b>🎵 A hymn on this verse</b> opens it. <b>Add to Screenshot</b> gathers up to 3 verses, from anywhere, onto one picture.', at:'#pa-bm'},
   mylist:   {i:'🔖', t:'Your list', b:'<b>↑ ↓</b> put the verses in your order. <b>📸 Card</b> makes a picture of a verse to share (<b>📸 Screenshot</b> under the buttons puts up to 3 verses on one), and <b>⚔️ Drill</b> sends it to Sword Drill to memorize. At the top, <b>🎦 Present</b> shows the whole list as slides.', at:'#screen-saved .col-it-ctl'},
@@ -16444,7 +16623,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v62';
+const WHATS_NEW_VERSION = 'v63';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -17439,6 +17618,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v63" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📜</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">The Titles of the Psalms</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          The Psalms now open with their titles, as in a printed King James Bible: <em>“A Psalm of David, when Doeg the Edomite came and told Saul…”</em>, and Psalm 119 has its letters, ALEPH to TAU. Where a title tells when the Psalm was written, tap <strong>📜</strong> under it for the passages that tell the story; <strong>📅</strong> and <strong>🧭</strong> take you to that time and that journey. Searching a name such as <strong>Doeg</strong> finds the title too.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v62" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">🎵</div>
       <div>

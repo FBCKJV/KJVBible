@@ -137,9 +137,9 @@ check('every classic map has its picture and is kept for offline use', async () 
   for(const m of html.matchAll(/\['([^']+)',\d+,\d+,'([^']+)'\]/g)) assert(files.includes(m[2]), `CHAPTER_MAPS ${m[1]} names no map ${m[2]}`);
 }, {noPage: true});
 
-check('hymn and verse indexes match their sources (rebuild if this fails)', async () => {
+check('hymn and verse indexes and the Psalm titles match their sources (rebuild if this fails)', async () => {
   const {execFileSync} = require('child_process');
-  for(const b of ['build-hymns.js', 'build-verse-index.js']){
+  for(const b of ['build-hymns.js', 'build-verse-index.js', 'build-psalm-titles.js']){
     try{ execFileSync(process.execPath, [path.join(__dirname, b), '--check'], {stdio: 'pipe'}); }
     catch(e){ throw new Error(String(e.stdout || e.message).trim()); }
   }
@@ -1117,6 +1117,65 @@ check('names only when the verse says them (3 John 1:1); one Psalm reads "Psalm 
   const k = await p.evaluate(() => ({card: document.getElementById('vpop-ref').textContent, key: Object.keys(S.highlights).includes('Psalms 47:1')}));
   assert(k.card === 'Psalm 47:1' && k.key, 'the card shows Psalm 47:1 while the highlight is kept under Psalms 47:1: ' + JSON.stringify(k));
   await p.evaluate(() => { setHL(null); history.back(); }); await sleep(400);
+});
+
+check('Psalm titles: above verse 1 but not a verse; search, names, places, the timeline and journeys lead to them', async p => {
+  await p.evaluate(() => jumpToRef('Psalms 52:1')); await sleep(1500);
+  const r = await p.evaluate(() => ({
+    title: document.querySelector('#ch-ps-title .ps-title')?.textContent || '',
+    before: !!(document.getElementById('ch-ps-title').compareDocumentPosition(document.querySelector('#verses .vblock')) & Node.DOCUMENT_POSITION_FOLLOWING),
+    first: document.querySelector('#verses .vblock')?.dataset.vnum, n: document.querySelectorAll('#verses .vblock').length,
+    when: document.querySelector('#ch-ps-title .ps-when')?.textContent || '',
+    time: document.getElementById('ch-time-btn').style.display !== 'none' && document.getElementById('ch-time-btn').textContent,
+    jr: document.getElementById('ch-jr').textContent, where: document.getElementById('ch-where-btn').textContent}));
+  assert(/^To the chief Musician, Maschil, A Psalm of David, when Doeg the Edomite came and told Saul/.test(r.title), 'Psalm 52 shows no title: ' + r.title);
+  assert(r.before && r.first === '1' && r.n === 9, 'the title should sit above verse 1, the verses 1–9 as before: ' + JSON.stringify(r));
+  assert(/Doeg/.test(r.when) && /1062/.test(r.time) && /David fleeing Saul/.test(r.jr) && /2 places/.test(r.where), 'Psalm 52 should lead to its history (📜, 📅 1062, 🧭, 📍 Nob and Gibeah): ' + JSON.stringify(r));
+  // Select All and copy take the verses only, starting at verse 1
+  await p.evaluate(() => selectAllVerses());
+  const sel = await p.evaluate(() => ({n: S.selectedData.length, txt: joinVerseText(getSelectedSorted()), lbl: passageLabel(getSelectedSorted())}));
+  assert(sel.n === 9 && !/Musician|Doeg/.test(sel.txt) && /^Why boastest thou/.test(sel.txt) && sel.lbl === 'Psalm 52:1–9', 'Select All should copy verses 1–9 alone: ' + JSON.stringify(sel).slice(0, 160));
+  await p.evaluate(() => exitSelectMode(true)); await sleep(300);
+  // The fold: the passages in 1 Samuel and the people; a passage opens its chapter
+  await p.evaluate(() => { LS.set('kjv_ps_when', false); renderPsalmTitle(); psWhenToggle(); }); await sleep(1500);
+  const f = await p.evaluate(() => ({refs: [...document.querySelectorAll('#ps-when-body .rc-ref')].map(x => x.textContent), pp: [...document.querySelectorAll('#ps-when-body .pp-chip')].map(x => x.textContent)}));
+  assert(f.refs.join('|') === '1 Samuel 21:1–9|1 Samuel 22:6–10|1 Samuel 22:11–19|1 Samuel 22:20–23' && f.pp.some(x => /Doeg/.test(x)) && f.pp.some(x => /Abiathar/.test(x)), 'the fold: ' + JSON.stringify(f));
+  await p.evaluate(() => document.querySelectorAll('#ps-when-body .rc')[1].click()); await sleep(1200);
+  assert(await p.evaluate(() => S.book === '1 Samuel' && S.ch === 21), 'a passage should open 1 Samuel 22');
+  await p.evaluate(() => LS.set('kjv_ps_when', false));
+  // A Psalm with no title shows none; Psalm 119's letters stand over their verses, not as verses
+  await p.evaluate(() => jumpToRef('Psalms 1:1')); await sleep(800);
+  assert(await p.evaluate(() => document.getElementById('ch-ps-title').innerHTML === ''), 'Psalm 1 has no title');
+  await p.evaluate(() => jumpToRef('Psalms 119:9')); await sleep(1000);
+  const h = await p.evaluate(() => ({heads: [...document.querySelectorAll('#verses .ps-head')].map(x => x.textContent), n: document.querySelectorAll('#verses .vblock').length,
+    next: document.querySelectorAll('#verses .ps-head')[1]?.nextElementSibling?.dataset.vnum}));
+  assert(h.heads.length === 22 && h.heads[0] === 'א ALEPH.' && h.heads[21] === 'ת TAU.' && h.n === 176 && h.next === '9', 'Psalm 119: ' + JSON.stringify(h).slice(0, 160));
+  // Search finds Doeg in the title of Psalm 52, and the title card opens it
+  await p.evaluate(() => { showScreen('search'); switchSearchMode('search'); doSearch('Doeg'); }); await sleep(3500);
+  const s = await p.evaluate(() => [...document.querySelectorAll('#s-results .rc .rc-ref')].map(x => x.textContent.replace('📝＋', '')));
+  assert(s.includes('Psalm 52 · the title') && s.includes('1 Samuel 21:7'), 'searching Doeg: ' + s.join(' | '));
+  assert(await p.evaluate(() => [...document.querySelectorAll('#s-results .rc')].find(x => /the title/.test(x.textContent)).dataset.nb === 'Psalms 52:1'), 'the title result should have 📝＋ Add to study, under Psalm 52');
+  await p.evaluate(() => [...document.querySelectorAll('#s-results .rc')].find(x => /the title/.test(x.textContent)).click()); await sleep(1200);
+  assert(await p.evaluate(() => S.screen === 'reader' && S.book === 'Psalms' && S.ch === 51), 'the title result should open Psalm 52');
+  // Doeg's page lists the title with 1 Samuel; Nob's page too; a description reads "the title of Psalm 7"
+  await p.evaluate(() => openPerson('Doeg_1')); await sleep(1800);
+  const pp = await p.evaluate(() => [...document.querySelectorAll('#ppv-body .rc-ref')].map(x => x.textContent.replace('📝＋', '')));
+  assert(pp.includes('Psalm 52 · the title') && pp.some(x => /^1 Samuel 21:7/.test(x)), 'Doeg\'s verses: ' + pp.join(' | '));
+  await p.evaluate(() => openPlace('afdda14')); await sleep(1500);
+  await p.evaluate(() => { const b = document.getElementById('plv-body'); if(b && !b.innerHTML) fillPlaceVerses(); }); await sleep(1200);
+  assert(await p.evaluate(() => [...document.querySelectorAll('#plv-body .rc-ref')].some(x => x.textContent.replace('📝＋', '') === 'Psalm 52 · the title')), 'Nob\'s page should list the title of Psalm 52');
+  assert(await p.evaluate(async () => (await loadPeople(), S._people.Cush_2.d)) === 'a Benjamite (the title of Psalm 7)', 'Cush\'s description');
+  // The Timeline shows the Psalms of David's flight; Absalom's rebellion is there with Psalm 3
+  await p.evaluate(() => openTimelineAt('tl-4-2')); await sleep(1500);
+  const tl = await p.evaluate(() => [...document.querySelectorAll('#timeline-list .tl-ev')].map(e => [e.querySelector('.tl-t').textContent, [...e.querySelectorAll('.tl-ps button')].map(b => b.textContent.replace(/\D/g, '')).join(',')]).filter(x => x[1]));
+  assert(tl.some(([t, ps]) => t === 'David flees from Saul' && ps === '34,52,54,56,57,59,142') && tl.some(([t, ps]) => t === "Absalom's rebellion" && ps === '3'), 'Timeline Psalms: ' + JSON.stringify(tl));
+  // A journey's stop: Psalm 52 written at Nob; tapping it opens the Psalm and leaves the map
+  await p.evaluate(() => openJourney('david', 2)); await sleep(2000);
+  const jr = await p.evaluate(() => document.querySelector('#wm-list .jr-ps')?.textContent || '');
+  assert(/Psalm 52/.test(jr), 'the Nob stop should show Psalm 52: ' + jr);
+  await p.evaluate(() => document.querySelector('#wm-list .jr-ps button').click()); await sleep(1500);
+  const end = await p.evaluate(() => ({book: S.book, ch: S.ch, map: document.getElementById('wm-overlay').classList.contains('on')}));
+  assert(end.book === 'Psalms' && end.ch === 51 && !end.map, 'the Psalm should open with the map put away: ' + JSON.stringify(end));
 });
 
 check('verse card: photo controls show only for a photo you add', async p => {

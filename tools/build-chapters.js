@@ -35,7 +35,8 @@ const appLink = (b, c, v = 1) => `../#${b.replace(/ /g, '+')}+${c}:${v}`;
 
 function load(b){
   const d = JSON.parse(fs.readFileSync(path.join(ROOT, 'bible', b.replace(/ /g, '') + '.json'), 'utf8'));
-  return d.chapters.map(ch => ch.verses.map(v => [+v.verse, v.text]));
+  // a Psalm's title, and Psalm 119's Hebrew letters, ride along with its verses
+  return d.chapters.map(ch => Object.assign(ch.verses.map(v => [+v.verse, v.text]), {title: ch.title, heads: ch.heads}));
 }
 
 // Follow the theme chosen in the app (same site, same storage)
@@ -140,7 +141,7 @@ for(const {b, chs} of all){
 <p class="lead">King James Version</p>
 <p class="open"><a class="btn" href="${appLink(b, c)}">📖 Read ${esc(name)} in the app</a><span>Highlight it, save it, hear it read, memorize it — free</span></p>
 <div class="text">
-${verses.map(([v, t]) => `<p id="v${v}"><sup>${v}</sup> ${esc(t)}</p>`).join('\n')}
+${verses.title ? `<p class="ps-title">${esc(verses.title)}</p>\n` : ''}${verses.map(([v, t]) => (verses.heads && verses.heads[v] ? `<h2 class="ps-head">${esc(verses.heads[v])}</h2>\n` : '') + `<p id="v${v}"><sup>${v}</sup> ${esc(t)}</p>`).join('\n')}
 </div>
 <nav class="pager">${prev ? `<span class="prev">‹ ${link(prev)}</span>` : '<span></span>'}<a class="all" href="${slug(b)}.html">${esc(b)}</a>${next ? `<span class="next">${link(next)} ›</span>` : '<span></span>'}</nav>
 <p class="open end"><a class="btn" href="${appLink(b, c)}">📖 Keep reading in the app</a></p>`,
