@@ -41,7 +41,13 @@ const ancient = readJsonl('ancient.jsonl.gz');
 const modern = Object.fromEntries(readJsonl('modern.jsonl.gz').map(m => [m.id, m]));
 
 const bible = BOOKS.map(b => JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'bible', b.replace(/ /g, '') + '.json'), 'utf8')).chapters);
-const verseText = (b, c, v) => { const ch = bible[b][c - 1]; const x = ch && ch.verses[v - 1]; return x ? x.text : null; };
+// Verse 0 of a Psalm is its title ("To the chief Musician … when the Philistines took him in Gath")
+const verseText = (b, c, v) => { const ch = bible[b][c - 1]; if(ch && v === 0) return ch.title || null; const x = ch && ch.verses[v - 1]; return x ? x.text : null; };
+const PS = BOOKS.indexOf('Psalms');
+// Places a Psalm's title points to without naming them: the king of Gath before whom David
+// changed his behaviour (34; 1 Samuel 21:10-13), the house of Ahimelech at Nob (52; 1 Samuel 21:1),
+// and the town of the Ziphims (54; 1 Samuel 23:19). Kept as verse 0, the title.
+const TITLE_PLACES = { a18873f: [34], afdda14: [52], a9b852f: [54] };
 const tags = s => (s || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 const lonlat = s => { if(!s) return null; const [lon, lat] = s.split(',').map(Number); return isFinite(lat) && isFinite(lon) ? [+lat.toFixed(5), +lon.toFixed(5)] : null; };
 const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -87,6 +93,14 @@ for(const a of ancient){
   // Other spellings of the same name only (Ai/Hai, Sinai/Sina) — not other
   // words a verse uses for the place (Jerusalem is not "Judah" or "Zion")
   const alts = used.slice(1).map(([n]) => n).filter(n => /^[A-Z][A-Za-z'’-]*$/.test(n) && n !== name && similar(n, name));
+
+  // The dataset counts a Psalm's title as its verse 1 (as the Hebrew does): a place named in the
+  // title and not in verse 1 belongs to the title, verse 0 (Gath in Psalm 56, Edom in Psalm 60)
+  const named = (t, ns) => ns.some(n => new RegExp(`(^|[^A-Za-z])${reEsc(n)}(?![a-z])`).test(t || ''));
+  const allNames = [name, ...Object.keys(a.translation_name_counts || {})];
+  for(const r of refs) if(r[0] === PS && !named(verseText(PS, r[1], r[2]), allNames) && named(verseText(PS, r[1], 0), allNames)) r[2] = 0;
+  for(const c of TITLE_PLACES[a.id] || []) if(!refs.some(r => r[0] === PS && r[1] === c && r[2] === 0)) refs.push([PS, c, 0]);
+  refs.sort((x, y) => x[0] - y[0] || x[1] - y[1] || x[2] - y[2]);
 
   // Verses, grouped by chapter, runs collapsed
   const byCh = new Map();
