@@ -26,6 +26,8 @@ const dest = path.join(root, 'bible', 'Psalms.json');
 const before = fs.readFileSync(dest, 'utf8');
 
 const plain = s => s.replace(/[\[\]]/g, '');
+// as the book files write it: JSON, with anything beyond ASCII as \uXXXX (’ is \u2019)
+const jsonAscii = s => JSON.stringify(s).replace(/[\u007f-\uffff]/g, ch => '\\u' + ch.charCodeAt(0).toString(16).padStart(4, '0'));
 // Take out what an earlier run wrote, then write it afresh
 let txt = before.replace(/\{"chapter": "(\d+)", "title": (?:"(?:[^"\\]|\\.)*"), /g, '{"chapter": "$1", ')
   .replace(/\{"chapter": "(\d+)", "heads": \{[^}]*\}, /g, '{"chapter": "$1", ');
@@ -33,14 +35,14 @@ let n = 0;
 for(const [c, t] of Object.entries(SRC.titles)){
   const from = `{"chapter": "${c}", "verses"`;
   if(!txt.includes(from)) throw new Error(`Psalm ${c}: chapter not found`);
-  txt = txt.replace(from, `{"chapter": "${c}", "title": ${JSON.stringify(plain(t))}, "verses"`);
+  txt = txt.replace(from, `{"chapter": "${c}", "title": ${jsonAscii(plain(t))}, "verses"`);
   n++;
 }
 let h = 0;
 for(const [c, heads] of Object.entries(SRC.heads)){
   const from = `{"chapter": "${c}", "verses"`;
   if(!txt.includes(from)) throw new Error(`Psalm ${c}: chapter not found`);
-  txt = txt.replace(from, `{"chapter": "${c}", "heads": ${JSON.stringify(heads)}, "verses"`);
+  txt = txt.replace(from, `{"chapter": "${c}", "heads": ${jsonAscii(heads)}, "verses"`);
   h += Object.keys(heads).length;
 }
 

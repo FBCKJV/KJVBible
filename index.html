@@ -5536,12 +5536,14 @@ async function downloadBook(name, cache){
 }
 
 // Books whose file changed after people saved them on their phones (v1: a
-// stray space before "?", "God:for"; v2: the titles of the Psalms): fetched
+// stray space before "?", "God:for"; v2: the titles of the Psalms; v3: 274
+// verses set right against the Pure Cambridge Edition and other KJVs, see
+// tools/text-review): fetched
 // again once, quietly, and the saved copy replaced only when the new one has
 // arrived — offline the old copy stays. Raise v and give the books the new v
 // when a book's file changes again; a phone fetches only the books changed
 // since it last caught up.
-const BOOK_FIXES = {v: 2, books: {Ecclesiastes: 1, Isaiah: 1, Joshua: 1, Leviticus: 1, Mark: 1, Revelation: 1, Psalms: 2}};
+const BOOK_FIXES = {v: 3, books: {Genesis: 3, Exodus: 3, Leviticus: 3, Numbers: 3, Deuteronomy: 3, Joshua: 3, Judges: 3, '1 Samuel': 3, '2 Samuel': 3, '1 Kings': 3, '2 Kings': 3, '1 Chronicles': 3, '2 Chronicles': 3, Ezra: 3, Nehemiah: 3, Job: 3, Psalms: 3, Proverbs: 3, Ecclesiastes: 3, Isaiah: 3, Jeremiah: 3, Lamentations: 3, Ezekiel: 3, Daniel: 3, Hosea: 3, Joel: 3, Amos: 3, Micah: 3, Nahum: 3, Zephaniah: 3, Haggai: 3, Zechariah: 3, Malachi: 3, Matthew: 3, Mark: 3, Luke: 3, John: 3, Acts: 3, Romans: 3, '1 Corinthians': 3, '2 Corinthians': 3, '1 John': 3, Revelation: 3}};
 async function refreshFixedBooks(){
   const had = LS.get('kjv_book_fix', 0) || 0;
   if(!('caches' in window) || had >= BOOK_FIXES.v) return;
@@ -7788,7 +7790,7 @@ function peopleInVerse(ref){ return (S._peopleByVerse && S._peopleByVerse.get(re
    geography, no commentary. They join the Names tab beside the people;
    a place page shows where it was, how far from Jerusalem, nearby Bible
    places, and every verse that names it. */
-const PLACES_URL = 'places.json?v=2026-10-26'; // bump v= whenever tools/build-places.js is re-run
+const PLACES_URL = 'places.json?v=2026-10-27'; // bump v= whenever tools/build-places.js is re-run
 function loadPlaces(){
   if(S._places) return Promise.resolve(S._places);
   return loadCachedJSON(PLACES_URL).then(d => {
@@ -8003,7 +8005,7 @@ function openDoctrineFromVerse(ci, ti){
    treasury/0.json … 65.json (one file per book) by tools/build-treasury.js;
    a book's file loads the first time one of its verses is opened. Verse keys
    are "bookIdx.ch:v"; the references use refCardsHTML's compact form. */
-const TSK_VERSION = '2026-10-03'; // bump whenever tools/build-treasury.js is re-run
+const TSK_VERSION = '2026-10-27'; // bump whenever tools/build-treasury.js is re-run
 function loadTreasury(b){ return loadCachedJSON(`treasury/${b}.json?v=${TSK_VERSION}`); }
 function tskKey(ref){
   const m = (ref || '').match(/^(.+) (\d+):(\d+)$/);
@@ -8175,7 +8177,7 @@ async function fillTreasuryLine(i, limit=12){
    Creation to the Revelation, by era, with Ussher's dates. Built into
    timeline.json by tools/build-timeline.js from tools/timeline/events.js.
    Event: [year (negative = B.C.), title, book, firstCh, lastCh, keyRef, keyText] */
-const TIMELINE_VERSION = '2026-10-26'; // bump whenever tools/build-timeline.js is re-run
+const TIMELINE_VERSION = '2026-10-27'; // bump whenever tools/build-timeline.js is re-run
 function loadTimeline(){
   return loadCachedJSON(`timeline.json?v=${TIMELINE_VERSION}`).then(d => S._timeline = d);
 }
@@ -10489,7 +10491,7 @@ function openWordFromVerse(key){ leaveVPopThen(() => openWord(key)); }
      strongs/H.json, G.json — every word in brief (the list, search, verse card)
      strongs/H0.json …     — the full entries, 500 to a file, with their verses
    Each file loads on first use and is kept on the device. */
-const SG_VERSION = '2026-10-07'; // bump whenever tools/build-strongs.js is re-run
+const SG_VERSION = '2026-10-27'; // bump whenever tools/build-strongs.js is re-run
 const SG_SHARD = 500;
 const sgLoadIndex = L => (S._sgIdx && S._sgIdx[L]) ? Promise.resolve(S._sgIdx[L])
   : loadCachedJSON(`strongs/${L}.json?v=${SG_VERSION}`).then(d => ((S._sgIdx = S._sgIdx || {})[L] = d));

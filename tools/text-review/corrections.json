@@ -1,0 +1,5214 @@
+{
+ "about": "Corrections to the KJV text in bible/, found by tools/text-review/compare.py (October 2026). Each verse here read differently from the Pure Cambridge Edition while at least one other independent electronic KJV agreed with the Pure Cambridge; our reading was shared by no source but Project Gutenberg #10, the transcription our text came from. 'was' is the old text and 'now' the corrected text; tools/apply-text-corrections.js applies them. Differences that are only Oxford and Cambridge spellings of the same 1769 text (enquire/inquire, counsellor/counseller, razor/rasor) are not here: see edition-differences.json.",
+ "corrections": [
+  {
+   "ref": "Genesis 6:5",
+   "was": "And God saw that the wickedness of man was great in the earth, and that every imagination of the thoughts of his heart was only evil continually.",
+   "now": "And GOD saw that the wickedness of man was great in the earth, and that every imagination of the thoughts of his heart was only evil continually.",
+   "change": [
+    [
+     "God",
+     "GOD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 10:7",
+   "was": "And the sons of Cush; Seba, and Havilah, and Sabtah, and Raamah, and Sabtechah: and the sons of Raamah; Sheba, and Dedan.",
+   "now": "And the sons of Cush; Seba, and Havilah, and Sabtah, and Raamah, and Sabtecha: and the sons of Raamah; Sheba, and Dedan.",
+   "change": [
+    [
+     "Sabtechah:",
+     "Sabtecha:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 10:15",
+   "was": "And Canaan begat Sidon his first born, and Heth,",
+   "now": "And Canaan begat Sidon his firstborn, and Heth,",
+   "change": [
+    [
+     "first born,",
+     "firstborn,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 11:3",
+   "was": "And they said one to another, Go to, let us make brick, and burn them thoroughly. And they had brick for stone, and slime had they for morter.",
+   "now": "And they said one to another, Go to, let us make brick, and burn them throughly. And they had brick for stone, and slime had they for morter.",
+   "change": [
+    [
+     "thoroughly.",
+     "throughly."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 15:2",
+   "was": "And Abram said, LORD God, what wilt thou give me, seeing I go childless, and the steward of my house is this Eliezer of Damascus?",
+   "now": "And Abram said, Lord GOD, what wilt thou give me, seeing I go childless, and the steward of my house is this Eliezer of Damascus?",
+   "change": [
+    [
+     "LORD God,",
+     "Lord GOD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 15:8",
+   "was": "And he said, LORD God, whereby shall I know that I shall inherit it?",
+   "now": "And he said, Lord GOD, whereby shall I know that I shall inherit it?",
+   "change": [
+    [
+     "LORD God,",
+     "Lord GOD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 18:3",
+   "was": "And said, My LORD, if now I have found favour in thy sight, pass not away, I pray thee, from thy servant:",
+   "now": "And said, My Lord, if now I have found favour in thy sight, pass not away, I pray thee, from thy servant:",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 18:27",
+   "was": "And Abraham answered and said, Behold now, I have taken upon me to speak unto the LORD, which am but dust and ashes:",
+   "now": "And Abraham answered and said, Behold now, I have taken upon me to speak unto the Lord, which am but dust and ashes:",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 18:30",
+   "was": "And he said unto him, Oh let not the LORD be angry, and I will speak: Peradventure there shall thirty be found there. And he said, I will not do it, if I find thirty there.",
+   "now": "And he said unto him, Oh let not the Lord be angry, and I will speak: Peradventure there shall thirty be found there. And he said, I will not do it, if I find thirty there.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 18:31",
+   "was": "And he said, Behold now, I have taken upon me to speak unto the LORD: Peradventure there shall be twenty found there. And he said, I will not destroy it for twenty’s sake.",
+   "now": "And he said, Behold now, I have taken upon me to speak unto the Lord: Peradventure there shall be twenty found there. And he said, I will not destroy it for twenty’s sake.",
+   "change": [
+    [
+     "LORD:",
+     "Lord:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 18:32",
+   "was": "And he said, Oh let not the LORD be angry, and I will speak yet but this once: Peradventure ten shall be found there. And he said, I will not destroy it for ten’s sake.",
+   "now": "And he said, Oh let not the Lord be angry, and I will speak yet but this once: Peradventure ten shall be found there. And he said, I will not destroy it for ten’s sake.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 19:18",
+   "was": "And Lot said unto them, Oh, not so, my LORD:",
+   "now": "And Lot said unto them, Oh, not so, my Lord:",
+   "change": [
+    [
+     "LORD:",
+     "Lord:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 19:22",
+   "was": "Haste thee, escape thither; for I cannot do anything till thou be come thither. Therefore the name of the city was called Zoar.",
+   "now": "Haste thee, escape thither; for I cannot do any thing till thou be come thither. Therefore the name of the city was called Zoar.",
+   "change": [
+    [
+     "anything",
+     "any thing"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 19:37",
+   "was": "And the first born bare a son, and called his name Moab: the same is the father of the Moabites unto this day.",
+   "now": "And the firstborn bare a son, and called his name Moab: the same is the father of the Moabites unto this day.",
+   "change": [
+    [
+     "first born",
+     "firstborn"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 20:4",
+   "was": "But Abimelech had not come near her: and he said, LORD, wilt thou slay also a righteous nation?",
+   "now": "But Abimelech had not come near her: and he said, Lord, wilt thou slay also a righteous nation?",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 21:16",
+   "was": "And she went, and sat her down over against him a good way off, as it were a bow shot: for she said, Let me not see the death of the child. And she sat over against him, and lift up her voice, and wept.",
+   "now": "And she went, and sat her down over against him a good way off, as it were a bowshot: for she said, Let me not see the death of the child. And she sat over against him, and lift up her voice, and wept.",
+   "change": [
+    [
+     "bow shot:",
+     "bowshot:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 27:19",
+   "was": "And Jacob said unto his father, I am Esau thy first born; I have done according as thou badest me: arise, I pray thee, sit and eat of my venison, that thy soul may bless me.",
+   "now": "And Jacob said unto his father, I am Esau thy firstborn; I have done according as thou badest me: arise, I pray thee, sit and eat of my venison, that thy soul may bless me.",
+   "change": [
+    [
+     "first born;",
+     "firstborn;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 30:31",
+   "was": "And he said, What shall I give thee? And Jacob said, Thou shalt not give me any thing: if thou wilt do this thing for me, I will again feed and keep thy flock.",
+   "now": "And he said, What shall I give thee? And Jacob said, Thou shalt not give me any thing: if thou wilt do this thing for me, I will again feed and keep thy flock:",
+   "change": [
+    [
+     "flock.",
+     "flock:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 30:37",
+   "was": "And Jacob took him rods of green poplar, and of the hazel and chestnut tree; and pilled white strakes in them, and made the white appear which was in the rods.",
+   "now": "And Jacob took him rods of green poplar, and of the hazel and chesnut tree; and pilled white strakes in them, and made the white appear which was in the rods.",
+   "change": [
+    [
+     "chestnut",
+     "chesnut"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 31:51",
+   "was": "And Laban said to Jacob, Behold this heap, and behold this pillar, which I have cast betwixt me and thee:",
+   "now": "And Laban said to Jacob, Behold this heap, and behold this pillar, which I have cast betwixt me and thee;",
+   "change": [
+    [
+     "thee:",
+     "thee;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Genesis 46:12",
+   "was": "And the sons of Judah; Er, and Onan, and Shelah, and Pharez, and Zarah: but Er and Onan died in the land of Canaan. And the sons of Pharez were Hezron and Hamul.",
+   "now": "And the sons of Judah; Er, and Onan, and Shelah, and Pharez, and Zerah: but Er and Onan died in the land of Canaan. And the sons of Pharez were Hezron and Hamul.",
+   "change": [
+    [
+     "Zarah:",
+     "Zerah:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 4:10",
+   "was": "And Moses said unto the LORD, O my LORD, I am not eloquent, neither heretofore, nor since thou hast spoken unto thy servant: but I am slow of speech, and of a slow tongue.",
+   "now": "And Moses said unto the LORD, O my Lord, I am not eloquent, neither heretofore, nor since thou hast spoken unto thy servant: but I am slow of speech, and of a slow tongue.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 4:13",
+   "was": "And he said, O my LORD, send, I pray thee, by the hand of him whom thou wilt send.",
+   "now": "And he said, O my Lord, send, I pray thee, by the hand of him whom thou wilt send.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 5:22",
+   "was": "And Moses returned unto the LORD, and said, LORD, wherefore hast thou so evil entreated this people? why is it that thou hast sent me?",
+   "now": "And Moses returned unto the LORD, and said, Lord, wherefore hast thou so evil entreated this people? why is it that thou hast sent me?",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 11:5",
+   "was": "And all the firstborn in the land of Egypt shall die, from the first born of Pharaoh that sitteth upon his throne, even unto the firstborn of the maidservant that is behind the mill; and all the firstborn of beasts.",
+   "now": "And all the firstborn in the land of Egypt shall die, from the firstborn of Pharaoh that sitteth upon his throne, even unto the firstborn of the maidservant that is behind the mill; and all the firstborn of beasts.",
+   "change": [
+    [
+     "first born",
+     "firstborn"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 15:17",
+   "was": "Thou shalt bring them in, and plant them in the mountain of thine inheritance, in the place, O LORD, which thou hast made for thee to dwell in, in the Sanctuary, O LORD, which thy hands have established.",
+   "now": "Thou shalt bring them in, and plant them in the mountain of thine inheritance, in the place, O LORD, which thou hast made for thee to dwell in, in the Sanctuary, O Lord, which thy hands have established.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 23:17",
+   "was": "Three times in the year all thy males shall appear before the LORD God.",
+   "now": "Three times in the year all thy males shall appear before the Lord GOD.",
+   "change": [
+    [
+     "LORD God.",
+     "Lord GOD."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 32:29",
+   "was": "For Moses had said, Consecrate yourselves today to the LORD, even every man upon his son, and upon his brother; that he may bestow upon you a blessing this day.",
+   "now": "For Moses had said, Consecrate yourselves to day to the LORD, even every man upon his son, and upon his brother; that he may bestow upon you a blessing this day.",
+   "change": [
+    [
+     "today",
+     "to day"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 33:9",
+   "was": "And it came to pass, as Moses entered into the tabernacle, the cloudy pillar descended, and stood at the door of the tabernacle, and the Lord talked with Moses.",
+   "now": "And it came to pass, as Moses entered into the tabernacle, the cloudy pillar descended, and stood at the door of the tabernacle, and the LORD talked with Moses.",
+   "change": [
+    [
+     "Lord",
+     "LORD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 34:9",
+   "was": "And he said, If now I have found grace in thy sight, O LORD, let my LORD, I pray thee, go among us; for it is a stiffnecked people; and pardon our iniquity and our sin, and take us for thine inheritance.",
+   "now": "And he said, If now I have found grace in thy sight, O Lord, let my Lord, I pray thee, go among us; for it is a stiffnecked people; and pardon our iniquity and our sin, and take us for thine inheritance.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ],
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Exodus 34:23",
+   "was": "Thrice in the year shall all your menchildren appear before the LORD God, the God of Israel.",
+   "now": "Thrice in the year shall all your men children appear before the Lord GOD, the God of Israel.",
+   "change": [
+    [
+     "menchildren",
+     "men children"
+    ],
+    [
+     "LORD God,",
+     "Lord GOD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Leviticus 19:15",
+   "was": "Ye shall do no unrighteousness in judgment: thou shalt not respect the person of the poor, nor honor the person of the mighty: but in righteousness shalt thou judge thy neighbour.",
+   "now": "Ye shall do no unrighteousness in judgment: thou shalt not respect the person of the poor, nor honour the person of the mighty: but in righteousness shalt thou judge thy neighbour.",
+   "change": [
+    [
+     "honor",
+     "honour"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Leviticus 24:11",
+   "was": "And the Israelitish woman’s son blasphemed the name of the Lord, and cursed. And they brought him unto Moses: (and his mother’s name was Shelomith, the daughter of Dibri, of the tribe of Dan:)",
+   "now": "And the Israelitish woman’s son blasphemed the name of the LORD, and cursed. And they brought him unto Moses: (and his mother’s name was Shelomith, the daughter of Dibri, of the tribe of Dan:)",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Leviticus 24:16",
+   "was": "And he that blasphemeth the name of the LORD, he shall surely be put to death, and all the congregation shall certainly stone him: as well the stranger, as he that is born in the land, when he blasphemeth the name of the Lord, shall be put to death.",
+   "now": "And he that blasphemeth the name of the LORD, he shall surely be put to death, and all the congregation shall certainly stone him: as well the stranger, as he that is born in the land, when he blasphemeth the name of the LORD, shall be put to death.",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Numbers 14:17",
+   "was": "And now, I beseech thee, let the power of my LORD be great, according as thou hast spoken, saying,",
+   "now": "And now, I beseech thee, let the power of my Lord be great, according as thou hast spoken, saying,",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Numbers 14:25",
+   "was": "(Now the Amalekites and the Canaanites dwelt in the valley.) Tomorrow turn you, and get you into the wilderness by the way of the Red sea.",
+   "now": "(Now the Amalekites and the Canaanites dwelt in the valley.) To morrow turn you, and get you into the wilderness by the way of the Red sea.",
+   "change": [
+    [
+     "Tomorrow",
+     "To morrow"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Numbers 18:7",
+   "was": "Therefore thou and thy sons with thee shall keep your priest’s office for everything of the altar, and within the vail; and ye shall serve: I have given your priest’s office unto you as a service of gift: and the stranger that cometh nigh shall be put to death.",
+   "now": "Therefore thou and thy sons with thee shall keep your priest’s office for every thing of the altar, and within the vail; and ye shall serve: I have given your priest’s office unto you as a service of gift: and the stranger that cometh nigh shall be put to death.",
+   "change": [
+    [
+     "everything",
+     "every thing"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Numbers 18:9",
+   "was": "This shall be thine of the most holy things, reserved from the fire: every oblation of theirs, every meat offering of theirs, and every sin offering of theirs, and every trespass offering of theirs which they shall render unto me, shall be most holy for thee and for thy sons.",
+   "now": "This shall be thine of the most holy things, reserved from the fire: every oblation of theirs, every meat offering of theirs, and every sin offering of theirs, and every trespass offering of theirs, which they shall render unto me, shall be most holy for thee and for thy sons.",
+   "change": [
+    [
+     "theirs",
+     "theirs,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Numbers 20:19",
+   "was": "And the children of Israel said unto him, We will go by the high way: and if I and my cattle drink of thy water, then I will pay for it: I will only, without doing anything else, go through on my feet.",
+   "now": "And the children of Israel said unto him, We will go by the high way: and if I and my cattle drink of thy water, then I will pay for it: I will only, without doing any thing else, go through on my feet.",
+   "change": [
+    [
+     "anything",
+     "any thing"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Numbers 31:28",
+   "was": "And levy a tribute unto the Lord of the men of war which went out to battle: one soul of five hundred, both of the persons, and of the beeves, and of the asses, and of the sheep:",
+   "now": "And levy a tribute unto the LORD of the men of war which went out to battle: one soul of five hundred, both of the persons, and of the beeves, and of the asses, and of the sheep:",
+   "change": [
+    [
+     "Lord",
+     "LORD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Deuteronomy 14:21",
+   "was": "Ye shall not eat of anything that dieth of itself: thou shalt give it unto the stranger that is in thy gates, that he may eat it; or thou mayest sell it unto an alien: for thou art an holy people unto the LORD thy God. Thou shalt not seethe a kid in his mother’s milk.",
+   "now": "Ye shall not eat of any thing that dieth of itself: thou shalt give it unto the stranger that is in thy gates, that he may eat it; or thou mayest sell it unto an alien: for thou art an holy people unto the LORD thy God. Thou shalt not seethe a kid in his mother’s milk.",
+   "change": [
+    [
+     "anything",
+     "any thing"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Deuteronomy 18:10",
+   "was": "There shall not be found among you any one that maketh his son or his daughter to pass through the fire, or that useth divination, or an observer of times, or an enchanter, or a witch.",
+   "now": "There shall not be found among you any one that maketh his son or his daughter to pass through the fire, or that useth divination, or an observer of times, or an enchanter, or a witch,",
+   "change": [
+    [
+     "witch.",
+     "witch,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Deuteronomy 28:32",
+   "was": "Thy sons and thy daughters shall be given unto another people, and thine eyes shall look, and fail with longing for them all the day long: and there shall be no might in thine hand:",
+   "now": "Thy sons and thy daughters shall be given unto another people, and thine eyes shall look, and fail with longing for them all the day long: and there shall be no might in thine hand.",
+   "change": [
+    [
+     "hand:",
+     "hand."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Deuteronomy 32:8",
+   "was": "When the Most High divided to the nations their inheritance, when he separated the sons of Adam, he set the bounds of the people according to the number of the children of Israel.",
+   "now": "When the most High divided to the nations their inheritance, when he separated the sons of Adam, he set the bounds of the people according to the number of the children of Israel.",
+   "change": [
+    [
+     "Most",
+     "most"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 3:11",
+   "was": "Behold, the ark of the covenant of the LORD of all the earth passeth over before you into Jordan.",
+   "now": "Behold, the ark of the covenant of the Lord of all the earth passeth over before you into Jordan.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 3:13",
+   "was": "And it shall come to pass, as soon as the soles of the feet of the priests that bear the ark of the LORD, the LORD of all the earth, shall rest in the waters of Jordan, that the waters of Jordan shall be cut off from the waters that come down from above; and they shall stand upon an heap.",
+   "now": "And it shall come to pass, as soon as the soles of the feet of the priests that bear the ark of the LORD, the Lord of all the earth, shall rest in the waters of Jordan, that the waters of Jordan shall be cut off from the waters that come down from above; and they shall stand upon an heap.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 4:5",
+   "was": "And Joshua said unto them, Pass over before the ark of the LORD your God into the midst of Jordan, and take you up every man of you a stone upon his shoulder, according unto the number of the tribes of the children of Israel:",
+   "now": "And Joshua said unto them, Pass over before the ark of the LORD your God into the midst of Jordan, and take ye up every man of you a stone upon his shoulder, according unto the number of the tribes of the children of Israel:",
+   "change": [
+    [
+     "you",
+     "ye"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 4:10",
+   "was": "For the priests which bare the ark stood in the midst of Jordan, until everything was finished that the LORD commanded Joshua to speak unto the people, according to all that Moses commanded Joshua: and the people hasted and passed over.",
+   "now": "For the priests which bare the ark stood in the midst of Jordan, until every thing was finished that the LORD commanded Joshua to speak unto the people, according to all that Moses commanded Joshua: and the people hasted and passed over.",
+   "change": [
+    [
+     "everything",
+     "every thing"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 7:7",
+   "was": "And Joshua said, Alas, O LORD God, wherefore hast thou at all brought this people over Jordan, to deliver us into the hand of the Amorites, to destroy us? would to God we had been content, and dwelt on the other side Jordan!",
+   "now": "And Joshua said, Alas, O Lord GOD, wherefore hast thou at all brought this people over Jordan, to deliver us into the hand of the Amorites, to destroy us? would to God we had been content, and dwelt on the other side Jordan!",
+   "change": [
+    [
+     "LORD God,",
+     "Lord GOD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 7:8",
+   "was": "O LORD, what shall I say, when Israel turneth their backs before their enemies!",
+   "now": "O Lord, what shall I say, when Israel turneth their backs before their enemies!",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 10:1",
+   "was": "Now it came to pass, when Adonizedec king of Jerusalem had heard how Joshua had taken Ai, and had utterly destroyed it; as he had done to Jericho and her king, so he had done to Ai and her king; and how the inhabitants of Gibeon had made peace with Israel, and were among them;",
+   "now": "Now it came to pass, when Adonizedek king of Jerusalem had heard how Joshua had taken Ai, and had utterly destroyed it; as he had done to Jericho and her king, so he had done to Ai and her king; and how the inhabitants of Gibeon had made peace with Israel, and were among them;",
+   "change": [
+    [
+     "Adonizedec",
+     "Adonizedek"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 10:3",
+   "was": "Wherefore Adonizedec king of Jerusalem sent unto Hoham king of Hebron, and unto Piram king of Jarmuth, and unto Japhia king of Lachish, and unto Debir king of Eglon, saying,",
+   "now": "Wherefore Adonizedek king of Jerusalem sent unto Hoham king of Hebron, and unto Piram king of Jarmuth, and unto Japhia king of Lachish, and unto Debir king of Eglon, saying,",
+   "change": [
+    [
+     "Adonizedec",
+     "Adonizedek"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Joshua 13:4",
+   "was": "From the south, all the land of the Canaanites, and Mearah that is beside the Sidonians unto Aphek, to the borders of the Amorites:",
+   "now": "From the south, all the land of the Canaanites, and Mearah that is beside the Sidonians, unto Aphek, to the borders of the Amorites:",
+   "change": [
+    [
+     "Sidonians",
+     "Sidonians,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 13:18",
+   "was": "And Jahaza, and Kedemoth, and Mephaath,",
+   "now": "And Jahazah, and Kedemoth, and Mephaath,",
+   "change": [
+    [
+     "Jahaza,",
+     "Jahazah,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 16:3",
+   "was": "And goeth down westward to the coast of Japhleti, unto the coast of Bethhoron the nether, and to Gezer; and the goings out thereof are at the sea.",
+   "now": "And goeth down westward to the coast of Japhleti, unto the coast of Bethhoron the nether, and to Gezer: and the goings out thereof are at the sea.",
+   "change": [
+    [
+     "Gezer;",
+     "Gezer:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 17:13",
+   "was": "Yet it came to pass, when the children of Israel were waxen strong, that they put the Canaanites to tribute, but did not utterly drive them out.",
+   "now": "Yet it came to pass, when the children of Israel were waxen strong, that they put the Canaanites to tribute; but did not utterly drive them out.",
+   "change": [
+    [
+     "tribute,",
+     "tribute;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 19:2",
+   "was": "And they had in their inheritance Beersheba, and Sheba, and Moladah,",
+   "now": "And they had in their inheritance Beersheba, or Sheba, and Moladah,",
+   "change": [
+    [
+     "and",
+     "or"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joshua 19:19",
+   "was": "And Haphraim, and Shihon, and Anaharath,",
+   "now": "And Hapharaim, and Shion, and Anaharath,",
+   "change": [
+    [
+     "Haphraim,",
+     "Hapharaim,"
+    ],
+    [
+     "Shihon,",
+     "Shion,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Judges 6:22",
+   "was": "And when Gideon perceived that he was an angel of the LORD, Gideon said, Alas, O LORD God! for because I have seen an angel of the LORD face to face.",
+   "now": "And when Gideon perceived that he was an angel of the LORD, Gideon said, Alas, O Lord GOD! for because I have seen an angel of the LORD face to face.",
+   "change": [
+    [
+     "LORD God!",
+     "Lord GOD!"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Judges 7:21",
+   "was": "And they stood every man in his place round about the camp; and all the host ran, and cried, and fled.",
+   "now": "And they stood every man in his place round about the camp: and all the host ran, and cried, and fled.",
+   "change": [
+    [
+     "camp;",
+     "camp:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Judges 13:19",
+   "was": "So Manoah took a kid with a meat offering, and offered it upon a rock unto the LORD: and the angel did wonderously; and Manoah and his wife looked on.",
+   "now": "So Manoah took a kid with a meat offering, and offered it upon a rock unto the LORD: and the angel did wondrously; and Manoah and his wife looked on.",
+   "change": [
+    [
+     "wonderously;",
+     "wondrously;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Judges 14:18",
+   "was": "And the men of the city said unto him on the seventh day before the sun went down, What is sweeter than honey? And what is stronger than a lion? And he said unto them, If ye had not plowed with my heifer, ye had not found out my riddle.",
+   "now": "And the men of the city said unto him on the seventh day before the sun went down, What is sweeter than honey? and what is stronger than a lion? And he said unto them, If ye had not plowed with my heifer, ye had not found out my riddle.",
+   "change": [
+    [
+     "And",
+     "and"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Judges 16:28",
+   "was": "And Samson called unto the LORD, and said, O Lord God, remember me, I pray thee, and strengthen me, I pray thee, only this once, O God, that I may be at once avenged of the Philistines for my two eyes.",
+   "now": "And Samson called unto the LORD, and said, O Lord GOD, remember me, I pray thee, and strengthen me, I pray thee, only this once, O God, that I may be at once avenged of the Philistines for my two eyes.",
+   "change": [
+    [
+     "God,",
+     "GOD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Samuel 6:9",
+   "was": "And see, if it goeth up by the way of his own coast to Bethshemesh, then he hath done us this great evil: but if not, then we shall know that it is not his hand that smote us: it was a chance that happened to us.",
+   "now": "And see, if it goeth up by the way of his own coast to Bethshemesh, then he hath done us this great evil: but if not, then we shall know that it is not his hand that smote us; it was a chance that happened to us.",
+   "change": [
+    [
+     "us:",
+     "us;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Samuel 17:17",
+   "was": "And Jesse said unto David his son, Take now for thy brethren an ephah of this parched corn, and these ten loaves, and run to the camp to thy brethren.",
+   "now": "And Jesse said unto David his son, Take now for thy brethren an ephah of this parched corn, and these ten loaves, and run to the camp to thy brethren;",
+   "change": [
+    [
+     "brethren.",
+     "brethren;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "1 Samuel 17:48",
+   "was": "And it came to pass, when the Philistine arose, and came, and drew nigh to meet David, that David hastened, and ran toward the army to meet the Philistine.",
+   "now": "And it came to pass, when the Philistine arose, and came and drew nigh to meet David, that David hasted, and ran toward the army to meet the Philistine.",
+   "change": [
+    [
+     "came,",
+     "came"
+    ],
+    [
+     "hastened,",
+     "hasted,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Samuel 19:10",
+   "was": "And Saul sought to smite David even to the wall with the javelin, but he slipped away out of Saul’s presence, and he smote the javelin into the wall: and David fled, and escaped that night.",
+   "now": "And Saul sought to smite David even to the wall with the javelin; but he slipped away out of Saul’s presence, and he smote the javelin into the wall: and David fled, and escaped that night.",
+   "change": [
+    [
+     "javelin,",
+     "javelin;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "1 Samuel 22:17",
+   "was": "And the king said unto the footmen that stood about him, Turn, and slay the priests of the LORD: because their hand also is with David, and because they knew when he fled, and did not shew it to me. But the servants of the king would not put forth their hand to fall upon the priests of the LORD.",
+   "now": "And the king said unto the footmen that stood about him, Turn, and slay the priests of the LORD; because their hand also is with David, and because they knew when he fled, and did not shew it to me. But the servants of the king would not put forth their hand to fall upon the priests of the LORD.",
+   "change": [
+    [
+     "LORD:",
+     "LORD;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Samuel 26:23",
+   "was": "The LORD render to every man his righteousness and his faithfulness; for the LORD delivered thee into my hand to day, but I would not stretch forth mine hand against the LORD’s anointed.",
+   "now": "The LORD render to every man his righteousness and his faithfulness: for the LORD delivered thee into my hand to day, but I would not stretch forth mine hand against the LORD’s anointed.",
+   "change": [
+    [
+     "faithfulness;",
+     "faithfulness:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Samuel 31:2",
+   "was": "And the Philistines followed hard upon Saul and upon his sons; and the Philistines slew Jonathan, and Abinadab, and Melchishua, Saul’s sons.",
+   "now": "And the Philistines followed hard upon Saul and upon his sons; and the Philistines slew Jonathan, and Abinadab, and Malchishua, Saul’s sons.",
+   "change": [
+    [
+     "Melchishua,",
+     "Malchishua,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Samuel 4:2",
+   "was": "And Saul’s son had two men that were captains of bands: the name of the one was Baanah, and the name of the other Rechab, the sons of Rimmon a Beerothite, of the children of Benjamin: (for Beeroth also was reckoned to Benjamin.",
+   "now": "And Saul’s son had two men that were captains of bands: the name of the one was Baanah, and the name of the other Rechab, the sons of Rimmon a Beerothite, of the children of Benjamin: (for Beeroth also was reckoned to Benjamin:",
+   "change": [
+    [
+     "Benjamin.",
+     "Benjamin:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Samuel 5:14",
+   "was": "And these be the names of those that were born unto him in Jerusalem; Shammuah, and Shobab, and Nathan, and Solomon,",
+   "now": "And these be the names of those that were born unto him in Jerusalem; Shammua, and Shobab, and Nathan, and Solomon,",
+   "change": [
+    [
+     "Shammuah,",
+     "Shammua,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Samuel 8:1",
+   "was": "And after this it came to pass that David smote the Philistines, and subdued them: and David took Methegammah out of the hand of the Philistines.",
+   "now": "And after this it came to pass, that David smote the Philistines, and subdued them: and David took Methegammah out of the hand of the Philistines.",
+   "change": [
+    [
+     "pass",
+     "pass,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Samuel 13:2",
+   "was": "And Amnon was so vexed, that he fell sick for his sister Tamar; for she was a virgin; and Amnon thought it hard for him to do anything to her.",
+   "now": "And Amnon was so vexed, that he fell sick for his sister Tamar; for she was a virgin; and Amnon thought it hard for him to do any thing to her.",
+   "change": [
+    [
+     "anything",
+     "any thing"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Samuel 21:21",
+   "was": "And when he defied Israel, Jonathan the son of Shimeah the brother of David slew him.",
+   "now": "And when he defied Israel, Jonathan the son of Shimea the brother of David slew him.",
+   "change": [
+    [
+     "Shimeah",
+     "Shimea"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Samuel 23:37",
+   "was": "Zelek the Ammonite, Nahari the Beerothite, armourbearer to Joab the son of Zeruiah,",
+   "now": "Zelek the Ammonite, Naharai the Beerothite, armourbearer to Joab the son of Zeruiah,",
+   "change": [
+    [
+     "Nahari",
+     "Naharai"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 1:42",
+   "was": "And while he yet spake, behold, Jonathan the son of Abiathar the priest came; and Adonijah said unto him, Come in; for thou art a valiant man, and bringest good tidings.",
+   "now": "And while he yet spake, behold, Jonathan the son of Abiathar the priest came: and Adonijah said unto him, Come in; for thou art a valiant man, and bringest good tidings.",
+   "change": [
+    [
+     "came;",
+     "came:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 1:51",
+   "was": "And it was told Solomon, saying, Behold, Adonijah feareth king Solomon: for, lo, he hath caught hold on the horns of the altar, saying, Let king Solomon swear unto me today that he will not slay his servant with the sword.",
+   "now": "And it was told Solomon, saying, Behold, Adonijah feareth king Solomon: for, lo, he hath caught hold on the horns of the altar, saying, Let king Solomon swear unto me to day that he will not slay his servant with the sword.",
+   "change": [
+    [
+     "today",
+     "to day"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 2:26",
+   "was": "And unto Abiathar the priest said the king, Get thee to Anathoth, unto thine own fields; for thou art worthy of death: but I will not at this time put thee to death, because thou barest the ark of the LORD God before David my father, and because thou hast been afflicted in all wherein my father was afflicted.",
+   "now": "And unto Abiathar the priest said the king, Get thee to Anathoth, unto thine own fields; for thou art worthy of death: but I will not at this time put thee to death, because thou barest the ark of the Lord GOD before David my father, and because thou hast been afflicted in all wherein my father was afflicted.",
+   "change": [
+    [
+     "LORD God",
+     "Lord GOD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 3:10",
+   "was": "And the speech pleased the LORD, that Solomon had asked this thing.",
+   "now": "And the speech pleased the Lord, that Solomon had asked this thing.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 6:15",
+   "was": "And he built the walls of the house within with boards of cedar, both the floor of the house, and the walls of the ceiling: and he covered them on the inside with wood, and covered the floor of the house with planks of fir.",
+   "now": "And he built the walls of the house within with boards of cedar, both the floor of the house, and the walls of the cieling: and he covered them on the inside with wood, and covered the floor of the house with planks of fir.",
+   "change": [
+    [
+     "ceiling:",
+     "cieling:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 8:53",
+   "was": "For thou didst separate them from among all the people of the earth, to be thine inheritance, as thou spakest by the hand of Moses thy servant, when thou broughtest our fathers out of Egypt, O LORD God.",
+   "now": "For thou didst separate them from among all the people of the earth, to be thine inheritance, as thou spakest by the hand of Moses thy servant, when thou broughtest our fathers out of Egypt, O Lord GOD.",
+   "change": [
+    [
+     "LORD God.",
+     "Lord GOD."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 20:1",
+   "was": "And Benhadad the king of Syria gathered all his host together: and there were thirty and two kings with him, and horses, and chariots; and he went up and besieged Samaria, and warred against it.",
+   "now": "And Benhadad the king of Syria gathered all his host together: and there were thirty and two kings with him, and horses, and chariots: and he went up and besieged Samaria, and warred against it.",
+   "change": [
+    [
+     "chariots;",
+     "chariots:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Kings 22:6",
+   "was": "Then the king of Israel gathered the prophets together, about four hundred men, and said unto them, Shall I go against Ramothgilead to battle, or shall I forbear? And they said, Go up; for the LORD shall deliver it into the hand of the king.",
+   "now": "Then the king of Israel gathered the prophets together, about four hundred men, and said unto them, Shall I go against Ramothgilead to battle, or shall I forbear? And they said, Go up; for the Lord shall deliver it into the hand of the king.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Kings 7:6",
+   "was": "For the LORD had made the host of the Syrians to hear a noise of chariots, and a noise of horses, even the noise of a great host: and they said one to another, Lo, the king of Israel hath hired against us the kings of the Hittites, and the kings of the Egyptians, to come upon us.",
+   "now": "For the Lord had made the host of the Syrians to hear a noise of chariots, and a noise of horses, even the noise of a great host: and they said one to another, Lo, the king of Israel hath hired against us the kings of the Hittites, and the kings of the Egyptians, to come upon us.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Kings 8:16",
+   "was": "And in the fifth year of Joram the son of Ahab king of Israel, Jehoshaphat being then king of Judah, Jehoram the son of Je hoshaphat king of Judah began to reign.",
+   "now": "And in the fifth year of Joram the son of Ahab king of Israel, Jehoshaphat being then king of Judah, Jehoram the son of Jehoshaphat king of Judah began to reign.",
+   "change": [
+    [
+     "Je hoshaphat",
+     "Jehoshaphat"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "2 Kings 19:3",
+   "was": "And they said unto him, Thus saith Hezekiah, This day is a day of trouble, and of rebuke, and blasphemy; for the children are come to the birth, and there is not strength to bring forth.",
+   "now": "And they said unto him, Thus saith Hezekiah, This day is a day of trouble, and of rebuke, and blasphemy: for the children are come to the birth, and there is not strength to bring forth.",
+   "change": [
+    [
+     "blasphemy;",
+     "blasphemy:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Kings 19:23",
+   "was": "By thy messengers thou hast reproached the LORD, and hast said, With the multitude of my chariots I am come up to the height of the mountains, to the sides of Lebanon, and will cut down the tall cedar trees thereof, and the choice fir trees thereof: and I will enter into the lodgings of his borders, and into the forest of his Carmel.",
+   "now": "By thy messengers thou hast reproached the Lord, and hast said, With the multitude of my chariots I am come up to the height of the mountains, to the sides of Lebanon, and will cut down the tall cedar trees thereof, and the choice fir trees thereof: and I will enter into the lodgings of his borders, and into the forest of his Carmel.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Kings 19:26",
+   "was": "Therefore their inhabitants were of small power, they were dismayed and confounded; they were as the grass of the field, and as the green herb, as the grass on the house tops, and as corn blasted before it be grown up.",
+   "now": "Therefore their inhabitants were of small power, they were dismayed and confounded; they were as the grass of the field, and as the green herb, as the grass on the housetops, and as corn blasted before it be grown up.",
+   "change": [
+    [
+     "house tops,",
+     "housetops,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 1:38",
+   "was": "And the sons of Seir; Lotan, and Shobal, and Zibeon, and Anah, and Dishon, and Ezar, and Dishan.",
+   "now": "And the sons of Seir; Lotan, and Shobal, and Zibeon, and Anah, and Dishon, and Ezer, and Dishan.",
+   "change": [
+    [
+     "Ezar,",
+     "Ezer,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 2:4",
+   "was": "And Tamar his daughter in law bore him Pharez and Zerah. All the sons of Judah were five.",
+   "now": "And Tamar his daughter in law bare him Pharez and Zerah. All the sons of Judah were five.",
+   "change": [
+    [
+     "bore",
+     "bare"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 2:47",
+   "was": "And the sons of Jahdai; Regem, and Jotham, and Gesham, and Pelet, and Ephah, and Shaaph.",
+   "now": "And the sons of Jahdai; Regem, and Jotham, and Geshan, and Pelet, and Ephah, and Shaaph.",
+   "change": [
+    [
+     "Gesham,",
+     "Geshan,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 2:49",
+   "was": "She bare also Shaaph the father of Madmannah, Sheva the father of Machbenah, and the father of Gibea: and the daughter of Caleb was Achsa.",
+   "now": "She bare also Shaaph the father of Madmannah, Sheva the father of Machbenah, and the father of Gibea: and the daughter of Caleb was Achsah.",
+   "change": [
+    [
+     "Achsa.",
+     "Achsah."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 4:34",
+   "was": "And Meshobab, and Jamlech, and Joshah, the son of Amaziah,",
+   "now": "And Meshobab, and Jamlech, and Joshah the son of Amaziah,",
+   "change": [
+    [
+     "Joshah,",
+     "Joshah"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 5:11",
+   "was": "And the children of Gad dwelt over against them, in the land of Bashan unto Salcah:",
+   "now": "And the children of Gad dwelt over against them, in the land of Bashan unto Salchah:",
+   "change": [
+    [
+     "Salcah:",
+     "Salchah:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 7:1",
+   "was": "Now the sons of Issachar were, Tola, and Puah, Jashub, and Shimrom, four.",
+   "now": "Now the sons of Issachar were, Tola, and Puah, Jashub, and Shimron, four.",
+   "change": [
+    [
+     "Shimrom,",
+     "Shimron,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 7:19",
+   "was": "And the sons of Shemidah were, Ahian, and Shechem, and Likhi, and Aniam.",
+   "now": "And the sons of Shemida were, Ahian, and Shechem, and Likhi, and Aniam.",
+   "change": [
+    [
+     "Shemidah",
+     "Shemida"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 7:27",
+   "was": "Non his son, Jehoshuah his son,",
+   "now": "Non his son, Jehoshua his son.",
+   "change": [
+    [
+     "Jehoshuah",
+     "Jehoshua"
+    ],
+    [
+     "son,",
+     "son."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "1 Chronicles 9:35",
+   "was": "And in Gibeon dwelt the father of Gibeon, Jehiel, whose wife’s name was Maachah,",
+   "now": "And in Gibeon dwelt the father of Gibeon, Jehiel, whose wife’s name was Maachah:",
+   "change": [
+    [
+     "Maachah,",
+     "Maachah:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "1 Chronicles 14:10",
+   "was": "And David enquired of God, saying, Shall I go up against the Philistines? And wilt thou deliver them into mine hand? And the LORD said unto him, Go up; for I will deliver them into thine hand.",
+   "now": "And David enquired of God, saying, Shall I go up against the Philistines? and wilt thou deliver them into mine hand? And the LORD said unto him, Go up; for I will deliver them into thine hand.",
+   "change": [
+    [
+     "And",
+     "and"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 15:29",
+   "was": "And it came to pass, as the ark of the covenant of the LORD came to the city of David, that Michal, the daughter of Saul looking out at a window saw king David dancing and playing: and she despised him in her heart.",
+   "now": "And it came to pass, as the ark of the covenant of the LORD came to the city of David, that Michal the daughter of Saul looking out at a window saw king David dancing and playing: and she despised him in her heart.",
+   "change": [
+    [
+     "Michal,",
+     "Michal"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 20:6",
+   "was": "And yet again there was war at Gath, where was a man of great stature, whose fingers and toes were four and twenty, six on each hand, and six on each foot and he also was the son of the giant.",
+   "now": "And yet again there was war at Gath, where was a man of great stature, whose fingers and toes were four and twenty, six on each hand, and six on each foot: and he also was the son of the giant.",
+   "change": [
+    [
+     "foot",
+     "foot:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 23:20",
+   "was": "Of the sons of Uzziel; Micah the first, and Jesiah the second.",
+   "now": "Of the sons of Uzziel; Michah the first, and Jesiah the second.",
+   "change": [
+    [
+     "Micah",
+     "Michah"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "1 Chronicles 24:11",
+   "was": "The ninth to Jeshuah, the tenth to Shecaniah,",
+   "now": "The ninth to Jeshua, the tenth to Shecaniah,",
+   "change": [
+    [
+     "Jeshuah,",
+     "Jeshua,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Chronicles 25:4",
+   "was": "Of Heman: the sons of Heman: Bukkiah, Mattaniah, Uzziel, Shebuel, and Jerimoth, Hananiah, Hanani, Eliathah, Giddalti, and Romamtiezer, Joshbekashah, Mallothi, Hothir, and Mahazioth:",
+   "now": "Of Heman: the sons of Heman; Bukkiah, Mattaniah, Uzziel, Shebuel, and Jerimoth, Hananiah, Hanani, Eliathah, Giddalti, and Romamtiezer, Joshbekashah, Mallothi, Hothir, and Mahazioth:",
+   "change": [
+    [
+     "Heman:",
+     "Heman;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Chronicles 6:13",
+   "was": "For Solomon had made a brasen scaffold of five cubits long, and five cubits broad, and three cubits high, and had set it in the midst of the court: and upon it he stood, and kneeled down upon his knees before all the congregation of Israel, and spread forth his hands toward heaven,",
+   "now": "For Solomon had made a brasen scaffold, of five cubits long, and five cubits broad, and three cubits high, and had set it in the midst of the court: and upon it he stood, and kneeled down upon his knees before all the congregation of Israel, and spread forth his hands toward heaven,",
+   "change": [
+    [
+     "scaffold",
+     "scaffold,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "2 Chronicles 20:36",
+   "was": "And he joined himself with him to make ships to go to Tarshish: and they made the ships in Eziongaber.",
+   "now": "And he joined himself with him to make ships to go to Tarshish: and they made the ships in Eziongeber.",
+   "change": [
+    [
+     "Eziongaber.",
+     "Eziongeber."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Chronicles 33:19",
+   "was": "His prayer also, and how God was intreated of him, and all his sins, and his trespass, and the places wherein he built high places, and set up groves and graven images, before he was humbled: behold, they are written among the sayings of the seers.",
+   "now": "His prayer also, and how God was intreated of him, and all his sin, and his trespass, and the places wherein he built high places, and set up groves and graven images, before he was humbled: behold, they are written among the sayings of the seers.",
+   "change": [
+    [
+     "sins,",
+     "sin,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Chronicles 35:20",
+   "was": "After all this, when Josiah had prepared the temple, Necho king of Egypt came up to fight against Charchemish by Euphrates: and Josiah went out against him.",
+   "now": "After all this, when Josiah had prepared the temple, Necho king of Egypt came up to fight against Carchemish by Euphrates: and Josiah went out against him.",
+   "change": [
+    [
+     "Charchemish",
+     "Carchemish"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezra 2:2",
+   "was": "Which came with Zerubbabel: Jeshua, Nehemiah, Seraiah, Reelaiah, Mordecai, Bilshan, Mizpar, Bigvai, Rehum, Baanah. The number of the men of the people of Israel:",
+   "now": "Which came with Zerubbabel: Jeshua, Nehemiah, Seraiah, Reelaiah, Mordecai, Bilshan, Mispar, Bigvai, Rehum, Baanah. The number of the men of the people of Israel:",
+   "change": [
+    [
+     "Mizpar,",
+     "Mispar,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezra 4:10",
+   "was": "And the rest of the nations whom the great and noble Asnapper brought over, and set in the cities of Samaria, and the rest that are on this side the river, and at such a time.",
+   "now": "And the rest of the nations whom the great and noble Asnappar brought over, and set in the cities of Samaria, and the rest that are on this side the river, and at such a time.",
+   "change": [
+    [
+     "Asnapper",
+     "Asnappar"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Nehemiah 1:11",
+   "was": "O LORD, I beseech thee, let now thine ear be attentive to the prayer of thy servant, and to the prayer of thy servants, who desire to fear thy name: and prosper, I pray thee, thy servant this day, and grant him mercy in the sight of this man. For I was the king’s cupbearer.",
+   "now": "O Lord, I beseech thee, let now thine ear be attentive to the prayer of thy servant, and to the prayer of thy servants, who desire to fear thy name: and prosper, I pray thee, thy servant this day, and grant him mercy in the sight of this man. For I was the king’s cupbearer.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Nehemiah 3:5",
+   "was": "And next unto them the Tekoites repaired; but their nobles put not their necks to the work of their LORD.",
+   "now": "And next unto them the Tekoites repaired; but their nobles put not their necks to the work of their Lord.",
+   "change": [
+    [
+     "LORD.",
+     "Lord."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Nehemiah 4:14",
+   "was": "And I looked, and rose up, and said unto the nobles, and to the rulers, and to the rest of the people, Be not ye afraid of them: remember the LORD, which is great and terrible, and fight for your brethren, your sons, and your daughters, your wives, and your houses.",
+   "now": "And I looked, and rose up, and said unto the nobles, and to the rulers, and to the rest of the people, Be not ye afraid of them: remember the Lord, which is great and terrible, and fight for your brethren, your sons, and your daughters, your wives, and your houses.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Nehemiah 7:30",
+   "was": "The men of Ramah and Gaba, six hundred twenty and one.",
+   "now": "The men of Ramah and Geba, six hundred twenty and one.",
+   "change": [
+    [
+     "Gaba,",
+     "Geba,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Nehemiah 8:10",
+   "was": "Then he said unto them, Go your way, eat the fat, and drink the sweet, and send portions unto them for whom nothing is prepared: for this day is holy unto our LORD: neither be ye sorry; for the joy of the LORD is your strength.",
+   "now": "Then he said unto them, Go your way, eat the fat, and drink the sweet, and send portions unto them for whom nothing is prepared: for this day is holy unto our Lord: neither be ye sorry; for the joy of the LORD is your strength.",
+   "change": [
+    [
+     "LORD:",
+     "Lord:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 5:14",
+   "was": "They meet with darkness in the day time, and grope in the noonday as in the night.",
+   "now": "They meet with darkness in the daytime, and grope in the noonday as in the night.",
+   "change": [
+    [
+     "day time,",
+     "daytime,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 11:17",
+   "was": "And thine age shall be clearer than the noonday: thou shalt shine forth, thou shalt be as the morning.",
+   "now": "And thine age shall be clearer than the noonday; thou shalt shine forth, thou shalt be as the morning.",
+   "change": [
+    [
+     "noonday:",
+     "noonday;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 28:28",
+   "was": "And unto man he said, Behold, the fear of the LORD, that is wisdom; and to depart from evil is understanding.",
+   "now": "And unto man he said, Behold, the fear of the Lord, that is wisdom; and to depart from evil is understanding.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 30:6",
+   "was": "To dwell in the cliffs of the valleys, in caves of the earth, and in the rocks.",
+   "now": "To dwell in the clifts of the valleys, in caves of the earth, and in the rocks.",
+   "change": [
+    [
+     "cliffs",
+     "clifts"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 31:6",
+   "was": "Let me be weighed in an even balance that God may know mine integrity.",
+   "now": "Let me be weighed in an even balance, that God may know mine integrity.",
+   "change": [
+    [
+     "balance",
+     "balance,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 33:4",
+   "was": "The spirit of God hath made me, and the breath of the Almighty hath given me life.",
+   "now": "The Spirit of God hath made me, and the breath of the Almighty hath given me life.",
+   "change": [
+    [
+     "spirit",
+     "Spirit"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 33:32",
+   "was": "If thou hast anything to say, answer me: speak, for I desire to justify thee.",
+   "now": "If thou hast any thing to say, answer me: speak, for I desire to justify thee.",
+   "change": [
+    [
+     "anything",
+     "any thing"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Job 34:10",
+   "was": "Therefore hearken unto me ye men of understanding: far be it from God, that he should do wickedness; and from the Almighty, that he should commit iniquity.",
+   "now": "Therefore hearken unto me, ye men of understanding: far be it from God, that he should do wickedness; and from the Almighty, that he should commit iniquity.",
+   "change": [
+    [
+     "me",
+     "me,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 2:4",
+   "was": "He that sitteth in the heavens shall laugh: the LORD shall have them in derision.",
+   "now": "He that sitteth in the heavens shall laugh: the Lord shall have them in derision.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 3:1",
+   "was": "Lord, how are they increased that trouble me! many are they that rise up against me.",
+   "now": "LORD, how are they increased that trouble me! many are they that rise up against me.",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 8:1",
+   "was": "O LORD, our Lord, how excellent is thy name in all the earth! who hast set thy glory above the heavens.",
+   "now": "O LORD our Lord, how excellent is thy name in all the earth! who hast set thy glory above the heavens.",
+   "change": [
+    [
+     "LORD,",
+     "LORD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 15:1",
+   "was": "Lord, who shall abide in thy tabernacle? who shall dwell in thy holy hill?",
+   "now": "LORD, who shall abide in thy tabernacle? who shall dwell in thy holy hill?",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 22:2",
+   "was": "O my God, I cry in the day time, but thou hearest not; and in the night season, and am not silent.",
+   "now": "O my God, I cry in the daytime, but thou hearest not; and in the night season, and am not silent.",
+   "change": [
+    [
+     "day time,",
+     "daytime,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 37:4",
+   "was": "Delight thyself also in the LORD: and he shall give thee the desires of thine heart.",
+   "now": "Delight thyself also in the LORD; and he shall give thee the desires of thine heart.",
+   "change": [
+    [
+     "LORD:",
+     "LORD;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 37:13",
+   "was": "The LORD shall laugh at him: for he seeth that his day is coming.",
+   "now": "The Lord shall laugh at him: for he seeth that his day is coming.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 39:4",
+   "was": "LORD, make me to know mine end, and the measure of my days, what it is: that I may know how frail I am.",
+   "now": "LORD, make me to know mine end, and the measure of my days, what it is; that I may know how frail I am.",
+   "change": [
+    [
+     "is:",
+     "is;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 42:8",
+   "was": "Yet the LORD will command his lovingkindness in the day time, and in the night his song shall be with me, and my prayer unto the God of my life.",
+   "now": "Yet the LORD will command his lovingkindness in the daytime, and in the night his song shall be with me, and my prayer unto the God of my life.",
+   "change": [
+    [
+     "day time,",
+     "daytime,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 50:17",
+   "was": "Seeing thou hatest instruction, and casteth my words behind thee.",
+   "now": "Seeing thou hatest instruction, and castest my words behind thee.",
+   "change": [
+    [
+     "casteth",
+     "castest"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 70:1",
+   "was": "MAKE HASTE, O GOD, TO DELIVER ME; MAKE HASTE TO HELP ME, O LORD.",
+   "now": "Make haste, O God, to deliver me; make haste to help me, O LORD.",
+   "change": [
+    [
+     "MAKE HASTE,",
+     "Make haste,"
+    ],
+    [
+     "GOD, TO DELIVER ME; MAKE HASTE TO HELP ME,",
+     "God, to deliver me; make haste to help me,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Psalms 71:18",
+   "was": "Now also when I am old and greyheaded, O God, forsake me not; until I have shewed thy strength unto this generation, and thy power to every one that is to come.",
+   "now": "Now also when I am old and grayheaded, O God, forsake me not; until I have shewed thy strength unto this generation, and thy power to every one that is to come.",
+   "change": [
+    [
+     "greyheaded,",
+     "grayheaded,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 78:65",
+   "was": "Then the LORD awaked as one out of sleep, and like a mighty man that shouteth by reason of wine.",
+   "now": "Then the Lord awaked as one out of sleep, and like a mighty man that shouteth by reason of wine.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 79:1",
+   "was": "O GOD, the heathen are come into thine inheritance; thy holy temple have they defiled; they have laid Jerusalem on heaps.",
+   "now": "O God, the heathen are come into thine inheritance; thy holy temple have they defiled; they have laid Jerusalem on heaps.",
+   "change": [
+    [
+     "GOD,",
+     "God,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Psalms 85:1",
+   "was": "Lord, thou hast been favourable unto thy land: thou hast brought back the captivity of Jacob.",
+   "now": "LORD, thou hast been favourable unto thy land: thou hast brought back the captivity of Jacob.",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 86:15",
+   "was": "But thou, O Lord, art a God full of compassion, and gracious, long suffering, and plenteous in mercy and truth.",
+   "now": "But thou, O Lord, art a God full of compassion, and gracious, longsuffering, and plenteous in mercy and truth.",
+   "change": [
+    [
+     "long suffering,",
+     "longsuffering,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Psalms 92:1",
+   "was": "IT IS A GOOD THING TO GIVE THANKS UNTO THE LORD, AND TO SING PRAISES UNTO THY NAME, O MOST HIGH:",
+   "now": "It is a good thing to give thanks unto the LORD, and to sing praises unto thy name, O most High:",
+   "change": [
+    [
+     "IT IS A GOOD THING TO GIVE THANKS UNTO THE",
+     "It is a good thing to give thanks unto the"
+    ],
+    [
+     "AND TO SING PRAISES UNTO THY NAME,",
+     "and to sing praises unto thy name,"
+    ],
+    [
+     "MOST HIGH:",
+     "most High:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Psalms 94:1",
+   "was": "O Lord God, to whom vengeance belongeth; O God, to whom vengeance belongeth, shew thyself.",
+   "now": "O LORD God, to whom vengeance belongeth; O God, to whom vengeance belongeth, shew thyself.",
+   "change": [
+    [
+     "Lord",
+     "LORD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 107:27",
+   "was": "They reel to and fro, and stagger like a drunken man, and are at their wit’s end.",
+   "now": "They reel to and fro, and stagger like a drunken man, and are at their wits’ end.",
+   "change": [
+    [
+     "wit’s",
+     "wits’"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 117:1",
+   "was": "O Praise the LORD, all ye nations: praise him, all ye people.",
+   "now": "O praise the LORD, all ye nations: praise him, all ye people.",
+   "change": [
+    [
+     "Praise",
+     "praise"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Psalms 131:1",
+   "was": "Lord, my heart is not haughty, nor mine eyes lofty: neither do I exercise myself in great matters, or in things too high for me.",
+   "now": "LORD, my heart is not haughty, nor mine eyes lofty: neither do I exercise myself in great matters, or in things too high for me.",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 132:1",
+   "was": "Lord, remember David, and all his afflictions:",
+   "now": "LORD, remember David, and all his afflictions:",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 141:1",
+   "was": "Lord, I cry unto thee: make haste unto me; give ear unto my voice, when I cry unto thee.",
+   "now": "LORD, I cry unto thee: make haste unto me; give ear unto my voice, when I cry unto thee.",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Psalms 148:8",
+   "was": "Fire, and hail; snow, and vapours; stormy wind fulfilling his word:",
+   "now": "Fire, and hail; snow, and vapour; stormy wind fulfilling his word:",
+   "change": [
+    [
+     "vapours;",
+     "vapour;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Proverbs 11:28",
+   "was": "He that trusteth in his riches shall fall; but the righteous shall flourish as a branch.",
+   "now": "He that trusteth in his riches shall fall: but the righteous shall flourish as a branch.",
+   "change": [
+    [
+     "fall;",
+     "fall:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Proverbs 12:28",
+   "was": "In the way of righteousness is life: and in the pathway thereof there is no death.",
+   "now": "In the way of righteousness is life; and in the pathway thereof there is no death.",
+   "change": [
+    [
+     "life:",
+     "life;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Proverbs 20:29",
+   "was": "The glory of young men is their strength: and the beauty of old men is the grey head.",
+   "now": "The glory of young men is their strength: and the beauty of old men is the gray head.",
+   "change": [
+    [
+     "grey",
+     "gray"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Proverbs 22:1",
+   "was": "A GOOD name is rather to be chosen than great riches, and loving favour rather than silver and gold.",
+   "now": "A good name is rather to be chosen than great riches, and loving favour rather than silver and gold.",
+   "change": [
+    [
+     "GOOD",
+     "good"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Ecclesiastes 8:17",
+   "was": "Then I beheld all the work of God, that a man cannot find out the work that is done under the sun: because though a man labour to seek it out, yet he shall not find it; yea farther; though a wise man think to know it, yet shall he not be able to find it.",
+   "now": "Then I beheld all the work of God, that a man cannot find out the work that is done under the sun: because though a man labour to seek it out, yet he shall not find it; yea further; though a wise man think to know it, yet shall he not be able to find it.",
+   "change": [
+    [
+     "farther;",
+     "further;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 1:24",
+   "was": "Therefore saith the LORD, the LORD of hosts, the mighty One of Israel, Ah, I will ease me of mine adversaries, and avenge me of mine enemies:",
+   "now": "Therefore saith the Lord, the LORD of hosts, the mighty One of Israel, Ah, I will ease me of mine adversaries, and avenge me of mine enemies:",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 3:1",
+   "was": "For, behold, the Lord, the LORD of hosts, doth take away from Jerusalem and from Judah the stay and the staff, the whole stay of bread, and the whole stay of water.",
+   "now": "For, behold, the Lord, the LORD of hosts, doth take away from Jerusalem and from Judah the stay and the staff, the whole stay of bread, and the whole stay of water,",
+   "change": [
+    [
+     "water.",
+     "water,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 3:17",
+   "was": "Therefore the LORD will smite with a scab the crown of the head of the daughters of Zion, and the LORD will discover their secret parts.",
+   "now": "Therefore the Lord will smite with a scab the crown of the head of the daughters of Zion, and the LORD will discover their secret parts.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 4:6",
+   "was": "And there shall be a tabernacle for a shadow in the day time from the heat, and for a place of refuge, and for a covert from storm and from rain.",
+   "now": "And there shall be a tabernacle for a shadow in the daytime from the heat, and for a place of refuge, and for a covert from storm and from rain.",
+   "change": [
+    [
+     "day time",
+     "daytime"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 6:1",
+   "was": "In the year that king Uzziah died I saw also the LORD sitting upon a throne, high and lifted up, and his train filled the temple.",
+   "now": "In the year that king Uzziah died I saw also the Lord sitting upon a throne, high and lifted up, and his train filled the temple.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 9:17",
+   "was": "Therefore the LORD shall have no joy in their young men, neither shall have mercy on their fatherless and widows: for every one is an hypocrite and an evildoer, and every mouth speaketh folly. For all this his anger is not turned away, but his hand is stretched out still.",
+   "now": "Therefore the Lord shall have no joy in their young men, neither shall have mercy on their fatherless and widows: for every one is an hypocrite and an evildoer, and every mouth speaketh folly. For all this his anger is not turned away, but his hand is stretched out still.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 21:6",
+   "was": "For thus hath the LORD said unto me, Go, set a watchman, let him declare what he seeth.",
+   "now": "For thus hath the Lord said unto me, Go, set a watchman, let him declare what he seeth.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 21:16",
+   "was": "For thus hath the LORD said unto me, Within a year, according to the years of an hireling, and all the glory of Kedar shall fail:",
+   "now": "For thus hath the Lord said unto me, Within a year, according to the years of an hireling, and all the glory of Kedar shall fail:",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 25:1",
+   "was": "O Lord, thou art my God; I will exalt thee, I will praise thy name; for thou hast done wonderful things; thy counsels of old are faithfulness and truth.",
+   "now": "O LORD, thou art my God; I will exalt thee, I will praise thy name; for thou hast done wonderful things; thy counsels of old are faithfulness and truth.",
+   "change": [
+    [
+     "Lord,",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 38:16",
+   "was": "O LORD, by these things men live, and in all these things is the life of my spirit: so wilt thou recover me, and make me to live.",
+   "now": "O Lord, by these things men live, and in all these things is the life of my spirit: so wilt thou recover me, and make me to live.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 56:8",
+   "was": "The Lord GOD, which gathereth the outcasts of Israel saith, Yet will I gather others to him, beside those that are gathered unto him.",
+   "now": "The Lord GOD which gathereth the outcasts of Israel saith, Yet will I gather others to him, beside those that are gathered unto him.",
+   "change": [
+    [
+     "GOD,",
+     "GOD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 58:10",
+   "was": "And if thou draw out thy soul to the hungry, and satisfy the afflicted soul; then shall thy light rise in obscurity, and thy darkness be as the noon day:",
+   "now": "And if thou draw out thy soul to the hungry, and satisfy the afflicted soul; then shall thy light rise in obscurity, and thy darkness be as the noonday:",
+   "change": [
+    [
+     "noon day:",
+     "noonday:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 59:10",
+   "was": "We grope for the wall like the blind, and we grope as if we had no eyes: we stumble at noon day as in the night; we are in desolate places as dead men.",
+   "now": "We grope for the wall like the blind, and we grope as if we had no eyes: we stumble at noonday as in the night; we are in desolate places as dead men.",
+   "change": [
+    [
+     "noon day",
+     "noonday"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Isaiah 59:17",
+   "was": "For he put on righteousness as a breastplate, and an helmet of salvation upon his head; and he put on the garments of vengeance for clothing, and was clad with zeal as a cloak.",
+   "now": "For he put on righteousness as a breastplate, and an helmet of salvation upon his head; and he put on the garments of vengeance for clothing, and was clad with zeal as a cloke.",
+   "change": [
+    [
+     "cloak.",
+     "cloke."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Jeremiah 11:8",
+   "was": "Yet they obeyed not, nor inclined their ear, but walked every one in the imagination of their evil heart: therefore I will bring upon them all the words of this covenant, which I commanded them to do: but they did them not.",
+   "now": "Yet they obeyed not, nor inclined their ear, but walked every one in the imagination of their evil heart: therefore I will bring upon them all the words of this covenant, which I commanded them to do; but they did them not.",
+   "change": [
+    [
+     "do:",
+     "do;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Jeremiah 30:7",
+   "was": "Alas! for that day is great, so that none is like it: it is even the time of Jacob’s trouble, but he shall be saved out of it.",
+   "now": "Alas! for that day is great, so that none is like it: it is even the time of Jacob’s trouble; but he shall be saved out of it.",
+   "change": [
+    [
+     "trouble,",
+     "trouble;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Jeremiah 34:16",
+   "was": "But ye turned and polluted my name, and caused every man his servant, and every man his handmaid, whom he had set at liberty at their pleasure, to return, and brought them into subjection, to be unto you for servants and for handmaids.",
+   "now": "But ye turned and polluted my name, and caused every man his servant, and every man his handmaid, whom ye had set at liberty at their pleasure, to return, and brought them into subjection, to be unto you for servants and for handmaids.",
+   "change": [
+    [
+     "he",
+     "ye"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Jeremiah 40:10",
+   "was": "As for me, behold, I will dwell at Mizpah, to serve the Chaldeans, which will come unto us: but ye, gather ye wine, and summer fruits, and oil, and put them in your vessels, and dwell in your cities that ye have taken.",
+   "now": "As for me, behold, I will dwell at Mizpah to serve the Chaldeans, which will come unto us: but ye, gather ye wine, and summer fruits, and oil, and put them in your vessels, and dwell in your cities that ye have taken.",
+   "change": [
+    [
+     "Mizpah,",
+     "Mizpah"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Jeremiah 45:2",
+   "was": "Thus saith the LORD, the God of Israel, unto thee, O Baruch:",
+   "now": "Thus saith the LORD, the God of Israel, unto thee, O Baruch;",
+   "change": [
+    [
+     "Baruch:",
+     "Baruch;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 1:14",
+   "was": "The yoke of my transgressions is bound by his hand: they are wreathed, and come up upon my neck: he hath made my strength to fall, the LORD hath delivered me into their hands, from whom I am not able to rise up.",
+   "now": "The yoke of my transgressions is bound by his hand: they are wreathed, and come up upon my neck: he hath made my strength to fall, the Lord hath delivered me into their hands, from whom I am not able to rise up.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 1:15",
+   "was": "The LORD hath trodden under foot all my mighty men in the midst of me: he hath called an assembly against me to crush my young men: the LORD hath trodden the virgin, the daughter of Judah, as in a winepress.",
+   "now": "The Lord hath trodden under foot all my mighty men in the midst of me: he hath called an assembly against me to crush my young men: the Lord hath trodden the virgin, the daughter of Judah, as in a winepress.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ],
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 2:1",
+   "was": "How hath the LORD covered the daughter of Zion with a cloud in his anger, and cast down from heaven unto the earth the beauty of Israel, and remembered not his footstool in the day of his anger!",
+   "now": "How hath the Lord covered the daughter of Zion with a cloud in his anger, and cast down from heaven unto the earth the beauty of Israel, and remembered not his footstool in the day of his anger!",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 2:2",
+   "was": "The LORD hath swallowed up all the habitations of Jacob, and hath not pitied: he hath thrown down in his wrath the strong holds of the daughter of Judah; he hath brought them down to the ground: he hath polluted the kingdom and the princes thereof.",
+   "now": "The Lord hath swallowed up all the habitations of Jacob, and hath not pitied: he hath thrown down in his wrath the strong holds of the daughter of Judah; he hath brought them down to the ground: he hath polluted the kingdom and the princes thereof.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 2:5",
+   "was": "The LORD was as an enemy: he hath swallowed up Israel, he hath swallowed up all her palaces: he hath destroyed his strong holds, and hath increased in the daughter of Judah mourning and lamentation.",
+   "now": "The Lord was as an enemy: he hath swallowed up Israel, he hath swallowed up all her palaces: he hath destroyed his strong holds, and hath increased in the daughter of Judah mourning and lamentation.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 2:7",
+   "was": "The LORD hath cast off his altar, he hath abhorred his sanctuary, he hath given up into the hand of the enemy the walls of her palaces; they have made a noise in the house of the LORD, as in the day of a solemn feast.",
+   "now": "The Lord hath cast off his altar, he hath abhorred his sanctuary, he hath given up into the hand of the enemy the walls of her palaces; they have made a noise in the house of the LORD, as in the day of a solemn feast.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 2:18",
+   "was": "Their heart cried unto the LORD, O wall of the daughter of Zion, let tears run down like a river day and night: give thyself no rest; let not the apple of thine eye cease.",
+   "now": "Their heart cried unto the Lord, O wall of the daughter of Zion, let tears run down like a river day and night: give thyself no rest; let not the apple of thine eye cease.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 2:19",
+   "was": "Arise, cry out in the night: in the beginning of the watches pour out thine heart like water before the face of the LORD: lift up thy hands toward him for the life of thy young children, that faint for hunger in the top of every street.",
+   "now": "Arise, cry out in the night: in the beginning of the watches pour out thine heart like water before the face of the Lord: lift up thy hands toward him for the life of thy young children, that faint for hunger in the top of every street.",
+   "change": [
+    [
+     "LORD:",
+     "Lord:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 3:1",
+   "was": "I AM the man that hath seen affliction by the rod of his wrath.",
+   "now": "I am the man that hath seen affliction by the rod of his wrath.",
+   "change": [
+    [
+     "AM",
+     "am"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Lamentations 3:31",
+   "was": "For the LORD will not cast off for ever:",
+   "now": "For the Lord will not cast off for ever:",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 3:36",
+   "was": "To subvert a man in his cause, the LORD approveth not.",
+   "now": "To subvert a man in his cause, the Lord approveth not.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Lamentations 3:58",
+   "was": "O LORD, thou hast pleaded the causes of my soul; thou hast redeemed my life.",
+   "now": "O Lord, thou hast pleaded the causes of my soul; thou hast redeemed my life.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezekiel 16:23",
+   "was": "And it came to pass after all thy wickedness, (woe, woe unto thee! saith the LORD GOD;)",
+   "now": "And it came to pass after all thy wickedness, (woe, woe unto thee! saith the Lord GOD;)",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezekiel 16:30",
+   "was": "How weak is thine heart, saith the LORD GOD, seeing thou doest all these things, the work of an imperious whorish woman;",
+   "now": "How weak is thine heart, saith the Lord GOD, seeing thou doest all these things, the work of an imperious whorish woman;",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezekiel 18:25",
+   "was": "Yet ye say, The way of the LORD is not equal. Hear now, O house of Israel; Is not my way equal? are not your ways unequal?",
+   "now": "Yet ye say, The way of the Lord is not equal. Hear now, O house of Israel; Is not my way equal? are not your ways unequal?",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezekiel 18:29",
+   "was": "Yet saith the house of Israel, The way of the LORD is not equal. O house of Israel, are not my ways equal? are not your ways unequal?",
+   "now": "Yet saith the house of Israel, The way of the Lord is not equal. O house of Israel, are not my ways equal? are not your ways unequal?",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezekiel 25:5",
+   "was": "And I will make Rabbah a stable for camels, and the Ammonites a couching place for flocks: and ye shall know that I am the LORD.",
+   "now": "And I will make Rabbah a stable for camels, and the Ammonites a couchingplace for flocks: and ye shall know that I am the LORD.",
+   "change": [
+    [
+     "couching place",
+     "couchingplace"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezekiel 31:8",
+   "was": "The cedars in the garden of God could not hide him: the fir trees were not like his boughs, and the chestnut trees were not like his branches; nor any tree in the garden of God was like unto him in his beauty.",
+   "now": "The cedars in the garden of God could not hide him: the fir trees were not like his boughs, and the chesnut trees were not like his branches; nor any tree in the garden of God was like unto him in his beauty.",
+   "change": [
+    [
+     "chestnut",
+     "chesnut"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Ezekiel 44:29",
+   "was": "They shall eat the meat offering, and the sin offering, and the trespass offering: and every dedicated thing in Israel shall be theirs.",
+   "now": "They shall eat the meat offering, and the sin offering, and the trespass offering; and every dedicated thing in Israel shall be theirs.",
+   "change": [
+    [
+     "offering:",
+     "offering;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Daniel 4:8",
+   "was": "But at the last Daniel came in before me, whose name was Belteshazzar, according to the name of my God, and in whom is the spirit of the holy gods: and before him I told the dream, saying,",
+   "now": "But at the last Daniel came in before me, whose name was Belteshazzar, according to the name of my god, and in whom is the spirit of the holy gods: and before him I told the dream, saying,",
+   "change": [
+    [
+     "God,",
+     "god,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Daniel 5:10",
+   "was": "Now the queen by reason of the words of the king and his lords came into the banquet house: and the queen spake and said, O king, live for ever: let not thy thoughts trouble thee, nor let thy countenance be changed:",
+   "now": "Now the queen, by reason of the words of the king and his lords, came into the banquet house: and the queen spake and said, O king, live for ever: let not thy thoughts trouble thee, nor let thy countenance be changed:",
+   "change": [
+    [
+     "queen",
+     "queen,"
+    ],
+    [
+     "lords",
+     "lords,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Daniel 9:7",
+   "was": "O LORD, righteousness belongeth unto thee, but unto us confusion of faces, as at this day; to the men of Judah, and to the inhabitants of Jerusalem, and unto all Israel, that are near, and that are far off, through all the countries whither thou hast driven them, because of their trespass that they have trespassed against thee.",
+   "now": "O Lord, righteousness belongeth unto thee, but unto us confusion of faces, as at this day; to the men of Judah, and to the inhabitants of Jerusalem, and unto all Israel, that are near, and that are far off, through all the countries whither thou hast driven them, because of their trespass that they have trespassed against thee.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Daniel 9:16",
+   "was": "O LORD, according to all thy righteousness, I beseech thee, let thine anger and thy fury be turned away from thy city Jerusalem, thy holy mountain: because for our sins, and for the iniquities of our fathers, Jerusalem and thy people are become a reproach to all that are about us.",
+   "now": "O Lord, according to all thy righteousness, I beseech thee, let thine anger and thy fury be turned away from thy city Jerusalem, thy holy mountain: because for our sins, and for the iniquities of our fathers, Jerusalem and thy people are become a reproach to all that are about us.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Hosea 12:14",
+   "was": "Ephraim provoked him to anger most bitterly: therefore shall he leave his blood upon him, and his reproach shall his LORD return unto him.",
+   "now": "Ephraim provoked him to anger most bitterly: therefore shall he leave his blood upon him, and his reproach shall his Lord return unto him.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Joel 1:14",
+   "was": "Sanctify ye a fast, call a solemn assembly, gather the elders and all the inhabitants of the land into the house of the LORD your God, and cry unto the LORD.",
+   "now": "Sanctify ye a fast, call a solemn assembly, gather the elders and all the inhabitants of the land into the house of the LORD your God, and cry unto the LORD,",
+   "change": [
+    [
+     "LORD.",
+     "LORD,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Joel 2:24",
+   "was": "And the floors shall be full of wheat, and the vats shall overflow with wine and oil.",
+   "now": "And the floors shall be full of wheat, and the fats shall overflow with wine and oil.",
+   "change": [
+    [
+     "vats",
+     "fats"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Amos 2:2",
+   "was": "But I will send a fire upon Moab, and it shall devour the palaces of Kirioth: and Moab shall die with tumult, with shouting, and with the sound of the trumpet:",
+   "now": "But I will send a fire upon Moab, and it shall devour the palaces of Kerioth: and Moab shall die with tumult, with shouting, and with the sound of the trumpet:",
+   "change": [
+    [
+     "Kirioth:",
+     "Kerioth:"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Amos 5:16",
+   "was": "Therefore the LORD, the God of hosts, the LORD, saith thus; Wailing shall be in all streets; and they shall say in all the highways, Alas! alas! and they shall call the husbandman to mourning, and such as are skilful of lamentation to wailing.",
+   "now": "Therefore the LORD, the God of hosts, the Lord, saith thus; Wailing shall be in all streets; and they shall say in all the highways, Alas! alas! and they shall call the husbandman to mourning, and such as are skilful of lamentation to wailing.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Amos 7:7",
+   "was": "Thus he shewed me: and, behold, the LORD stood upon a wall made by a plumbline, with a plumbline in his hand.",
+   "now": "Thus he shewed me: and, behold, the Lord stood upon a wall made by a plumbline, with a plumbline in his hand.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Amos 7:8",
+   "was": "And the LORD said unto me, Amos, what seest thou? And I said, A plumbline. Then said the LORD, Behold, I will set a plumbline in the midst of my people Israel: I will not again pass by them any more:",
+   "now": "And the LORD said unto me, Amos, what seest thou? And I said, A plumbline. Then said the Lord, Behold, I will set a plumbline in the midst of my people Israel: I will not again pass by them any more:",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Amos 9:1",
+   "was": "I saw the LORD standing upon the altar: and he said, Smite the lintel of the door, that the posts may shake: and cut them in the head, all of them; and I will slay the last of them with the sword: he that fleeth of them shall not flee away, and he that escapeth of them shall not be delivered.",
+   "now": "I saw the Lord standing upon the altar: and he said, Smite the lintel of the door, that the posts may shake: and cut them in the head, all of them; and I will slay the last of them with the sword: he that fleeth of them shall not flee away, and he that escapeth of them shall not be delivered.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Micah 1:2",
+   "was": "Hear, all ye people; hearken, O earth, and all that therein is: and let the Lord GOD be witness against you, the LORD from his holy temple.",
+   "now": "Hear, all ye people; hearken, O earth, and all that therein is: and let the Lord GOD be witness against you, the Lord from his holy temple.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Nahum 3:16",
+   "was": "Thou hast multiplied thy merchants above the stars of heaven: the cankerworm spoileth, and fleeth away.",
+   "now": "Thou hast multiplied thy merchants above the stars of heaven: the cankerworm spoileth, and flieth away.",
+   "change": [
+    [
+     "fleeth",
+     "flieth"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Zephaniah 1:3",
+   "was": "I will consume man and beast; I will consume the fowls of the heaven, and the fishes of the sea, and the stumbling blocks with the wicked: and I will cut off man from off the land, saith the LORD.",
+   "now": "I will consume man and beast; I will consume the fowls of the heaven, and the fishes of the sea, and the stumblingblocks with the wicked; and I will cut off man from off the land, saith the LORD.",
+   "change": [
+    [
+     "stumbling blocks",
+     "stumblingblocks"
+    ],
+    [
+     "wicked:",
+     "wicked;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Haggai 1:9",
+   "was": "Ye looked for much, and lo, it came to little; and when ye brought it home, I did blow upon it. Why? saith the LORD of hosts. Because of mine house that is waste, and ye run every man unto his own house.",
+   "now": "Ye looked for much, and, lo, it came to little; and when ye brought it home, I did blow upon it. Why? saith the LORD of hosts. Because of mine house that is waste, and ye run every man unto his own house.",
+   "change": [
+    [
+     "and",
+     "and,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Zechariah 4:14",
+   "was": "Then said he, These are the two anointed ones, that stand by the LORD of the whole earth.",
+   "now": "Then said he, These are the two anointed ones, that stand by the Lord of the whole earth.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Zechariah 6:5",
+   "was": "And the angel answered and said unto me, These are the four spirits of the heavens, which go forth from standing before the LORD of all the earth.",
+   "now": "And the angel answered and said unto me, These are the four spirits of the heavens, which go forth from standing before the Lord of all the earth.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Zechariah 9:4",
+   "was": "Behold, the LORD will cast her out, and he will smite her power in the sea; and she shall be devoured with fire.",
+   "now": "Behold, the Lord will cast her out, and he will smite her power in the sea; and she shall be devoured with fire.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Zechariah 9:14",
+   "was": "And the LORD shall be seen over them, and his arrow shall go forth as the lightning: and the LORD God shall blow the trumpet, and shall go with whirlwinds of the south.",
+   "now": "And the LORD shall be seen over them, and his arrow shall go forth as the lightning: and the Lord GOD shall blow the trumpet, and shall go with whirlwinds of the south.",
+   "change": [
+    [
+     "LORD God",
+     "Lord GOD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Malachi 1:14",
+   "was": "But cursed be the deceiver, which hath in his flock a male, and voweth, and sacrificeth unto the LORD a corrupt thing: for I am a great King, saith the LORD of hosts, and my name is dreadful among the heathen.",
+   "now": "But cursed be the deceiver, which hath in his flock a male, and voweth, and sacrificeth unto the Lord a corrupt thing: for I am a great King, saith the LORD of hosts, and my name is dreadful among the heathen.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Malachi 3:1",
+   "was": "Behold, I will send my messenger, and he shall prepare the way before me: and the LORD, whom ye seek, shall suddenly come to his temple, even the messenger of the covenant, whom ye delight in: behold, he shall come, saith the LORD of hosts.",
+   "now": "Behold, I will send my messenger, and he shall prepare the way before me: and the Lord, whom ye seek, shall suddenly come to his temple, even the messenger of the covenant, whom ye delight in: behold, he shall come, saith the LORD of hosts.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 1:20",
+   "was": "But while he thought on these things, behold, the angel of the LORD appeared unto him in a dream, saying, Joseph, thou son of David, fear not to take unto thee Mary thy wife: for that which is conceived in her is of the Holy Ghost.",
+   "now": "But while he thought on these things, behold, the angel of the Lord appeared unto him in a dream, saying, Joseph, thou son of David, fear not to take unto thee Mary thy wife: for that which is conceived in her is of the Holy Ghost.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 5:40",
+   "was": "And if any man will sue thee at the law, and take away thy coat, let him have thy cloak also.",
+   "now": "And if any man will sue thee at the law, and take away thy coat, let him have thy cloke also.",
+   "change": [
+    [
+     "cloak",
+     "cloke"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 9:27",
+   "was": "And when Jesus departed thence, two blind men followed him, crying, and saying, Thou son of David, have mercy on us.",
+   "now": "And when Jesus departed thence, two blind men followed him, crying, and saying, Thou Son of David, have mercy on us.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 13:15",
+   "was": "For this people’s heart is waxed gross, and their ears are dull of hearing, and their eyes they have closed; lest at any time they should see with their eyes and hear with their ears, and should understand with their heart, and should be converted, and I should heal them.",
+   "now": "For this people’s heart is waxed gross, and their ears are dull of hearing, and their eyes they have closed; lest at any time they should see with their eyes, and hear with their ears, and should understand with their heart, and should be converted, and I should heal them.",
+   "change": [
+    [
+     "eyes",
+     "eyes,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 15:22",
+   "was": "And, behold, a woman of Canaan came out of the same coasts, and cried unto him, saying, Have mercy on me, O Lord, thou son of David; my daughter is grievously vexed with a devil.",
+   "now": "And, behold, a woman of Canaan came out of the same coasts, and cried unto him, saying, Have mercy on me, O Lord, thou Son of David; my daughter is grievously vexed with a devil.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 20:30",
+   "was": "And, behold, two blind men sitting by the way side, when they heard that Jesus passed by, cried out, saying, Have mercy on us, O Lord, thou son of David.",
+   "now": "And, behold, two blind men sitting by the way side, when they heard that Jesus passed by, cried out, saying, Have mercy on us, O Lord, thou Son of David.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 20:31",
+   "was": "And the multitude rebuked them, because they should hold their peace: but they cried the more, saying, Have mercy on us, O Lord, thou son of David.",
+   "now": "And the multitude rebuked them, because they should hold their peace: but they cried the more, saying, Have mercy on us, O Lord, thou Son of David.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 21:9",
+   "was": "And the multitudes that went before, and that followed, cried, saying, Hosanna to the son of David: Blessed is he that cometh in the name of the Lord; Hosanna in the highest.",
+   "now": "And the multitudes that went before, and that followed, cried, saying, Hosanna to the Son of David: Blessed is he that cometh in the name of the Lord; Hosanna in the highest.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 21:15",
+   "was": "And when the chief priests and scribes saw the wonderful things that he did, and the children crying in the temple, and saying, Hosanna to the son of David; they were sore displeased,",
+   "now": "And when the chief priests and scribes saw the wonderful things that he did, and the children crying in the temple, and saying, Hosanna to the Son of David; they were sore displeased,",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 22:42",
+   "was": "Saying, What think ye of Christ? whose son is he? They say unto him, The son of David.",
+   "now": "Saying, What think ye of Christ? whose son is he? They say unto him, The Son of David.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Matthew 26:39",
+   "was": "And he went a little farther, and fell on his face, and prayed, saying, O my Father, if it be possible, let this cup pass from me: nevertheless not as I will, but as thou wilt.",
+   "now": "And he went a little further, and fell on his face, and prayed, saying, O my Father, if it be possible, let this cup pass from me: nevertheless not as I will, but as thou wilt.",
+   "change": [
+    [
+     "farther,",
+     "further,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Mark 1:19",
+   "was": "And when he had gone a little farther thence, he saw James the son of Zebedee, and John his brother, who also were in the ship mending their nets.",
+   "now": "And when he had gone a little further thence, he saw James the son of Zebedee, and John his brother, who also were in the ship mending their nets.",
+   "change": [
+    [
+     "farther",
+     "further"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Mark 10:47",
+   "was": "And when he heard that it was Jesus of Nazareth, he began to cry out, and say, Jesus, thou son of David, have mercy on me.",
+   "now": "And when he heard that it was Jesus of Nazareth, he began to cry out, and say, Jesus, thou Son of David, have mercy on me.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Mark 10:48",
+   "was": "And many charged him that he should hold his peace: but he cried the more a great deal, Thou son of David, have mercy on me.",
+   "now": "And many charged him that he should hold his peace: but he cried the more a great deal, Thou Son of David, have mercy on me.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Mark 12:7",
+   "was": "But those husbandmen said among themselves, This is the heir; come, let us kill him, and the inheritance shall be our’s.",
+   "now": "But those husbandmen said among themselves, This is the heir; come, let us kill him, and the inheritance shall be ours.",
+   "change": [
+    [
+     "our’s.",
+     "ours."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible",
+    "Project Gutenberg #10"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "Mark 12:35",
+   "was": "And Jesus answered and said, while he taught in the temple, How say the scribes that Christ is the son of David?",
+   "now": "And Jesus answered and said, while he taught in the temple, How say the scribes that Christ is the Son of David?",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Luke 2:23",
+   "was": "(As it is written in the law of the LORD, Every male that openeth the womb shall be called holy to the Lord;)",
+   "now": "(As it is written in the law of the Lord, Every male that openeth the womb shall be called holy to the Lord;)",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Luke 6:29",
+   "was": "And unto him that smiteth thee on the one cheek offer also the other; and him that taketh away thy cloak forbid not to take thy coat also.",
+   "now": "And unto him that smiteth thee on the one cheek offer also the other; and him that taketh away thy cloke forbid not to take thy coat also.",
+   "change": [
+    [
+     "cloak",
+     "cloke"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Luke 10:1",
+   "was": "After these things the LORD appointed other seventy also, and sent them two and two before his face into every city and place, whither he himself would come.",
+   "now": "After these things the Lord appointed other seventy also, and sent them two and two before his face into every city and place, whither he himself would come.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Luke 18:38",
+   "was": "And he cried, saying, Jesus, thou son of David, have mercy on me.",
+   "now": "And he cried, saying, Jesus, thou Son of David, have mercy on me.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Luke 18:39",
+   "was": "And they which went before rebuked him, that he should hold his peace: but he cried so much the more, Thou son of David, have mercy on me.",
+   "now": "And they which went before rebuked him, that he should hold his peace: but he cried so much the more, Thou Son of David, have mercy on me.",
+   "change": [
+    [
+     "son",
+     "Son"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 3:23",
+   "was": "And John also was baptizing in Aenon near to Salim, because there was much water there: and they came, and were baptized.",
+   "now": "And John also was baptizing in Ænon near to Salim, because there was much water there: and they came, and were baptized.",
+   "change": [
+    [
+     "Aenon",
+     "Ænon"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 4:1",
+   "was": "When therefore the LORD knew how the Pharisees had heard that Jesus made and baptized more disciples than John,",
+   "now": "When therefore the Lord knew how the Pharisees had heard that Jesus made and baptized more disciples than John,",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 7:8",
+   "was": "Go ye up unto this feast: I go not up yet unto this feast: for my time is not yet full come.",
+   "now": "Go ye up unto this feast: I go not up yet unto this feast; for my time is not yet full come.",
+   "change": [
+    [
+     "feast:",
+     "feast;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 12:1",
+   "was": "Then Jesus six days before the passover came to Bethany, where Lazarus was, which had been dead, whom he raised from the dead.",
+   "now": "Then Jesus six days before the passover came to Bethany, where Lazarus was which had been dead, whom he raised from the dead.",
+   "change": [
+    [
+     "was,",
+     "was"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 15:22",
+   "was": "If I had not come and spoken unto them, they had not had sin: but now they have no cloak for their sin.",
+   "now": "If I had not come and spoken unto them, they had not had sin: but now they have no cloke for their sin.",
+   "change": [
+    [
+     "cloak",
+     "cloke"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 20:2",
+   "was": "Then she runneth, and cometh to Simon Peter, and to the other disciple, whom Jesus loved, and saith unto them, They have taken away the LORD out of the sepulchre, and we know not where they have laid him.",
+   "now": "Then she runneth, and cometh to Simon Peter, and to the other disciple, whom Jesus loved, and saith unto them, They have taken away the Lord out of the sepulchre, and we know not where they have laid him.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 20:13",
+   "was": "And they say unto her, Woman, why weepest thou? She saith unto them, Because they have taken away my LORD, and I know not where they have laid him.",
+   "now": "And they say unto her, Woman, why weepest thou? She saith unto them, Because they have taken away my Lord, and I know not where they have laid him.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 20:18",
+   "was": "Mary Magdalene came and told the disciples that she had seen the LORD, and that he had spoken these things unto her.",
+   "now": "Mary Magdalene came and told the disciples that she had seen the Lord, and that he had spoken these things unto her.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "John 20:20",
+   "was": "And when he had so said, he shewed unto them his hands and his side. Then were the disciples glad, when they saw the LORD.",
+   "now": "And when he had so said, he shewed unto them his hands and his side. Then were the disciples glad, when they saw the Lord.",
+   "change": [
+    [
+     "LORD.",
+     "Lord."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "John 20:25",
+   "was": "The other disciples therefore said unto him, We have seen the LORD. But he said unto them, Except I shall see in his hands the print of the nails, and put my finger into the print of the nails, and thrust my hand into his side, I will not believe.",
+   "now": "The other disciples therefore said unto him, We have seen the Lord. But he said unto them, Except I shall see in his hands the print of the nails, and put my finger into the print of the nails, and thrust my hand into his side, I will not believe.",
+   "change": [
+    [
+     "LORD.",
+     "Lord."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": []
+  },
+  {
+   "ref": "John 20:28",
+   "was": "And Thomas answered and said unto him, My LORD and my God.",
+   "now": "And Thomas answered and said unto him, My Lord and my God.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 2:34",
+   "was": "For David is not ascended into the heavens: but he saith himself, The Lord said unto my Lord, Sit thou on my right hand,",
+   "now": "For David is not ascended into the heavens: but he saith himself, The LORD said unto my Lord, Sit thou on my right hand,",
+   "change": [
+    [
+     "Lord",
+     "LORD"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 2:39",
+   "was": "For the promise is unto you, and to your children, and to all that are afar off, even as many as the LORD our God shall call.",
+   "now": "For the promise is unto you, and to your children, and to all that are afar off, even as many as the Lord our God shall call.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 7:31",
+   "was": "When Moses saw it, he wondered at the sight: and as he drew near to behold it, the voice of the LORD came unto him,",
+   "now": "When Moses saw it, he wondered at the sight: and as he drew near to behold it, the voice of the Lord came unto him,",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 8:24",
+   "was": "Then answered Simon, and said, Pray ye to the LORD for me, that none of these things which ye have spoken come upon me.",
+   "now": "Then answered Simon, and said, Pray ye to the Lord for me, that none of these things which ye have spoken come upon me.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 9:33",
+   "was": "And there he found a certain man named Aeneas, which had kept his bed eight years, and was sick of the palsy.",
+   "now": "And there he found a certain man named Æneas, which had kept his bed eight years, and was sick of the palsy.",
+   "change": [
+    [
+     "Aeneas,",
+     "Æneas,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 9:34",
+   "was": "And Peter said unto him, Aeneas, Jesus Christ maketh thee whole: arise, and make thy bed. And he arose immediately.",
+   "now": "And Peter said unto him, Æneas, Jesus Christ maketh thee whole: arise, and make thy bed. And he arose immediately.",
+   "change": [
+    [
+     "Aeneas,",
+     "Æneas,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 11:20",
+   "was": "And some of them were men of Cyprus and Cyrene, which, when they were come to Antioch, spake unto the Grecians, preaching the LORD Jesus.",
+   "now": "And some of them were men of Cyprus and Cyrene, which, when they were come to Antioch, spake unto the Grecians, preaching the Lord Jesus.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 12:11",
+   "was": "And when Peter was come to himself, he said, Now I know of a surety, that the LORD hath sent his angel, and hath delivered me out of the hand of Herod, and from all the expectation of the people of the Jews.",
+   "now": "And when Peter was come to himself, he said, Now I know of a surety, that the Lord hath sent his angel, and hath delivered me out of the hand of Herod, and from all the expectation of the people of the Jews.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 15:11",
+   "was": "But we believe that through the grace of the LORD Jesus Christ we shall be saved, even as they.",
+   "now": "But we believe that through the grace of the Lord Jesus Christ we shall be saved, even as they.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 15:36",
+   "was": "And some days after Paul said unto Barnabas, Let us go again and visit our brethren in every city where we have preached the word of the LORD, and see how they do.",
+   "now": "And some days after Paul said unto Barnabas, Let us go again and visit our brethren in every city where we have preached the word of the Lord, and see how they do.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 19:13",
+   "was": "Then certain of the vagabond Jews, exorcists, took upon them to call over them which had evil spirits the name of the LORD Jesus, saying, We adjure you by Jesus whom Paul preacheth.",
+   "now": "Then certain of the vagabond Jews, exorcists, took upon them to call over them which had evil spirits the name of the Lord Jesus, saying, We adjure you by Jesus whom Paul preacheth.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 20:19",
+   "was": "Serving the LORD with all humility of mind, and with many tears, and temptations, which befell me by the lying in wait of the Jews:",
+   "now": "Serving the Lord with all humility of mind, and with many tears, and temptations, which befell me by the lying in wait of the Jews:",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Acts 22:10",
+   "was": "And I said, What shall I do, LORD? And the Lord said unto me, Arise, and go into Damascus; and there it shall be told thee of all things which are appointed for thee to do.",
+   "now": "And I said, What shall I do, Lord? And the Lord said unto me, Arise, and go into Damascus; and there it shall be told thee of all things which are appointed for thee to do.",
+   "change": [
+    [
+     "LORD?",
+     "Lord?"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Romans 4:18",
+   "was": "Who against hope believed in hope, that he might become the father of many nations, according to that which was spoken, So shall thy seed be.",
+   "now": "Who against hope believed in hope, that he might become the father of many nations; according to that which was spoken, So shall thy seed be.",
+   "change": [
+    [
+     "nations,",
+     "nations;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Romans 4:19",
+   "was": "And being not weak in faith, he considered not his own body now dead, when he was about an hundred years old, neither yet the deadness of Sarah’s womb:",
+   "now": "And being not weak in faith, he considered not his own body now dead, when he was about an hundred years old, neither yet the deadness of Sara’s womb:",
+   "change": [
+    [
+     "Sarah’s",
+     "Sara’s"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Romans 9:9",
+   "was": "For this is the word of promise, At this time will I come, and Sarah shall have a son.",
+   "now": "For this is the word of promise, At this time will I come, and Sara shall have a son.",
+   "change": [
+    [
+     "Sarah",
+     "Sara"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Romans 11:7",
+   "was": "What then? Israel hath not obtained that which he seeketh for; but the election hath obtained it, and the rest were blinded.",
+   "now": "What then? Israel hath not obtained that which he seeketh for; but the election hath obtained it, and the rest were blinded",
+   "change": [
+    [
+     "blinded.",
+     "blinded"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Corinthians 14:21",
+   "was": "In the law it is written, With men of other tongues and other lips will I speak unto this people; and yet for all that will they not hear me, saith the LORD.",
+   "now": "In the law it is written, With men of other tongues and other lips will I speak unto this people; and yet for all that will they not hear me, saith the Lord.",
+   "change": [
+    [
+     "LORD.",
+     "Lord."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 Corinthians 15:31",
+   "was": "I protest by your rejoicing which I have in Christ Jesus our LORD, I die daily.",
+   "now": "I protest by your rejoicing which I have in Christ Jesus our Lord, I die daily.",
+   "change": [
+    [
+     "LORD,",
+     "Lord,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "2 Corinthians 3:18",
+   "was": "But we all, with open face beholding as in a glass the glory of the Lord, are changed into the same image from glory to glory, even as by the Spirit of the LORD.",
+   "now": "But we all, with open face beholding as in a glass the glory of the Lord, are changed into the same image from glory to glory, even as by the Spirit of the Lord.",
+   "change": [
+    [
+     "LORD.",
+     "Lord."
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "1 John 2:23",
+   "was": "Whosoever denieth the Son, the same hath not the Father: he that acknowledgeth the Son hath the Father also.",
+   "now": "Whosoever denieth the Son, the same hath not the Father: but he that acknowledgeth the Son hath the Father also.",
+   "change": [
+    [
+     "",
+     "but"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 2:6",
+   "was": "But this thou hast, that thou hatest the deeds of the Nicolaitanes, which I also hate.",
+   "now": "But this thou hast, that thou hatest the deeds of the Nicolaitans, which I also hate.",
+   "change": [
+    [
+     "Nicolaitanes,",
+     "Nicolaitans,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 2:15",
+   "was": "So hast thou also them that hold the doctrine of the Nicolaitanes, which thing I hate.",
+   "now": "So hast thou also them that hold the doctrine of the Nicolaitans, which thing I hate.",
+   "change": [
+    [
+     "Nicolaitanes,",
+     "Nicolaitans,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 4:8",
+   "was": "And the four beasts had each of them six wings about him; and they were full of eyes within: and they rest not day and night, saying, Holy, holy, holy, LORD God Almighty, which was, and is, and is to come.",
+   "now": "And the four beasts had each of them six wings about him; and they were full of eyes within: and they rest not day and night, saying, Holy, holy, holy, Lord God Almighty, which was, and is, and is to come.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 7:6",
+   "was": "Of the tribe of Aser were sealed twelve thousand. Of the tribe of Nephthalim were sealed twelve thousand. Of the tribe of Manasses were sealed twelve thousand.",
+   "now": "Of the tribe of Aser were sealed twelve thousand. Of the tribe of Nepthalim were sealed twelve thousand. Of the tribe of Manasses were sealed twelve thousand.",
+   "change": [
+    [
+     "Nephthalim",
+     "Nepthalim"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 11:17",
+   "was": "Saying, We give thee thanks, O LORD God Almighty, which art, and wast, and art to come; because thou hast taken to thee thy great power, and hast reigned.",
+   "now": "Saying, We give thee thanks, O Lord God Almighty, which art, and wast, and art to come; because thou hast taken to thee thy great power, and hast reigned.",
+   "change": [
+    [
+     "LORD",
+     "Lord"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 18:10",
+   "was": "Standing afar off for the fear of her torment, saying, Alas, alas that great city Babylon, that mighty city! for in one hour is thy judgment come.",
+   "now": "Standing afar off for the fear of her torment, saying, Alas, alas, that great city Babylon, that mighty city! for in one hour is thy judgment come.",
+   "change": [
+    [
+     "alas",
+     "alas,"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 21:20",
+   "was": "The fifth, sardonyx; the sixth, sardius; the seventh, chrysolyte; the eighth, beryl; the ninth, a topaz; the tenth, a chrysoprasus; the eleventh, a jacinth; the twelfth, an amethyst.",
+   "now": "The fifth, sardonyx; the sixth, sardius; the seventh, chrysolite; the eighth, beryl; the ninth, a topaz; the tenth, a chrysoprasus; the eleventh, a jacinth; the twelfth, an amethyst.",
+   "change": [
+    [
+     "chrysolyte;",
+     "chrysolite;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  },
+  {
+   "ref": "Revelation 21:21",
+   "was": "And the twelve gates were twelve pearls: every several gate was of one pearl: and the street of the city was pure gold, as it were transparent glass.",
+   "now": "And the twelve gates were twelve pearls; every several gate was of one pearl: and the street of the city was pure gold, as it were transparent glass.",
+   "change": [
+    [
+     "pearls:",
+     "pearls;"
+    ]
+   ],
+   "witnesses": [
+    "Pure Cambridge Edition",
+    "eBible.org KJV (1769)",
+    "thiagobodruk/bible"
+   ],
+   "ours_with": [
+    "Project Gutenberg #10"
+   ]
+  }
+ ]
+}
