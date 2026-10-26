@@ -31,6 +31,22 @@ const root = path.join(__dirname, '..');
 const VCOUNT = BOOKS.map(b => JSON.parse(fs.readFileSync(path.join(root, 'bible', b.replace(/ /g, '') + '.json'), 'utf8'))
   .chapters.map(c => c.verses.length));
 
+// A verse whose text was corrected (tools/text-review/corrections.json: "son of David"
+// → "Son of David") has its anchor words corrected the same way, so the phrase on the
+// verse card reads as the verse does
+const FIXES = {};
+for(const c of JSON.parse(fs.readFileSync(path.join(__dirname, 'text-review', 'corrections.json'), 'utf8')).corrections){
+  const m = c.ref.match(/^(.+) (\d+):(\d+)$/);
+  FIXES[`${BOOKS.indexOf(m[1])}.${m[2]}:${m[3]}`] = c.change.map(([a, b]) => [a.replace(/[^A-Za-z’' ]/g, '').trim(), b.replace(/[^A-Za-z’' ]/g, '').trim()]).filter(([a, b]) => a && b && a !== b);
+}
+let respelt = 0;
+function corrected(b, key, anchor){
+  let s = anchor;
+  for(const [a, z] of FIXES[`${b}.${key}`] || []) s = s.replace(new RegExp(`(?<![A-Za-z])${a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![A-Za-z])`, 'g'), z);
+  if(s !== anchor) respelt++;
+  return s;
+}
+
 const rows = fs.readFileSync(path.join(__dirname, 'treasury', 'crossreferences_kjv.tsv'), 'utf8').split('\n').slice(1).filter(Boolean);
 const out = BOOKS.map(() => ({}));
 let groups = 0, refsKept = 0, dropped = 0, unknown = new Set();
@@ -58,7 +74,7 @@ for(const line of rows){
   const list = refs.split('|').map(compact).filter(Boolean);
   if(!list.length) continue;
   const key = `${+ch}:${+vs}`;
-  (out[b][key] = out[b][key] || []).push([anchor.trim(), list.join(';')]);
+  (out[b][key] = out[b][key] || []).push([corrected(b, key, anchor.trim()), list.join(';')]);
   groups++; refsKept += list.length;
 }
 
@@ -66,5 +82,5 @@ const dir = path.join(root, 'treasury');
 fs.mkdirSync(dir, { recursive: true });
 let bytes = 0;
 out.forEach((o, i) => { const s = JSON.stringify(o); bytes += s.length; fs.writeFileSync(path.join(dir, i + '.json'), s); });
-console.log(`${groups} phrase groups, ${refsKept} references, ${dropped} dropped, ${(bytes / 1048576).toFixed(1)} MB in 66 files`);
+console.log(`${groups} phrase groups, ${refsKept} references, ${dropped} dropped, ${respelt} anchors corrected with their verse, ${(bytes / 1048576).toFixed(1)} MB in 66 files`);
 if(unknown.size) console.log('unparsed:', [...unknown].slice(0, 20));

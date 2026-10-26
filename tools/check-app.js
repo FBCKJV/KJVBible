@@ -137,9 +137,9 @@ check('every classic map has its picture and is kept for offline use', async () 
   for(const m of html.matchAll(/\['([^']+)',\d+,\d+,'([^']+)'\]/g)) assert(files.includes(m[2]), `CHAPTER_MAPS ${m[1]} names no map ${m[2]}`);
 }, {noPage: true});
 
-check('hymn and verse indexes and the Psalm titles match their sources (rebuild if this fails)', async () => {
+check('hymn and verse indexes, the Psalm titles and the text corrections match their sources (rebuild if this fails)', async () => {
   const {execFileSync} = require('child_process');
-  for(const b of ['build-hymns.js', 'build-verse-index.js', 'build-psalm-titles.js']){
+  for(const b of ['build-hymns.js', 'build-verse-index.js', 'build-psalm-titles.js', 'apply-text-corrections.js']){
     try{ execFileSync(process.execPath, [path.join(__dirname, b), '--check'], {stdio: 'pipe'}); }
     catch(e){ throw new Error(String(e.stdout || e.message).trim()); }
   }
