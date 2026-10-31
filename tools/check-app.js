@@ -456,18 +456,27 @@ check('person, place and journey stop lead to one another; Back returns each tim
   assert(r.stop && /^place:/.test(r.fromStop), `the journey stop (${r.stop}) did not open its place: ${r.fromStop}`);
 });
 
-check('a journey stop\'s quoted verse opens that verse in its chapter', async p => {
+check('a journey stop\'s verse opens its chapter; Back returns to the same stop, then closes the journey', async p => {
   const r = await p.evaluate(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms));
     await openJourney('david', 0); await wait(2500);
     const st = S._jr.j.s[S._jr.i], v = document.querySelector('#wm-list .jr-v');
     if(v) v.click(); await wait(2500);
     const el = document.querySelector(`#verses .vblock[data-ref="${st.r}"]`);
-    return {ref: st.r, tappable: !!v && v.getAttribute('role') === 'button', screen: S.screen, book: S.book, ch: S.ch + 1, found: !!el,
+    const wmOn = () => document.getElementById('wm-overlay').classList.contains('on');
+    const atRead = S.screen;
+    history.back(); await wait(2500); const back1 = {on: wmOn(), id: S._jr.j.id, i: S._jr.i};
+    jrPlace(); await wait(2500); const toPlace = !wmOn() && S._subView && S._subView.sub;
+    history.back(); await wait(2500); const back2 = {on: wmOn(), i: S._jr.i};
+    history.back(); await wait(1500); const back3 = wmOn();
+    return {atRead, back1, toPlace, back2, back3, ref: st.r, tappable: !!v && v.getAttribute('role') === 'button', screen: atRead, book: S.book, ch: S.ch + 1, found: !!el,
             overlay: document.getElementById('wm-overlay').classList.contains('on')};
   });
   assert(r.tappable, 'the stop\'s verse is not tappable');
-  assert(r.screen === 'reader' && !r.overlay && r.found && r.ref.startsWith(r.book + ' ' + r.ch + ':'), 'tapping the stop\'s verse left ' + JSON.stringify(r));
+  assert(r.screen === 'reader' && r.found && r.ref.startsWith(r.book + ' ' + r.ch + ':'), 'tapping the stop\'s verse left ' + JSON.stringify(r));
+  assert(r.back1.on && r.back1.id === 'david' && r.back1.i === 0, 'Back from the chapter did not bring the journey back at its stop: ' + JSON.stringify(r.back1));
+  assert(r.toPlace === 'place' && r.back2.on && r.back2.i === 0, 'Back from the stop\'s place did not bring the journey back: ' + JSON.stringify(r));
+  assert(!r.back3, 'Back again did not close the journey');
 });
 
 check('verse card scenes: the Morning devotion photo loads in both orientations', async p => {

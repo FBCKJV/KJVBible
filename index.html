@@ -5379,6 +5379,11 @@ window.addEventListener('popstate', e => {
 
   // Back to a study that stepped aside for a reference (phone): it comes back
   if(state && state.modal === 'nb-panel' && S._nbUnder && !document.getElementById('nb-panel').classList.contains('on')){ nbComeBack(); return; }
+  // Back to a journey that stepped aside for its verse, place or Psalm: it comes back at the same stop
+  if(state && state.modal === 'wm-overlay' && S._jrUnder && !document.getElementById('wm-overlay').classList.contains('on')){
+    const mo = document.getElementById('map-overlay'); if(mo && mo.classList.contains('on')){ mo.classList.remove('on'); document.getElementById('map-img').src = ''; } // the classic map it opened
+    jrComeBack(); return;
+  }
   // The full-screen map is on top of everything (even an open notebook): it closes first
   const _mapOv = document.getElementById('map-overlay');
   const _overMap = () => POPOVER_IDS.some(id => { const el = document.getElementById(id); return el && el.classList.contains('on') && !isSidePanel(el) && (+el.dataset.t || 0) > (+_mapOv.dataset.t || 0); });
@@ -9993,8 +9998,8 @@ async function openJourney(id, i=0){
   document.getElementById('wm-title').textContent = '🧭 ' + j.t;
   const plate = MAPS.findIndex(m => MAP_LINKS[m.f] && MAP_LINKS[m.f].jr.includes(id));
   document.getElementById('wm-sub').innerHTML = escapeHtml(`${j.r} · ${jrDates(j)} · ${j.s.length} stops`)
-    + (plate >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openMap(${plate}))">📜 Classic map: ${escapeHtml(MAPS[plate].t)} ›</button>` : '');
-  if(!ov.classList.contains('on')) openPopover('wm-overlay');
+    + (plate >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="jrStepAside(() => openMap(${plate}))">📜 Classic map: ${escapeHtml(MAPS[plate].t)} ›</button>` : '');
+  if(!ov.classList.contains('on')){ S._jrUnder = null; openPopover('wm-overlay'); }
   else if((history.state || {}).modal !== 'wm-overlay') history.pushState({screen:S.screen, modal:'wm-overlay'}, '', ''); // over the side map: Back closes the journey
   requestAnimationFrame(() => {
     const el = document.getElementById('wm-map');
@@ -10054,10 +10059,31 @@ document.addEventListener('keydown', e => {
   else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key)){ e.preventDefault(); jrGo(S._jr.i - 1); }
   else if(e.key === 'Escape'){ e.preventDefault(); jrPresent(); }
 });
-function jrRead(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => jumpToRef(st.r)); }
-function jrPsalm(c){ leavePopoverThen('wm-overlay', () => openPsalmTitle(c)); }
-function jrPlace(){ const st = S._jr.j.s[S._jr.i]; if(st.p) leavePopoverThen('wm-overlay', () => openPlace(st.p)); }
-function jrTimeline(){ const st = S._jr.j.s[S._jr.i]; leavePopoverThen('wm-overlay', () => openTimelineAt(st.e)); }
+/* Leaving a journey for its verse, place, Psalm, timeline or map: the journey
+   steps aside but keeps its place in the Back history, so Back brings it back
+   at the same stop, over the page that was under it; Back again closes it. */
+function jrStepAside(fn){
+  const ov = document.getElementById('wm-overlay');
+  if(!S._jr || (history.state || {}).modal !== 'wm-overlay'){ leavePopoverThen('wm-overlay', fn); return; }
+  S._jrUnder = {id: S._jr.j.id, i: S._jr.i, screen: S.screen, book: S.book, ch: S.ch};
+  if(ov.classList.contains('jpres')){ ov.classList.remove('jpres'); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} }
+  ov.classList.remove('on');
+  fn();
+}
+async function jrComeBack(){
+  const u = S._jrUnder; S._jrUnder = null;
+  if(u.screen === 'reader' && (u.book !== S.book || u.ch !== S.ch)){
+    const d = await fetchBook(u.book);
+    if(d){ S.book = u.book; S.ch = u.ch; S.bookData = d; renderReader(); }
+  }
+  if(u.screen && u.screen !== S.screen) showScreen(u.screen, false);
+  const ov = document.getElementById('wm-overlay'); ov.classList.add('on'); ov.dataset.t = ++LAYER_SEQ;
+  openJourney(u.id, u.i);
+}
+function jrRead(){ const st = S._jr.j.s[S._jr.i]; jrStepAside(() => jumpToRef(st.r)); }
+function jrPsalm(c){ jrStepAside(() => openPsalmTitle(c)); }
+function jrPlace(){ const st = S._jr.j.s[S._jr.i]; if(st.p) jrStepAside(() => openPlace(st.p)); }
+function jrTimeline(){ const st = S._jr.j.s[S._jr.i]; jrStepAside(() => openTimelineAt(st.e)); }
 // Search → Maps: the list
 async function renderJourneyList(){
   const el = document.getElementById('jr-list');
@@ -14322,7 +14348,7 @@ const TOOL_TIPS = {
   ]},
   journey: {i:'🧭', t:'Journeys', tips:[
     ['›', '<strong>Next stop › and ‹ Back</strong> step through the journey, or tap a numbered stop on the map. Each stop is a verse that names the place'],
-    ['📖', '<strong>Read ›</strong>, or a tap on the stop\'s verse, opens it in its chapter; <strong>📅 About …</strong> opens the timeline at that event'],
+    ['📖', '<strong>Read ›</strong>, or a tap on the stop\'s verse, opens it in its chapter, and <strong>Back</strong> brings you back to the journey at the same stop (from the place, a Psalm or the timeline too); <strong>📅 About …</strong> opens the timeline at that event'],
     ['📜', 'A stop a Psalm’s title tells of shows it under <strong>In the Psalms</strong> — at Nob, <strong>📜 Psalm 52</strong> (“when Doeg the Edomite came and told Saul”). Tap it to read the Psalm'],
     ['⚖️', '<strong>Disputed sites</strong> (the Red Sea and Sinai, Ur, Golgotha, Emmaus …) have a switch on the stop card for each view, with <strong>Why this view?</strong>. Your choice is remembered and shared, so the Exodus and Elijah’s Horeb always agree'],
     ['┄', '<strong>Dashed</strong> lines and rings mark sites that are uncertain'],
