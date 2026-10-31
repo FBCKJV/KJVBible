@@ -456,6 +456,29 @@ check('person, place and journey stop lead to one another; Back returns each tim
   assert(r.stop && /^place:/.test(r.fromStop), `the journey stop (${r.stop}) did not open its place: ${r.fromStop}`);
 });
 
+check('a journey stop\'s quoted verse opens that verse in its chapter', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    await openJourney('david', 0); await wait(2500);
+    const st = S._jr.j.s[S._jr.i], v = document.querySelector('#wm-list .jr-v');
+    if(v) v.click(); await wait(2500);
+    const el = document.querySelector(`#verses .vblock[data-ref="${st.r}"]`);
+    return {ref: st.r, tappable: !!v && v.getAttribute('role') === 'button', screen: S.screen, book: S.book, ch: S.ch + 1, found: !!el,
+            overlay: document.getElementById('wm-overlay').classList.contains('on')};
+  });
+  assert(r.tappable, 'the stop\'s verse is not tappable');
+  assert(r.screen === 'reader' && !r.overlay && r.found && r.ref.startsWith(r.book + ' ' + r.ch + ':'), 'tapping the stop\'s verse left ' + JSON.stringify(r));
+});
+
+check('verse card scenes: the Morning devotion photo loads in both orientations', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    await wait(1500);
+    return ['morning', 'morning_land'].map(k => [k, _bgImgs[k] && _bgImgs[k].naturalWidth]).concat([['swatch', !!document.querySelector('.ct-swatch[data-s="morning"]')], ['scene', typeof CARD_SCENES.morning]]);
+  });
+  assert(r[0][1] > 0 && r[1][1] > 0 && r[2][1] && r[3][1] === 'function', 'morning scene missing: ' + JSON.stringify(r));
+});
+
 check('classic maps: every passage is real; verses, journeys and places open, Back closes the map first', async p => {
   const r = await p.evaluate(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms)), bad = [];

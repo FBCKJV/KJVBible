@@ -426,7 +426,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 .jr-pl{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
 .jr-place span{font-family:'Crimson Pro',serif;font-size:14px;color:var(--text-m);font-style:italic}
 .jr-d{font-family:'Crimson Pro',serif;font-size:15.5px;color:var(--text);margin:2px 0 6px}
-.jr-v{font-family:'Crimson Pro',serif;font-size:15px;line-height:1.5;color:var(--text);border-left:3px solid var(--gold);padding:2px 0 2px 10px;margin:4px 0}
+.jr-v{font-family:'Crimson Pro',serif;font-size:15px;line-height:1.5;color:var(--text);border-left:3px solid var(--gold);padding:2px 0 2px 10px;margin:4px 0;cursor:pointer;border-radius:0 6px 6px 0;-webkit-tap-highlight-color:transparent}
+.jr-v:hover,.jr-v:active,.jr-v:focus-visible{background:var(--bg3);outline:none}
 .jr-v b{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.06em;color:var(--gold);text-transform:uppercase;display:block}
 .jr-views{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 8px;font-family:'Inter',sans-serif;font-size:12px;color:var(--text-m)}
 .jr-views button{background:none;border:1px solid var(--border);color:var(--text-d);border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer}
@@ -2611,7 +2612,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
-        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes and both landscape and portrait (TikTok/Stories) formats, each signed at the foot with the church's logo, name and fbckjv.app/KJVBible so others can find their way to the Word. A hymn makes a card too: tap its verses (or the refrain) and choose <strong>📸 Card</strong></span></div>
+        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes, seven photo and painted scenes (Sunrise, Meadow, Misty mountains, Calvary, the Empty tomb, <strong>Morning devotion</strong> — an open Bible by a sunlit window — and Starry night) or a photo of your own, and both landscape and portrait (TikTok/Stories) formats, each signed at the foot with the church's logo, name and fbckjv.app/KJVBible so others can find their way to the Word. A hymn makes a card too: tap its verses (or the refrain) and choose <strong>📸 Card</strong></span></div>
         <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
         <div class="tip-row"><span class="tip-ico">🎤</span><span class="tip-txt"><strong>Say it aloud in Sword Drill</strong> — in First Letters or Full Recall, tap 🎤 beside the box and say the verse at your own pace; each word fills in as you say it. A word the phone mishears is simply passed over, and 💡 still helps. Tap 🎤 again to stop</span></div>
         <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Chapters you have read</strong> show a ✓ in a book's chapter list. Read a book before the app counted? Tap <strong>✓ Mark chapters I read before</strong>, then the chapters — finish a book and it is celebrated and ticked off in your Reading Journey</span></div>
@@ -3310,6 +3311,7 @@ body.light #home-watermark{
     <div class="ct-swatch scene" data-s="mountain" title="Misty mountains" style="background:#8f97a3 center/cover no-repeat url(backgrounds/mountain.jpg?v=2)" onclick="switchCardScene('mountain')"></div>
     <div class="ct-swatch scene" data-s="calvary"  title="Calvary" style="background:#9a7d55 center/cover no-repeat url(backgrounds/calvary.jpg?v=2)" onclick="switchCardScene('calvary')"></div>
     <div class="ct-swatch scene" data-s="tomb"     title="Empty tomb" style="background:#b7a583 center/cover no-repeat url(backgrounds/tomb.jpg?v=2)" onclick="switchCardScene('tomb')"></div>
+    <div class="ct-swatch scene" data-s="morning"  title="Morning devotion" style="background:#c99a55 center/cover no-repeat url(backgrounds/morning.jpg?v=2)" onclick="switchCardScene('morning')"></div>
     <div class="ct-swatch scene" data-s="starry"   title="Starry night" style="background:linear-gradient(180deg,#1b2a55,#0a1230 70%,#05070f)" onclick="switchCardScene('starry')"></div>
     <div class="ct-photo" id="ct-upload" title="Upload your own photo" onclick="pickCardPhoto()">📷</div>
     <input type="file" id="card-photo-input" accept="image/*" style="display:none" onchange="onCardPhotoPicked(event)">
@@ -4718,6 +4720,9 @@ const CARD_SCENES = {
   tomb(ctx, W, H){  // bundled photo — the empty tomb (orientation-aware)
     drawSceneImage(ctx, _sceneImg('tomb'), W, H, '#cdbb98', '#3a3020');
   },
+  morning(ctx, W, H){  // bundled photo — an open Bible on the table by a sunlit window (orientation-aware)
+    drawSceneImage(ctx, _sceneImg('morning'), W, H, '#e2b673', '#4a2e16');
+  },
   starry(ctx, W, H){
     const g = ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,'#1c2c58'); g.addColorStop(.5,'#0b1430'); g.addColorStop(1,'#04060f');
@@ -4734,6 +4739,8 @@ const CARD_SCENES = {
     ctx.fillStyle=moon; ctx.beginPath(); ctx.arc(mx,my,30,0,7); ctx.fill();
   },
 };
+
+const SCENE_EXTRA_SCRIM = { morning: .2 };
 
 /* Draw an image scaled to COVER the given box (crop-to-fill, centered). */
 function drawCover(ctx, img, x, y, w, h){
@@ -4779,6 +4786,13 @@ function drawPhotoBase(ctx, W, H, radius){
   const sc=ctx.createLinearGradient(0,0,0,H);
   sc.addColorStop(0,'rgba(0,0,0,.5)'); sc.addColorStop(.5,'rgba(0,0,0,.5)'); sc.addColorStop(1,'rgba(0,0,0,.66)');
   ctx.fillStyle=sc; ctx.fillRect(0,0,W,H);
+  // Bright, sunlit scenes take a little more shade behind the words
+  const extra = SCENE_EXTRA_SCRIM[S.cardBg];
+  if(extra){
+    const rg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.6);
+    rg.addColorStop(0,`rgba(20,10,0,${extra})`); rg.addColorStop(1,`rgba(20,10,0,${extra*0.4})`);
+    ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
+  }
   ctx.restore();
   ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5;
   rr(ctx, 2, 2, W-4, H-4, radius-1); ctx.stroke();
@@ -10014,7 +10028,7 @@ async function jrCard(){
     <div class="jr-top"><span>Stop ${i + 1} of ${j.s.length}</span>${st.y != null ? `<button onclick="jrTimeline()">📅 About ${tlYearText(st.y)} ›</button>` : ''}<button onclick="jrPresent()" style="margin-left:6px">${document.getElementById('wm-overlay').classList.contains('jpres') ? '✕ Exit' : '🎦 Present'}</button></div>
     <div class="jr-place">${st.p && S._places[st.p] ? `<button class="jr-pl" onclick="jrPlace()" title="The place, and every verse that names it">📍 ${escapeHtml(st.n)} ›</button>` : `📍 ${escapeHtml(st.n)}`}${today}</div>
     <div class="jr-d">${escapeHtml(st.d)}</div>
-    <div class="jr-v"><b>${escapeHtml(st.r)}</b><span class="jr-vt">…</span></div>
+    <div class="jr-v" role="button" tabindex="0" onclick="jrRead()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();jrRead()}" title="Read it in the chapter"><b>${escapeHtml(st.r)} ›</b><span class="jr-vt">…</span></div>
     ${(ps => ps.length ? `<div class="jr-ps">In the Psalms:${ps.map(c => `<button onclick="jrPsalm(${c})" title="${escapeHtml(PSALM_OCCASIONS[c].w)}">📜 Psalm ${c}</button>`).join('')}</div>` : '')(psalmsAtStop(j.id, st.r))}
     ${st.site ? `<div class="jr-site">${escapeHtml(st.site)}</div>` : st.u ? '<div class="jr-site">The site is uncertain — drawn dashed.</div>' : ''}
     <div class="jr-nav"><button onclick="jrGo(${i - 1})" ${i ? '' : 'disabled'}>‹ Back</button><button onclick="jrRead()">Read ›</button><button class="go" onclick="jrGo(${i + 1})" ${i < j.s.length - 1 ? '' : 'disabled'}>Next stop ›</button></div>
@@ -14264,6 +14278,7 @@ const _bgImgs = {
   meadow: new Image(), mountain: new Image(),
   calvary: new Image(), calvary_land: new Image(),
   tomb: new Image(), tomb_land: new Image(),
+  morning: new Image(), morning_land: new Image(),
 };
 Object.entries(_bgImgs).forEach(([k,img])=>{
   img.onload = ()=>{ const ov=document.getElementById('scr-overlay'); if(ov && ov.classList.contains('on')) renderCanvas(S.cardTheme); };
@@ -14307,7 +14322,7 @@ const TOOL_TIPS = {
   ]},
   journey: {i:'🧭', t:'Journeys', tips:[
     ['›', '<strong>Next stop › and ‹ Back</strong> step through the journey, or tap a numbered stop on the map. Each stop is a verse that names the place'],
-    ['📖', '<strong>Read ›</strong> opens the verse in the Bible; <strong>📅 About …</strong> opens the timeline at that event'],
+    ['📖', '<strong>Read ›</strong>, or a tap on the stop\'s verse, opens it in its chapter; <strong>📅 About …</strong> opens the timeline at that event'],
     ['📜', 'A stop a Psalm’s title tells of shows it under <strong>In the Psalms</strong> — at Nob, <strong>📜 Psalm 52</strong> (“when Doeg the Edomite came and told Saul”). Tap it to read the Psalm'],
     ['⚖️', '<strong>Disputed sites</strong> (the Red Sea and Sinai, Ur, Golgotha, Emmaus …) have a switch on the stop card for each view, with <strong>Why this view?</strong>. Your choice is remembered and shared, so the Exodus and Elijah’s Horeb always agree'],
     ['┄', '<strong>Dashed</strong> lines and rings mark sites that are uncertain'],
