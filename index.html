@@ -2603,6 +2603,7 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Tap a verse</strong> to open its card — highlight it (<strong>✏️</strong> gives each colour a meaning), <strong>🔖 Save</strong> it to a list, write a Note, add it to a study, <strong>🎦 Present</strong> it or make a <strong>📸 Screenshot</strong>. <strong>Tap any word of the verse</strong> for its meaning. Below the verse are the <strong>📛 names</strong> in it (people and places), its <strong>🔗 cross-references</strong> (tap the heading to fold them away), the doctrines that cite it, a <strong>🧭 When &amp; where</strong> fold when the verse is a timeline event or a stop on a journey, a <strong>🎵 hymn</strong> built on the verse when there is one, and <strong>🔤 Hebrew words</strong> (Greek in the New Testament), folded until you open them. <strong>✕ Close</strong> is at the top right, or tap outside the card</span></div>
         <div class="tip-row"><span class="tip-ico">📜</span><span class="tip-txt"><strong>The titles of the Psalms</strong> — 116 Psalms open with their title, above verse 1, as in a printed King James Bible (<em>“A Psalm of David, when he fled from Absalom his son”</em>), and Psalm 119 has its Hebrew letters over each part. The title is part of the text but not a numbered verse, so copying or sharing the whole chapter starts at verse 1. Where a title tells when the Psalm was written, tap <strong>📜</strong> under it for the passages that tell the story and the people in it; <strong>📅</strong>, <strong>🧭</strong> and <strong>📍 Where</strong> above it follow that history. Search, the people and the places find the titles too (<em>Doeg</em> → Psalm 52)</span></div>
         <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Several verses, one screenshot</strong> — <strong>Screenshot</strong> in the press-and-hold bar pictures verses side by side in a chapter. To gather verses from different places, tap each verse and choose <strong>Add to Screenshot</strong> (up to 3); the 📸 count at the top opens them to make the picture, and the press-and-hold bar shows how many are waiting.</span></div>
+        <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back always brings you back</strong> — wherever a verse leads you into its chapter (or to a person, a place, a map), the phone's <strong>Back</strong> returns you to where you began, just as you left it: the verse card, the cross-reference card, a journey at the same stop, a map, or the verse you were drilling in Sword Drill. Back once more closes it</span></div>
         <div class="tip-row"><span class="tip-ico">↩</span><span class="tip-txt"><strong>Back to your chapter</strong> — step away to Search, Plans or Notes and the top left shows <strong>📖 John 7</strong> (the chapter you were reading): tap it to return to the very place you left off. In a chapter, <strong>⌂ Home</strong> takes you Home</span></div>
         <div class="tip-row"><span class="tip-ico">📋</span><span class="tip-txt"><strong>Sharing on a computer</strong> — on a phone, Share opens the phone's own menu (Messages, Gmail, Drive…). On a computer, Share copies the words and the link instead: paste them into an email, a message or a Google Doc</span></div>
         <div class="tip-row"><span class="tip-ico">📛</span><span class="tip-txt"><strong>Names in this verse</strong> — on the verse card, every person and place the verse names sits in one row. Tap a name for what it means (Hitchcock’s Bible Names), then <strong>👤</strong> opens the person’s story or <strong>📍</strong> where the place was; <strong>🗺️ Show on map</strong> pins the places.</span></div>
@@ -3070,7 +3071,7 @@ body.light #home-watermark{
   <div id="tt-inner">
     <div id="tt-hdr"><div id="tt-title"></div><button onclick="closePopover('tt-pop')" aria-label="Close">✕</button></div>
     <div id="tt-body"></div>
-    <button id="tt-all" onclick="leavePopoverThen('tt-pop', showTips)">All tips &amp; help ›</button>
+    <button id="tt-all" onclick="stepAside('tt-pop', showTips)">All tips &amp; help ›</button>
   </div>
 </div>
 
@@ -5361,6 +5362,70 @@ function closePopover(id){
   else el.classList.remove('on');
 }
 
+/* ── Step aside, come back ──
+   Every way into Scripture (or into another page) from a card, sheet, map or
+   tool keeps the user's place: the layer they were in steps aside, keeping its
+   step in the Back history, instead of closing. When Back lands on that step,
+   the page that was under it and the layer itself come back just as they were
+   (same verse card, same journey stop, same Sword Drill verse); Back again
+   closes the layer as usual. The step is marked with a token (uk) in its
+   history state, so a layer opened afresh later is a new step and never
+   confused with the one that stepped aside. */
+const STEP_MODAL = {'map-overlay':'map'};   // layers whose history step is named differently
+function stepModal(id){ return STEP_MODAL[id] || id; }
+function viewHere(){
+  const sv = activeSubView();
+  if(sv) return {screen:'search', sv:{...sv}, y:document.getElementById('screen-search').scrollTop};
+  if(S.screen === 'search') return {screen:'search', mode:currentSearchMode(), y:document.getElementById('screen-search').scrollTop};
+  if(S.screen === 'reader') return {screen:'reader', book:S.book, ch:S.ch, y:document.getElementById('screen-reader').scrollTop};
+  return {screen:S.screen};
+}
+async function viewRestore(v){
+  if(!v) return;
+  if(v.sv && SUBVIEWS[v.sv.sub]){ const cur = activeSubView(); if(!cur || cur.sub !== v.sv.sub || cur.key !== v.sv.key) await SUBVIEWS[v.sv.sub].open(v.sv.key, false, v.y); else if(S.screen !== 'search') showScreen('search', false); return; }
+  if(v.screen === 'reader' && v.book){
+    const moved = v.book !== S.book || v.ch !== S.ch || S.screen !== 'reader';
+    if(v.book !== S.book || v.ch !== S.ch){ const d = await fetchBook(v.book); if(d){ S.book = v.book; S.ch = v.ch; S.bookData = d; renderReader(); } }
+    if(S.screen !== 'reader') showScreen('reader', false);
+    if(moved) requestAnimationFrame(() => { document.getElementById('screen-reader').scrollTop = v.y || 0; });
+    return;
+  }
+  if(v.screen === 'search'){
+    if(S.screen !== 'search') showScreen('search', false);
+    if(v.mode && currentSearchMode() !== v.mode) switchSearchMode(v.mode, false);
+    requestAnimationFrame(() => { document.getElementById('screen-search').scrollTop = v.y || 0; });
+    return;
+  }
+  if(v.screen && v.screen !== S.screen) showScreen(v.screen, false);
+}
+// Hide layer `id` (keeping its Back step), then run fn. comeBack, optional,
+// redraws it on return; otherwise it is simply shown again as it was left.
+function stepAside(id, fn, comeBack = null){
+  const el = document.getElementById(id), st = history.state || {};
+  if(!el || !el.classList.contains('on') || isSidePanel(el)){ if(el && !isSidePanel(el)) el.classList.remove('on'); fn(); return; }
+  if(st.modal === stepModal(id)){
+    const uk = 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    (S._under || (S._under = {}))[uk] = {id, view:viewHere(), comeBack};
+    history.replaceState({...st, uk}, '', '');
+  }
+  el.classList.remove('on');
+  fn();
+}
+// Back landed on a stepped-aside layer's step: put away whatever was opened
+// over it, bring back the page under it, then the layer
+async function stepComeBack(uk){
+  const u = S._under[uk]; delete S._under[uk];
+  const mo = document.getElementById('map-overlay');
+  if(mo && mo.classList.contains('on') && u.id !== 'map-overlay'){ mo.classList.remove('on'); document.getElementById('map-img').src = ''; }
+  const so = document.getElementById('scr-overlay'); if(so && so.classList.contains('on')){ so.classList.remove('on'); so.style.zIndex = ''; }
+  const mem = document.getElementById('mem-overlay'); if(mem && mem.classList.contains('on') && u.id !== 'mem-overlay') closeMemorize();
+  [...POPOVER_IDS, 'vpop', 'tips-sheet'].forEach(id => { const el = document.getElementById(id); if(id !== u.id && el && el.classList.contains('on') && !isSidePanel(el)){ el.classList.remove('on'); if(id === 'pres-overlay') presEnd(); } });
+  await viewRestore(u.view);
+  const el = document.getElementById(u.id);
+  el.classList.add('on'); el.dataset.t = ++LAYER_SEQ;
+  if(u.comeBack) u.comeBack();
+}
+
 // ── Android / browser back button handler ──
 window.addEventListener('popstate', e => {
   const state = e.state;
@@ -5379,11 +5444,8 @@ window.addEventListener('popstate', e => {
 
   // Back to a study that stepped aside for a reference (phone): it comes back
   if(state && state.modal === 'nb-panel' && S._nbUnder && !document.getElementById('nb-panel').classList.contains('on')){ nbComeBack(); return; }
-  // Back to a journey that stepped aside for its verse, place or Psalm: it comes back at the same stop
-  if(state && state.modal === 'wm-overlay' && S._jrUnder && !document.getElementById('wm-overlay').classList.contains('on')){
-    const mo = document.getElementById('map-overlay'); if(mo && mo.classList.contains('on')){ mo.classList.remove('on'); document.getElementById('map-img').src = ''; } // the classic map it opened
-    jrComeBack(); return;
-  }
+  // Back to a card, map or tool that stepped aside for a verse or a page: it comes back as it was
+  if(state && state.uk && S._under && S._under[state.uk]){ stepComeBack(state.uk); return; }
   // The full-screen map is on top of everything (even an open notebook): it closes first
   const _mapOv = document.getElementById('map-overlay');
   const _overMap = () => POPOVER_IDS.some(id => { const el = document.getElementById(id); return el && el.classList.contains('on') && !isSidePanel(el) && (+el.dataset.t || 0) > (+_mapOv.dataset.t || 0); });
@@ -7424,16 +7486,13 @@ function showTabList(mode){
   if(S._subView && SUBVIEWS[S._subView.sub].mode === mode) S._subView = null;
   ttCat();
 }
-// Closes the verse card (consuming its history entry), then runs fn — so a
-// link inside the card can open a page and Back still lands in the reader.
+// The verse card steps aside (keeping its Back step), then runs fn — so a
+// link inside the card can open a page and Back brings the card back over
+// the chapter, as it was.
 function leaveVPopThen(fn){
   const vp = document.getElementById('vpop');
-  if(vp && vp.classList.contains('on') && history.state && history.state.modal === 'vpop'){
-    const after = () => { window.removeEventListener('popstate', after); setTimeout(fn, 0); };
-    window.addEventListener('popstate', after);
-    history.back();
-  } else {
-    if(vp) vp.classList.remove('on');
+  if(vp && vp.classList.contains('on')) stepAside('vpop', fn);
+  else {
     fn();
   }
 }
@@ -9363,16 +9422,17 @@ function wmDraw(el, pins, opts){
 // Leaving a map (overlay or verse card) for a place page
 function wmOpenPlace(id){
   const ov = document.getElementById('wm-overlay');
-  if(ov.classList.contains('on')) leavePopoverThen('wm-overlay', () => leaveVPopThen(() => openPlace(id)));
+  if(ov.classList.contains('on')) wmStepAside(() => leaveVPopThen(() => openPlace(id)));
   else leaveVPopThen(() => openPlace(id));
 }
 // The full-screen map
 function openWhereMap(title, sub, pins, classic=-1){
   pins = pins.filter(Boolean);
+  S._wmArgs = [title, sub, pins, classic]; S._wmRedo = null;
   document.getElementById('wm-overlay').classList.remove('jr', 'jpres');
   document.getElementById('wm-tips').dataset.tt = 'where'; ttRefresh();
   document.getElementById('wm-title').textContent = title;
-  document.getElementById('wm-sub').innerHTML = escapeHtml(sub || '') + (classic >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openMap(${classic}))">📜 Classic map: ${escapeHtml(MAPS[classic].t)} ›</button>` : '');
+  document.getElementById('wm-sub').innerHTML = escapeHtml(sub || '') + (classic >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="wmStepAside(() => openMap(${classic}))">📜 Classic map: ${escapeHtml(MAPS[classic].t)} ›</button>` : '');
   const list = document.getElementById('wm-list');
   list.innerHTML = pins.length > 1 ? pins.map(p => `<button class="vl-chip" onclick="document.getElementById('wm-map')._wmFocus('${p.id}')">📍 ${escapeHtml(p.name)}</button>`).join('') : '';
   openPopover('wm-overlay');
@@ -9521,7 +9581,8 @@ function openChapterMap(){
   const ids = chapterPlaces();
   openWhereMap(`Places in ${refShow(S.book + ' ' + (S.ch + 1))}`, `${ids.length} place${ids.length !== 1 ? 's' : ''} named in this chapter · tap a pin for details`, ids.map(id => wmPin(id)), chapterMap(S.book, S.ch + 1));
   const jr = chapterJourneys();
-  if(jr.length) document.getElementById('wm-sub').insertAdjacentHTML('beforeend', jr.map(([j, i]) => ` <button class="vl-chip" style="margin-top:6px" onclick="leavePopoverThen('wm-overlay', () => openJourney('${j.id}', ${i}))">🧭 ${escapeHtml(j.t)} ›</button>`).join(''));
+  if(jr.length) document.getElementById('wm-sub').insertAdjacentHTML('beforeend', jr.map(([j, i]) => ` <button class="vl-chip" style="margin-top:6px" onclick="wmStepAside(() => openJourney('${j.id}', ${i}))">🧭 ${escapeHtml(j.t)} ›</button>`).join(''));
+  S._wmRedo = openChapterMap;   // coming back, it is drawn again for the chapter (restored first)
 }
 // Verse card: the verse's places on a small map, shown on request
 function vpopShowMap(btn){
@@ -9999,7 +10060,7 @@ async function openJourney(id, i=0){
   const plate = MAPS.findIndex(m => MAP_LINKS[m.f] && MAP_LINKS[m.f].jr.includes(id));
   document.getElementById('wm-sub').innerHTML = escapeHtml(`${j.r} · ${jrDates(j)} · ${j.s.length} stops`)
     + (plate >= 0 ? `<br><button class="vl-chip" style="margin-top:6px" onclick="jrStepAside(() => openMap(${plate}))">📜 Classic map: ${escapeHtml(MAPS[plate].t)} ›</button>` : '');
-  if(!ov.classList.contains('on')){ S._jrUnder = null; openPopover('wm-overlay'); }
+  if(!ov.classList.contains('on')) openPopover('wm-overlay');
   else if((history.state || {}).modal !== 'wm-overlay') history.pushState({screen:S.screen, modal:'wm-overlay'}, '', ''); // over the side map: Back closes the journey
   requestAnimationFrame(() => {
     const el = document.getElementById('wm-map');
@@ -10062,24 +10123,17 @@ document.addEventListener('keydown', e => {
 /* Leaving a journey for its verse, place, Psalm, timeline or map: the journey
    steps aside but keeps its place in the Back history, so Back brings it back
    at the same stop, over the page that was under it; Back again closes it. */
-function jrStepAside(fn){
+// The map overlay (a journey or a map of places): it comes back redrawn at the same stop or places
+function wmStepAside(fn){
   const ov = document.getElementById('wm-overlay');
-  if(!S._jr || (history.state || {}).modal !== 'wm-overlay'){ leavePopoverThen('wm-overlay', fn); return; }
-  S._jrUnder = {id: S._jr.j.id, i: S._jr.i, screen: S.screen, book: S.book, ch: S.ch};
+  let back = null;
+  if(ov.classList.contains('jr') && S._jr){ const id = S._jr.j.id, i = S._jr.i; back = () => openJourney(id, i); }
+  else if(S._wmRedo) back = S._wmRedo;
+  else if(S._wmArgs){ const a = S._wmArgs; back = () => openWhereMap(...a); }
   if(ov.classList.contains('jpres')){ ov.classList.remove('jpres'); try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} }
-  ov.classList.remove('on');
-  fn();
+  stepAside('wm-overlay', fn, back);
 }
-async function jrComeBack(){
-  const u = S._jrUnder; S._jrUnder = null;
-  if(u.screen === 'reader' && (u.book !== S.book || u.ch !== S.ch)){
-    const d = await fetchBook(u.book);
-    if(d){ S.book = u.book; S.ch = u.ch; S.bookData = d; renderReader(); }
-  }
-  if(u.screen && u.screen !== S.screen) showScreen(u.screen, false);
-  const ov = document.getElementById('wm-overlay'); ov.classList.add('on'); ov.dataset.t = ++LAYER_SEQ;
-  openJourney(u.id, u.i);
-}
+const jrStepAside = wmStepAside;
 function jrRead(){ const st = S._jr.j.s[S._jr.i]; jrStepAside(() => jumpToRef(st.r)); }
 function jrPsalm(c){ jrStepAside(() => openPsalmTitle(c)); }
 function jrPlace(){ const st = S._jr.j.s[S._jr.i]; if(st.p) jrStepAside(() => openPlace(st.p)); }
@@ -10978,14 +11032,7 @@ const MAP_LINKS = {
 };
 // "Genesis 10:1-5" → ["Genesis 10:1", …, "Genesis 10:5"]
 const mapRefVerses = r => { const m = r.match(/^(.+ \d+):(\d+)(?:-(\d+))?$/); const out = []; for(let v = +m[2]; v <= +(m[3] || m[2]); v++) out.push(`${m[1]}:${v}`); return out; };
-function leaveMapThen(fn){
-  const ov = document.getElementById('map-overlay');
-  if(ov && ov.classList.contains('on') && history.state && history.state.modal === 'map'){
-    const after = () => { window.removeEventListener('popstate', after); setTimeout(fn, 0); };
-    window.addEventListener('popstate', after);
-    history.back();
-  } else { if(ov) ov.classList.remove('on'); fn(); }
-}
+function leaveMapThen(fn){ stepAside('map-overlay', fn); }
 async function renderMapMore(i){
   const el = document.getElementById('map-more'), m = MAPS[i], L = m && MAP_LINKS[m.f];
   if(!el) return;
@@ -13151,7 +13198,7 @@ function spCalMove(d){
 }
 function spCalDay(k){ S._calDay = S._calDay === k ? null : k; spCalRender(); }
 // Back to the Word: a chapter from the calendar opens in the reader
-function spOpenChapter(bi, ci){ leavePopoverThen('streak-panel', () => openPlanChapter(bi, ci)); }
+function spOpenChapter(bi, ci){ stepAside('streak-panel', () => openPlanChapter(bi, ci)); }
 function spBadgesRender(){
   const el = document.getElementById('sp-rbadges');
   if(!el) return;
@@ -13287,18 +13334,15 @@ async function openParallel(book, ch, label){
 
 function openParFull(){
   if(_parOpenBook === null) return;
-  document.getElementById('par-panel').classList.remove('on'); // hide the panel; we reuse its history entry
-  fetchBook(_parOpenBook).then(data => {
+  // The panel steps aside: Back returns to the chapter you began in with the panel open again
+  const book = _parOpenBook, ch = _parOpenCh;
+  stepAside('par-panel', () => fetchBook(book).then(data => {
     if(!data) return;
-    S.book=_parOpenBook; S.ch=_parOpenCh; S.bookData=data;
+    S.book=book; S.ch=ch; S.bookData=data;
     renderReader();
-    // Reuse the panel's own history entry as the destination chapter, so Back
-    // returns to where we started rather than adding an extra step.
-    const st = {screen:'reader', book:_parOpenBook, ch:_parOpenCh};
-    if(history.state && history.state.modal==='par-panel') history.replaceState(st, '', '');
-    else history.pushState(st, '', '');
+    history.pushState({screen:'reader', book, ch}, '', '');
     showScreen('reader', false);
-  });
+  }));
 }
 
 function closeParPanel(e){
@@ -14025,23 +14069,18 @@ function renderXRefTab(idx){
 
 function openXRefFull(){
   if(!_xrefBook) return;
-  document.getElementById('xref-pop').classList.remove('on'); // hide the card; we reuse its history entry
-  fetchBook(_xrefBook).then(data => {
+  // The card steps aside: Back returns to the chapter you began in with the card open again
+  stepAside('xref-pop', () => fetchBook(_xrefBook).then(data => {
     if(!data) return;
     S.book=_xrefBook; S.ch=_xrefCh; S.bookData=data;
     renderReader();
-    // Reuse the card's own history entry as the destination chapter — so the
-    // stack stays [origin chapter, new chapter] and Back returns to the exact
-    // spot we started from instead of stranding the reader in the other book.
-    const st = {screen:'reader', book:_xrefBook, ch:_xrefCh};
-    if(history.state && history.state.modal==='xref-pop') history.replaceState(st, '', '');
-    else history.pushState(st, '', '');
+    history.pushState({screen:'reader', book:_xrefBook, ch:_xrefCh}, '', '');
     showScreen('reader', false);
     // land on the verse itself, not the top of the chapter
     const r = _xrefs[_xrefIdx], nums = [];
     if(r) for(let v = r.v; v <= (r.vEnd || r.v); v++) nums.push(v);
     lightVerses(_xrefBook, _xrefCh + 1, nums);
-  });
+  }));
 }
 
 function closeXRef(){
@@ -15047,12 +15086,9 @@ function memCloseTap(){
 function memOpenChapter(){
   const r = (M.ref || M.loading || '').replace(/-\d+$/, '').replace(/^Psalm (?=\d)/, 'Psalms ');
   if(!r) return;
-  const st = history.state || {};
-  if(st.modal === 'mem-overlay'){
-    const after = () => { window.removeEventListener('popstate', after); setTimeout(() => jumpToRef(r), 0); };
-    window.addEventListener('popstate', after);
-    history.go(st.mem === 'verse' ? -2 : -1);
-  } else { closeMemorize(); jumpToRef(r); }
+  // Sword Drill steps aside: Back brings it back on the same verse, as it was left
+  memVoiceStop(); document.getElementById('mem-input').blur();
+  stepAside('mem-overlay', () => jumpToRef(r));
 }
 function memBackTap(){
   const st = history.state || {};
