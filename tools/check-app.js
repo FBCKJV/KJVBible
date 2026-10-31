@@ -208,7 +208,9 @@ check('verse card: Strong\'s fold and a word', async p => {
   assert(await p.evaluate(() => S._subView && S._subView.key) === 'G25', 'Full entry did not open G25');
   await p.evaluate(() => history.back()); await sleep(800);
   const st = await p.evaluate(() => ({screen: S.screen, book: S.book, vpop: document.getElementById('vpop').classList.contains('on')}));
-  assert(st.screen === 'reader' && st.book === 'John' && !st.vpop, `Back should return to John with the card closed, got ${JSON.stringify(st)}`);
+  assert(st.screen === 'reader' && st.book === 'John' && st.vpop, `Back should return to John with the verse card back, got ${JSON.stringify(st)}`);
+  await p.evaluate(() => history.back()); await sleep(800);
+  assert(!(await p.evaluate(() => document.getElementById('vpop').classList.contains('on'))), 'Back again should close the verse card');
 });
 
 check('search: every study tool opens and Back leaves it', async p => {
@@ -381,7 +383,7 @@ check('verse card: 🎵 a hymn on the verse opens it; a verse with none shows no
 
 check('the trail back: verse → card → Strong\'s → another chapter, then Back, Back lands where you started', async p => {
   const r = await p.evaluate(async () => {
-    const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, sub: S._subView ? S._subView.sub + ':' + S._subView.key : '', book: S.book, ch: S.ch + 1});
+    const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, sub: S._subView ? S._subView.sub + ':' + S._subView.key : '', book: S.book, ch: S.ch + 1, vpop: document.getElementById('vpop').classList.contains('on')});
     await jumpToRef('John 3:16'); await wait(1500);
     openVPop('John 3:16', 'For God so loved the world'); await wait(800);
     leaveVPopThen(() => openStrongs('G26')); await wait(1800);
@@ -390,17 +392,19 @@ check('the trail back: verse → card → Strong\'s → another chapter, then Ba
     const away = at();
     history.back(); await wait(1200); const back1 = at();
     history.back(); await wait(1200); const back2 = at();
+    history.back(); await wait(1000); const back3 = at();
     // and from a person page: a verse, then Back returns to the person
     showScreen('search'); switchSearchMode('names'); await wait(1200);
     await openPerson('Adam_1'); await wait(1500);
     await jumpToRef('1 Corinthians 15:45'); await wait(1500);
     history.back(); await wait(1200); const person = at();
-    return {strongs, away, back1, back2, person};
+    return {strongs, away, back1, back2, back3, person};
   });
   assert(r.strongs.sub === 'strongs:G26', 'the Strong\'s page did not open: ' + JSON.stringify(r.strongs));
   assert(r.away.screen === 'reader' && r.away.book === 'Matthew', 'the verse did not open Matthew 24');
   assert(r.back1.screen === 'search' && r.back1.sub === 'strongs:G26', 'Back from the verse should return to the Strong\'s page: ' + JSON.stringify(r.back1));
-  assert(r.back2.screen === 'reader' && r.back2.book === 'John' && r.back2.ch === 3, 'Back again should land in John 3, where it started: ' + JSON.stringify(r.back2));
+  assert(r.back2.screen === 'reader' && r.back2.book === 'John' && r.back2.ch === 3 && r.back2.vpop, 'Back again should land in John 3 with the verse card, where it started: ' + JSON.stringify(r.back2));
+  assert(r.back3.screen === 'reader' && r.back3.book === 'John' && !r.back3.vpop, 'Back once more should close the card in John 3: ' + JSON.stringify(r.back3));
   assert(r.person.screen === 'search' && r.person.sub === 'person:Adam_1', 'Back from a verse should return to the person page: ' + JSON.stringify(r.person));
 });
 
@@ -408,7 +412,7 @@ check('verse card: 🧭 When & where opens the timeline or a journey, Back retur
   const r = await p.evaluate(async () => {
     const wait = ms => new Promise(r => setTimeout(r, ms)), at = () => ({screen: S.screen, book: S.book, ch: S.ch + 1, vpop: document.getElementById('vpop').classList.contains('on')});
     LS.set('kjv_when_open', true);
-    const card = async (ref, txt) => { await jumpToRef(ref); await wait(1500); openVPop(ref, txt); await wait(1800); const el = document.getElementById('vpop-when'); return {shown: el.style.display !== 'none', text: el.textContent, row: el.querySelector('.hy-row')}; };
+    const card = async (ref, txt) => { if(document.getElementById('vpop').classList.contains('on')){ history.back(); await wait(800); } await jumpToRef(ref); await wait(1500); openVPop(ref, txt); await wait(1800); const el = document.getElementById('vpop-when'); return {shown: el.style.display !== 'none', text: el.textContent, row: el.querySelector('.hy-row')}; };
     const flood = await card('Genesis 6:8', 'But Noah found grace in the eyes of the LORD.');
     flood.row.click(); await wait(2000);
     const tl = {screen: S.screen, sub: (document.querySelector('.tl-ev.here, #tl-panel .here') || {}).id || '', url: location.href.length > 0};
@@ -425,7 +429,8 @@ check('verse card: 🧭 When & where opens the timeline or a journey, Back retur
   assert(r.afterTl.screen === 'reader' && r.afterTl.book === 'Genesis' && r.afterTl.ch === 6, 'Back from the timeline left ' + JSON.stringify(r.afterTl));
   assert(r.bethel.shown && /Bethel/.test(r.bethel.text), 'Genesis 28:19 has no journey row: ' + r.bethel.text);
   assert(r.jr.overlay && r.jr.jr, 'the journey did not open: ' + JSON.stringify(r.jr));
-  assert(r.afterJr.screen === 'reader' && r.afterJr.book === 'Genesis' && r.afterJr.ch === 28, 'Back from the journey left ' + JSON.stringify(r.afterJr));
+  assert(r.afterJr.screen === 'reader' && r.afterJr.book === 'Genesis' && r.afterJr.ch === 28 && r.afterJr.vpop, 'Back from the journey should bring back the verse card in Genesis 28: ' + JSON.stringify(r.afterJr));
+  assert(r.afterTl.vpop, 'Back from the timeline should bring back the verse card');
   assert(!r.none, 'a fold shows on Genesis 1:2');
 });
 
@@ -454,6 +459,38 @@ check('person, place and journey stop lead to one another; Back returns each tim
   assert(r.bethel.some(c => /openPerson\('Jacob_1'\)/.test(c)), 'Bethel does not list Jacob: ' + r.bethel.join(' '));
   assert(/^person:/.test(r.toPerson) && r.backPlace === 'place:' + r.bethelId, `person chip went to ${r.toPerson}, Back to ${r.backPlace}`);
   assert(r.stop && /^place:/.test(r.fromStop), `the journey stop (${r.stop}) did not open its place: ${r.fromStop}`);
+});
+
+check('a journey stop\'s verse opens its chapter; Back returns to the same stop, then closes the journey', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    await openJourney('david', 0); await wait(2500);
+    const st = S._jr.j.s[S._jr.i], v = document.querySelector('#wm-list .jr-v');
+    if(v) v.click(); await wait(2500);
+    const el = document.querySelector(`#verses .vblock[data-ref="${st.r}"]`);
+    const wmOn = () => document.getElementById('wm-overlay').classList.contains('on');
+    const atRead = S.screen;
+    history.back(); await wait(2500); const back1 = {on: wmOn(), id: S._jr.j.id, i: S._jr.i};
+    jrPlace(); await wait(2500); const toPlace = !wmOn() && S._subView && S._subView.sub;
+    history.back(); await wait(2500); const back2 = {on: wmOn(), i: S._jr.i};
+    history.back(); await wait(1500); const back3 = wmOn();
+    return {atRead, back1, toPlace, back2, back3, ref: st.r, tappable: !!v && v.getAttribute('role') === 'button', screen: atRead, book: S.book, ch: S.ch + 1, found: !!el,
+            overlay: document.getElementById('wm-overlay').classList.contains('on')};
+  });
+  assert(r.tappable, 'the stop\'s verse is not tappable');
+  assert(r.screen === 'reader' && r.found && r.ref.startsWith(r.book + ' ' + r.ch + ':'), 'tapping the stop\'s verse left ' + JSON.stringify(r));
+  assert(r.back1.on && r.back1.id === 'david' && r.back1.i === 0, 'Back from the chapter did not bring the journey back at its stop: ' + JSON.stringify(r.back1));
+  assert(r.toPlace === 'place' && r.back2.on && r.back2.i === 0, 'Back from the stop\'s place did not bring the journey back: ' + JSON.stringify(r));
+  assert(!r.back3, 'Back again did not close the journey');
+});
+
+check('verse card scenes: the Morning devotion photo loads in both orientations', async p => {
+  const r = await p.evaluate(async () => {
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    await wait(1500);
+    return ['morning', 'morning_land'].map(k => [k, _bgImgs[k] && _bgImgs[k].naturalWidth]).concat([['swatch', !!document.querySelector('.ct-swatch[data-s="morning"]')], ['scene', typeof CARD_SCENES.morning]]);
+  });
+  assert(r[0][1] > 0 && r[1][1] > 0 && r[2][1] && r[3][1] === 'function', 'morning scene missing: ' + JSON.stringify(r));
 });
 
 check('classic maps: every passage is real; verses, journeys and places open, Back closes the map first', async p => {
@@ -755,6 +792,48 @@ check('cross-reference: Open lands on the verse; the top shows the chapter', asy
   assert(r.lit && r.seen, `John 7:38 should be on screen and outlined (${JSON.stringify(r)})`);
   await p.evaluate(() => nextCh()); await sleep(800);
   assert(await p.evaluate(() => document.getElementById('logo').textContent) === 'John 8', 'Next should move the top to John 8');
+});
+
+check('Back always returns to where you began: every card, map and tool that leads to Scripture comes back as it was', async p => {
+  const r = await p.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), on = id => document.getElementById(id).classList.contains('on');
+    const at = () => ({screen: S.screen, book: S.book, ch: S.ch + 1});
+    const out = {};
+    // the verse card → a place → Back: the card again; Back closes it
+    await jumpToRef('Genesis 28:19'); await w(1200); openVPop('Genesis 28:19', S.bookData.chapters[27].verses[18].text); await w(1500);
+    openPlaceFromVerse(Object.keys(S._places).find(k => S._places[k].n === 'Bethel')); await w(2000);
+    out.vpGone = S.screen === 'search' && !on('vpop');
+    history.back(); await w(1500); out.vp = {...at(), card: on('vpop'), ref: S.popRef}; history.back(); await w(800); out.vpClosed = !on('vpop');
+    // the verse card → 🎦 Present → ✕: the card again
+    openVPop('Genesis 28:19', S.bookData.chapters[27].verses[18].text); await w(500);
+    document.querySelector('#vpop button.pa[onclick*=presOpen]').click(); await w(1500); out.pres = on('pres-overlay');
+    closePopover('pres-overlay'); await w(1500); out.presBack = on('vpop') && !on('pres-overlay'); history.back(); await w(800);
+    // a cross-reference card → Open → Back: the first chapter with the card
+    await jumpToRef('Zechariah 14:8'); await w(1200); showXRef([{book: 'John', ch: 7, v: 38, ref: 'John 7:38'}]); await w(600);
+    openXRefFull(); await w(1500); out.xrAway = at();
+    history.back(); await w(1500); out.xr = {...at(), card: on('xref-pop')}; history.back(); await w(800);
+    // the chapter's 📍 Where map → a place → Back: the map, with its journey buttons
+    await jumpToRef('1 Samuel 21:1'); await w(1500); openChapterMap(); await w(1500);
+    wmOpenPlace(S._wmArgs[2][0].id); await w(2000); out.wmGone = S.screen === 'search' && !on('wm-overlay');
+    history.back(); await w(2000); out.wm = {...at(), map: on('wm-overlay'), title: document.getElementById('wm-title').textContent, jr: !!document.querySelector('#wm-sub .vl-chip')};
+    history.back(); await w(800); out.wmClosed = !on('wm-overlay');
+    // a classic map → Read about it → Back: the map again
+    openMap(10); await w(1200); if(!document.querySelector('.mm-fold.on')) mapMoreToggle(); await w(800);
+    document.querySelector('#mm-body .mm-chip').click(); await w(2000); out.mapAway = S.screen === 'reader' && !on('map-overlay');
+    history.back(); await w(1500); out.map = on('map-overlay') && S._mapOpen === 10; history.back(); await w(800); out.mapClosed = !on('map-overlay');
+    // Sword Drill, a verse → its chapter → Back: the same verse in Sword Drill
+    openMemorize(); await w(800); await startMem('John 3:16'); await w(1500); memOpenChapter(); await w(2000);
+    out.memAway = {...at(), mem: on('mem-overlay')};
+    history.back(); await w(1500); out.mem = {on: on('mem-overlay'), title: document.getElementById('mem-hdr-title').textContent, game: document.getElementById('mem-game').style.display};
+    history.back(); await w(800); history.back(); await w(800); out.memClosed = !on('mem-overlay');
+    return out;
+  });
+  assert(r.vpGone && r.vp.screen === 'reader' && r.vp.book === 'Genesis' && r.vp.ch === 28 && r.vp.card && r.vp.ref === 'Genesis 28:19' && r.vpClosed, 'verse card → place → Back: ' + JSON.stringify(r));
+  assert(r.pres && r.presBack, 'verse card → Present → ✕ did not bring the card back');
+  assert(r.xrAway.book === 'John' && r.xr.book === 'Zechariah' && r.xr.ch === 14 && r.xr.card, 'cross-reference → Open → Back: ' + JSON.stringify(r.xr));
+  assert(r.wmGone && r.wm.map && r.wm.book === '1 Samuel' && r.wm.ch === 21 && /1 Samuel 21/.test(r.wm.title) && r.wm.jr && r.wmClosed, 'Where map → place → Back: ' + JSON.stringify(r.wm));
+  assert(r.mapAway && r.map && r.mapClosed, 'classic map → verse → Back did not bring the map back');
+  assert(r.memAway.screen === 'reader' && r.memAway.book === 'John' && !r.memAway.mem && r.mem.on && r.mem.title === 'John 3:16' && r.mem.game === 'flex' && r.memClosed, 'Sword Drill → chapter → Back: ' + JSON.stringify(r));
 });
 
 check('📖 at the top returns from Search to the chapter and place you left', async p => {
