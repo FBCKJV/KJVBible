@@ -194,6 +194,22 @@ check('home: Scripture first, swipe the Verse of the Day, Undo', async p => {
   assert(await p.evaluate(() => getComputedStyle(document.getElementById('vod-wrap')).display) !== 'none', 'Undo should bring it back');
 });
 
+check('audio: the 🌙 sleep timer offers 15/30/60, Turn off and Cancel; Back closes it', async p => {
+  await p.evaluate(() => { openSleepTimer(); }); await sleep(400);
+  let labels = await p.evaluate(() => [...document.querySelectorAll('#ask-acts .ask-btn')].map(b => b.textContent));
+  assert(labels.join('|') === '15 minutes|30 minutes|60 minutes|Cancel', 'sheet choices: ' + labels.join('|'));
+  await p.evaluate(() => askPick(1)); await sleep(500);
+  assert(await p.evaluate(() => SA.sleepMin === 30 && document.getElementById('sb-sleep').classList.contains('on') && document.getElementById('sb-sleep').textContent === '🌙'), '30 min should be set and the moon stay small');
+  await p.evaluate(() => { openSleepTimer(); }); await sleep(400);
+  labels = await p.evaluate(() => [...document.querySelectorAll('#ask-acts .ask-btn')].map(b => b.textContent));
+  assert(labels.includes('Turn off the sleep timer'), 'a set timer should offer Turn off: ' + labels.join('|'));
+  await p.evaluate(() => history.back()); await sleep(500);
+  assert(await p.evaluate(() => !document.getElementById('ask-sheet').classList.contains('on') && SA.sleepMin === 30), 'Back should close the sheet and keep the timer');
+  await p.evaluate(() => { openSleepTimer(); }); await sleep(400);
+  await p.evaluate(() => askPick([...document.querySelectorAll('#ask-acts .ask-btn')].findIndex(b => b.textContent.startsWith('Turn off')))); await sleep(500);
+  assert(await p.evaluate(() => SA.sleepMin === 0 && !_sleepTimeout && !document.getElementById('sb-sleep').classList.contains('on')), 'Turn off should clear the timer');
+});
+
 check('verse card: Strong\'s fold and a word', async p => {
   await p.evaluate(() => jumpToRef('John 3:16')); await sleep(1200);
   await p.evaluate(() => { const d = S.bookData.chapters[2].verses[15]; openVPop('John 3:16', d.text); sgToggleFold(); });
