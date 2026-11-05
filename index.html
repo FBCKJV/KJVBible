@@ -1566,6 +1566,7 @@ body.light #home-watermark{
   border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;flex-shrink:0;
   touch-action:manipulation}
 .sb-btn:active{opacity:.7}
+.sb-btn.on{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 #sb-progress{height:3px;background:var(--border);border-radius:2px;
   margin:0 0 0 0;position:relative;cursor:pointer}
 #sb-progress-fill{height:100%;background:var(--gold);border-radius:2px;
@@ -2655,7 +2656,7 @@ body.light #home-watermark{
         <div class="tips-section-lbl">🔊 Audio Bible — Two Ways to Listen</div>
         <div class="tip-row"><span class="tip-ico">📖</span><span class="tip-txt"><strong>Book Play</strong> — From any book's chapter list, tap the <strong>🔊 Listen</strong> button below the chapters to stream the entire book. A floating player bar stays with you across all screens — read along, search, or navigate while the audio continues. Your position in every book is saved automatically.</span></div>
         <div class="tip-row"><span class="tip-ico">🔊</span><span class="tip-txt"><strong>Chapter Play</strong> — While reading, tap the <strong>🔊</strong> button next to the chapter title to hear just that chapter. Audio plays to the end of the last verse, then stops automatically. Pause or leave partway and tapping 🔊 again picks up right where you left off; once a chapter finishes it starts fresh next time.</span></div>
-        <div class="tip-row"><span class="tip-ico">🌙</span><span class="tip-txt"><strong>Sleep timer &amp; Auto-play</strong> — Tap the <strong>🌙</strong> on the player bar to wind down after 15, 30, or 60 minutes. Turn on <strong>Auto-play next chapter</strong> in ⚙ Settings to keep listening — and if you're reading the chapter that's playing, the text follows along as it advances.</span></div>
+        <div class="tip-row"><span class="tip-ico">🌙</span><span class="tip-txt"><strong>Sleep timer &amp; Auto-play</strong> — Tap the <strong>🌙</strong> on the player bar to wind down after 15, 30, or 60 minutes; the moon turns gold while it is set. Tap it again to change it or <strong>Turn off</strong> the timer. Turn on <strong>Auto-play next chapter</strong> in ⚙ Settings to keep listening — and if you're reading the chapter that's playing, the text follows along as it advances.</span></div>
         <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Listening counts as reading</strong> — a chapter heard through to its end, in Chapter Play or Book Play, is checked off just as if you had read it: in your plans, your books and Reading Journey, the reading calendar and your 🔥 streak. Skipping ahead with 30▶ doesn't count; at least half the chapter must be heard.</span></div>
         <div class="tip-row"><span class="tip-ico">▶</span><span class="tip-txt">Both modes share the same floating player bar with play/pause, <strong>◀30</strong> / <strong>30▶</strong> skip, speed control (0.5×–2.0×), and a progress bar. Chapter Play shows chapter progress; Book Play shows whole-book progress.</span></div>
         <div class="tip-row"><span class="tip-ico">💾</span><span class="tip-txt">Both Book Play and Chapter Play positions are <strong>saved to the cloud</strong> with your restore code — switch devices and pick up exactly where you left off, whether in a whole book or a single chapter.</span></div>
@@ -16608,17 +16609,30 @@ function scourbySlower(){
   document.getElementById('scourby-audio').playbackRate = SA.rate;
   document.getElementById('sb-speed').textContent = SA.rate + '×';
 }
-// Sleep timer — session-only; cycles Off → 15 → 30 → 60 min, pauses on fire.
-function cycleSleepTimer(){
-  const opts=[0,15,30,60];
-  setSleepTimer(opts[(opts.indexOf(SA.sleepMin||0)+1)%opts.length]);
+// Sleep timer — session-only. 🌙 opens a short sheet: 15 / 30 / 60 minutes,
+// Turn off (when one is set) and Cancel; it pauses the audio when it fires.
+let _sleepEnds=0;
+async function openSleepTimer(){
+  const on=SA.sleepMin>0 && _sleepTimeout;
+  const left=on ? Math.max(1, Math.ceil((_sleepEnds-Date.now())/60000)) : 0;
+  const acts=[15,30,60].map(m=>({label:`${m} minutes`, v:m}));
+  if(on) acts.push({label:'Turn off the sleep timer', v:0, danger:true});
+  acts.push({label:'Cancel', ghost:true});
+  const v=await appSheet({title:'🌙 Sleep timer',
+    msg: on ? `The audio will pause in about ${left} min.` : 'Pause the audio after:',
+    actions:acts});
+  if(v===null || v===undefined) return;
+  setSleepTimer(v);
+  if(v===0) showToast('🌙 Sleep timer off');
 }
+function cycleSleepTimer(){ openSleepTimer(); }
 function setSleepTimer(min){
   SA.sleepMin=min;
   if(_sleepTimeout){ clearTimeout(_sleepTimeout); _sleepTimeout=null; }
   const btn=document.getElementById('sb-sleep');
-  if(btn){ btn.textContent = min ? '🌙'+min : '🌙'; btn.classList.toggle('on', min>0); }
+  if(btn){ btn.classList.toggle('on', min>0); btn.title = min ? `Sleep timer: ${min} min (tap to change or turn off)` : 'Sleep timer'; }
   if(min>0){
+    _sleepEnds=Date.now()+min*60000;
     _sleepTimeout=setTimeout(sleepTimerFire, min*60000);
     showToast(`🌙 Sleep timer set for ${min} min`);
   }
@@ -17581,7 +17595,7 @@ function closeSettings(e){
       <button class="sb-btn" onclick="scourbySlower()">－</button>
       <span id="sb-speed" style="font-size:11px;color:var(--text-m);min-width:24px;text-align:center">1×</span>
       <button class="sb-btn" onclick="scourbyFaster()">＋</button>
-      <button class="sb-btn" id="sb-sleep" onclick="cycleSleepTimer()" title="Sleep timer">🌙</button>
+      <button class="sb-btn" id="sb-sleep" onclick="openSleepTimer()" title="Sleep timer">🌙</button>
       <button class="sb-btn" onclick="scourbyStop()">■</button>
     </div>
   </div>
