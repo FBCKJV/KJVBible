@@ -417,6 +417,43 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;displ
 #pres-bar button{min-width:52px;height:48px;border-radius:12px;border:1px solid rgba(201,148,58,.5);background:rgba(201,148,58,.12);color:inherit;font-size:17px;cursor:pointer;padding:0 12px;font-family:'Inter',sans-serif}
 #pres-bar button[aria-label=Previous],#pres-bar button[aria-label=Next]{font-size:30px;min-width:76px}
 #pres-pos{font-family:'Inter',sans-serif;font-size:14px;opacity:.7;min-width:110px;text-align:center}
+/* Verse Glow: verses fade one after another, full screen */
+#glow-overlay{position:fixed;inset:0;z-index:900;background:#0b0703;color:#f5ede0;display:none;flex-direction:column;user-select:none;-webkit-user-select:none;overflow:hidden}
+#glow-overlay.on{display:flex}
+#glow-overlay.hc{background:#000;color:#fff}
+#glow-bg{position:absolute;inset:0;background:center/cover no-repeat;opacity:0;transition:opacity 1.5s}
+#glow-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,.62),rgba(0,0,0,.5))}
+#glow-overlay.scene #glow-bg{opacity:1}
+#glow-stage{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:5vh 7vw 7vh;overflow:hidden;cursor:pointer}
+#glow-txt{font-family:'Crimson Pro',Georgia,serif;line-height:1.36;text-align:center;max-width:100%;transition:opacity 1.2s ease}
+#glow-ref{font-family:'IM Fell English',serif;color:#e0b060;font-size:clamp(20px,3.2vw,56px);margin-top:3vh;background:none;border:0;padding:4px 12px;cursor:pointer;transition:opacity 1.2s ease}
+#glow-overlay.hc #glow-txt{font-weight:600}
+#glow-overlay.hc #glow-ref{color:#ffd54a;font-weight:700}
+#glow-overlay.scene #glow-txt,#glow-overlay.scene #glow-ref{text-shadow:0 1px 3px rgba(0,0,0,.85),0 0 18px rgba(0,0,0,.5)}
+#glow-overlay.scene #glow-ref{color:#ffd88a}
+#glow-overlay.fade #glow-txt,#glow-overlay.fade #glow-ref{opacity:0}
+#glow-foot{position:absolute;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));text-align:center;font-family:'IM Fell English',serif;font-size:clamp(13px,1.4vw,22px);opacity:.5;pointer-events:none}
+#glow-bar{position:absolute;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:28px 10px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(0,0,0,.78) 34%);transition:opacity .4s}
+#glow-overlay.idle #glow-bar{opacity:0;pointer-events:none}
+#glow-overlay.idle{cursor:none}
+#glow-bar button{min-width:48px;height:46px;border-radius:12px;border:1px solid rgba(201,148,58,.55);background:rgba(20,12,4,.6);color:#f5ede0;font-size:15px;cursor:pointer;padding:0 12px;font-family:'Inter',sans-serif}
+#glow-bar button.big{font-size:26px;min-width:64px}
+#glow-bar button.on{background:#c9943a;color:#1a1206;border-color:#c9943a}
+#glow-pos{font-family:'Inter',sans-serif;font-size:13px;opacity:.75;min-width:70px;text-align:center}
+#glow-pick{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(460px,calc(100% - 32px));max-height:82vh;overflow-y:auto;background:#1a1208;border:1px solid #7a5520;border-radius:16px;padding:14px;display:none;z-index:2;box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 0 100vmax rgba(0,0,0,.6)}
+#glow-pick.on{display:block}
+#glow-pick h3{font-family:'IM Fell English',serif;font-weight:400;color:#e0b060;font-size:20px;margin:2px 4px 10px}
+#glow-pick .gp-lbl{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.6;margin:12px 4px 6px}
+#glow-pick button.gp{display:flex;width:100%;align-items:center;gap:12px;text-align:left;min-height:52px;margin:0 0 6px;border-radius:12px;border:1px solid rgba(201,148,58,.35);background:rgba(255,255,255,.04);color:#f5ede0;font-family:'Inter',sans-serif;font-size:15px;padding:8px 12px;cursor:pointer}
+#glow-pick button.gp.on{border-color:#c9943a;background:rgba(201,148,58,.18)}
+#glow-pick button.gp i{font-style:normal;font-size:20px;width:26px;text-align:center;flex-shrink:0}
+#glow-pick button.gp small{display:block;font-size:12px;opacity:.65;margin-top:2px}
+#glow-pick .gp-x{width:100%;height:46px;border-radius:12px;border:1px solid rgba(201,148,58,.5);background:none;color:#f5ede0;font-size:15px;margin-top:6px;cursor:pointer}
+#glow-note{position:absolute;left:50%;top:max(16px,env(safe-area-inset-top,0px));transform:translateX(-50%);width:min(460px,calc(100% - 32px));background:#1a1208;border:1.5px solid #c9943a;border-radius:14px;padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;line-height:1.45;display:none;z-index:3}
+#glow-note.on{display:block}
+#glow-note button{margin-top:8px;height:40px;padding:0 18px;border-radius:10px;border:0;background:#c9943a;color:#1a1206;font-weight:600;font-size:14px;cursor:pointer}
+@media (prefers-reduced-motion:reduce){#glow-txt,#glow-ref{transition-duration:.5s}}
+@media (max-width:600px){#glow-bar{gap:6px}#glow-bar button{height:42px;min-width:42px;padding:0 9px;font-size:14px}#glow-bar button.big{min-width:56px}}
 /* Journeys */
 #wm-overlay.jr #wm-list{max-height:46vh;display:block;padding-top:8px}
 .jr-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 13px}
@@ -740,7 +777,7 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 .col-title input{width:100%;font-family:'IM Fell English',serif;font-size:21px;color:var(--text);background:var(--surface);border:1px solid var(--gold-d);border-radius:8px;padding:4px 8px}
 .col-ic{background:none;border:1px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:14px}
 .col-sub{font-size:12px;color:var(--text-m);margin:2px 0 10px}
-.col-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.col-acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
 .col-sort{background:none;border:none;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;padding:0}
 .mb-emo{font-size:15px;line-height:16px}
 .col-acts button{background:var(--surface);border:1px solid var(--border);color:var(--text-d);border-radius:9px;padding:8px 2px;font-size:11.5px;font-weight:600;cursor:pointer}
@@ -979,6 +1016,8 @@ sup.vsuper{font-size:11.5px;color:var(--gold-t);font-weight:700;margin-right:2px
 .orient-btn.active{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 /* Portrait canvas display */
 #scr-scroll.portrait{max-height:65vh}
+#wp-hint{max-width:440px;font-size:12.5px;line-height:1.45;color:rgba(255,255,255,.85);text-align:center;padding:0 6px}
+#scr-overlay.plain-only #wp-hint{display:none}
 #scr-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;gap:14px;backdrop-filter:blur(8px)}
 #scr-overlay.on{display:flex}
 #scr-scroll{overflow-y:auto;max-height:60vh;border-radius:12px;width:100%;max-width:440px;flex-shrink:1}
@@ -2614,7 +2653,8 @@ body.light #home-watermark{
         <div class="tip-row"><span class="tip-ico">🕘</span><span class="tip-txt"><strong>Recent searches</strong> — tap into an empty search box (on Home, in Search, or in a tool such as the Dictionary, Names or Hymns) to see what you looked up last; tap one to look it up again, or <strong>Clear</strong>. They go with your restore code to your other devices</span></div>
         <div class="tip-row"><span class="tip-ico">✦</span><span class="tip-txt"><strong>Gold ✦ markers</strong> next to verse numbers link Old Testament quotations both ways — in the New Testament they show the OT source; in the Old Testament they show where the NT quotes it</span></div>
         <div class="tip-row"><span class="tip-ico">☐</span><span class="tip-txt"><strong>Long press any verse</strong> to enter select mode — then make a screenshot card, copy, share, save to My Verses (verses side by side are saved as one passage), 🖍 highlight them all at once, send them to ⚔ Sword Drill, or add them to a study</span></div>
-        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes, seven photo and painted scenes (Sunrise, Meadow, Misty mountains, Calvary, the Empty tomb, <strong>Morning devotion</strong> — an open Bible by a sunlit window — and Starry night) or a photo of your own, and both landscape and portrait (TikTok/Stories) formats, each signed at the foot with the church's logo, name and fbckjv.app/KJVBible so others can find their way to the Word. A hymn makes a card too: tap its verses (or the refrain) and choose <strong>📸 Card</strong></span></div>
+        <div class="tip-row"><span class="tip-ico">📸</span><span class="tip-txt"><strong>Screenshot cards</strong> come in 5 colour themes, seven photo and painted scenes (Sunrise, Meadow, Misty mountains, Calvary, the Empty tomb, <strong>Morning devotion</strong> — an open Bible by a sunlit window — and Starry night) or a photo of your own, in landscape, portrait (TikTok/Stories) and <strong>📱 phone wallpaper</strong>, each signed at the foot with the church's logo, name and fbckjv.app/KJVBible so others can find their way to the Word. <strong>📱</strong> makes a lock-screen picture for any phone, iPhone or Android, with the verse below the clock: save it, then in Photos choose <em>Use as Wallpaper</em>; a photo of your own works too. A hymn makes a card too: tap its verses (or the refrain) and choose <strong>📸 Card</strong></span></div>
+        <div class="tip-row"><span class="tip-ico">✨</span><span class="tip-txt"><strong>Verse Glow</strong> — verses fade in one after another, large and full screen, and the screen stays awake: for a lobby or captioning monitor before and after the service, or a phone on the nightstand. Open it from Home → Search &amp; Study Tools, <strong>✨ Glow</strong> on a My Verses list, or ✨ in Present. <strong>📚 Verses</strong> picks a theme, a list, your Sword Drill verses, a study or a chapter. Tap the reference to read the chapter; Back returns to Glow</span></div>
         <div class="tip-row"><span class="tip-ico">🖍</span><span class="tip-txt"><strong>Name your highlight colours</strong> with ✏️ beside the colours in the verse card (or in Notes → Highlights). Then pick a colour in Notes → Highlights to see just those verses, and <strong>🔖 Save</strong> them as a My Verses list</span></div>
         <div class="tip-row"><span class="tip-ico">🎤</span><span class="tip-txt"><strong>Say it aloud in Sword Drill</strong> — in First Letters or Full Recall, tap 🎤 beside the box and say the verse at your own pace; each word fills in as you say it. A word the phone mishears is simply passed over, and 💡 still helps. Tap 🎤 again to stop</span></div>
         <div class="tip-row"><span class="tip-ico">✓</span><span class="tip-txt"><strong>Chapters you have read</strong> show a ✓ in a book's chapter list. Read a book before the app counted? Tap <strong>✓ Mark chapters I read before</strong>, then the chapters — finish a book and it is celebrated and ticked off in your Reading Journey</span></div>
@@ -3042,12 +3082,38 @@ body.light #home-watermark{
     <button id="pres-count" onclick="presCount()">1 verse</button>
     <button id="pres-class" onclick="presClassroom()" title="One verse, never smaller than a back row can read; long verses run onto a second screen">📽 Classroom</button>
     <button id="pres-theme" onclick="presTheme()" aria-label="Colours">◐ Dark</button>
+    <button onclick="stepAside('pres-overlay', () => glowOpen())" title="Verse Glow: verses fade in one after another — Back returns here">✨ Glow</button>
     <button id="pres-click" onclick="presClicker()" title="Hide the buttons — step with a clicker, keyboard or tap; touch the bottom edge to bring them back">🖱 Clicker only</button>
     <button onclick="presFull()" aria-label="Full screen">⛶</button>
     <button data-tt="present" onclick="toolTips('present')" aria-label="Present tips" title="Tips">?</button>
     <button onclick="presClose()" aria-label="Close">✕</button>
     <button onclick="presStep(1)" aria-label="Next">›</button>
   </div>
+</div>
+
+<!-- VERSE GLOW: verses fade in one after another, for a lobby screen, a nightstand or a quiet moment -->
+<div id="glow-overlay" role="dialog" aria-label="Verse Glow">
+  <div id="glow-bg"></div>
+  <div id="glow-stage"><div id="glow-txt"></div><button id="glow-ref" onclick="glowRefTap(event)"></button></div>
+  <div id="glow-foot">Faith Baptist Church · The King James Bible</div>
+  <div id="glow-bar">
+    <button class="big" onclick="glowStep(-1)" aria-label="Previous verse">‹</button>
+    <button id="glow-play" onclick="glowPause()">⏸ Pause</button>
+    <span id="glow-pos"></span>
+    <button class="big" onclick="glowStep(1)" aria-label="Next verse">›</button>
+    <button id="glow-src" onclick="glowPickOpen()" title="Choose the verses">📚 Verses</button>
+    <button id="glow-pace" onclick="glowPace()" title="How long each verse stays">⏱ 30 s</button>
+    <button id="glow-scene" onclick="glowScene()" title="Background">🖼 Plain</button>
+    <button onclick="glowFont(-1)" aria-label="Smaller text">A−</button>
+    <button onclick="glowFont(1)" aria-label="Larger text">A+</button>
+    <button onclick="glowRead()" title="Open this verse in its chapter">📖 Read</button>
+    <button onclick="glowWallpaper()" title="Make this verse a phone wallpaper">📱 Wallpaper</button>
+    <button onclick="glowFull()" aria-label="Full screen">⛶</button>
+    <button data-tt="glow" onclick="toolTips('glow')" aria-label="Verse Glow tips" title="Tips">?</button>
+    <button onclick="glowClose()" aria-label="Close">✕</button>
+  </div>
+  <div id="glow-pick" role="dialog" aria-label="Choose the verses"></div>
+  <div id="glow-note"></div>
 </div>
 
 <!-- WHERE IS THIS? map overlay -->
@@ -3321,6 +3387,7 @@ body.light #home-watermark{
     <div id="orient-toggle">
       <button class="orient-btn active" id="ob-landscape" onclick="switchOrientation('landscape')" title="Landscape">▬</button>
       <button class="orient-btn" id="ob-portrait" onclick="switchOrientation('portrait')" title="Portrait / TikTok">▮</button>
+      <button class="orient-btn" id="ob-wallpaper" onclick="switchOrientation('wallpaper')" title="Phone wallpaper (lock screen)">📱</button>
     </div>
   </div>
   <div id="card-photo-row" hidden>
@@ -3337,6 +3404,7 @@ body.light #home-watermark{
     <div class="pc-hint">Pinch or drag the photo to zoom &amp; reposition</div>
   </div>
   <div id="scr-scroll"><canvas id="scr-canvas"></canvas></div>
+  <div id="wp-hint" hidden>📱 <b>Phone wallpaper</b> — the verse sits below the clock. Tap <b>⬇ Save</b>, then open the picture in Photos: on iPhone, <b>Share → Use as Wallpaper</b>; on Android, <b>⋮ → Use as → Wallpaper</b> (or Settings → Wallpaper). Pick a scene, or 📷 your own photo.</div>
   <div class="scr-btns">
     <div class="scr-btn" onclick="closeScrOverlay()">✕ Close</div>
     <div class="scr-btn" onclick="shareScreenshot()">
@@ -3854,7 +3922,9 @@ function homeSearchGo(){
   openSearchTab();
   searchFor(q);
 }
-function homeTool(m){ openSearchTab(); switchSearchMode(m); }
+function homeTool(m){ const t = SEARCH_TOOLS.find(x => x.m === m); if(t && t.open){ t.open(); return; } openSearchTab(); switchSearchMode(m); }
+// A tool that is not a search page (Verse Glow) opens over the page you are on
+function searchToolOpen(m){ const t = SEARCH_TOOLS.find(x => x.m === m); if(t && t.open) t.open(); }
 
 // Notes: the latest thing folded; open, a count for each kind and recent studies
 /* ── Something to try ──
@@ -4691,7 +4761,7 @@ function _srand(seed){ let s = seed >>> 0; return () => { s = (s * 1664525 + 101
 // Pick a scene's landscape variant in landscape mode (once loaded), else the base image.
 function _sceneImg(base){
   const L = _bgImgs[base+'_land'];
-  if(S.cardOrientation!=='portrait' && L && L.complete && L.naturalWidth) return L;
+  if(S.cardOrientation==='landscape' && L && L.complete && L.naturalWidth) return L;
   return _bgImgs[base];
 }
 // Draw a bundled photo cover-filled, or a soft gradient fallback until it loads.
@@ -4773,7 +4843,7 @@ function drawUploadImage(ctx, img, W, H){
 
 /* Photo/scene background: clip to rounded rect, paint the image or scene,
    apply a legibility scrim, then stroke the border. */
-function drawPhotoBase(ctx, W, H, radius){
+function drawPhotoBase(ctx, W, H, radius, edge = true){
   ctx.shadowColor='transparent'; ctx.shadowBlur=0; ctx.shadowOffsetX=0; ctx.shadowOffsetY=0;
   ctx.save();
   rr(ctx, 0, 0, W, H, radius); ctx.clip();
@@ -4796,6 +4866,7 @@ function drawPhotoBase(ctx, W, H, radius){
     ctx.fillStyle=rg; ctx.fillRect(0,0,W,H);
   }
   ctx.restore();
+  if(!edge) return;   // a wallpaper runs to the edges of the phone
   ctx.strokeStyle='rgba(255,255,255,.35)'; ctx.lineWidth=1.5;
   rr(ctx, 2, 2, W-4, H-4, radius-1); ctx.stroke();
 }
@@ -4829,14 +4900,17 @@ function renderCanvas(theme){
   const t       = photo ? PHOTO_T : CARD_THEMES[theme];
   const canvas  = document.getElementById('scr-canvas');
   const ctx     = canvas.getContext('2d');
-  const dpr     = Math.min(window.devicePixelRatio || 1, 2);
-  const portrait = S.cardOrientation === 'portrait';
+  const portrait = S.cardOrientation === 'portrait', wallpaper = S.cardOrientation === 'wallpaper';
+  const dpr     = wallpaper ? 2 : Math.min(window.devicePixelRatio || 1, 2);   // a wallpaper is always 1080 × 2340
 
   // One verse or several, the words stand alone, without quote marks
   const bodyText  = joinVerseText(verses);
 
   canvas.classList.toggle('editable', upload);   // enables grab cursor + touch-action:none
-  if(portrait){
+  const wh = document.getElementById('wp-hint'); if(wh) wh.hidden = !wallpaper;
+  if(wallpaper){
+    renderWallpaper(ctx, canvas, dpr, t, bodyText, photo, upload);
+  } else if(portrait){
     renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload);
   } else {
     renderLandscape(ctx, canvas, dpr, t, bodyText, photo, upload);
@@ -4945,6 +5019,47 @@ function renderPortrait(ctx, canvas, dpr, t, bodyText, photo, upload){
 
   // ── Corner ornaments
   drawCorners(ctx, PAD, W, H, t);
+}
+
+/* 📱 Phone wallpaper (lock screen), 1080 × 2340: the whole screen of most
+   phones, iPhone and Android alike. The picture runs to the edges; the top
+   ~40% is left clear for the phone's clock and date, and the verse keeps
+   above the fingerprint and shortcut buttons near the foot. The verse, then
+   its reference, centred in that band; a long passage takes smaller type. */
+function renderWallpaper(ctx, canvas, dpr, t, bodyText, photo, upload){
+  const W = 540, H = 1170, PAD = 46;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  const dispW = 200;
+  canvas.style.width = dispW + 'px'; canvas.style.height = (dispW * H / W) + 'px';
+  ctx.resetTransform(); ctx.scale(dpr, dpr);
+  if(photo) drawPhotoBase(ctx, W, H, 0, false);
+  else {
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+    const g = ctx.createLinearGradient(0, 0, W * 0.4, H); g.addColorStop(0, t.bg1); g.addColorStop(1, t.bg2);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+  S._cw = W; S._ch = H;
+  if(photo){ ctx.shadowColor = 'rgba(0,0,0,.8)'; ctx.shadowBlur = 12; ctx.shadowOffsetY = 1; }
+  const hy = S.scrHymn, align = upload ? cardAlign() : 'center';
+  const REF = 28, GAP = 52;                      // the reference, and the space above it
+  let bandTop = Math.round(H * 0.40), bandBot = Math.round(H * 0.80);
+  let size = hy ? 30 : 34, body;
+  for(;; size--){
+    body = cardBody(ctx, bodyText, size, W, PAD, t, align);
+    if(size <= 17 || body.h + GAP + REF <= bandBot - bandTop) break;
+  }
+  if(body.h + GAP + REF > bandBot - bandTop) bandTop = Math.max(Math.round(H * 0.2), bandBot - body.h - GAP - REF);   // a long passage reaches up a little
+  const total = body.h + GAP + REF, vpos = upload ? S.textVPos : 'center';
+  const top = vpos === 'top' ? bandTop : vpos === 'bottom' ? Math.max(bandTop, bandBot - total) : Math.max(bandTop, bandTop + (bandBot - bandTop - total) / 2);
+  body.draw(top);
+  const ry = top + body.h + 22;
+  ctx.strokeStyle = t.ref; ctx.globalAlpha = 0.6; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(W / 2 - 36, ry); ctx.lineTo(W / 2 + 36, ry); ctx.stroke(); ctx.globalAlpha = 1;
+  drawRef(ctx, W, top + body.h + GAP + REF * 0.75, REF, t, S.scrRef, PAD);
+  // The app's address, small, at the very foot
+  ctx.textAlign = 'center'; ctx.fillStyle = t.text; ctx.globalAlpha = photo ? 0.6 : 0.45;
+  ctx.font = cardFont(400, 13); ctx.fillText(CARD_URL, W / 2, H - 34);
+  ctx.globalAlpha = 1; ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
 }
 
 // ── Shared drawing helpers ──
@@ -5141,7 +5256,7 @@ function _syncPhotoControls(){
   const up = S.cardBg==='upload' && !!S.uploadImg;
   const row=document.getElementById('card-photo-row'); if(row) row.hidden=!up;
   if(!up) return;
-  const vg=document.getElementById('pc-vpos'); if(vg) vg.style.display = (S.cardOrientation==='portrait') ? 'flex' : 'none';
+  const vg=document.getElementById('pc-vpos'); if(vg) vg.style.display = (S.cardOrientation!=='landscape') ? 'flex' : 'none';
   document.querySelectorAll('#pc-vpos .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===S.textVPos));
   document.querySelectorAll('#pc-align .pc-btn').forEach(b=>b.classList.toggle('on', b.dataset.v===cardAlign()));
 }
@@ -5195,7 +5310,7 @@ function flashSaved(btn){
 }
 function downloadScreenshot(btn){
   const a=document.createElement('a');
-  a.download=`${(S.scrRef||'verse').replace(/[: ]/g,'_')}_KJV.png`;
+  a.download=`${(S.scrRef||'verse').replace(/[: ]/g,'_')}_KJV${S.cardOrientation==='wallpaper' ? '_wallpaper' : ''}.png`;
   a.href=document.getElementById('scr-canvas').toDataURL('image/png');
   document.body.appendChild(a);
   a.click();
@@ -5300,7 +5415,7 @@ function updateContinueBanner(){
    tagged with its element id; every close routes back through history so the
    ✕, a backdrop tap and Back all consume that entry identically. The popstate
    handler below performs the matching dismissal. */
-const POPOVER_IDS = ['privacy-sheet','mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay','tl-panel'];
+const POPOVER_IDS = ['privacy-sheet','mk-sheet','hln-sheet','tour','ask-sheet','col-sheet','tt-pop','pres-overlay','glow-overlay','xref-pop','par-panel','share-pop','streak-panel','cl-overlay','nb-panel','wm-overlay','tl-panel'];
 // Order the cards were opened in: on a wide screen several can be open side
 // by side (the verse card beside the notebook), and Back closes the newest
 let LAYER_SEQ = 0;
@@ -5440,6 +5555,8 @@ window.addEventListener('popstate', e => {
   if(_clip && _clip.classList.contains('on')){ closeClipboard(); return; }
   const _pg = document.getElementById('pres-goto');
   if(_pg && _pg.classList.contains('on')){ _pg.classList.remove('on'); document.getElementById('pres-goto-in').blur(); return; }
+  // Verse Glow's list of verses to choose from: Back closes the list, and Glow plays on
+  if(glowPickClose(true)) return;
   const _wn = document.getElementById('whatsnew-modal');
   if(_wn && _wn.style.display === 'flex'){ dismissWhatsNew(); return; }
 
@@ -9078,12 +9195,13 @@ const SEARCH_TOOLS = [
   {m:'timeline', i:'📅', n:'Timeline',    d:'Creation to Revelation'},
   {m:'maps',     i:'🗺️', n:'Maps',        d:'Every place · atlas plates'},
   {m:'hymns',    i:'🎵', n:'Hymns',       d:'224 hymns of the faith'},
+  {m:'glow',     i:'✨', n:'Verse Glow',  d:'Verses fade in one by one, full screen', open: () => glowOpen()},
 ];
 function renderSearchHub(){
   const hub = document.getElementById('s-hub');
   if(!hub) return;
   if(!hub.children.length) hub.innerHTML = SEARCH_TOOLS.map(t =>
-    `<button class="hub-t" onclick="switchSearchMode('${t.m}')"><span class="hub-i">${t.i}</span><span><div class="hub-n">${t.n}</div><div class="hub-d">${escapeHtml(t.d)}</div></span></button>`).join('');
+    `<button class="hub-t" onclick="${t.open ? `searchToolOpen('${t.m}')` : `switchSearchMode('${t.m}')`}"><span class="hub-i">${t.i}</span><span><div class="hub-n">${t.n}</div><div class="hub-d">${escapeHtml(t.d)}</div></span></button>`).join('');
   const inp = document.getElementById('s-input');
   showSearchHub(!inp || inp.value.trim().length < 2);
 }
@@ -9972,6 +10090,363 @@ function presWake(e){
   });
   window.addEventListener('resize', () => { if(ov.classList.contains('on')) presRender(); });
 })();
+
+/* ════ VERSE GLOW ════
+   Verses fade in one after another, full screen and large, for a lobby or
+   captioning screen between services, a tablet in the kitchen or a phone on
+   the nightstand. Verses come from a chosen set (every Verse of the Day
+   verse, or a theme gathered from the Sword Drill categories), a My Verses
+   list, your Sword Drill verses, a chapter or the verses of a study. Each
+   verse stays for the pace chosen, longer when it is long; a verse too long
+   to read from the back of a room runs over two screens. The screen is kept
+   awake while it shows. A tap brings the buttons; the reference (or 📖 Read)
+   opens the chapter, and Back returns to Glow at the same verse. Settings
+   travel with the restore code (kjv_glow). */
+const GLOW = {src:'all', pace:30, scene:'plain', scale:1, paused:false, on:false, built:null, items:[], order:[], i:0, part:0, parts:null, timer:null, idle:null, lock:null, tok:0, full:false};
+const GLOW_PACES = [15, 30, 45, 60, 90];
+// Backgrounds: the card scenes (photos use their wide picture on a wide screen)
+const GLOW_SCENES = [
+  ['plain', 'Plain'], ['hc', 'High contrast'],
+  ['sunrise', 'Sunrise', 'linear-gradient(180deg,#f3d9a0,#e88b45 42%,#a24a52 72%,#3c1f34)'],
+  ['meadow', 'Meadow', 'meadow'], ['mountain', 'Mountains', 'mountain'], ['calvary', 'Calvary', 'calvary'],
+  ['tomb', 'Empty tomb', 'tomb'], ['morning', 'Morning', 'morning'],
+  ['starry', 'Starry night', 'radial-gradient(1.5px 1.5px at 20% 30%,#fff8,transparent),radial-gradient(1px 1px at 70% 20%,#fff9,transparent),radial-gradient(1.5px 1.5px at 85% 60%,#fff6,transparent),radial-gradient(1px 1px at 40% 70%,#fff7,transparent),radial-gradient(1px 1px at 60% 45%,#fff5,transparent),linear-gradient(180deg,#1c2c58,#0b1430 50%,#04060f)'],
+];
+const GLOW_WIDE = {calvary:1, tomb:1, morning:1};   // scenes with a *_land picture
+// Themes, gathered from the Sword Drill categories with a few more verses each
+const GLOW_SETS = {
+  salvation: {i:'✝', n:'Salvation', cats:['Romans Road', 'Salvation'], add:['Isaiah 53:5','Isaiah 53:6','John 1:12','1 John 1:9','2 Corinthians 5:17','1 Timothy 1:15','Acts 4:12','John 5:24']},
+  comfort:   {i:'🌅', n:'Comfort & Trust', cats:['Trust & Refuge', 'Comfort & Healing'], add:['Isaiah 41:10','Matthew 11:28','Philippians 4:6','Philippians 4:7','1 Peter 5:7','Psalm 23:4','Psalm 46:10','Psalm 91:1','Psalm 121:1-2','Lamentations 3:22-23','Nahum 1:7','John 14:27','Isaiah 26:3','Romans 8:28','2 Corinthians 12:9','Deuteronomy 31:6']},
+  strength:  {i:'🛡', n:'Strength & Courage', cats:['Daniel & Courage'], add:['Philippians 4:13','Isaiah 40:31','2 Timothy 1:7','Joshua 1:9','Zechariah 4:6','Psalm 27:1','Ephesians 6:10','1 Corinthians 16:13','Nehemiah 8:10','Psalm 18:2','2 Corinthians 4:16']},
+  praise:    {i:'🎵', n:'Praise & Thanksgiving', cats:['Praise & Thanksgiving', 'The Word & the Heart'], add:['Psalm 34:8','Psalm 118:24','1 Thessalonians 5:18','Psalm 107:1','Psalm 136:1','Revelation 4:11','Hebrews 13:15']},
+  christ:    {i:'👑', n:'The Lord Jesus Christ', cats:[], add:['John 1:1','John 1:14','Isaiah 9:6','John 11:25','John 10:11','John 8:12','Colossians 1:16','Hebrews 13:8','Philippians 2:10-11','Revelation 1:8','1 Corinthians 15:3-4','John 14:6']},
+  word:      {i:'📖', n:'The Word & Prayer', cats:['Scripture & Prayer'], add:['Isaiah 55:11','Psalm 19:14','Hebrews 4:12','Romans 10:17','Isaiah 40:8','Joshua 1:8','James 5:16','Matthew 4:4','John 17:17']},
+  hope:      {i:'☁️', n:'His Coming & Our Hope', cats:[], add:['John 14:2-3','1 Thessalonians 4:16-17','Titus 2:13','Revelation 22:20','1 Corinthians 15:51-52','Revelation 21:4','Romans 8:18','1 John 3:2','Philippians 3:20','Acts 1:11']},
+};
+function glowSetRefs(k){
+  const s = GLOW_SETS[k];
+  return [...new Set([...MEM_VERSES.filter(c => s.cats.includes(c.cat)).flatMap(c => c.verses), ...s.add])];
+}
+function glowLoad(){
+  const o = LS.get('kjv_glow', {}) || {};
+  GLOW.src = o.src || 'all'; GLOW.pace = GLOW_PACES.includes(o.pace) ? o.pace : 30;
+  GLOW.scene = GLOW_SCENES.some(x => x[0] === o.scene) ? o.scene : 'plain'; GLOW.scale = o.scale || 1;
+}
+function glowSave(){
+  LS.set('kjv_glow', {src: GLOW.src, pace: GLOW.pace, scene: GLOW.scene, scale: GLOW.scale});
+  if(typeof fbSyncSoon === 'function') fbSyncSoon();
+}
+// The sources there are to choose from, now
+function glowSources(){
+  const out = [{k:'all', i:'✦', n:'Every Verse of the Day', d:`${VOD.length} verses, chosen with care`, g:'Chosen verses'}];
+  for(const [k, s] of Object.entries(GLOW_SETS)) out.push({k, i:s.i, n:s.n, d:`${glowSetRefs(k).length} verses`, g:'Chosen verses'});
+  colLists().filter(c => c.items.length).forEach(c => out.push({k:'list:' + c.id, i:'🔖', n:c.n, d:`${c.items.length} ${c.items.length === 1 ? 'verse' : 'verses'}`, g:'Yours'}));
+  const drill = glowDrillRefs();
+  if(drill.length) out.push({k:'drill', i:'⚔', n:'My Sword Drill verses', d:`${drill.length} ${drill.length === 1 ? 'verse' : 'verses'}`, g:'Yours'});
+  const nd = nbData(), st = nd.list.find(x => x.id === nd.active);
+  if(st && /class="nb-v"/.test(st.h || '')) out.push({k:'study:' + st.id, i:'📝', n:st.t || 'Study', d:'the verses of this study, in order', g:'Yours'});
+  if(S.book) out.push({k:`ch:${S.book}|${S.ch}`, i:'📖', n:refShow(`${S.book} ${S.ch + 1}`), d:'the chapter, verse by verse', g:'Yours'});
+  return out;
+}
+function glowDrillRefs(){
+  const m = (memGetMastery().refs) || {};
+  return [...new Set([...Object.keys(m), ...memGetCustom()])].filter(r => parseReference(r));
+}
+// The verses of a source: [{ref, label, txt?}]
+async function glowItems(src){
+  const R = r => ({ref: r});
+  if(src === 'all') return VOD.map(r => R(`${r.b} ${r.c}:${r.v}`));
+  if(GLOW_SETS[src]) return glowSetRefs(src).map(R);
+  if(src === 'drill') return glowDrillRefs().map(R);
+  if(src.startsWith('list:')){
+    const c = colLists().find(x => x.id === src.slice(5));
+    return c ? c.items.map(it => ({ref: it.a + (it.e && parseReference(it.a) && it.e !== parseReference(it.a).verse ? '-' + it.e : ''), label: it.r, txt: it.t || ''})) : [];
+  }
+  if(src.startsWith('study:')){
+    const st = nbData().list.find(x => x.id === src.slice(6));
+    return st ? presBuildDeck(st).filter(x => x.k === 'verse' && x.txt).map(x => ({ref: x.ref || '', label: x.label, txt: x.txt})) : [];
+  }
+  if(src.startsWith('ch:')){
+    const [book, ch] = src.slice(3).split('|'), d = await fetchBook(book).catch(() => null), c = d && d.chapters[+ch];
+    return c ? c.verses.map(v => ({ref: `${book} ${+ch + 1}:${v.verse}`, txt: v.text})) : [];
+  }
+  return [];
+}
+const glowInOrder = src => /^(list|study|ch):/.test(src);
+function glowShuffle(n){ const a = [...Array(n).keys()]; for(let i = n - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+async function glowBuild(){
+  let items = await glowItems(GLOW.src).catch(() => []);
+  if(!items.length){ GLOW.src = 'all'; glowSave(); items = await glowItems('all'); }
+  GLOW.items = items; GLOW.built = GLOW.src;
+  GLOW.order = glowInOrder(GLOW.src) ? [...items.keys()] : glowShuffle(items.length);
+  GLOW.i = 0; GLOW.part = 0;
+}
+async function glowResolve(it){
+  if(!it.label) it.label = refShow(it.ref.replace(/-(\d)/, '–$1'));
+  if(it.txt) return it;
+  const p = parseReference(it.ref), d = p && p.book && await fetchBook(p.book).catch(() => null), c = d && d.chapters[p.chIdx];
+  if(!c){ it.txt = ''; return it; }
+  const a = p.verse || 1, z = p.verseEnd || a;
+  it.txt = c.verses.filter(v => +v.verse >= a && +v.verse <= z).map(v => v.text).join(' ');
+  return it;
+}
+
+// ── Open, close ──
+function glowOpen(src){
+  glowLoad();
+  if(src && src !== GLOW.src){ GLOW.src = src; glowSave(); }
+  if(GLOW.built !== GLOW.src) GLOW.built = null;
+  GLOW.paused = false;
+  openPopover('glow-overlay');
+  glowFull(true);
+}
+function glowClose(){
+  if(glowPickClose()) return;
+  closePopover('glow-overlay');
+}
+// Glow starts when it shows and stops when it is put away (closed, or stepped
+// aside for a verse), however that happens
+(function glowWire(){
+  const ov = document.getElementById('glow-overlay'), stage = document.getElementById('glow-stage');
+  if(!ov) return;
+  new MutationObserver(() => {
+    const on = ov.classList.contains('on');
+    if(on && !GLOW.on) glowStart();
+    else if(!on && GLOW.on) glowStop();
+  }).observe(ov, {attributes: true, attributeFilter: ['class']});
+  ov.addEventListener('pointermove', e => { if(e.pointerType === 'mouse') glowWake(); });
+  let sx = null, sy = null, woke = false;
+  stage.addEventListener('pointerdown', e => { sx = e.clientX; sy = e.clientY; woke = ov.classList.contains('idle'); glowWake(); });
+  stage.addEventListener('pointerup', e => {
+    if(sx == null) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
+    if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) return glowStep(dx < 0 ? 1 : -1); // swipe
+    if(woke || Math.abs(dx) > 10 || Math.abs(dy) > 10 || e.target.id === 'glow-ref') return; // the first tap only brings the buttons
+    const x = e.clientX / window.innerWidth;
+    if(x > 0.7) glowStep(1); else if(x < 0.3) glowStep(-1);
+  });
+  document.addEventListener('keydown', e => {
+    if(!ov.classList.contains('on') || document.getElementById('tt-pop').classList.contains('on')) return;
+    const k = e.key;
+    if(k === 'Escape'){ e.preventDefault(); glowClose(); return; }
+    if(document.getElementById('glow-pick').classList.contains('on')) return;
+    if(['ArrowRight','ArrowDown','PageDown','Enter'].includes(k)){ e.preventDefault(); glowStep(1); }
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(k)){ e.preventDefault(); glowStep(-1); }
+    else if(k === ' '){ e.preventDefault(); glowPause(); }
+    else if(k === '+' || k === '='){ glowFont(1); } else if(k === '-'){ glowFont(-1); }
+    else return;
+    glowWake();
+  });
+  window.addEventListener('resize', () => { if(GLOW.on) glowRender(false); });
+  document.addEventListener('visibilitychange', () => { if(GLOW.on && document.visibilityState === 'visible') glowKeepAwake(); });
+})();
+async function glowStart(){
+  GLOW.on = true;
+  glowLook(); glowWake(); glowKeepAwake();
+  if(GLOW.built !== GLOW.src){ document.getElementById('glow-txt').textContent = ''; document.getElementById('glow-ref').textContent = ''; await glowBuild(); }
+  if(!GLOW.on) return;
+  await glowRender(false);
+  glowNote();
+}
+function glowStop(){
+  GLOW.on = false; GLOW.tok++;
+  clearTimeout(GLOW.timer); clearTimeout(GLOW.idle);
+  document.getElementById('glow-pick').classList.remove('on');
+  document.getElementById('glow-note').classList.remove('on');
+  try{ if(GLOW.lock){ GLOW.lock.release(); } }catch(e){}
+  GLOW.lock = null;
+  try{ if(GLOW.full && document.fullscreenElement) document.exitFullscreen(); }catch(e){}
+  GLOW.full = false;
+}
+// Keep the screen from dimming or locking while the verses show
+async function glowKeepAwake(){
+  try{ if(navigator.wakeLock && (!GLOW.lock || GLOW.lock.released)) GLOW.lock = await navigator.wakeLock.request('screen'); }catch(e){}
+}
+function glowFull(auto){
+  const de = document.documentElement;
+  try{
+    if(document.fullscreenElement || document.webkitFullscreenElement){ if(!auto){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); GLOW.full = false; } return; }
+    const req = de.requestFullscreen || de.webkitRequestFullscreen;
+    if(req){ const r = req.call(de); GLOW.full = true; if(r && r.catch) r.catch(() => { GLOW.full = false; }); }
+  }catch(e){}
+}
+
+// ── Showing a verse ──
+function glowRoom(){
+  const stage = document.getElementById('glow-stage'), ref = document.getElementById('glow-ref'), cs = getComputedStyle(stage);
+  return {h: stage.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom) - ref.offsetHeight - parseFloat(getComputedStyle(ref).marginTop) - 8};
+}
+// The smallest size a room can read: 5.5% of the screen's short side (a phone held upright reads closer)
+const glowMin = () => Math.max(22, Math.min(window.innerWidth, window.innerHeight) * 0.055);
+// The largest size the text fits at (before A− / A+)
+function glowBest(txt, text){
+  const room = glowRoom().h;
+  txt.textContent = text;
+  let lo = 14, hi = Math.max(Math.min(150, window.innerWidth / 9), glowMin() * 1.2);
+  for(let i = 0; i < 14; i++){ const mid = (lo + hi) / 2; txt.style.fontSize = mid + 'px'; if(txt.scrollHeight <= room) lo = mid; else hi = mid; }
+  return lo;
+}
+// A verse too long for the smallest size a room can read runs over two screens or more
+function glowSplit(txt, text){
+  const room = glowRoom().h, words = text.split(' '), parts = [];
+  txt.style.fontSize = glowMin() * GLOW.scale + 'px';
+  let cur = [];
+  for(const w of words){
+    txt.textContent = '… ' + cur.concat(w).join(' ') + ' …';
+    if(cur.length && txt.scrollHeight > room){ parts.push(cur.join(' ')); cur = [w]; } else cur.push(w);
+  }
+  parts.push(cur.join(' '));
+  return parts;
+}
+async function glowRender(fade = true){
+  if(!GLOW.items.length) return;
+  const tok = ++GLOW.tok, ov = document.getElementById('glow-overlay');
+  const txt = document.getElementById('glow-txt'), refEl = document.getElementById('glow-ref');
+  clearTimeout(GLOW.timer);
+  const it = await glowResolve(GLOW.items[GLOW.order[GLOW.i]]);
+  if(tok !== GLOW.tok) return;
+  if(fade && txt.textContent){ ov.classList.add('fade'); await new Promise(r => setTimeout(r, 1200)); if(tok !== GLOW.tok) return; }
+  refEl.textContent = it.label;
+  GLOW.parts = null;
+  let show = it.txt;
+  if(glowBest(txt, it.txt) < glowMin()){
+    const parts = glowSplit(txt, it.txt);
+    if(parts.length > 1){
+      GLOW.parts = parts;
+      if(GLOW.part < 0 || GLOW.part >= parts.length) GLOW.part = GLOW.part < 0 ? parts.length - 1 : 0;
+      show = (GLOW.part ? '… ' : '') + parts[GLOW.part] + (GLOW.part < parts.length - 1 ? ' …' : '');
+      refEl.textContent = `${it.label} (${GLOW.part + 1} of ${parts.length})`;
+    }
+  }
+  if(!GLOW.parts) GLOW.part = 0;
+  const best = glowBest(txt, show);
+  txt.style.fontSize = Math.max(Math.min(best, glowMin()), best * GLOW.scale) + 'px';
+  document.getElementById('glow-pos').textContent = `${GLOW.i + 1} of ${GLOW.items.length}`;
+  ov.classList.remove('fade');
+  glowSchedule(show);
+}
+// Each verse stays for the pace chosen, and longer when it takes longer to read
+function glowSchedule(shown){
+  clearTimeout(GLOW.timer);
+  if(GLOW.paused || !GLOW.on) return;
+  const words = (shown || '').split(/\s+/).length;
+  GLOW.timer = setTimeout(() => glowStep(1, true), Math.max(GLOW.pace, words / 2 + 4) * 1000);
+}
+function glowStep(dir, auto){
+  if(!GLOW.items.length) return;
+  if(!auto) glowWake();
+  if(GLOW.parts){
+    const np = GLOW.part + dir;
+    if(np >= 0 && np < GLOW.parts.length){ GLOW.part = np; return glowRender(); }
+  }
+  let i = GLOW.i + dir;
+  if(i >= GLOW.items.length){ i = 0; if(!glowInOrder(GLOW.src)) GLOW.order = glowShuffle(GLOW.items.length); }
+  if(i < 0) i = GLOW.items.length - 1;
+  GLOW.i = i; GLOW.part = dir < 0 ? -1 : 0;
+  return glowRender();
+}
+function glowPause(){
+  GLOW.paused = !GLOW.paused;
+  glowLook();
+  if(GLOW.paused) clearTimeout(GLOW.timer);
+  else glowSchedule(document.getElementById('glow-txt').textContent);
+  showToast(GLOW.paused ? 'Paused — this verse stays' : 'Playing');
+}
+function glowPace(){
+  GLOW.pace = GLOW_PACES[(GLOW_PACES.indexOf(GLOW.pace) + 1) % GLOW_PACES.length];
+  glowSave(); glowLook();
+  glowSchedule(document.getElementById('glow-txt').textContent);
+}
+function glowScene(){
+  const i = GLOW_SCENES.findIndex(x => x[0] === GLOW.scene);
+  GLOW.scene = GLOW_SCENES[(i + 1) % GLOW_SCENES.length][0];
+  glowSave(); glowLook();
+}
+function glowFont(dir){ GLOW.scale = Math.min(1.6, Math.max(0.6, +(GLOW.scale + dir * 0.1).toFixed(2))); glowSave(); glowRender(false); }
+function glowLook(){
+  const ov = document.getElementById('glow-overlay'), bg = document.getElementById('glow-bg');
+  const sc = GLOW_SCENES.find(x => x[0] === GLOW.scene) || GLOW_SCENES[0];
+  ov.classList.toggle('hc', sc[0] === 'hc');
+  ov.classList.toggle('scene', !!sc[2]);
+  if(sc[2]){
+    const wide = window.innerWidth > window.innerHeight && GLOW_WIDE[sc[2]];
+    bg.style.backgroundImage = /gradient\(/.test(sc[2]) ? sc[2] : `url(backgrounds/${sc[2]}${wide ? '_land' : ''}.jpg?v=${BG_V})`;
+  }
+  document.getElementById('glow-scene').textContent = '🖼 ' + sc[1];
+  document.getElementById('glow-pace').textContent = `⏱ ${GLOW.pace} s`;
+  const p = document.getElementById('glow-play');
+  p.textContent = GLOW.paused ? '▶ Play' : '⏸ Pause'; p.classList.toggle('on', GLOW.paused);
+  const s = glowSources().find(x => x.k === GLOW.src);
+  document.getElementById('glow-src').textContent = '📚 ' + (s ? s.n : 'Verses');
+}
+// The buttons fade after a few seconds still; a tap or a move brings them back
+function glowWake(){
+  const ov = document.getElementById('glow-overlay');
+  ov.classList.remove('idle'); clearTimeout(GLOW.idle);
+  GLOW.idle = setTimeout(() => { if(GLOW.on && !document.getElementById('glow-pick').classList.contains('on')) ov.classList.add('idle'); }, 4000);
+}
+
+// ── Choosing the verses ──
+function glowPickOpen(){
+  const el = document.getElementById('glow-pick'), src = glowSources();
+  let g = '', h = '<h3>✨ Which verses?</h3>';
+  for(const s of src){
+    if(s.g !== g){ g = s.g; h += `<div class="gp-lbl">${g}</div>`; }
+    h += `<button class="gp${s.k === GLOW.src ? ' on' : ''}" data-k="${escapeHtml(s.k)}" onclick="glowPick(this.dataset.k)"><i>${s.i}</i><span>${escapeHtml(s.n)}<small>${escapeHtml(s.d)}</small></span></button>`;
+  }
+  el.innerHTML = h + '<button class="gp-x" onclick="glowPickClose()">Close</button>';
+  if(el.classList.contains('on')) return;
+  el.classList.add('on'); el.scrollTop = 0;
+  clearTimeout(GLOW.idle);
+  history.pushState({screen:S.screen, modal:'glowpick'}, '', '');   // Back closes the list, not Glow
+}
+// true when the list was open (and is now closed)
+function glowPickClose(fromBack){
+  const el = document.getElementById('glow-pick');
+  if(!el.classList.contains('on')) return false;
+  el.classList.remove('on'); glowWake();
+  if(!fromBack && history.state && history.state.modal === 'glowpick'){ S._popSkip = true; history.back(); }
+  return true;
+}
+async function glowPick(k){
+  glowPickClose();
+  if(k === GLOW.src && GLOW.built === k) return;
+  GLOW.src = k; glowSave(); GLOW.paused = false;
+  await glowBuild(); glowLook();
+  glowRender();
+}
+
+// ── Where it leads ──
+function glowCur(){ return GLOW.items[GLOW.order[GLOW.i]]; }
+function glowRefTap(e){
+  if(e) e.stopPropagation();
+  const ov = document.getElementById('glow-overlay');
+  if(ov.classList.contains('idle')){ glowWake(); return; }
+  glowRead();
+}
+// The verse in its chapter; Back comes back to Glow at the same verse
+function glowRead(){
+  const it = glowCur();
+  if(!it || !it.ref){ showToast('This verse has no reference to open'); return; }
+  stepAside('glow-overlay', () => jumpToRef(it.ref));
+}
+// The verse as a phone wallpaper in the card maker; Back comes back to Glow
+async function glowWallpaper(){
+  const it = glowCur();
+  if(!it) return;
+  await glowResolve(it);
+  const vs = [{ref: (it.ref || '').replace(/-\d+$/, ''), vnum: '', txt: it.txt}];
+  stepAside('glow-overlay', () => { S.cardOrientation = 'wallpaper'; openScrOverlay(vs, it.label); switchOrientation('wallpaper'); });
+}
+// First time: how to use it (the hints are on top of the page, so Glow shows its own)
+function glowNote(){
+  if(!hintsOn() || hintSeen('glow')) return;
+  const n = document.getElementById('glow-note'), h = HINTS.glow;
+  n.innerHTML = `<b>${h.i} ${h.t}</b><div>${h.b}</div><button onclick="this.parentNode.classList.remove('on')">Got it</button>`;
+  n.classList.add('on');
+  const seen = LS.get('kjv_hints_seen', []) || []; seen.push('glow'); LS.set('kjv_hints_seen', seen);
+  setTimeout(() => n.classList.remove('on'), 15000);
+}
 
 /* ════ RESIZABLE PANELS (wide screens) ════
    Drag a side panel's edge — the verse card, notebook, map or a journey's
@@ -11868,6 +12343,7 @@ function renderColList(el, c){
       <button onclick="colShare('${c.id}')">📤 Share</button>
       <button onclick="colPresent('${c.id}')">🎦 Present</button>
       <button onclick="colToStudy('${c.id}')">📝＋ Study</button>
+      <button onclick="glowOpen('list:${c.id}')">✨ Glow</button>
     </div>
     <button class="col-pickgo" onclick="colPickStart()">📸 Screenshot — pick up to 3 verses</button>` : `<div class="empty-msg" style="padding:24px 0">Empty for now.<br>While reading, tap a verse → 🔖 Save → ${escapeHtml(c.n)}.</div>`}
     ${c.items.map((it, i) => `<div class="col-item">
@@ -14386,6 +14862,15 @@ const TOOL_TIPS = {
     ['🖱', '<strong>🖱 Clicker only</strong> hides the buttons; touch near the bottom edge to bring them back. <strong>⛶</strong> fills the screen; Esc or ✕ finishes'],
     ['☁️', 'Your Present settings are remembered and travel with your restore code'],
   ]},
+  glow: {i:'✨', t:'Verse Glow', tips:[
+    ['✨', '<strong>Verses fade in one after another</strong>, large and full screen, for a lobby or captioning screen before and after the service, a tablet in the kitchen or a phone on the nightstand. The screen stays awake while it shows'],
+    ['📚', '<strong>📚 Verses</strong> chooses what plays: every Verse of the Day verse, a theme (Salvation, Comfort &amp; Trust, Strength &amp; Courage, Praise, the Lord Jesus Christ, the Word &amp; Prayer, His Coming), one of your <strong>My Verses</strong> lists, your <strong>Sword Drill</strong> verses, the study you have open, or the chapter you were reading. Chosen verses come in a fresh order; your own play in your order'],
+    ['👆', '<strong>Tap the screen</strong> to bring the buttons back; the first tap does nothing else, so a passer-by cannot lose your place. Then tap the right or left side, swipe, or use ‹ › (or the arrow keys) to move on or back; <strong>⏸</strong> keeps one verse up'],
+    ['⏱', '<strong>⏱</strong> sets how long each verse stays (15 seconds to a minute and a half); a long verse stays longer, and one too long to read across a room runs over two screens'],
+    ['🖼', '<strong>🖼</strong> changes the background: Plain, High contrast (black and white, boldest for a monitor), or one of the card scenes. <strong>A− / A+</strong> change the size'],
+    ['📖', '<strong>Tap the reference</strong> (or 📖 Read) to open the verse in its chapter; <strong>Back</strong> returns to Glow at the same verse. <strong>📱 Wallpaper</strong> makes the verse a phone wallpaper'],
+    ['⛶', '<strong>⛶</strong> fills the screen. On an iPad, Guided Access (Settings → Accessibility) keeps it on Glow; a four-finger swipe switches between Glow and your captioning app'],
+  ]},
   journey: {i:'🧭', t:'Journeys', tips:[
     ['›', '<strong>Next stop › and ‹ Back</strong> step through the journey, or tap a numbered stop on the map. Each stop is a verse that names the place'],
     ['📖', '<strong>Read ›</strong>, or a tap on the stop\'s verse, opens it in its chapter, and <strong>Back</strong> brings you back to the journey at the same stop (from the place, a Psalm or the timeline too); <strong>📅 About …</strong> opens the timeline at that event'],
@@ -14522,6 +15007,7 @@ const HINTS = {
   strongstool: {i:'🔤', t:'Hebrew & Greek', b:'Type an English word such as <b>mercy</b> to see the Hebrew and Greek words the KJV renders by it, or a number like <b>G26</b>. Tap a word for its meaning and every verse it is in.', at:'#strongs-input', tt:'strongs'},
   strongs:  {i:'🔤', t:'Follow a word', b:'Every verse this word is in is listed below, its English in bold. Tap a rendering such as <b>mercy</b> or <b>kindness</b> to see only those verses.', at:'#strongs-view .sg-r', tt:'strongs'},
   hymn:     {i:'🎵', t:'Share a hymn', b:'<b>Tap a verse</b> of the hymn (or the refrain) to light it, and tap more to take them together. Then <b>📸 Card</b> makes a picture of it to share, <b>📝＋ Study</b> adds it to your notes, or <b>📤 Share</b> sends the words.', at:'#hymn-view .hy-st'},
+  glow:     {i:'✨', t:'Verse Glow', b:'The verses fade in one after another and the screen stays awake. <b>Tap the screen</b> for the buttons: <b>📚 Verses</b> chooses a theme, a My Verses list or a chapter, <b>⏱</b> the pace, <b>🖼</b> the background. Tap the reference to read the chapter; Back returns here.'},
   sword:    {i:'⚔️', t:'Sword Drill', b:'Hide God’s Word in your heart. Choose a verse, fill in the missing words, and once you master it, it rests a month before it comes back for review — badges mark your progress. In First Letters and Full Recall you can tap <b>🎤</b> and say the verse aloud.', at:null},
 };
 const HINT_GAP = 8000; // at least this long between two hints
@@ -16714,7 +17200,7 @@ function showWelcomeIfNeeded(){
 // of sw.js CACHE_NAME, and that's the cue to redo the one-page feature guide.
 // Bug-fix point releases (v23.01, v23.02 …) deliberately leave this untouched,
 // so the pop-up never fires for a fix. Each major version shows at most once.
-const WHATS_NEW_VERSION = 'v63';
+const WHATS_NEW_VERSION = 'v64';
 function showWhatsNewIfNeeded(){
   if(localStorage.getItem('kjv_whatsnew') === WHATS_NEW_VERSION) return; // already seen this batch
   // Brand-new users are seeing everything for the first time and get the
@@ -17010,7 +17496,7 @@ const SYNC_KEYS = [
   'kjv_bm','kjv_hl','kjv_notes','kjv_fs','kjv_theme','kjv_last',
   'kjv_streak','kjv_streak_best','kjv_streak_last','kjv_streak_tokens',
   'kjv_streak_ts','kjv_streak_ms','kjv_mem_mastery','kjv_active_plan',
-  'kjv_books_read','kjv_pres','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies','kjv_hints_seen','kjv_hints_off','kjv_hl_names','kjv_recent'
+  'kjv_books_read','kjv_pres','kjv_glow','kjv_spos','kjv_cpos','kjv_history','kjv_ls','kjv_margin','kjv_ff','kjv_audio_adv','kjv_mem_custom','kjv_studies','kjv_hints_seen','kjv_hints_off','kjv_hl_names','kjv_recent'
 ];
 
 let _db = null;
@@ -17709,6 +18195,15 @@ function closeSettings(e){
     <!-- Each item is tagged with the release it arrived in (data-wn). Someone
          who already saw an earlier pop-up only sees the items newer than it;
          someone who skipped a release sees everything since their last one. -->
+    <div class="wn-item" data-wn="v64" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
+      <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">✨</div>
+      <div>
+        <div style="font-family:'IM Fell English',serif;font-size:16px;color:var(--gold)">Verse Glow &amp; Phone Wallpapers</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:14px;color:var(--text);line-height:1.5">
+          <strong>✨ Verse Glow</strong> shows verses one after another, large and full screen, and keeps the screen awake. Use it on a lobby screen before and after the service, or on a phone by the bed. It's in Home → Search &amp; Study Tools, and <strong>✨ Glow</strong> on any My Verses list. The verse card maker can now make a <strong>📱 phone wallpaper</strong> too, with the verse below the clock.
+        </div>
+      </div>
+    </div>
     <div class="wn-item" data-wn="v63" style="display:flex;align-items:flex-start;gap:13px;padding:12px 0;border-top:1px solid var(--border)">
       <div style="font-size:24px;flex-shrink:0;width:30px;text-align:center">📜</div>
       <div>
