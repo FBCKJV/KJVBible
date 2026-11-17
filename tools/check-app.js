@@ -230,7 +230,7 @@ check('verse card: Strong\'s fold and a word', async p => {
 });
 
 check('search: every study tool opens and Back leaves it', async p => {
-  const tools = await p.evaluate(() => SEARCH_TOOLS.map(t => t.m));
+  const tools = await p.evaluate(() => SEARCH_TOOLS.filter(t => !t.open).map(t => t.m));   // Verse Glow opens over the page (its own check)
   await p.evaluate(() => showScreen('search')); await sleep(400);
   for(const m of tools){
     await p.evaluate(m => switchSearchMode(m), m); await sleep(900);
@@ -842,6 +842,19 @@ check('Back always returns to where you began: every card, map and tool that lea
     out.memAway = {...at(), mem: on('mem-overlay')};
     history.back(); await w(1500); out.mem = {on: on('mem-overlay'), title: document.getElementById('mem-hdr-title').textContent, game: document.getElementById('mem-game').style.display};
     history.back(); await w(800); history.back(); await w(800); out.memClosed = !on('mem-overlay');
+    // Verse Glow, a verse → 📖 its chapter → Back: Glow at the same verse; 📱 Wallpaper → Back: Glow again
+    glowOpen('salvation'); await w(2500); glowStep(1); await w(2000);
+    const gi = GLOW.i, gref = glowCur().ref;
+    glowRead(); await w(2000); out.glowAway = {...at(), glow: on('glow-overlay')};
+    history.back(); await w(2000); out.glow = {on: on('glow-overlay'), same: GLOW.i === gi && glowCur().ref === gref, ref: document.getElementById('glow-ref').textContent};
+    await glowWallpaper(); await w(1200); out.wpAway = document.getElementById('scr-overlay').classList.contains('on') && !on('glow-overlay');
+    history.back(); await w(1500); out.wpBack = on('glow-overlay') && !document.getElementById('scr-overlay').classList.contains('on') && GLOW.i === gi;
+    history.back(); await w(800); out.glowClosed = !on('glow-overlay');
+    // Present → ✨ Glow → Back: Present on the same verse
+    presOpen('Psalm 23:1'); await w(1500); const pv = PRES.v;
+    document.querySelector('#pres-bar button[onclick*=glowOpen]').click(); await w(1500); out.presGlow = on('glow-overlay') && !on('pres-overlay');
+    history.back(); await w(1500); out.presAgain = on('pres-overlay') && !on('glow-overlay') && PRES.book === 'Psalms' && PRES.v === pv;
+    presClose(); await w(800);
     return out;
   });
   assert(r.vpGone && r.vp.screen === 'reader' && r.vp.book === 'Genesis' && r.vp.ch === 28 && r.vp.card && r.vp.ref === 'Genesis 28:19' && r.vpClosed, 'verse card → place → Back: ' + JSON.stringify(r));
@@ -849,7 +862,87 @@ check('Back always returns to where you began: every card, map and tool that lea
   assert(r.xrAway.book === 'John' && r.xr.book === 'Zechariah' && r.xr.ch === 14 && r.xr.card, 'cross-reference → Open → Back: ' + JSON.stringify(r.xr));
   assert(r.wmGone && r.wm.map && r.wm.book === '1 Samuel' && r.wm.ch === 21 && /1 Samuel 21/.test(r.wm.title) && r.wm.jr && r.wmClosed, 'Where map → place → Back: ' + JSON.stringify(r.wm));
   assert(r.mapAway && r.map && r.mapClosed, 'classic map → verse → Back did not bring the map back');
+  assert(r.glowAway.screen === 'reader' && !r.glowAway.glow && r.glow.on && r.glow.same && r.glow.ref && r.wpAway && r.wpBack && r.glowClosed, 'Verse Glow → chapter / wallpaper → Back: ' + JSON.stringify(r));
+  assert(r.presGlow && r.presAgain, 'Present → ✨ Glow → Back did not return to Present: ' + JSON.stringify(r));
   assert(r.memAway.screen === 'reader' && r.memAway.book === 'John' && !r.memAway.mem && r.mem.on && r.mem.title === 'John 3:16' && r.mem.game === 'flex' && r.memClosed, 'Sword Drill → chapter → Back: ' + JSON.stringify(r));
+});
+
+check('Verse Glow: plays verses, chooses a theme or a list, every chosen verse is real, Back closes the list then Glow', async p => {
+  const r = await p.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), on = id => document.getElementById(id).classList.contains('on');
+    const out = {};
+    // from Home's tools
+    showScreen('books'); await w(600); homeTool('glow'); await w(2500);
+    out.open = on('glow-overlay'); out.txt = document.getElementById('glow-txt').textContent; out.ref = document.getElementById('glow-ref').textContent;
+    out.n = GLOW.items.length; out.vod = VOD.length;
+    const t0 = out.txt; glowStep(1); await w(2000); out.stepped = GLOW.i === 1 && document.getElementById('glow-txt').textContent !== t0;
+    // every verse of every theme is in the Bible
+    out.bad = [];
+    for(const k of Object.keys(GLOW_SETS)) for(const ref of glowSetRefs(k)){ const it = await glowResolve({ref}); if(!it.txt) out.bad.push(ref); }
+    // the list of sources, and Back closes it alone
+    glowPickOpen(); await w(300); out.pick = on('glow-pick') && document.querySelectorAll('#glow-pick button.gp').length >= 8;
+    history.back(); await w(500); out.pickBack = !on('glow-pick') && on('glow-overlay');
+    await glowPick('comfort'); await w(2000); out.comfort = GLOW.src === 'comfort' && GLOW.items.length === glowSetRefs('comfort').length;
+    // a first tap only brings the buttons back
+    document.getElementById('glow-overlay').classList.add('idle'); const i0 = GLOW.i;
+    const st = document.getElementById('glow-stage'), x = innerWidth * 0.9, y = innerHeight / 2;
+    st.dispatchEvent(new PointerEvent('pointerdown', {clientX: x, clientY: y, bubbles: true})); st.dispatchEvent(new PointerEvent('pointerup', {clientX: x, clientY: y, bubbles: true}));
+    await w(300); out.firstTap = GLOW.i === i0 && !document.getElementById('glow-overlay').classList.contains('idle');
+    glowPause(); out.paused = GLOW.paused && document.getElementById('glow-play').textContent.includes('Play'); glowPause();
+    history.back(); await w(800); out.closed = !on('glow-overlay') && !GLOW.on;
+    // a My Verses list plays in its own order, from ✨ Glow on the list
+    const d = colData(); d.list.push({id: 'cglow', n: 'Sunday', items: [{a: 'John 3:16', r: 'John 3:16', t: ''}, {a: 'Romans 5:8', r: 'Romans 5:8', t: ''}, {a: 'John 10:27', e: 29, r: 'John 10:27–29', t: ''}], u: Date.now()}); colSave(d);
+    showScreen('saved'); await w(400); colOpen('cglow'); await w(800);
+    const b = [...document.querySelectorAll('.col-acts button')].find(x => /Glow/.test(x.textContent)); out.listBtn = !!b; if(b) b.click(); await w(2500);
+    out.list = GLOW.src === 'list:cglow' && GLOW.items.map(x => x.ref).join('|');
+    out.first = document.getElementById('glow-ref').textContent;
+    GLOW.i = 2; await glowRender(false); out.passage = document.getElementById('glow-ref').textContent + ' ' + document.getElementById('glow-txt').textContent.slice(0, 20);
+    history.back(); await w(800);
+    return out;
+  });
+  // On a monitor across a room, a very long passage (Psalm 119:1-16) runs over several screens, each at least the room-readable size
+  await p.setViewportSize({width: 1280, height: 720}); await sleep(400);
+  Object.assign(r, await p.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms)), out = {};
+    glowOpen(); await w(2500);
+    GLOW.items = [{ref: 'Psalm 119:1-16'}]; GLOW.order = [0]; GLOW.i = 0; GLOW.part = 0; await glowRender(false);
+    out.parts = GLOW.parts ? GLOW.parts.length : 1; out.font = parseFloat(document.getElementById('glow-txt').style.fontSize); out.min = glowMin();
+    glowStep(1); await w(1500); out.part2 = GLOW.part === 1 && /^… /.test(document.getElementById('glow-txt').textContent);
+    history.back(); await w(600);
+    return out;
+  }));
+  assert(r.open && r.txt.length > 10 && r.ref && r.n === r.vod, 'Glow should open from Home playing every Verse of the Day verse: ' + JSON.stringify(r));
+  assert(r.stepped, '› should show the next verse');
+  assert(!r.bad.length, 'theme verses not found in the Bible: ' + r.bad.join(', '));
+  assert(r.pick && r.pickBack, 'the list of verses should open, and Back close it alone: ' + JSON.stringify(r));
+  assert(r.comfort, 'choosing Comfort & Trust should play its verses');
+  assert(r.firstTap, 'the first tap on a quiet screen should only bring the buttons back');
+  assert(r.paused && r.closed, 'pause, and Back closes Glow: ' + JSON.stringify(r));
+  assert(r.listBtn && r.list === 'John 3:16|Romans 5:8|John 10:27-29' && r.first === 'John 3:16' && /^John 10:27–29 My sheep/.test(r.passage), 'a My Verses list should play in its order, passages whole: ' + JSON.stringify(r));
+  assert(r.parts >= 2 && r.part2 && r.font >= r.min - 0.5, 'a very long passage should run over several screens at a readable size: ' + JSON.stringify(r));
+});
+
+check('verse card: 📱 phone wallpaper is 1080 × 2340, verse below the clock, in every scene', async p => {
+  const r = await p.evaluate(async () => {
+    const w = ms => new Promise(r => setTimeout(r, ms));
+    await jumpToRef('Ephesians 2:8'); await w(1200);
+    const v = S.bookData.chapters[1].verses[7]; openVPop('Ephesians 2:8', v.text); await w(400);
+    singleScreenshot(); await w(800);
+    switchOrientation('wallpaper'); await w(300);
+    const c = document.getElementById('scr-canvas'), out = {w: c.width, h: c.height, hint: !document.getElementById('wp-hint').hidden};
+    // the top 38% is left for the clock: no text drawn there on a plain style
+    const ctx = c.getContext('2d'), top = ctx.getImageData(0, 0, c.width, Math.round(c.height * 0.38)).data;
+    let lit = 0; for(let i = 0; i < top.length; i += 4) if(top[i] + top[i + 1] + top[i + 2] > 450) lit++;
+    out.clockClear = lit < 50;
+    for(const sc of ['meadow', 'calvary', 'morning', 'starry']){ switchCardScene(sc); await w(400); }
+    out.after = c.width + 'x' + c.height;
+    switchOrientation('landscape'); out.hintGone = document.getElementById('wp-hint').hidden;
+    closeScrOverlay(); await w(400);
+    return out;
+  });
+  assert(r.w === 1080 && r.h === 2340 && r.after === '1080x2340', 'the wallpaper should be 1080 × 2340: ' + JSON.stringify(r));
+  assert(r.clockClear, 'the clock\'s space at the top should be clear: ' + JSON.stringify(r));
+  assert(r.hint && r.hintGone, 'the wallpaper note shows only for a wallpaper');
 });
 
 check('📖 at the top returns from Search to the chapter and place you left', async p => {
