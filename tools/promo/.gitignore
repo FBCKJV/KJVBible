@@ -1,0 +1,9 @@
+# Everything the promo tools make is rebuilt from the scripts here
+rec-*
+vo-*/
+voices/
+st-*.png
+*.mp4
+*.wav
+*.cues.json
+*.marks.json

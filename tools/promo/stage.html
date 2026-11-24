@@ -1,0 +1,118 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=block" rel="stylesheet">
+<style>
+:root{--gold:#d4a24c;--gold-l:#ecc77d;--text:#f3e9d6;--text-m:#bfae8f;--bg1:#1a120a;--bg2:#0d0906}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:transparent}
+.bg{position:absolute;inset:0;background:radial-gradient(1200px 900px at 72% 45%,#2a1d10 0%,var(--bg1) 45%,var(--bg2) 100%)}
+.bg::after{content:"";position:absolute;inset:0;background:radial-gradient(600px 600px at 1383px 540px,rgba(212,162,76,.16),transparent 70%)}
+body.wide .bg{background:radial-gradient(1500px 900px at 50% 60%,#2a1d10 0%,var(--bg1) 50%,var(--bg2) 100%)}
+body.wide .bg::after{display:none}
+.brand{position:absolute;left:120px;top:84px;font-family:'IM Fell English';font-size:34px;color:var(--gold);letter-spacing:.5px}
+.brand small{display:block;font-family:Inter;font-size:15px;letter-spacing:4px;text-transform:uppercase;color:var(--text-m);margin-top:8px}
+.cap{position:absolute;left:120px;top:250px;width:940px}
+.kicker{font-family:Inter;font-weight:600;font-size:22px;letter-spacing:6px;text-transform:uppercase;color:var(--gold)}
+.title{font-family:'IM Fell English';font-size:86px;color:var(--text);line-height:1.05;margin:14px 0 24px}
+.body{font-family:'Crimson Pro';font-size:40px;line-height:1.35;color:var(--text);max-width:900px}
+.body em{color:var(--gold-l);font-style:italic}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;margin-top:40px;width:760px;font-family:Inter;font-size:24px}
+.tools div{padding:11px 20px;border-radius:12px;border:1.5px solid rgba(212,162,76,.22);color:var(--text-m)}
+.tools div.done{color:rgba(191,174,143,.75)}
+.tools div.done::before{content:"✓ ";color:var(--gold)}
+.tools div.on{background:var(--gold);color:#1a120a;border-color:var(--gold);font-weight:600}
+.ring{position:absolute;left:120px;bottom:84px;display:flex;align-items:center;gap:12px;font-family:Inter;font-size:20px;color:var(--text-m)}
+.ring .n{padding:9px 18px;border:1.5px solid rgba(212,162,76,.35);border-radius:40px}
+.ring .n.on{background:var(--gold);color:#1a120a;border-color:var(--gold);font-weight:600}
+.ring .a{color:rgba(212,162,76,.6)}
+.ring .w{font-family:'IM Fell English';font-style:italic;font-size:24px;color:var(--gold-l);margin-left:4px}
+/* phone: screen at 1180,100 406x880 */
+.phone{position:absolute;left:1166px;top:86px;width:434px;height:908px;border-radius:58px;border:14px solid #0b0806;
+  box-shadow:0 0 0 2px #4a3a26,0 30px 80px rgba(0,0,0,.7),0 0 120px rgba(212,162,76,.18)}
+.hole{position:absolute;left:1180px;top:100px;width:406px;height:880px;border-radius:44px;background:#000}
+/* laptop: screen at 336,236 1248x780 */
+.wcap{position:absolute;left:0;right:0;top:44px;text-align:center}
+.wcap .title{font-size:64px;margin:8px 0 6px}
+.wcap .body{font-size:32px;max-width:none}
+.lid{position:absolute;left:318px;top:218px;width:1284px;height:816px;border-radius:26px 26px 6px 6px;border:18px solid #0b0806;
+  box-shadow:0 0 0 2px #4a3a26,0 30px 90px rgba(0,0,0,.7),0 0 140px rgba(212,162,76,.14)}
+.lhole{position:absolute;left:336px;top:236px;width:1248px;height:780px;background:#000}
+.lbase{position:absolute;left:230px;top:1034px;width:1460px;height:22px;border-radius:0 0 30px 30px;background:linear-gradient(#3a2d1f,#16100a);box-shadow:0 0 0 1px #4a3a26}
+body.bezel .bg,body.bezel .cap,body.bezel .brand,body.bezel .ring,body.bezel .hole,body.bezel .lhole,body.bezel .wcap{display:none}
+body.bezel .phone,body.bezel .lid{box-shadow:0 0 0 2px #4a3a26}
+body.base .phone,body.base .lid{border-color:transparent}
+/* cards */
+.card{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--text)}
+.card .cross{font-size:64px;color:var(--gold);font-family:'IM Fell English'}
+.card h1{font-family:'IM Fell English';font-weight:400;font-size:108px;line-height:1.05;margin:16px 0 18px}
+.card .sub{font-family:'Crimson Pro';font-size:44px;color:var(--text);max-width:1400px;line-height:1.35}
+.card .gold{color:var(--gold-l);font-style:italic}
+.card .rule{width:120px;height:2px;background:var(--gold);opacity:.6;margin:34px auto}
+.card .pills{display:flex;gap:18px;font-family:Inter;font-size:26px;margin-top:6px}
+.card .pills span{border:1.5px solid rgba(212,162,76,.5);border-radius:40px;padding:12px 26px;color:var(--text)}
+.card .url{font-family:Inter;font-weight:600;font-size:56px;color:var(--gold);margin-top:40px;letter-spacing:.5px}
+.card .church{font-family:Inter;font-size:20px;letter-spacing:5px;text-transform:uppercase;color:var(--text-m);margin-top:36px}
+.verse{font-family:'Crimson Pro';font-style:italic;font-size:34px;color:var(--text-m)}
+</style></head><body>
+<div class="bg"></div>
+<div id="root"></div>
+<script>
+const Q=new URLSearchParams(location.search);const mode=Q.get('m');
+const RING=['Read','Study','Keep','Memorize','Share & Present'];
+const ring=on=>`<div class="ring">${RING.map((x,i)=>`<span class="n ${x===on?'on':''}">${x}</span>${i<RING.length-1?'<span class="a">→</span>':''}`).join('')}<span class="a">↺</span><span class="w">back to the Word</span></div>`;
+const TOOLS=[['concord','Concordance'],['dict','Dictionary'],['strongs','Hebrew & Greek'],['topics','Topics'],['doct','Doctrines'],['maps','Maps & Journeys'],['timeline','Timeline'],['hymns','Hymns & Names'],['glow','Verse Glow']];
+const C={
+ read:['For the reader','Read','The Verse of the Day','Waiting each time you open the app, and sent to your phone each morning if you wish.'],
+ chapter:['For the reader','Read','Simply read','Any book and chapter, in clear, restful type: dark, light or sepia. A <em>Reading Journal</em> waits at the end of each chapter.'],
+ romans:['For the reader','Read','The Romans Road','Front and center on the home page, ready to win souls.'],
+ audio:['For the reader','Read','Listen to the Bible','Alexander Scourby’s King James reading, chapter by chapter or a whole book, with a sleep timer.'],
+ plans:['For the reader','Read','Reading plans','Proverbs in a month, the New Testament in 30 days, the Bible in a year, or a plan of your own.'],
+ streak:['For the reader','Read','Reading streaks','Your streak grows each day you read. A week of reading earns a <em>shield</em> for a missed day, and badges mark every milestone.'],
+ hymns:['Study tools','Study','Hymns & Names','224 hymns of the faith, and Bible names with their meanings.'],
+ glow:['Study tools','Study','Verse Glow','A screensaver of Scripture: one verse gently fades into the next, full screen.'],
+ notes:['Keep','Keep','Verses into your notes','Press and hold a verse, tap <em>Study</em>, and it is in your notes. Tap its reference to go back to the chapter.'],
+ drill2:['Memorize','Memorize','Streaks, badges & packs','A daily streak, badges and certificates, verse packs to unlock, your own verses, and modes for every age and level.'],
+ links:['Share','Share & Present','Links & hymn cards','Share any verse, passage or hymn as a link that opens right to it. Hymn lyrics make cards, too.'],
+ tips:['Always there','','Tips & Help','One tap away, with a short guide for every tool.'],
+ privacy:['Always there','','Your privacy is kept','No accounts, no names or emails, no ads, and nothing is ever sold. A backup code keeps your notes safe.'],
+ search:['For the student','Study','Search the Scriptures','Find any word or phrase in the King James Bible and land right in the chapter.'],
+ card:['For the student','Study','Tap any verse','The meaning of its words, the Greek and Hebrew behind them, cross-references and the doctrines it teaches.'],
+ back:['For the student','Study','Always back to the verse','Every page leads to Scripture, and <em>Back</em> returns you right where you were reading.'],
+ tools:['Study tools','Study','A library, built in','A whole shelf of study tools, and every verse in them opens its chapter.'],
+ concord:['Study tools','Study','Concordance','Every word in the King James Bible, and every verse it is found in.'],
+ dict:['Study tools','Study','Dictionary','Webster’s 1828, with plain notes on older King James words.'],
+ strongs:['Study tools','Study','Hebrew & Greek','Strong’s: the original word behind the English, and where else it is used.'],
+ topics:['Study tools','Study','Topics','Nave’s 5,300 Bible topics, with the verses on each.'],
+ doct:['Study tools','Study','Doctrines','The primary doctrines of the faith, each shown from Scripture.'],
+ maps:['Study tools','Study','Maps & Journeys','Abraham, Moses, David, the Lord Jesus and Paul, stop by stop, each stop with its verses. Every chapter’s places, on the map.'],
+ timeline:['Study tools','Study','Timeline','From Creation to Revelation, every event tied to its passage.'],
+ keep:['Keep','Keep','Highlights & My Verses','Highlight in your own colours, with your own labels, and save verses to <em>My Verses</em> lists you create.'],
+ drill:['Memorize','Memorize','Sword Drill','Hide the Word in thine heart: learn verses one word at a time, and earn badges as you go.'],
+ share:['Share','Share & Present','Verse cards','Any verse as a picture, in a beautiful scene or on your own photo, to share by text, email or social media.'],
+ drill:['Memorize','Memorize','Sword Drill','A Bible memorization game. Hide the Word in thine heart, one word at a time.'],
+ laptop:['On a laptop','Study','Study notes beside the Bible','Write a lesson or sermon with the chapter open, adding references from any study tool.'],
+ present:['On a laptop','Share & Present','Present on the big screen','Project a passage for church, a class or a Bible study, one verse at a time.'],
+};
+const R=document.getElementById('root');
+if(mode==='bezel'){document.body.classList.add('bezel');R.innerHTML='<div class="phone"></div>';}
+else if(mode==='lbezel'){document.body.classList.add('bezel');R.innerHTML='<div class="lid"></div><div class="lbase"></div>';}
+else if(mode==='intro'){R.innerHTML=`<div class="card"><div class="cross">✝</div>
+ <h1>The King James Bible</h1>
+ <div class="sub">A fully featured Bible app — <span class="gold">King James only.</span></div>
+ <div class="sub" style="font-size:38px;color:var(--text-m);margin-top:14px">For the one who simply reads, and for the serious student of the Word.</div>
+ <div class="rule"></div><div class="verse">“Thy word is a lamp unto my feet, and a light unto my path.” — Psalm 119:105</div></div>`;}
+else if(mode==='outro'){R.innerHTML=`<div class="card"><div class="cross">✝</div>
+ <h1>Everything leads back to the Word.</h1>
+ <div class="rule" style="margin:26px auto 34px"></div>
+ <div class="pills"><span>King James only</span><span>Free</span><span>No download</span><span>No account</span><span>No ads</span></div>
+ <div class="sub" style="margin-top:30px;font-size:38px">On any phone, tablet or computer. Share it with your church.</div>
+ <div class="url">fbckjv.app/KJVBible</div>
+ <div class="church">Faith Baptist Church of Plymouth County</div></div>`;}
+else if(mode==='laptop'||mode==='present'){const c=C[mode];document.body.classList.add('base','wide');
+ R.innerHTML=`<div class="wcap"><div class="kicker">${c[0]}</div><div class="title">${c[2]}</div><div class="body">${c[3]}</div></div><div class="lhole"></div><div class="lid"></div><div class="lbase"></div>`;}
+else{const c=C[mode];document.body.classList.add('base');
+ const ti=TOOLS.findIndex(t=>t[0]===mode);
+ const list=(mode==='tools'||ti>=0)?`<div class="tools">${TOOLS.map((t,i)=>`<div class="${i===ti?'on':i<ti?'done':''}">${t[1]}</div>`).join('')}</div>`:'';
+ const kick=ti>=0?`${c[0]} · ${ti+1} of ${TOOLS.length}`:c[0];
+ R.innerHTML=`<div class="brand">✝ The King James Bible<small>King James only · Free for your church</small></div>
+ <div class="cap"${list?' style="top:200px"':''}><div class="kicker">${kick}</div><div class="title">${c[2]}</div><div class="body">${c[3]}</div>${list}</div>${ring(c[1])}<div class="hole"></div><div class="phone"></div>`;}
+</script></body></html>
