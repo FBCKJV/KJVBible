@@ -61,3 +61,15 @@ cd tools/promo
 - **Wording.** Change `script.json` and record the narration again. A new scene needs its key in `script.json`, a `scene('<key>', …)` in `record4.js` in the same place, and a caption under that key in `stage.html` (`C` in its script).
 - **The app changed.** Record again (steps 2 and 3); the narration can stay. If a scene prints `FAILED`, a button it taps has moved: look at that scene in `record4.js`.
 - **A scene runs past its narration.** `record4.js` prints `over <scene> 2.1s`; the music fills the gap. Shorten that scene's waits, or lengthen its paragraph.
+
+## The thumbnail
+
+`thumbnail.html` is the YouTube thumbnail (1280 × 720); its two phone screens are frames of the phone recording. After recording, take them and draw it:
+
+```sh
+ffmpeg -ss 76 -i rec-n.mp4 -frames:v 1 thumb-card.png   # the John 3:16 verse card, "begotten" open
+ffmpeg -ss 3  -i rec-n.mp4 -frames:v 1 thumb-home.png   # Home with the Verse of the Day
+node thumbnail.js                                         # → thumbnail.png
+```
+
+The times move a little with each recording: the verse card is a few seconds after the `card` time in `rec-n.marks.json`. The web address sits bottom left, since YouTube puts the video's length over the bottom-right corner.

@@ -7,3 +7,5 @@ st-*.png
 *.wav
 *.cues.json
 *.marks.json
+thumb-*.png
+thumbnail.png
