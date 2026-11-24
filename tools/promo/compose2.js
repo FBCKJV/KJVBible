@@ -32,7 +32,8 @@ if(!SKIP){
 }
 // narration cues
 const cues=[['intro',0.9]];
-P.marks.forEach(([k,t])=>cues.push([k,o1+t+0.5]));
+const DELAY=JSON.parse(fs.readFileSync(`${D}/delays.json`));
+P.marks.forEach(([k,t])=>cues.push([k,o1+t+0.5+(DELAY[k]||0)]));
 Lp.marks.forEach(([k,t])=>cues.push([k,o2+t+0.6]));
 cues.push(['outro',o3+0.9]);
 const ai=[],fl=[];

@@ -4,6 +4,8 @@ const {openApp,tap,sleep,typeSlow,recorder}=require('./lib');
 const fs=require('fs');
 const LENS=JSON.parse(fs.readFileSync(__dirname+'/'+(process.argv[3]||'vo-mike')+'/lens.json'));
 const LEAD=0.5, TAIL=0.9;
+// a scene whose narration waits a moment for the screen to catch up (seconds)
+const DELAY=JSON.parse(fs.readFileSync(__dirname+'/delays.json'));
 const day=n=>{const d=new Date(2026,10,1+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
 const days={},chs={};for(let i=0;i<23;i++){days[i]=day(i);chs['19:'+i]=day(i);}
 const seed={kjv_streak:23,kjv_streak_best:23,kjv_streak_last:day(22),kjv_streak_ts:String(Date.now()-86400000),kjv_streak_tokens:'2',kjv_nudge_asked:true,
@@ -22,7 +24,7 @@ const scene=async(key,fn)=>{
   cur=key;t0=Date.now();r.mark(key);
   try{await fn();}catch(e){console.log('SCENE',key,'FAILED',e.message.split('\n')[0]);}
 };
-const pad=async()=>{const need=(LEAD+(LENS[cur]||3)+TAIL)*1000-(Date.now()-t0);if(need>0)await sleep(need);else console.log('  over',cur,(-need/1000).toFixed(1)+'s');};
+const pad=async()=>{const need=(LEAD+(DELAY[cur]||0)+(LENS[cur]||3)+TAIL)*1000-(Date.now()-t0);if(need>0)await sleep(need);else console.log('  over',cur,(-need/1000).toFixed(1)+'s');};
 const hubTool=async name=>{const home=await E(()=>{const b=document.getElementById('cat-home');return b&&b.offsetParent?b:null;});
   if(home){await T(home);await sleep(600);} await T(`.hub-t >> text=${name}`);await sleep(800);};
 const lp=async ref=>{await T(`#verses .vblock[data-ref="${ref}"]`,{hold:650,act:()=>p.evaluate(r=>{enterSelectMode();toggleVerseSelect(document.querySelector(`.vblock[data-ref="${r}"]`));},ref)});};
@@ -112,10 +114,8 @@ await scene('notes',async()=>{
   const ref=await E(()=>[...document.querySelectorAll('#nb-ed .nb-ref')].find(e=>/John 3:18/.test(e.textContent)));
   if(ref){await T(ref);await sleep(2200);} else console.log('no nb ref');});
 await scene('drill',async()=>{
-  await p.evaluate(()=>{if(document.getElementById('nb-panel')&&0){} });
-  await glide('.vblock[data-ref="John 3:17"]','screen-reader',360,500);await sleep(300);
-  await lp('John 3:17');await sleep(600);
-  await T('#multibar >> text=Sword Drill');await sleep(1800);
+  await lp('John 3:17');await sleep(400);
+  await T('#multibar >> text=Sword Drill');await sleep(1300);
   await p.evaluate(()=>startMem('John 3:17'));await sleep(1000);
   await T(await H(()=>[...document.querySelectorAll('.mg-mode')].find(b=>/First Letters/.test(b.textContent))));await sleep(400);
   const i=await E(()=>[...document.querySelectorAll('input')].find(i=>/first letter/i.test(i.placeholder)&&i.offsetParent));

@@ -15,6 +15,8 @@ async function openApp(opts={}){
   await ctx.route(u=>!/^http:\/\/127\.0\.0\.1|fonts\.(googleapis|gstatic)\.com/.test(u.href),r=>r.abort());
   const p=await ctx.newPage();p.on('pageerror',e=>console.log('PAGEERR',e.message));
   const WN=fs.readFileSync(ROOT+'/index.html','utf8').match(/WHATS_NEW_VERSION = '([^']+)'/)[1];
+  // full screen would change the recording's size mid-scene (Verse Glow, Present): stay in the page
+  await p.addInitScript(()=>{Element.prototype.requestFullscreen=function(){return Promise.resolve();};Element.prototype.webkitRequestFullscreen=function(){};});
   await p.addInitScript(([wn,seed])=>{if(sessionStorage.getItem('__s'))return;sessionStorage.setItem('__s',1);
     localStorage.setItem('kjv_rc','DEMO01');localStorage.setItem('kjv_whatsnew',wn);localStorage.setItem('kjv_hints_off','true');
     for(const [k,v] of Object.entries(seed||{})) localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v));},[WN,opts.seed]);
