@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Church Website Template</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a sketch board. Two phones side by side (the church's site, the pastor's editor), notes beneath. */
+:root{
+  --bg:#f3f4f6; --panel:#ffffff; --ink:#1d2330; --muted:#5b6474; --line:#d9dde4; --accent:#1f4e79; --ok:#2e7d4f;
+  --display:'Libre Caslon Text', Georgia, 'Times New Roman', serif;
+  --body:'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  /* the church site itself: one fixed look, like a real website */
+  --c-navy:#1b3150; --c-navy2:#244068; --c-paper:#fbfaf7; --c-ink:#22262e; --c-soft:#5d6370; --c-rule:#e4e0d8; --c-gold:#b8862f; --c-fb:#1877f2;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#14171d;--panel:#1c2028;--ink:#e6e9ef;--muted:#9aa3b2;--line:#2e3440;--accent:#8cb7e6;--ok:#6cc495;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171d;--panel:#1c2028;--ink:#e6e9ef;--muted:#9aa3b2;--line:#2e3440;--accent:#8cb7e6;--ok:#6cc495;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:28px}
+header.top h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,3vw,2.2rem);margin:0;text-wrap:balance}
+header.top p{margin:.4rem 0 0;color:var(--muted);max-width:68ch}
+.sample{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 8px;margin-bottom:10px}
+.board{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:28px;align-items:start}
+.col{display:grid;gap:10px;justify-items:center;min-width:0}
+.col h2{font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:700}
+.phone{width:100%;max-width:380px;height:720px;border-radius:38px;border:10px solid #111318;background:#111318;box-shadow:0 18px 50px rgba(0,0,0,.18);overflow:hidden;position:relative}
+.screen{height:100%;overflow-y:auto;border-radius:28px;scrollbar-width:thin}
+
+/* ── the church site ── */
+.site{background:var(--c-paper);color:var(--c-ink);font-family:var(--body);min-height:100%}
+.s-bar{background:var(--c-gold);color:#1b1407;font-size:.86rem;font-weight:600;padding:8px 16px;text-align:center}
+.s-hero{background:var(--c-navy);color:#fff;padding:26px 20px 22px}
+.s-hero .town{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.s-hero h3{font-family:var(--display);font-size:1.7rem;line-height:1.15;margin:.3rem 0 .6rem;text-wrap:balance}
+.s-hero .kjv{font-family:var(--display);font-style:italic;opacity:.9;font-size:.95rem;margin:0}
+.times{display:grid;gap:6px;margin-top:16px;background:var(--c-navy2);border-radius:10px;padding:12px 14px}
+.times div{display:flex;justify-content:space-between;gap:12px;font-size:.95rem}
+.times b{font-weight:600}
+.s-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.s-btns a{display:block;text-align:center;padding:11px 8px;border-radius:8px;font-weight:700;text-decoration:none;font-size:.95rem}
+.s-btns .call{background:#fff;color:var(--c-navy)}
+.s-btns .map{border:1.5px solid rgba(255,255,255,.6);color:#fff}
+.s-sec{padding:20px;border-bottom:1px solid var(--c-rule)}
+.s-sec h4{font-family:var(--display);font-size:1.2rem;margin:0 0 .5rem;color:var(--c-navy)}
+.s-sec p{margin:.3rem 0;color:var(--c-ink)}
+.pastor{display:flex;gap:12px;align-items:center}
+.pastor .ph{width:56px;height:56px;border-radius:50%;background:var(--c-rule);display:grid;place-items:center;font-family:var(--display);font-weight:700;color:var(--c-navy);flex:none}
+.faith details{border-top:1px solid var(--c-rule)}
+.faith details:last-of-type{border-bottom:1px solid var(--c-rule)}
+.faith summary{cursor:pointer;padding:10px 0;font-weight:600;list-style:none;display:flex;justify-content:space-between}
+.faith summary::after{content:"+";color:var(--c-gold);font-weight:700}
+.faith details[open] summary::after{content:"−"}
+.faith details p{margin:0 0 10px;font-size:.95rem}
+.faith .refs{font-family:var(--display);font-style:italic;color:var(--c-soft);font-size:.88rem}
+.fb{border:1px solid var(--c-rule);border-radius:10px;overflow:hidden;background:#fff}
+.fb .h{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--c-rule);font-weight:700;font-size:.92rem}
+.fb .logo{width:22px;height:22px;border-radius:50%;background:var(--c-fb);color:#fff;display:grid;place-items:center;font-size:.8rem;font-weight:800;flex:none}
+.fb .post{padding:10px 12px;border-bottom:1px solid var(--c-rule);font-size:.92rem}
+.fb .post small{color:var(--c-soft);display:block;margin-bottom:2px}
+.fb .note{padding:8px 12px;font-size:.78rem;color:var(--c-soft);background:#f4f6f9}
+.vod{background:#f3efe6;border-radius:10px;padding:14px}
+.vod q{font-family:var(--display);font-style:italic;quotes:none;display:block}
+.vod .r{font-size:.85rem;color:var(--c-soft);margin-top:6px}
+.vod a{display:inline-block;margin-top:8px;color:var(--c-navy);font-weight:700}
+form.cf{display:grid;gap:8px}
+form.cf label{font-size:.85rem;font-weight:600}
+form.cf input,form.cf textarea{width:100%;font:inherit;padding:9px 10px;border:1px solid #cfc9bd;border-radius:7px;background:#fff;color:var(--c-ink)}
+form.cf textarea{min-height:80px;resize:vertical}
+form.cf button{background:var(--c-navy);color:#fff;border:0;border-radius:8px;padding:11px;font:inherit;font-weight:700;cursor:pointer}
+.hp{position:absolute;left:-9999px}
+.addr{font-size:.95rem}
+.s-foot{padding:18px 20px 26px;font-size:.8rem;color:var(--c-soft);text-align:center}
+
+/* ── the pastor's editor ── */
+.ed{background:var(--panel);color:var(--ink);min-height:100%;font-family:var(--body)}
+.ed-top{position:sticky;top:0;background:var(--panel);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;z-index:2}
+.ed-top b{font-size:1rem}
+.ed-top span{font-size:.78rem;color:var(--muted)}
+.ed-body{padding:14px 16px 90px;display:grid;gap:16px}
+.field{display:grid;gap:5px}
+.field label{font-weight:700;font-size:.9rem}
+.field .hint{font-size:.78rem;color:var(--muted)}
+.field input,.field textarea{font:inherit;font-size:1rem;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+.field textarea{min-height:64px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.toggles{display:grid;gap:6px}
+.toggles label{display:flex;gap:10px;align-items:center;font-weight:400;font-size:.95rem;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.toggles input{width:20px;height:20px;accent-color:var(--accent)}
+.publish{position:absolute;left:10px;right:10px;bottom:10px;z-index:3}
+.publish button{width:100%;padding:15px;border:0;border-radius:14px;background:var(--accent);color:var(--panel);font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer}
+.toast{position:absolute;left:50%;transform:translateX(-50%);bottom:84px;background:var(--ok);color:#fff;padding:8px 16px;border-radius:20px;font-weight:700;font-size:.9rem;z-index:4}
+button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.signin{display:grid;gap:8px;padding:12px;border:1px dashed var(--line);border-radius:12px;font-size:.85rem;color:var(--muted)}
+.signin .code{font-family:var(--mono);font-size:1.25rem;letter-spacing:.35em;color:var(--ink)}
+
+/* ── notes ── */
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;min-width:0}
+.note h3{margin:0 0 6px;font-size:1.02rem}
+.note p,.note li{color:var(--muted);margin:.3rem 0;font-size:.95rem}
+.note ul{margin:.3rem 0;padding-left:1.1rem}
+.note strong{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="sample">Sketch · sample church, not a real congregation</span>
+    <h1>A website any small church can keep up</h1>
+    <p>One page with what a visitor needs: service times, how to call, where to come, what the church believes, and its latest Facebook posts. The pastor keeps it current from his phone. Edit the right-hand phone and press Publish to see the site change.</p>
+  </header>
+
+  <section class="board">
+    <div class="col">
+      <h2>What visitors see</h2>
+      <div class="phone"><div class="screen"><div class="site" id="site">
+        <div class="s-bar" id="v-bar"></div>
+        <div class="s-hero">
+          <div class="town" id="v-town"></div>
+          <h3 id="v-name"></h3>
+          <p class="kjv">An independent Baptist church · King James Bible</p>
+          <div class="times" id="v-times"></div>
+          <div class="s-btns">
+            <a class="call" href="#contact" id="v-call">Call us</a>
+            <a class="map" href="https://www.openstreetmap.org/" target="_blank" rel="noopener">Directions</a>
+          </div>
+        </div>
+
+        <div class="s-sec">
+          <h4>Welcome</h4>
+          <div class="pastor">
+            <div class="ph" id="v-initials"></div>
+            <div><p style="margin:0"><b id="v-pastor"></b></p><p style="margin:0;color:var(--c-soft);font-size:.9rem">Pastor</p></div>
+          </div>
+          <p id="v-welcome" style="margin-top:10px"></p>
+        </div>
+
+        <div class="s-sec">
+          <h4>Verse of the Day</h4>
+          <div class="vod">
+            <q>Thy word is a lamp unto my feet, and a light unto my path.</q>
+            <div class="r">Psalm 119:105</div>
+            <a href="https://fbckjv.app/KJVBible/" target="_blank" rel="noopener">Read the King James Bible ›</a>
+          </div>
+        </div>
+
+        <div class="s-sec faith">
+          <h4>What we believe</h4>
+          <div id="v-faith"></div>
+        </div>
+
+        <div class="s-sec">
+          <h4>From our Facebook page</h4>
+          <div class="fb">
+            <div class="h"><span class="logo">f</span><span id="v-fbname"></span></div>
+            <div class="post"><small>Sunday</small>Thank you to everyone who came out for the missions conference. Next Sunday: baptism service after the morning message.</div>
+            <div class="post"><small>Wednesday</small>Prayer meeting tonight at 7. Bring a friend!</div>
+            <div class="note">On the real site, the church's own Facebook posts show here through Facebook's page embed, so the website stays current whenever the church posts.</div>
+          </div>
+        </div>
+
+        <div class="s-sec" id="contact">
+          <h4>Visit or write to us</h4>
+          <p class="addr" id="v-addr"></p>
+          <p class="addr">Phone: <b id="v-phone"></b></p>
+          <form class="cf" id="cf" novalidate>
+            <label for="cf-name">Your name</label><input id="cf-name" autocomplete="name">
+            <label for="cf-msg">Message</label><textarea id="cf-msg"></textarea>
+            <input class="hp" id="cf-web" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <button type="submit">Send to the pastor</button>
+            <p id="cf-ok" hidden style="color:#2e7d4f;font-weight:600;margin:0">In the real site this goes straight to the pastor's email. (This sketch sends nothing.)</p>
+          </form>
+        </div>
+        <div class="s-foot"><span id="v-foot"></span><br>King James Bible · fbckjv.app/KJVBible</div>
+      </div></div></div>
+    </div>
+
+    <div class="col">
+      <h2>What the pastor edits, from his phone</h2>
+      <div class="phone"><div class="screen" style="position:relative">
+        <div class="ed">
+          <div class="ed-top"><b>Edit our website</b><span>Signed in</span></div>
+          <div class="ed-body">
+            <div class="signin">How he signs in: types his phone number, gets a 6-digit code by text, enters it. No password to forget.<span class="code">4 1 8 2 0 6</span></div>
+            <div class="field"><label for="e-bar">Announcement banner</label><span class="hint">Leave empty to hide it.</span><input id="e-bar"></div>
+            <div class="field"><label>Service times</label>
+              <div class="row"><input id="e-t1a" aria-label="Service 1 name"><input id="e-t1b" aria-label="Service 1 time"></div>
+              <div class="row"><input id="e-t2a" aria-label="Service 2 name"><input id="e-t2b" aria-label="Service 2 time"></div>
+              <div class="row"><input id="e-t3a" aria-label="Service 3 name"><input id="e-t3b" aria-label="Service 3 time"></div>
+            </div>
+            <div class="field"><label for="e-welcome">Welcome message</label><textarea id="e-welcome"></textarea></div>
+            <div class="field"><label for="e-pastor">Pastor's name</label><input id="e-pastor"></div>
+            <div class="field"><label for="e-phone">Church phone</label><input id="e-phone" inputmode="tel"></div>
+            <div class="field"><label for="e-fb">Facebook page</label><span class="hint">Paste the page's address once. Its posts then show on the site.</span><input id="e-fb" inputmode="url"></div>
+            <div class="field"><label>What we believe</label><span class="hint">A standard statement is filled in. Turn sections on or off, or ask for the wording to match yours.</span>
+              <div class="toggles" id="e-faith"></div>
+            </div>
+          </div>
+        </div>
+        <div class="publish"><button id="publish" type="button">Publish</button></div>
+        <div class="toast" id="toast" hidden>Published</div>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <div class="note"><h3>Why it stays current</h3>
+      <p>Most church sites die because the one volunteer who built them moved on. Here the <strong>Facebook posts show on the site by themselves</strong>, so a church that posts on Facebook already has a living website. The pastor only edits the few things that change: the banner, times, phone and welcome.</p></div>
+    <div class="note"><h3>Editing from a phone</h3>
+      <p>Eight plain boxes and one Publish button. <strong>He can't break the layout</strong>: the design is fixed, and only the words change. Sign-in is a code by text message, so there's no password to lose when someone moves on; a second person can be added.</p></div>
+    <div class="note"><h3>No spam</h3>
+      <ul>
+        <li><strong>No email address on the page</strong>, so spammers have nothing to collect.</li>
+        <li>The contact form carries a hidden trap field that only robots fill in, plus a free "are you human" check that most people never see (such as Cloudflare Turnstile).</li>
+        <li>Messages go to the pastor's email; his address stays private.</li>
+      </ul></div>
+    <div class="note"><h3>Cost and ownership</h3>
+      <p>The site is plain pages with nothing to hack, so it can sit on a free hosting plan. <strong>The church pays only for its own web address</strong> (about $10–20 a year) and owns it, so the site survives any change of helper.</p></div>
+    <div class="note"><h3>One template, many churches</h3>
+      <p>Each church fills in the same template: name, town, times, pastor, phone, Facebook, statement of faith. Setting one up is about an hour; the <strong>31 churches</strong> from the list with no site, a broken one or a dated one could each have one.</p></div>
+    <div class="note"><h3>Ties to the Bible app</h3>
+      <p>Every site shows the Verse of the Day and a link to read the King James Bible. Together the sites could also feed a simple <strong>"Find a King James church near you"</strong> page, built from the same list.</p></div>
+  </section>
+</div>
+
+<script>
+const FAITH = [
+  ['The Scriptures','We believe the Holy Bible is the inspired, preserved Word of God, and we use the King James Version.','2 Timothy 3:16; Psalm 12:6–7'],
+  ['God','We believe in one God, eternally existing in three persons: the Father, the Son and the Holy Ghost.','1 John 5:7; Matthew 28:19'],
+  ['The Lord Jesus Christ','We believe in His virgin birth, sinless life, death for our sins, bodily resurrection and coming again.','Isaiah 7:14; 1 Corinthians 15:3–4'],
+  ['Salvation','We believe salvation is by grace through faith in Christ alone, not of works, and that a saved person is kept forever.','Ephesians 2:8–9; John 10:28'],
+  ['The Church','We believe in the independent local church, with Christ as its head, and two ordinances: baptism by immersion and the Lord\'s Supper.','Matthew 16:18; Acts 8:36–38'],
+  ['Things to come','We believe in the personal, bodily return of the Lord Jesus Christ for His church.','1 Thessalonians 4:16–17; John 14:3'],
+];
+const D = {bar:'Revival meetings March 8–11 · everyone welcome', town:'Anytown, Massachusetts', name:'Cedar Hill Baptist Church',
+  t:[['Sunday School','9:45 AM'],['Sunday Worship','11:00 AM'],['Wednesday Prayer','7:00 PM']],
+  welcome:'We are a small, friendly church that preaches the Bible verse by verse. Come as you are; you will be glad you came.',
+  pastor:'Pastor John Example', phone:'(508) 555-0142', fb:'facebook.com/CedarHillBaptistExample', addr:'12 Meeting House Road, Anytown, MA 02000',
+  faith:FAITH.map(()=>true)};
+let S = JSON.parse(JSON.stringify(D));
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){
+  $('v-bar').textContent = S.bar; $('v-bar').hidden = !S.bar.trim();
+  $('v-town').textContent = S.town; $('v-name').textContent = S.name;
+  $('v-times').innerHTML = S.t.filter(r => r[0].trim() || r[1].trim()).map(r => `<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('');
+  $('v-welcome').textContent = S.welcome; $('v-pastor').textContent = S.pastor;
+  const n = S.pastor.replace(/^pastor\s+/i,'').split(/\s+/).filter(Boolean); $('v-initials').textContent = (n[0]||'')[0]?.toUpperCase()+((n[n.length-1]||'')[0]||'').toUpperCase();
+  $('v-phone').textContent = S.phone; $('v-call').textContent = 'Call ' + S.phone;
+  $('v-fbname').textContent = S.name; $('v-addr').textContent = S.addr;
+  $('v-faith').innerHTML = FAITH.map((f,i) => S.faith[i] ? `<details><summary>${f[0]}</summary><p>${f[1]}</p><p class="refs">${f[2]}</p></details>` : '').join('');
+  $('v-foot').textContent = `${S.name} · ${S.addr}`;
+}
+function fill(){
+  $('e-bar').value = S.bar; $('e-welcome').value = S.welcome; $('e-pastor').value = S.pastor; $('e-phone').value = S.phone; $('e-fb').value = S.fb;
+  S.t.forEach((r,i) => { $(`e-t${i+1}a`).value = r[0]; $(`e-t${i+1}b`).value = r[1]; });
+  $('e-faith').innerHTML = FAITH.map((f,i) => `<label><input type="checkbox" id="e-f${i}" ${S.faith[i]?'checked':''}> ${f[0]}</label>`).join('');
+}
+$('publish').addEventListener('click', () => {
+  S.bar = $('e-bar').value; S.welcome = $('e-welcome').value; S.pastor = $('e-pastor').value || D.pastor; S.phone = $('e-phone').value || D.phone; S.fb = $('e-fb').value;
+  S.t = [1,2,3].map(i => [$(`e-t${i}a`).value, $(`e-t${i}b`).value]);
+  S.faith = FAITH.map((_,i) => $(`e-f${i}`).checked);
+  render();
+  const t = $('toast'); t.hidden = false; clearTimeout(t._h); t._h = setTimeout(() => t.hidden = true, 1800);
+});
+$('cf').addEventListener('submit', e => { e.preventDefault(); if($('cf-web').value) return; $('cf-ok').hidden = false; });
+fill(); render();
+</script>
